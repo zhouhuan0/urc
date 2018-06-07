@@ -22,15 +22,7 @@ public class TestKafkaConsumerClient
 			@Override
 			public void call(String topic, String message)
 			{
-			/*	if(message.contains("90747021842255") || message.contains("701333936082512") ||
-						message.contains("701349151012512") || message.contains("90630921506406") ||
-						message.contains("505596812159227") ||
-						message.contains("701405017436331") || message.contains("90865022521353"))
-				{*/
-					System.out.println("---->" + message);
-					//orderIdSet.add(Long.parseLong(PatternUtils.getValueByPattern("order_id_pattern", message)));
-					//System.out.println("records: " + counter.incrementAndGet() + ", orderId: " + orderIdSet.size());
-//				}
+					System.out.println("consumer message ---->" + message);
 			}
 		});
 		

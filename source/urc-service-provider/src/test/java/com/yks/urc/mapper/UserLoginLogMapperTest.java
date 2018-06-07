@@ -8,7 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+ /**
+  * 〈一句话功能简述〉 
+  *  用户登录日志mapper单元测试类
+  * @author lvcr
+  * @version 1.0 
+  * @see UserLoginLogMapperTest 
+  * @since JDK1.8
+  * @date 2018/6/7 16:12
+  */ 
 public class UserLoginLogMapperTest extends BaseMapperTest{
 
     @Autowired
