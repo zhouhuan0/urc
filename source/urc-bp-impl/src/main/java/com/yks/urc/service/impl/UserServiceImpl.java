@@ -53,7 +53,7 @@ public class UserServiceImpl implements IUserService {
 		loginLog.ldapCost = endTime - startTime;
 		loginLog.loginSuccess = blnOk ? 1 : 0;
 		loginLog.remark = String.format("PWD:%s", authUser.pwd);
-		loginLog.loginTime = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format( new Date()));
+		loginLog.loginTime = new Date();
 		this.insertLoginLog(loginLog);
 		return VoHelper.getSuccessResult(null, blnOk ? "00001" : "00000", null);
 	}

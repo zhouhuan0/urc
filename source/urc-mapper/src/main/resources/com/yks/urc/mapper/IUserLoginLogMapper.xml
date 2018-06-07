@@ -17,7 +17,7 @@
         (user_name,ip,ldap_cost,is_login_success,remark,login_time,create_time,modified_time)
         values
         (
-         #{userName},#{ip},#{ldapCost},#{loginSuccess},#{remark},now(3),#{createTime},#{modifiedTime}
+         #{userName},#{ip},#{ldapCost},#{loginSuccess},#{remark},#{loginTime},#{createTime},#{modifiedTime}
         )
     </insert>
     <select id="selectUserLoginLog" resultMap="BaseResultMap">

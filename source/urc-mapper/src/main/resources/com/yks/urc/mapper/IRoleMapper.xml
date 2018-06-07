@@ -2,22 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yks.urc.mapper.IRoleMapper">
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleDO">
-        <id column="role_id" jdbcType="CHAR" property="roleId"/>
+        <id column="id" jdbcType="TINYINT" property="id"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="is_active" jdbcType="TINYINT" property="isActive"/>
         <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
         <result column="is_forever" jdbcType="TINYINT" property="isForever"/>
         <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime"/>
-        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
-        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
-        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
-        <result column="updated_by" jdbcType="VARCHAR" property="updatedBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP"  property="createTime"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP"  property="modifiedTime"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
     </resultMap>
     <sql id="Base_Column_List">
-    role_id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time, 
-    created_time, created_by, updated_time, updated_by
-  </sql>
+     id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
+     create_time, create_by, modified_time, modified_by
+   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -31,15 +31,15 @@
 
     <insert id="insert" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
-     (role_id, role_name, is_active,
+     (role_name, is_active,
       is_authorizable, is_forever, effective_time,
-      expire_time, created_time, created_by,
-      updated_time, updated_by)
+      expire_time, create_time, create_by,
+      modified_time, modified_by)
     values
-     (#{roleId,jdbcType=CHAR}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
+     ( #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
       #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
-      #{expireTime,jdbcType=TIMESTAMP}, #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR},
-      #{updatedTime,jdbcType=TIMESTAMP}, #{updatedBy,jdbcType=VARCHAR})
+      #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
 
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
@@ -63,17 +63,17 @@
             <if test="expireTime != null">
                 expire_time = #{expireTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="createdTime != null">
-                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="createdBy != null">
-                created_by = #{createdBy,jdbcType=VARCHAR},
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
             </if>
-            <if test="updatedTime != null">
-                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updatedBy != null">
-                updated_by = #{updatedBy,jdbcType=VARCHAR},
+            <if test="modifiedBy != null">
+                modified_by = #{modifiedBy,jdbcType=VARCHAR},
             </if>
         </set>
         where role_id = #{roleId,jdbcType=CHAR}
@@ -86,10 +86,10 @@
       is_forever = #{isForever,jdbcType=TINYINT},
       effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
       expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=VARCHAR},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=VARCHAR}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where role_id = #{roleId,jdbcType=CHAR}
   </update>
 </mapper>

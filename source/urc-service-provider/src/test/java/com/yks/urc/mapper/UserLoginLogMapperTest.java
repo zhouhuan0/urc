@@ -25,9 +25,7 @@ public class UserLoginLogMapperTest extends BaseMapperTest{
     @Test
     public void testInsert(){
         UserLoginLogDO userLoginLogDO = new UserLoginLogDO();
-        String current = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format( new Date());
-        Timestamp time = Timestamp.valueOf(current);
-        userLoginLogDO.loginTime=time;
+        userLoginLogDO.loginTime=new Date();
         userLoginLogDO.userName="admin12122";
         int rtn = userLoginLogMapper.insertUserLoginLog(userLoginLogDO);
         Assert.assertEquals(1,rtn);

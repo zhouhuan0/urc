@@ -1,61 +1,51 @@
 package com.yks.urc.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class RoleDO {
-
     /**
-     *
-     */
-    public String roleId;
-    /**
-     * 角色名
+     * 角色名称
      */
     public String roleName;
     /**
-     *  是否存活
+     * 是否启用
      */
     public boolean isActive;
     /**
-     *  是否通过验证
+     * 是否管理员角色
      */
     public boolean isAuthorizable;
     /**
-     * 是否永久保存
+     * 是否永久有效
      */
     public boolean isForever;
     /**
-     *
+     * 有效开始时间
      */
     public Date effectiveTime;
     /**
-     *
+     * 有效结束时间
      */
     public Date expireTime;
     /**
-     *
+     * 创建时间
      */
-    public Date createdTime;
-    /**
-     *
-     */
-    public String createdBy;
-    /**
-     *
-     */
-    public Date updatedTime;
-    /**
-     *
-     */
-    public String updatedBy;
+    public Date createTime;
 
-    public String getRoleId() {
-        return roleId;
-    }
+    /**
+     * 创建人
+     */
+    public String createBy;
+    /**
+     * 更新时间
+     */
+    public Date modifiedTime;
+    /**
+     * 更新人
+     */
+    public String modifiedBy;
 
-    public void setRoleId(String roleId) {
-        this.roleId = roleId;
-    }
 
     public String getRoleName() {
         return roleName;
@@ -105,35 +95,36 @@ public class RoleDO {
         this.expireTime = expireTime;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+
+    public String getCreateBy() {
+        return createBy;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public Date getModifiedTime() {
+        return modifiedTime;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 }
