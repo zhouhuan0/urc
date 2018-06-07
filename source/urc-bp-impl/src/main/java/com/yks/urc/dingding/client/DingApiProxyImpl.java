@@ -1,4 +1,4 @@
-package com.yks.urc.dingding.proxy;
+package com.yks.urc.dingding.client;
 
 import java.util.Date;
 import java.util.List;

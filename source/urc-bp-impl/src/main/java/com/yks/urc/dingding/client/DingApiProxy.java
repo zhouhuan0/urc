@@ -1,4 +1,4 @@
-package com.yks.urc.dingding.proxy;
+package com.yks.urc.dingding.client;
 
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;

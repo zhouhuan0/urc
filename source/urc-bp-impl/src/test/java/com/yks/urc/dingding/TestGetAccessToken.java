@@ -2,13 +2,12 @@ package com.yks.urc.dingding;
 
 import java.util.List;
 
-import com.yks.urc.dingding.proxy.ApiProxy;
-import com.yks.urc.dingding.proxy.DingApiProxyImpl;
 import org.junit.Test;
 
+import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
-import com.yks.urc.dingding.proxy.DingApiProxy;
+import com.yks.urc.dingding.proxy.ApiProxy;
 /**
  * @Author: wujianghui@youkeshu.com
  * @Date: 2018/6/6 8:59
