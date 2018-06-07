@@ -9,25 +9,15 @@
         <result column="is_forever" jdbcType="TINYINT" property="isForever"/>
         <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
         <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime"/>
-        <result column="create_time" jdbcType="TIMESTAMP"  property="createTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-        <result column="modified_time" jdbcType="TIMESTAMP"  property="modifiedTime"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
     </resultMap>
     <sql id="Base_Column_List">
      id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
      create_time, create_by, modified_time, modified_by
    </sql>
-    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_role
-        where role_id = #{roleId,jdbcType=CHAR}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
-    delete from urc_role
-    where role_id = #{roleId,jdbcType=CHAR}
-  </delete>
 
     <insert id="insert" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
@@ -41,6 +31,40 @@
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
+
+    <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
+    insert into urc_role
+     (role_name, is_active,
+      is_authorizable, is_forever, effective_time,
+      expire_time, create_time, create_by,
+      modified_time, modified_by)
+      values
+      ( #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
+      #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
+      #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
+      on DUPLICATE key
+      UPDATE
+        role_name = #{roleName,jdbcType=VARCHAR},
+        is_active = #{isActive,jdbcType=TINYINT},
+        is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
+        is_forever = #{isForever,jdbcType=TINYINT},
+        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+        expire_time = #{expireTime,jdbcType=TIMESTAMP},
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+        create_by = #{createBy,jdbcType=VARCHAR},
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+        modified_by = #{modifiedBy,jdbcType=VARCHAR}
+    </insert>
+
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+      delete from urc_role where id in
+        <foreach collection="list" item = "roleId" open="(" separator="," close=")">
+            #{ roleId}
+        </foreach>
+    </delete>
+
 
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
         update urc_role
