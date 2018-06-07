@@ -1,5 +1,7 @@
 package com.yks.urc.service.impl;
 
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,7 +53,7 @@ public class UserServiceImpl implements IUserService {
 		loginLog.ldapCost = endTime - startTime;
 		loginLog.loginSuccess = blnOk ? 1 : 0;
 		loginLog.remark = String.format("PWD:%s", authUser.pwd);
-		loginLog.loginTime = new Date();
+		loginLog.loginTime = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format( new Date()));
 		this.insertLoginLog(loginLog);
 		return VoHelper.getSuccessResult(null, blnOk ? "00001" : "00000", null);
 	}
