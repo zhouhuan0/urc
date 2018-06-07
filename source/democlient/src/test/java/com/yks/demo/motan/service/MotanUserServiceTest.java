@@ -1,7 +1,7 @@
 package com.yks.demo.motan.service;
 
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
-import com.yks.demo.DemoclientApplication;
+import com.yks.demo.DemoClientApplication;
 import com.yks.demo.bean.UserInfo;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DemoclientApplication.class)
+@SpringBootTest(classes = DemoClientApplication.class)
 public class MotanUserServiceTest {
 
 	@MotanReferer

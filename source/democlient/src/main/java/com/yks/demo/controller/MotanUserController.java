@@ -28,4 +28,14 @@ public class MotanUserController {
 		return urcService.syncUserInfo(curUser);// .sayHello(msg);
 	}
 
+	@RequestMapping("/login/{userName}/{pwd}")
+	public ResultVO login(@PathVariable String userName, @PathVariable String pwd) {
+		UserVO curUser = new UserVO();
+		curUser.ip = "127.0.0.1";
+
+		UserVO authUser = new UserVO();
+		authUser.userName = userName;
+		authUser.pwd = pwd;
+		return urcService.login(curUser, authUser);
+	}
 }
