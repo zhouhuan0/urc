@@ -14,16 +14,10 @@ public class TestKafkaProducerClient
 
 		MQProducerClient mqProducerClient = new MQProducerClient();
 
-		//正常订单
-		//File file = new File("E:\\source_order1.txt");
-		//负利润
-		//File file = new File("D:\\source_order_profit.txt");
-		//File file = new File("E:\\detail.json");
-		//String response = FileUtils.readBytesToString(file);
 
 		List<String> messages = new ArrayList<String>();
 
-		messages.add("hello, kafka");
+		messages.add("hello,this is  kafka");
 
 		mqProducerClient.pubish("test-topic", messages, new MQProducerClient.MessageCallBack()
 		{
