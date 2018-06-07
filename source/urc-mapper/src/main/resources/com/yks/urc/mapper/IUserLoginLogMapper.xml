@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IUserLoginLogMapper">
+    <insert id="insertUserLoginLog" parameterType="com.yks.urc.entity.UserLoginLogDO">
+        insert into user_login_log
+        (user_name,ip,ldap_cost,is_login_success,remark,login_time,create_time,modified_time)
+        values
+        (
+         #{userName},#{ip},#{ldapCost},#{loginSuccess},#{remark},#{loginTime,jdbcType = TIMESTAMP},#{createTime},#{modifiedTime}
+        )
+    </insert>
+
+
+</mapper>
