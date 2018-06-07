@@ -28,7 +28,7 @@ public class UserLoginLogMapperTest extends BaseMapperTest{
     @Test
     public void testSelect(){
         UserLoginLogDO userLoginLogDO = userLoginLogMapper.selectUserLoginLog();
-        Timestamp loginTime = Timestamp.valueOf(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(userLoginLogDO.loginTime));
-        System.out.println("============="+loginTime);
+        String dateStr  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(userLoginLogDO.loginTime);
+        System.out.println(dateStr);
     }
 }
