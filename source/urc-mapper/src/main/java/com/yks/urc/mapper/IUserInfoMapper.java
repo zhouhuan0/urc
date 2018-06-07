@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
  * @author lvcr
  * @version 1.0
  * @date 2018/5/28 8:40
- * @see UserInfoMapper
+ * @see IUserInfoMapper
  * @since JDK1.8
  */
 @Repository
-public interface UserInfoMapper {
+public interface IUserInfoMapper {
 
     Integer insertUser(UserInfoDO userInfoPO);
 

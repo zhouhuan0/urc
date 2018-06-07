@@ -9,11 +9,11 @@ import org.springframework.stereotype.Repository;
  * @author lvcr
  * @version 1.0
  * @date 2018/6/6 11:17
- * @see RoleMapper
+ * @see IRoleMapper
  * @since JDK1.8
  */
 @Repository
-public interface RoleMapper {
+public interface IRoleMapper {
 
     Integer insert(RoleDO roleDO);
 }

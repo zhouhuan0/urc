@@ -2,7 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RolePermissionDO;
 
-public interface RolePermissionMapper {
+public interface IRolePermissionMapper {
     int deleteByPrimaryKey(String RolePermissionDOId);
 
     int insert(RolePermissionDO record);

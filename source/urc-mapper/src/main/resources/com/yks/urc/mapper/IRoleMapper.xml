@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yks.urc.mapper.RoleMapper">
+<mapper namespace="com.yks.urc.mapper.IRoleMapper">
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleDO">
         <id column="role_id" jdbcType="CHAR" property="roleId"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
