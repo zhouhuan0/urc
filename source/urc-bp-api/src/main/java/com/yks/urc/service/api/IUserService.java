@@ -8,4 +8,6 @@ public interface IUserService {
 	ResultVO syncUserInfo(UserVO curUser);
 
 	ResultVO login(UserVO curUser, UserVO authUser);
+
+
 }

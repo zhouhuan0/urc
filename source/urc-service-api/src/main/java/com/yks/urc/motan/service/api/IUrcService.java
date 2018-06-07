@@ -4,6 +4,11 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
 public interface IUrcService {
+	/**
+	 * 同步数据
+	 * @param curUser
+	 * @return
+	 */
 	ResultVO syncUserInfo(UserVO curUser);
 
 	/**

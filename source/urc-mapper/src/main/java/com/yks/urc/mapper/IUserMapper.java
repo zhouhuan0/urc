@@ -8,5 +8,13 @@
  */
 package com.yks.urc.mapper;
 
+import com.yks.urc.vo.UserVO;
+
 public interface IUserMapper {
+    /**
+     * 获取域名
+     * @param userName
+     * @return
+     */
+    UserVO getUserByName(String userName);
 }
