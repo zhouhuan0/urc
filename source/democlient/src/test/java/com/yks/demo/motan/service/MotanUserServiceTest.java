@@ -38,10 +38,10 @@ public class MotanUserServiceTest {
 			ResultVO rslt = urcService.login(curUser, authUser);
 			System.out.println(StringUtility.toJSONString_NoException(rslt));
 
-			for (int i = 0; i < 10; i++) {
-				authUser.userName = "panyun" + i;
-				urcService.login(curUser, authUser);
-			}
+//			for (int i = 0; i < 10; i++) {
+//				authUser.userName = "panyun" + i;
+//				urcService.login(curUser, authUser);
+//			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
