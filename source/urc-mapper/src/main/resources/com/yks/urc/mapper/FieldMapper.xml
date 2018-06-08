@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.FieldMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.Field">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="field_code" jdbcType="VARCHAR" property="fieldCode" />
+    <result column="field_name" jdbcType="VARCHAR" property="fieldName" />
+    <result column="entity_code" jdbcType="BIGINT" property="entityCode" />
+    <result column="data_type" jdbcType="VARCHAR" property="dataType" />
+    <result column="maxlength" jdbcType="INTEGER" property="maxlength" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, field_code, field_name, entity_code, data_type, maxlength, create_time, create_by, 
+    modified_time, modified_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from urc_field
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from urc_field
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.Field">
+    insert into urc_field (id, field_code, field_name, 
+      entity_code, data_type, maxlength, 
+      create_time, create_by, modified_time, 
+      modified_by)
+    values (#{id,jdbcType=BIGINT}, #{fieldCode,jdbcType=VARCHAR}, #{fieldName,jdbcType=VARCHAR}, 
+      #{entityCode,jdbcType=BIGINT}, #{dataType,jdbcType=VARCHAR}, #{maxlength,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{modifiedTime,jdbcType=TIMESTAMP}, 
+      #{modifiedBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.Field">
+    insert into urc_field
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="fieldCode != null">
+        field_code,
+      </if>
+      <if test="fieldName != null">
+        field_name,
+      </if>
+      <if test="entityCode != null">
+        entity_code,
+      </if>
+      <if test="dataType != null">
+        data_type,
+      </if>
+      <if test="maxlength != null">
+        maxlength,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedTime != null">
+        modified_time,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="fieldCode != null">
+        #{fieldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldName != null">
+        #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="entityCode != null">
+        #{entityCode,jdbcType=BIGINT},
+      </if>
+      <if test="dataType != null">
+        #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="maxlength != null">
+        #{maxlength,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.Field">
+    update urc_field
+    <set>
+      <if test="fieldCode != null">
+        field_code = #{fieldCode,jdbcType=VARCHAR},
+      </if>
+      <if test="fieldName != null">
+        field_name = #{fieldName,jdbcType=VARCHAR},
+      </if>
+      <if test="entityCode != null">
+        entity_code = #{entityCode,jdbcType=BIGINT},
+      </if>
+      <if test="dataType != null">
+        data_type = #{dataType,jdbcType=VARCHAR},
+      </if>
+      <if test="maxlength != null">
+        maxlength = #{maxlength,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.Field">
+    update urc_field
+    set field_code = #{fieldCode,jdbcType=VARCHAR},
+      field_name = #{fieldName,jdbcType=VARCHAR},
+      entity_code = #{entityCode,jdbcType=BIGINT},
+      data_type = #{dataType,jdbcType=VARCHAR},
+      maxlength = #{maxlength,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.PersonMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.Person">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="person_name" jdbcType="VARCHAR" property="personName" />
+    <result column="gender" jdbcType="TINYINT" property="gender" />
+    <result column="phone_num" jdbcType="VARCHAR" property="phoneNum" />
+    <result column="ding_user_id" jdbcType="VARCHAR" property="dingUserId" />
+    <result column="ding_id" jdbcType="VARCHAR" property="dingId" />
+    <result column="ding_unionid" jdbcType="VARCHAR" property="dingUnionid" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="join_date" jdbcType="DATE" property="joinDate" />
+    <result column="leave_date" jdbcType="DATE" property="leaveDate" />
+    <result column="job_number" jdbcType="VARCHAR" property="jobNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, person_name, gender, phone_num, ding_user_id, ding_id, ding_unionid, birthday, 
+    join_date, leave_date, job_number, email, position, create_time, create_by, modified_time, 
+    modified_by
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from urc_person
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from urc_person
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.Person">
+    insert into urc_person (id, person_name, gender, 
+      phone_num, ding_user_id, ding_id, 
+      ding_unionid, birthday, join_date, 
+      leave_date, job_number, email, 
+      position, create_time, create_by, 
+      modified_time, modified_by)
+    values (#{id,jdbcType=BIGINT}, #{personName,jdbcType=VARCHAR}, #{gender,jdbcType=TINYINT}, 
+      #{phoneNum,jdbcType=VARCHAR}, #{dingUserId,jdbcType=VARCHAR}, #{dingId,jdbcType=VARCHAR}, 
+      #{dingUnionid,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{joinDate,jdbcType=DATE}, 
+      #{leaveDate,jdbcType=DATE}, #{jobNumber,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, 
+      #{position,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.Person">
+    insert into urc_person
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="personName != null">
+        person_name,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="phoneNum != null">
+        phone_num,
+      </if>
+      <if test="dingUserId != null">
+        ding_user_id,
+      </if>
+      <if test="dingId != null">
+        ding_id,
+      </if>
+      <if test="dingUnionid != null">
+        ding_unionid,
+      </if>
+      <if test="birthday != null">
+        birthday,
+      </if>
+      <if test="joinDate != null">
+        join_date,
+      </if>
+      <if test="leaveDate != null">
+        leave_date,
+      </if>
+      <if test="jobNumber != null">
+        job_number,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="position != null">
+        position,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedTime != null">
+        modified_time,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="personName != null">
+        #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=TINYINT},
+      </if>
+      <if test="phoneNum != null">
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="dingUserId != null">
+        #{dingUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="dingId != null">
+        #{dingId,jdbcType=VARCHAR},
+      </if>
+      <if test="dingUnionid != null">
+        #{dingUnionid,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        #{birthday,jdbcType=DATE},
+      </if>
+      <if test="joinDate != null">
+        #{joinDate,jdbcType=DATE},
+      </if>
+      <if test="leaveDate != null">
+        #{leaveDate,jdbcType=DATE},
+      </if>
+      <if test="jobNumber != null">
+        #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.Person">
+    update urc_person
+    <set>
+      <if test="personName != null">
+        person_name = #{personName,jdbcType=VARCHAR},
+      </if>
+      <if test="gender != null">
+        gender = #{gender,jdbcType=TINYINT},
+      </if>
+      <if test="phoneNum != null">
+        phone_num = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="dingUserId != null">
+        ding_user_id = #{dingUserId,jdbcType=VARCHAR},
+      </if>
+      <if test="dingId != null">
+        ding_id = #{dingId,jdbcType=VARCHAR},
+      </if>
+      <if test="dingUnionid != null">
+        ding_unionid = #{dingUnionid,jdbcType=VARCHAR},
+      </if>
+      <if test="birthday != null">
+        birthday = #{birthday,jdbcType=DATE},
+      </if>
+      <if test="joinDate != null">
+        join_date = #{joinDate,jdbcType=DATE},
+      </if>
+      <if test="leaveDate != null">
+        leave_date = #{leaveDate,jdbcType=DATE},
+      </if>
+      <if test="jobNumber != null">
+        job_number = #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="position != null">
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.Person">
+    update urc_person
+    set person_name = #{personName,jdbcType=VARCHAR},
+      gender = #{gender,jdbcType=TINYINT},
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
+      ding_user_id = #{dingUserId,jdbcType=VARCHAR},
+      ding_id = #{dingId,jdbcType=VARCHAR},
+      ding_unionid = #{dingUnionid,jdbcType=VARCHAR},
+      birthday = #{birthday,jdbcType=DATE},
+      join_date = #{joinDate,jdbcType=DATE},
+      leave_date = #{leaveDate,jdbcType=DATE},
+      job_number = #{jobNumber,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      position = #{position,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

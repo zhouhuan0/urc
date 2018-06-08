@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.UserPermissionCacheMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.UserPermissionCache">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="sys_key" jdbcType="CHAR" property="sysKey" />
+    <result column="permission_version" jdbcType="CHAR" property="permissionVersion" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.UserPermissionCache">
+    <result column="user_context" jdbcType="LONGVARCHAR" property="userContext" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, sys_key, permission_version, create_time, create_by, modified_time, 
+    modified_by
+  </sql>
+  <sql id="Blob_Column_List">
+    user_context
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from urc_user_permission_cache
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from urc_user_permission_cache
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.UserPermissionCache">
+    insert into urc_user_permission_cache (id, user_name, sys_key, 
+      permission_version, create_time, create_by, 
+      modified_time, modified_by, user_context
+      )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{sysKey,jdbcType=CHAR}, 
+      #{permissionVersion,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, #{userContext,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.UserPermissionCache">
+    insert into urc_user_permission_cache
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="sysKey != null">
+        sys_key,
+      </if>
+      <if test="permissionVersion != null">
+        permission_version,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="modifiedTime != null">
+        modified_time,
+      </if>
+      <if test="modifiedBy != null">
+        modified_by,
+      </if>
+      <if test="userContext != null">
+        user_context,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysKey != null">
+        #{sysKey,jdbcType=CHAR},
+      </if>
+      <if test="permissionVersion != null">
+        #{permissionVersion,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="userContext != null">
+        #{userContext,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.UserPermissionCache">
+    update urc_user_permission_cache
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="sysKey != null">
+        sys_key = #{sysKey,jdbcType=CHAR},
+      </if>
+      <if test="permissionVersion != null">
+        permission_version = #{permissionVersion,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="userContext != null">
+        user_context = #{userContext,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.UserPermissionCache">
+    update urc_user_permission_cache
+    set user_name = #{userName,jdbcType=VARCHAR},
+      sys_key = #{sysKey,jdbcType=CHAR},
+      permission_version = #{permissionVersion,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      user_context = #{userContext,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.UserPermissionCache">
+    update urc_user_permission_cache
+    set user_name = #{userName,jdbcType=VARCHAR},
+      sys_key = #{sysKey,jdbcType=CHAR},
+      permission_version = #{permissionVersion,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>
