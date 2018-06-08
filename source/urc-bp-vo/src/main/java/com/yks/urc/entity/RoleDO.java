@@ -4,48 +4,58 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 public class RoleDO {
+
+    private Integer id;
     /**
      * 角色名称
      */
-    public String roleName;
+    private String roleName;
     /**
      * 是否启用
      */
-    public boolean isActive;
+    private boolean isActive;
     /**
      * 是否管理员角色
      */
-    public boolean isAuthorizable;
+    private boolean isAuthorizable;
     /**
      * 是否永久有效
      */
-    public boolean isForever;
+    private boolean isForever;
     /**
      * 有效开始时间
      */
-    public Date effectiveTime;
+    private Date effectiveTime;
     /**
      * 有效结束时间
      */
-    public Date expireTime;
+    private Date expireTime;
     /**
      * 创建时间
      */
-    public Date createTime;
+    private Date createTime;
 
     /**
      * 创建人
      */
-    public String createBy;
+    private String createBy;
     /**
      * 更新时间
      */
-    public Date modifiedTime;
+    private Date modifiedTime;
     /**
      * 更新人
      */
-    public String modifiedBy;
+    private String modifiedBy;
 
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getRoleName() {
         return roleName;

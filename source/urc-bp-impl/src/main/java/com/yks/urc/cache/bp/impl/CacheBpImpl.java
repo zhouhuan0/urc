@@ -13,7 +13,7 @@ import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.UserVO;
 
-@Component
+//@Component
 public class CacheBpImpl implements ICacheBp {
 
 	/**

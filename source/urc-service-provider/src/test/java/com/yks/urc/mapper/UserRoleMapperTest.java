@@ -24,6 +24,9 @@ public class UserRoleMapperTest extends BaseMapperTest {
     @Autowired
     private IRoleMapper roleMapper;
 
+    @Autowired
+    IUserRoleMapper userRoleMapper;
+
     @Test
     public void testInsert() {
         RoleDO roleDO = new RoleDO();
@@ -38,6 +41,16 @@ public class UserRoleMapperTest extends BaseMapperTest {
         Assert.assertEquals(1, rtn);
     }
 
+    @Test
+    public void deleteBatch() {
+        List<Integer> ids = new ArrayList<>();
+        ids.add(2);
+        ids.add(3);
+        ids.add(4);
+        int rtn = userRoleMapper.deleteBatch(ids);
+        System.out.println(rtn);
+
+    }
 
 
 }

@@ -16,8 +16,8 @@ import org.springframework.context.annotation.PropertySource;
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.yks.urc.mapper")
-//@ComponentScan(basePackages = { "com.yks.urc.mapper" })
-@ComponentScan(basePackages = { "com.yks.urc.mapper", "com.yks.urc.**.impl" })
+@ComponentScan(basePackages = { "com.yks.urc.mapper" })
+//@ComponentScan(basePackages = { "com.yks.urc.mapper", "com.yks.urc.**.impl" })
 @PropertySource("classpath:constant-${spring.profiles.active}.properties")
 public class MapperTestApplication {
 }

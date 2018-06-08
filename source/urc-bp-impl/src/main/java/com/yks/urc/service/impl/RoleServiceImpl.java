@@ -2,11 +2,21 @@ package com.yks.urc.service.impl;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserInfoDO;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IRoleService;
 
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.helper.VoHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -21,6 +31,17 @@ import java.util.List;
  */
 @Service
 public class RoleServiceImpl implements IRoleService {
+
+    private Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
+
+    @Autowired
+    private IRoleMapper roleMapper;
+
+    @Autowired
+    private IRolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
 
     /**
      * Description:
@@ -64,6 +85,21 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
+     * Description: 根据角色Id获取角色信息
+     *
+     * @param : roleId
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/8 17:32
+     * @see
+     */
+    @Override
+    public RoleDO getRoleByRoleId(Integer roleId) {
+        RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
+        return roleDO;
+    }
+
+    /**
      * Description: 获取角色关联的用户
      * 1、…
      * 2、…
@@ -82,19 +118,26 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
-     * Description: 删除多个角色
-     * 1、…
-     * 2、…
+     * Description:
+     * 批量删除角色 包括角色-功能权限关系   用户-角色关系  角色
      *
      * @param : lstRoleId
      * @auther: lvcr
      * @date: 2018/6/6 14:44
      * @see
      */
+    @Transactional
     @Override
-    public void deleteRoles(List<String> lstRoleId) {
+    public void deleteRoles(List<Integer> lstRoleId) {
         /*1、非管理员用户只能管理自己创建的角色*/
         /*2、先删除用户角色关系，再删角色权限关系数据，然后删角色信息*/
+
+        /** 1、 删除角色权限关系*/
+        rolePermissionMapper.deleteBatch(lstRoleId);
+        /*2、删除用户角色关系*/
+        userRoleMapper.deleteBatch(lstRoleId);
+        /*3、删除角色信息*/
+        roleMapper.deleteBatch(lstRoleId);
 
     }
 
@@ -184,11 +227,13 @@ public class RoleServiceImpl implements IRoleService {
         /*根据角色删除用户角色关系表*/
         /*新增用户角色关系表*/
     }
+
     /**
      * Description:
      * 1、复制角色
+     *
      * @param :
-     * @return: 
+     * @return:
      * @auther: lvcr
      * @date: 2018/6/6 15:04
      * @see
