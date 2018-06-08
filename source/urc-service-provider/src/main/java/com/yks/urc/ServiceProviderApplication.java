@@ -9,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
 @MapperScan("com.yks.urc.mapper")
+@PropertySource("classpath:constant-${spring.profiles.active}.properties")
 public class ServiceProviderApplication {
 
 	public static void main(String[] args) {

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import com.yks.urc.bp.impl.UserBp;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.ldap.bp.api.ILdapBp;
 import com.yks.urc.ldap.bp.impl.LdapBpImpl;
 import com.yks.urc.mapper.IUserLoginLogMapper;
 import com.yks.urc.service.api.IUserService;
@@ -29,7 +30,8 @@ public class UserServiceImpl implements IUserService {
 	UserBp userBp;
 
 	@Autowired
-	LdapBpImpl ldapBpImpl;
+	ILdapBp ldapBpImpl;
+	
 	@Autowired
 	IUserLoginLogMapper userLoginLogMapper;
 

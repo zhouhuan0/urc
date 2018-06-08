@@ -1,10 +1,16 @@
 package com.yks.urc.ldap.bp.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.yks.urc.ldap.bp.api.ILdapBp;
+
 @Component
-public class LdapBpImpl {
+public class LdapBpImpl implements ILdapBp {
+	@Autowired
+	LDAPUtil ldapUtil;
+
 	public boolean validateUser(String userName, String pwd) {
-		return LDAPUtil.connect(false, userName, pwd, null);
+		return ldapUtil.connect(false, userName, pwd, null);
 	}
 }

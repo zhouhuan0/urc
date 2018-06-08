@@ -15,8 +15,11 @@ import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+@Component
 public class LDAPUtil {
 
 	private static final String ADMIN_USER = "dcadmin";
@@ -24,16 +27,19 @@ public class LDAPUtil {
 	private static final Control[] connCtls = null;
 	// private static final String ldapURL =
 	// "LDAP://192.168.5.112:";//格式：LDAP://IP:port 192.168.5.112:389;
-	private static final String ldapURL = "LDAP://youkeshu.com:";// 格式：LDAP://IP:port LDAP://youkeshu.com:389;
+//	private static final String ldapURL = "LDAP://youkeshu.com:";
+    @Value("${ldap.URL}")
+	private String ldapURL = "LDAP://192.168.5.112:";
+	// 格式：LDAP://IP:port LDAP://youkeshu.com:389;
 	private static final String ldapPort = "389";
 	private static final String ldapSSLPort = "636";
-	private static final String ou = "youkeshu";
-	// private static final String root = "OU=youkeshu,DC=photo138,DC=com";
-	private static final String root = "OU=youkeshu,DC=youkeshu,DC=com";
+//	private static final String ou = "youkeshu";
+//	 private static final String root = "OU=youkeshu,DC=photo138,DC=com";
+//	private static final String root = "OU=youkeshu,DC=youkeshu,DC=com";
 	/** connect to ldap */
 	private static DirContext dc = null;
 
-	public static Hashtable getEnv(boolean isAdmin, String userName, String password, String protocol) {
+	public Hashtable getEnv(boolean isAdmin, String userName, String password, String protocol) {
 		Hashtable<String, String> HashEnv = new Hashtable<String, String>();
 		String user = null;
 		String pwd = null;
@@ -65,12 +71,12 @@ public class LDAPUtil {
 	}
 
 	/** connect to ldap */
-	public static boolean connect(boolean isAdmin, String username, String password, String protocol) {
+	public boolean connect(boolean isAdmin, String username, String password, String protocol) {
 
 		LdapContext ctx = null;
 		String user = null;
 		try {
-			ctx = new InitialLdapContext(getEnv(isAdmin, username, password, protocol), connCtls);
+			ctx = new InitialLdapContext(getEnv(false, username, password, null), connCtls);
 
 			if (isAdmin) {
 				user = ADMIN_USER;
