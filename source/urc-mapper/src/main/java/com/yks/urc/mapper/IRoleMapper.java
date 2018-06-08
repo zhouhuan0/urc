@@ -61,5 +61,5 @@ public interface IRoleMapper {
      * @date: 2018/6/7 18:42
      * @see
      */
-    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
+//    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 }
