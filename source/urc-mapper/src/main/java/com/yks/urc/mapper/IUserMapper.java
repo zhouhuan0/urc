@@ -1,20 +1,21 @@
-/**
- * 〈一句话功能简述〉<br>
- * 〈〉
- *
- * @author linwanxian@youkeshu.com
- * @create 2018/6/7
- * @since 1.0.0
- */
 package com.yks.urc.mapper;
 
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.entity.UserDO;
+
+import java.util.List;
 
 public interface IUserMapper {
-    /**
-     * 获取域名
-     * @param userName
-     * @return
-     */
-    UserVO getUserByName(String userName);
+    int deleteByPrimaryKey(Long id);
+
+    int insert(UserDO record);
+
+    int insertSelective(UserDO record);
+
+    UserDO selectByPrimaryKey(Long id);
+
+    int updateByPrimaryKeySelective(UserDO record);
+
+    int updateByPrimaryKey(UserDO record);
+
+    List<UserDO> listUsersByRoleId(Integer roleId);
 }

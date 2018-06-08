@@ -1,7 +1,5 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.ServiceProviderApplication;
-import com.yks.urc.TestMapperApplication;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,7 +15,7 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since JDK1.8
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = TestMapperApplication.class)
+@SpringBootTest(classes = MapperTestApplication.class)
 //@SpringBootTest(classes = ServiceProviderApplication.class)
 public class BaseMapperTest {
 }

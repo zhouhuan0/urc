@@ -3,33 +3,33 @@ package com.yks.urc.entity;
 import java.util.Date;
 
 public class UserRoleDO {
-    private String userRoleId;
+    private String id;
 
-    private String roleId;
+    private Integer roleId;
 
     private String userName;
 
     private String createdBy;
 
-    private Date createdTime;
+    private Date createTime;
 
-    private String updatedBy;
+    private String modifiedBy;
 
-    private Date updatedTime;
+    private Date modifiedTime;
 
-    public String getUserRoleId() {
-        return userRoleId;
+    public String getId() {
+        return id;
     }
 
-    public void setUserRoleId(String userRoleId) {
-        this.userRoleId = userRoleId;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public String getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }
 
@@ -49,27 +49,27 @@ public class UserRoleDO {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
+    public Date getModifiedTime() {
+        return modifiedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 }

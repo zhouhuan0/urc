@@ -4,8 +4,6 @@ import com.yks.urc.entity.UserRoleDO;
 
 public interface IUserRoleMapper {
 
-    int insertUserRole(UserRoleDO record);
-
 
 
 
