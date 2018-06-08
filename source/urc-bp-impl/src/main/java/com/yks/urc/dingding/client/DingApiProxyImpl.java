@@ -5,21 +5,53 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.dingding.client.vo.DingApiRespVO;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
+import com.yks.urc.entity.SystemParameter;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.SystemParameterMapper;
 
 /**
  * 获取钉钉部门以及成员信息
  * @Author: wujianghui@youkeshu.com
  * @Date: 2018/6/6 8:59
  */
+
+@Service
 public class DingApiProxyImpl implements  DingApiProxy{
-	
 	private static Logger LOG = LoggerFactory.getLogger(DingApiProxyImpl.class);
+
+    @Value("${yks.ding.cropid}")
+    private String corpid;
+    
+    @Value("${yks.ding.cropidsecret}")
+    private String corpsecret;
+    
+    @Value("${yks.ding.access_token_time}")
+    private String accessTokeTime;
+    
+    @Value("${yks.ding.access_token_url}")
+    private String accessTokenUrl;
+    
+    @Value("${yks.ding.department_url}")
+    private String departmentUrl;
+    
+    @Value("${yks.ding.user_url}")
+    private String userUrl;
+    
+	@Autowired
+	SystemParameterMapper systemParameterMapper;
+	
+	
+    // 调整到1小时30分钟，钉钉保存2个小时，30分钟缓冲
+    public static final long cacheTime = 1000 * 60 * 45 * 2;
 	
 	/**
 	 * 获取钉钉accessToken
@@ -27,32 +59,38 @@ public class DingApiProxyImpl implements  DingApiProxy{
 	 * @throws Exception
 	 */
     public  String getDingAccessToken() throws Exception {
-        	String accToken = "";
-        	String accessTokenUrl = "https://oapi.dingtalk.com";
-            try {
-            	StringBuffer param=new StringBuffer();
-            	String corpid="dinge8d7141acdb006a135c2f4657eb6378f";
-            	String corpsecret="1Tf9YqLFKPNF0xJumHQWmZYGt9HdpPjlWT68P1NJu3yWYM1r9hJAajlFbXaZeuis";
-            	param.append("corpid=").append(corpid).append("&corpsecret=").append(corpsecret);
-            	
-            	LOG.info("调用钉钉获取accessTokenc参数,parama={}",param.toString());
-            	
-            	if(accessTokenUrl.endsWith("/")){
-            		accessTokenUrl=accessTokenUrl.substring(0, accessTokenUrl.length()-1);
-            	}
-            	accessTokenUrl+="/gettoken";
-            	String strResp= HttpUtility.sendGet(accessTokenUrl, param.toString());
-            	LOG.info("钉钉accessTokenc响应,strResp={}",strResp);
-        		DingApiRespVO resp = StringUtility.parseObject(strResp, DingApiRespVO.class);
-        		if (resp != null) {
-        			if (resp.errcode == 0) {
-        				accToken=resp.access_token;
-        			}
-        		}
-            } catch (Exception e) {
-            	LOG.info("钉钉获取accessToken出错，message={}",e.getMessage());
-    			throw new Exception(e.getMessage());
-            }
+    	   long curTime = System.currentTimeMillis();
+    	   SystemParameter systemParameter= systemParameterMapper.querySystemValuebyParameterName(accessTokeTime);
+    	   JSONObject accessTokenValue=JSONObject.parseObject(systemParameter.getParameterValue());
+    	   String accToken = "";
+           JSONObject jsontemp = new JSONObject();
+           if (accessTokenValue == null || curTime - accessTokenValue.getLong("begin_time") >= cacheTime) {
+        	   try {
+        		   StringBuffer param=new StringBuffer();
+        		   param.append("corpid=").append(corpid).append("&corpsecret=").append(corpsecret);
+        		   LOG.info("调用钉钉获取accessTokenc参数,parama={}",param.toString());
+        		   String strResp= HttpUtility.sendGet(accessTokenUrl, param.toString());
+        		   LOG.info("钉钉accessTokenc响应,strResp={}",strResp);
+        		   DingApiRespVO resp = StringUtility.parseObject(strResp, DingApiRespVO.class);
+        		   if (resp != null) {
+        			   if (resp.errcode == 0) {
+        				   accToken=resp.access_token;
+        			   }
+        		   }
+        		   jsontemp.clear();
+                   jsontemp.put("access_token", accToken);
+                   jsontemp.put("begin_time", curTime);
+        		   systemParameter.setModifiedTime(new Date());
+        		   systemParameter.setParameterValue(jsontemp.toJSONString());
+        		   systemParameterMapper.updateByPrimaryKeySelective(systemParameter);
+        	   } catch (Exception e) {
+        		   LOG.info("钉钉获取accessToken出错，message={}",e.getMessage());
+        		   throw new Exception(e.getMessage());
+        	   }
+           }else{
+        	   accToken=accessTokenValue.getString("access_token");
+        	   LOG.info("钉钉accessToken缓存值,accessToken={}",accToken);
+           }
 
         return accToken;
     }
@@ -64,13 +102,12 @@ public class DingApiProxyImpl implements  DingApiProxy{
      */
     public  List<DingDeptVO> getDingAllDept() throws Exception {
     	List<DingDeptVO> department = null;
-    	String accessTokenUrl = "https://oapi.dingtalk.com";
     	 try {
     		String accToken = getDingAccessToken();
          	StringBuffer param=new StringBuffer();
          	param.append("access_token=").append(accToken).append("&fetch_child=").append("true");
          	LOG.info("调用钉钉获取所有部门信息参数,parama={}",param.toString());
-         	department=getDingInfo(department, accessTokenUrl, param.toString());
+         	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
          	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
@@ -86,13 +123,12 @@ public class DingApiProxyImpl implements  DingApiProxy{
      */
     public  List<DingDeptVO> getDingSubDept(String departmentId) throws Exception {
     	List<DingDeptVO> department = null;
-    	String accessTokenUrl = "https://oapi.dingtalk.com";
     	 try {
     		String accToken = getDingAccessToken();
          	StringBuffer param=new StringBuffer();
          	param.append("access_token=").append(accToken).append("&id=").append(departmentId);
          	LOG.info("调用钉钉获取所有部门信息参数,departmentId={},parama={}",departmentId,param.toString());
-         	department=getDingInfo(department, accessTokenUrl, param.toString());
+         	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
          	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
@@ -108,13 +144,12 @@ public class DingApiProxyImpl implements  DingApiProxy{
      */
     public  List<DingDeptVO> getDingAllSubDept(String departmentId) throws Exception {
     	List<DingDeptVO> department = null;
-    	String accessTokenUrl = "https://oapi.dingtalk.com";
     	 try {
     		String accToken = getDingAccessToken();
          	StringBuffer param=new StringBuffer();
          	param.append("access_token=").append(accToken).append("&fetch_child").append("true").append("&id=").append(departmentId);
          	LOG.info("调用钉钉获取所有子部门信息参数,departmentId={},parama={}",departmentId,param.toString());
-         	department=getDingInfo(department, accessTokenUrl, param.toString());
+         	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
          	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
@@ -123,14 +158,10 @@ public class DingApiProxyImpl implements  DingApiProxy{
     }
     
     
-    private   List<DingDeptVO> getDingInfo(List<DingDeptVO> department,String accessTokenUrl,String param) throws Exception{
+    private   List<DingDeptVO> getDingInfo(List<DingDeptVO> department,String param) throws Exception{
      	String strResp;
 		try {
-         	if(accessTokenUrl.endsWith("/")){
-         		accessTokenUrl=accessTokenUrl.substring(0, accessTokenUrl.length()-1);
-         	}
-         	accessTokenUrl+="/department/list";
-			strResp = HttpUtility.sendGet(accessTokenUrl, param);
+			strResp = HttpUtility.sendGet(departmentUrl, param);
 			LOG.info("钉钉所有部门响应,strResp={}",strResp);
 			DingApiRespVO resp = StringUtility.parseObject(strResp, DingApiRespVO.class);
 			if (resp != null && resp.errcode == 0) {
@@ -152,20 +183,14 @@ public class DingApiProxyImpl implements  DingApiProxy{
      */
     public  List<DingUserVO> getDingMemberByDepId(String departmentId) throws Exception {
     	List<DingUserVO> userlist = null;
-    	String accessTokenUrl = "https://oapi.dingtalk.com";
     	String KEY_BIRTHDAY = "生日";
     	String KEY_GENDER = "性别";
     	 try {
     		String accToken = getDingAccessToken();
-         	if(accessTokenUrl.endsWith("/")){
-         		accessTokenUrl=accessTokenUrl.substring(0, accessTokenUrl.length()-1);
-         	}
-         	
-         	accessTokenUrl+="/user/list";
          	StringBuffer param=new StringBuffer();
          	param.append("access_token=").append(accToken).append("&department_id=").append(departmentId).append("&order=").append("entry_desc");
          	LOG.info("调用钉钉获取部门下成员信息参数,departmentId={},parama={}",departmentId,param.toString());
-         	String strResp= HttpUtility.sendGet(accessTokenUrl, param.toString());
+         	String strResp= HttpUtility.sendGet(userUrl, param.toString());
          	LOG.info("钉钉部门下成员响应,departmentId={},strResp={}",departmentId,strResp);
      		DingApiRespVO resp = StringUtility.parseObject(strResp, DingApiRespVO.class);
 			if (resp != null && resp.errcode == 0 && resp.userlist != null && resp.userlist.size() > 0) {
