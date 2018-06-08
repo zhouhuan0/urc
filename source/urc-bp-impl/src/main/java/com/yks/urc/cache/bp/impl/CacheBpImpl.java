@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.UserVO;
 
 @Component
-public class CacheBpImpl {
+public class CacheBpImpl implements ICacheBp {
 
 	/**
 	 * 用户基础信息
