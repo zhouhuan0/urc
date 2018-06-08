@@ -1,4 +1,4 @@
-package com.yks.urc;
+package com.yks.urc.mapper;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,13 +10,14 @@ import org.springframework.context.annotation.PropertySource;
  * 
  * @author lvcr
  * @version 1.0
- * @see TestMapperApplication
+ * @see MapperTestApplication
  * @since JDK1.8
  * @date 2018/6/6 18:04
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.yks.urc.mapper")
+//@ComponentScan(basePackages = { "com.yks.urc.mapper" })
 @ComponentScan(basePackages = { "com.yks.urc.mapper", "com.yks.urc.**.impl" })
-//@PropertySource("classpath:constant-${spring.profiles.active}.properties")
-public class TestMapperApplication {
+@PropertySource("classpath:constant-${spring.profiles.active}.properties")
+public class MapperTestApplication {
 }
