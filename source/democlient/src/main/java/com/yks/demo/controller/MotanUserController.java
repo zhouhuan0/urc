@@ -55,7 +55,7 @@ public class MotanUserController {
 	@RequestMapping("/startRequest")
 	public ResultVO startRequest(@RequestParam("c") int c) {
 		ResultVO rslt = new ResultVO<>();
-		UserLoginRunnable.isStop = false;
+		UserLoginRunnable.init();
 		String strUserName = String.format("%s", StringUtility.dt2Str(new Date(), StringUtility.DtFormatString_yyyyMMddHHmmss));
 		rslt.msg = String.format("并发数:%s userName:%s pwd:%s", c, strUserName, strUserName);
 
@@ -71,7 +71,7 @@ public class MotanUserController {
 	public ResultVO stopRequest() {
 		UserLoginRunnable.isStop = true;
 		ResultVO rslt = new ResultVO<>();
-		rslt.msg = String.format("isStop=%s", UserLoginRunnable.isStop);
+		rslt.msg = String.format("%s", UserLoginRunnable.getStatStr());
 		return rslt;
 	}
 }
