@@ -24,64 +24,71 @@ import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class UserServiceImpl implements IUserService {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	UserBp userBp;
+    @Autowired
+    UserBp userBp;
 
-	@Autowired
-	ILdapBp ldapBpImpl;
-	
-	@Autowired
-	IUserLoginLogMapper userLoginLogMapper;
+    @Autowired
+    ILdapBp ldapBpImpl;
 
-	@Override
-	public ResultVO syncUserInfo(UserVO curUser) {
-		userBp.SynUserFromUserInfo();
-		ResultVO rslt = VoHelper.getSuccessResult();
-		rslt.msg = "Success " + curUser.userName;
-		return rslt;
-	}
+    @Autowired
+    IUserLoginLogMapper userLoginLogMapper;
 
-	@Override
-	public ResultVO login(UserVO curUser, UserVO authUser) {
-		long startTime = System.currentTimeMillis();
-		boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
-		long endTime = System.currentTimeMillis();
+    @Override
+    public ResultVO syncUserInfo(UserVO curUser) {
+        ResultVO rslt = null;
+        try {
+            userBp.SynUserFromUserInfo(curUser.userName);
+            rslt = VoHelper.getSuccessResult();
+            rslt.msg = "Success " + curUser.userName;
+        } catch (Exception e) {
+            rslt = VoHelper.getErrorResult();
+            rslt.msg = "Error" + curUser.userName;
+        } finally {
+            return rslt;
+        }
+    }
 
-		UserLoginLogDO loginLog = new UserLoginLogDO();
-		loginLog.userName = authUser.userName;
-		loginLog.ip = curUser.ip;
-		loginLog.ldapCost = endTime - startTime;
-		loginLog.loginSuccess = blnOk ? 1 : 0;
-		loginLog.remark = String.format("PWD:%s", authUser.pwd);
-		loginLog.loginTime = new Date();
-		this.insertLoginLog(loginLog);
-		return VoHelper.getSuccessResult(null, blnOk ? "00001" : "00000", null);
-	}
+    @Override
+    public ResultVO login(UserVO curUser, UserVO authUser) {
+        long startTime = System.currentTimeMillis();
+        boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
+        long endTime = System.currentTimeMillis();
 
-	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+        UserLoginLogDO loginLog = new UserLoginLogDO();
+        loginLog.userName = authUser.userName;
+        loginLog.ip = curUser.ip;
+        loginLog.ldapCost = endTime - startTime;
+        loginLog.loginSuccess = blnOk ? 1 : 0;
+        loginLog.remark = String.format("PWD:%s", authUser.pwd);
+        loginLog.loginTime = new Date();
+        this.insertLoginLog(loginLog);
+        return VoHelper.getSuccessResult(null, blnOk ? "00001" : "00000", null);
+    }
 
-	/**
-	 * 登录日志入库
-	 * 
-	 * @param loginLog
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月6日 下午2:20:46
-	 */
-	private void insertLoginLog(UserLoginLogDO loginLog) {
-		fixedThreadPool.execute(new Runnable() {
+    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
-			@Override
-			public void run() {
-				try {
-					loginLog.createTime = new Date();
-					loginLog.modifiedTime = new Date();
-					userLoginLogMapper.insertUserLoginLog(loginLog);
-				} catch (Exception ex) {
-					logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
-				}
-			}
-		});
-	}
+    /**
+     * 登录日志入库
+     *
+     * @param loginLog
+     * @author panyun@youkeshu.com
+     * @date 2018年6月6日 下午2:20:46
+     */
+    private void insertLoginLog(UserLoginLogDO loginLog) {
+        fixedThreadPool.execute(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    loginLog.createTime = new Date();
+                    loginLog.modifiedTime = new Date();
+                    userLoginLogMapper.insertUserLoginLog(loginLog);
+                } catch (Exception ex) {
+                    logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
+                }
+            }
+        });
+    }
 }

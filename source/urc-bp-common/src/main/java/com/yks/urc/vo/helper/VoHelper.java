@@ -22,4 +22,7 @@ public class VoHelper {
 		rslt.msg = strMsg;
 		return rslt;
 	}
+	public static ResultVO getErrorResult() {
+		return getSuccessResult(null, UrCenterStatusEnum.FAIL.getCode(), UrCenterStatusEnum.FAIL.getDesc());
+	}
 }

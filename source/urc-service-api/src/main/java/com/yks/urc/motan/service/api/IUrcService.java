@@ -1,5 +1,6 @@
 package com.yks.urc.motan.service.api;
 
+import com.weibo.api.motan.config.springsupport.annotation.MotanService;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
