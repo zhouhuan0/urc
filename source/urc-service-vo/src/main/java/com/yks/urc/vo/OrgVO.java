@@ -20,4 +20,7 @@ public class OrgVO implements Serializable {
      * 组织名称
      */
     public String orgName;
+    
+    
+    public String parentDingOrgId;
 }

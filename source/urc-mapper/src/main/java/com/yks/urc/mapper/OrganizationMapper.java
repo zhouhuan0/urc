@@ -1,6 +1,9 @@
 package com.yks.urc.mapper;
 
+import java.util.List;
+
 import com.yks.urc.entity.Organization;
+
 
 public interface OrganizationMapper {
     int deleteByPrimaryKey(Long id);
@@ -14,4 +17,7 @@ public interface OrganizationMapper {
     int updateByPrimaryKeySelective(Organization record);
 
     int updateByPrimaryKey(Organization record);
+    
+    
+    List<Organization> queryAllDept();
 }
