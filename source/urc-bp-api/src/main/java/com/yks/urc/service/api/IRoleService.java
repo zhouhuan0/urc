@@ -13,9 +13,11 @@ public interface IRoleService {
 
     Integer addOrUpdateRoleInfo(RoleVO roleVO);
 
+    RoleDO getRoleByRoleId(Integer roleId);
+
     List<UserInfoDO> getUserByRoleId(String roleId);
 
-    void deleteRoles(List<String> lstRoleId);
+    void deleteRoles(List<Integer> lstRoleId);
 
     List<SystemRootVO> getUserAuthorizablePermission(String userName);
 

@@ -133,6 +133,13 @@ public class StringUtility {
 		SimpleDateFormat df = new SimpleDateFormat(DtFormatString_HH_mm);// 设置日期格式
 		return df.format(dt);
 	}
+	
+	public static String dt2Str(Date dt,String fmt) {		
+		if (dt == null)
+			return Empty;
+		SimpleDateFormat df = new SimpleDateFormat(fmt);// 设置日期格式
+		return df.format(dt);
+	}
 
 	/**
 	 * 将时间转换为 yyyy-MM-dd HH:mm:ss

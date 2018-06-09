@@ -13,12 +13,17 @@
   <sql id="Base_Column_List">
     id, role_id, user_name, create_by, create_time, modified_by, modified_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from urc_user_role
-    where id = #{id,jdbcType=TINYINT}
-  </select>
+  <!--批量删除-->
+  <delete id="deleteBatch" parameterType="java.util.List">
+    delete from urc_user_role where role_id in
+    <foreach collection="list" item = "roleId" open="(" separator="," close=")">
+      #{ roleId}
+    </foreach>
+  </delete>
+
+
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from urc_user_role
     where id = #{id,jdbcType=TINYINT}

@@ -19,6 +19,16 @@
   <sql id="Blob_Column_List">
     selected_context
   </sql>
+
+
+  <!--批量删除-->
+  <delete id="deleteBatch" parameterType="java.util.List">
+    delete from urc_role_permission where role_id in
+    <foreach collection="list" item = "roleId" open="(" separator="," close=")">
+      #{ roleId}
+    </foreach>
+  </delete>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     select 
     <include refid="Base_Column_List" />
