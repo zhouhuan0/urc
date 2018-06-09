@@ -8,8 +8,15 @@
 
 	<name>urc-taskScheduler</name>
 	<url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>com.yks.urc</groupId>
+            <artifactId>urc-bp-impl</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 
-	<parent>
+    <parent>
 		<groupId>com.yks.urc</groupId>
 		<artifactId>urc-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>

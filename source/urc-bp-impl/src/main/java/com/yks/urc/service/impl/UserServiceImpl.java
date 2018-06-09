@@ -37,7 +37,7 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public ResultVO syncUserInfo(UserVO curUser) {
-		userBp.SynUserFromUserInfo();
+		userBp.SynUserFromUserInfo(curUser.userName);
 		ResultVO rslt = VoHelper.getSuccessResult();
 		rslt.msg = "Success " + curUser.userName;
 		return rslt;
