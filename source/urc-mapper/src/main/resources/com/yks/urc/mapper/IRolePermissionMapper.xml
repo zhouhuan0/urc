@@ -1,155 +1,183 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yks.urc.mapper.IRolePermissionMapper">
-  <resultMap id="BaseResultMap" type="com.yks.urc.entity.RolePermissionDO">
-    <id column="role_permission_id" jdbcType="CHAR" property="rolePermissionId" />
-    <result column="role_id" jdbcType="CHAR" property="roleId" />
-    <result column="sys_key" jdbcType="CHAR" property="sysKey" />
-    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
-    <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
-    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
-    <result column="updated_by" jdbcType="VARCHAR" property="updatedBy" />
-  </resultMap>
-  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.RolePermissionDO">
-    <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext" />
-  </resultMap>
-  <sql id="Base_Column_List">
-    role_permission_id, role_id, sys_key, created_time, created_by, updated_time, updated_by
+    <resultMap id="BaseResultMap" type="com.yks.urc.entity.RolePermissionDO">
+        <id column="id" jdbcType="TINYINT" property="id"/>
+        <result column="role_id" jdbcType="TINYINT" property="roleId"/>
+        <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+    </resultMap>
+    <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.RolePermissionDO">
+        <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    role_permission_id, role_id, sys_key, create_time, create_by, modified_time, modified_by
   </sql>
-  <sql id="Blob_Column_List">
+    <sql id="Blob_Column_List">
     selected_context
   </sql>
 
 
-  <!--批量删除-->
-  <delete id="deleteBatch" parameterType="java.util.List">
-    delete from urc_role_permission where role_id in
-    <foreach collection="list" item = "roleId" open="(" separator="," close=")">
-      #{ roleId}
-    </foreach>
-  </delete>
+    <!--批量删除-->
+    <delete id="deleteBatch" parameterType="java.util.List">
+        delete from urc_role_permission where role_id in
+        <foreach collection="list" item="roleId" open="(" separator="," close=")">
+            #{ roleId}
+        </foreach>
+    </delete>
+    <!--批量操作urc_role_permission 存在则更新，不存在则新增-->
+    <update id="insertAndUpdateBatch" parameterType="java.util.List">
+        insert into
+        urc_role_permission(role_id,sys_key,selected_context,create_time,create_by,modified_time,modified_by)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.roleId,jdbcType=TINYINT},#{item.sysKey,jdbcType=CHAR}
+            ,#{item.selectedContext,jdbcType=LONGVARCHAR},#{item.createTime,jdbcType=TIMESTAMP}
+            ,#{item.createBy,jdbcType=VARCHAR},#{item.modifiedTime,jdbcType=TIMESTAMP}
+            ,#{item.modifiedBy,jdbcType=VARCHAR})
+        </foreach>
+        on DUPLICATE key update
+        selected_context=values(selected_context),
+        modified_time=values(modified_time),
+        modified_by=values(modified_by)
+    </update>
+    <!--批量新增-->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into urc_role_permission
+        (role_id,sys_key,selected_context,create_time,create_by,modified_time,modified_by)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.roleId,jdbcType=TINYINT},#{item.sysKey,jdbcType=CHAR}
+            ,#{item.selectedContext,jdbcType=LONGVARCHAR},#{item.createTime,jdbcType=TIMESTAMP}
+            ,#{item.createBy,jdbcType=VARCHAR},#{item.modifiedTime,jdbcType=TIMESTAMP}
+            ,#{item.modifiedBy,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
-    select 
-    <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
-    from urc_role_permission
-    where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from urc_role_permission
+        where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from urc_role_permission
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </delete>
-  <insert id="insert" parameterType="com.yks.urc.entity.RolePermissionDO">
+    <insert id="insert" parameterType="com.yks.urc.entity.RolePermissionDO">
     insert into urc_role_permission (role_permission_id, role_id, sys_key, 
-      created_time, created_by, updated_time, 
-      updated_by, selected_context)
+      create_time, create_by, modified_time, 
+      modified_by, selected_context)
     values (#{rolePermissionId,jdbcType=CHAR}, #{roleId,jdbcType=CHAR}, #{sysKey,jdbcType=CHAR}, 
-      #{createdTime,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=VARCHAR}, #{updatedTime,jdbcType=TIMESTAMP}, 
-      #{updatedBy,jdbcType=VARCHAR}, #{selectedContext,jdbcType=LONGVARCHAR})
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{modifiedTime,jdbcType=TIMESTAMP}, 
+      #{modifiedBy,jdbcType=VARCHAR}, #{selectedContext,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.yks.urc.entity.RolePermissionDO">
-    insert into urc_role_permission
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="rolePermissionId != null">
-        role_permission_id,
-      </if>
-      <if test="roleId != null">
-        role_id,
-      </if>
-      <if test="sysKey != null">
-        sys_key,
-      </if>
-      <if test="createdTime != null">
-        created_time,
-      </if>
-      <if test="createdBy != null">
-        created_by,
-      </if>
-      <if test="updatedTime != null">
-        updated_time,
-      </if>
-      <if test="updatedBy != null">
-        updated_by,
-      </if>
-      <if test="selectedContext != null">
-        selected_context,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="rolePermissionId != null">
-        #{rolePermissionId,jdbcType=CHAR},
-      </if>
-      <if test="roleId != null">
-        #{roleId,jdbcType=CHAR},
-      </if>
-      <if test="sysKey != null">
-        #{sysKey,jdbcType=CHAR},
-      </if>
-      <if test="createdTime != null">
-        #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        #{createdBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updatedTime != null">
-        #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedBy != null">
-        #{updatedBy,jdbcType=VARCHAR},
-      </if>
-      <if test="selectedContext != null">
-        #{selectedContext,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.RolePermissionDO">
-    update urc_role_permission
-    <set>
-      <if test="roleId != null">
-        role_id = #{roleId,jdbcType=CHAR},
-      </if>
-      <if test="sysKey != null">
-        sys_key = #{sysKey,jdbcType=CHAR},
-      </if>
-      <if test="createdTime != null">
-        created_time = #{createdTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createdBy != null">
-        created_by = #{createdBy,jdbcType=VARCHAR},
-      </if>
-      <if test="updatedTime != null">
-        updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="updatedBy != null">
-        updated_by = #{updatedBy,jdbcType=VARCHAR},
-      </if>
-      <if test="selectedContext != null">
-        selected_context = #{selectedContext,jdbcType=LONGVARCHAR},
-      </if>
-    </set>
-    where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
-  </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.RolePermissionDO">
+    <insert id="insertSelective" parameterType="com.yks.urc.entity.RolePermissionDO">
+        insert into urc_role_permission
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rolePermissionId != null">
+                role_permission_id,
+            </if>
+            <if test="roleId != null">
+                role_id,
+            </if>
+            <if test="sysKey != null">
+                sys_key,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="modifiedTime != null">
+                modified_time,
+            </if>
+            <if test="modifiedBy != null">
+                modified_by,
+            </if>
+            <if test="selectedContext != null">
+                selected_context,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rolePermissionId != null">
+                #{rolePermissionId,jdbcType=CHAR},
+            </if>
+            <if test="roleId != null">
+                #{roleId,jdbcType=CHAR},
+            </if>
+            <if test="sysKey != null">
+                #{sysKey,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedTime != null">
+                #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="selectedContext != null">
+                #{selectedContext,jdbcType=LONGVARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.RolePermissionDO">
+        update urc_role_permission
+        <set>
+            <if test="roleId != null">
+                role_id = #{roleId,jdbcType=CHAR},
+            </if>
+            <if test="sysKey != null">
+                sys_key = #{sysKey,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                modified_by = #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="selectedContext != null">
+                selected_context = #{selectedContext,jdbcType=LONGVARCHAR},
+            </if>
+        </set>
+        where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
+    </update>
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.RolePermissionDO">
     update urc_role_permission
     set role_id = #{roleId,jdbcType=CHAR},
       sys_key = #{sysKey,jdbcType=CHAR},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=VARCHAR},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
       selected_context = #{selectedContext,jdbcType=LONGVARCHAR}
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.RolePermissionDO">
+    <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.RolePermissionDO">
     update urc_role_permission
     set role_id = #{roleId,jdbcType=CHAR},
       sys_key = #{sysKey,jdbcType=CHAR},
-      created_time = #{createdTime,jdbcType=TIMESTAMP},
-      created_by = #{createdBy,jdbcType=VARCHAR},
-      updated_time = #{updatedTime,jdbcType=TIMESTAMP},
-      updated_by = #{updatedBy,jdbcType=VARCHAR}
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </update>
 </mapper>

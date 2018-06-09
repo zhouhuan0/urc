@@ -32,7 +32,7 @@
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
 
-    <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
+    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
      (role_name, is_active,
       is_authorizable, is_forever, effective_time,

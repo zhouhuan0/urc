@@ -1,5 +1,7 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.RolePermissionDO;
+
 import java.util.List;
 
 /**
@@ -24,4 +26,29 @@ public interface IRolePermissionMapper {
      * @see
      */
     Integer deleteBatch(List<Integer> ids);
+
+
+    /**
+     * Description: 批量操作角色-操作权限关系 以roleId+sysKey作为唯一约束
+     * 1、记录存在则更新
+     * 2、记录不存在则新增
+     *
+     * @param : rolePermissionDOS
+     * @return: Integer
+     * @auther: lvcr
+     * @date: 2018/6/9 12:14
+     * @see
+     */
+    Integer insertAndUpdateBatch(List<RolePermissionDO> rolePermissionDOS);
+
+    /**
+     * Description: 批量新增角色-操作权限关系
+     *
+     * @param : rolePermissionDOS
+     * @return: Integer
+     * @auther: lvcr
+     * @date: 2018/6/9 16:09
+     * @see
+     */
+    Integer insertBatch(List<RolePermissionDO> rolePermissionDOS);
 }

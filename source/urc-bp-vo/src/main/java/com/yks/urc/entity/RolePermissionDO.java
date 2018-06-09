@@ -3,35 +3,36 @@ package com.yks.urc.entity;
 import java.util.Date;
 
 public class RolePermissionDO {
-    private String rolePermissionId;
+    private Integer id;
 
-    private String roleId;
+    private Integer roleId;
 
     private String sysKey;
 
-    private Date createdTime;
-
-    private String createdBy;
-
-    private Date updatedTime;
-
-    private String updatedBy;
-
     private String selectedContext;
 
-    public String getRolePermissionId() {
-        return rolePermissionId;
+    private Date createTime;
+
+    private String createBy;
+
+    private Date modifiedTime;
+
+    private String modifiedBy;
+
+
+    public Integer getId() {
+        return id;
     }
 
-    public void setRolePermissionId(String rolePermissionId) {
-        this.rolePermissionId = rolePermissionId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
-    public String getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }
 
@@ -43,43 +44,43 @@ public class RolePermissionDO {
         this.sysKey = sysKey;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
-    }
-
-    public String getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
-    }
-
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
-    public String getUpdatedBy() {
-        return updatedBy;
-    }
-
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
-    }
-
     public String getSelectedContext() {
         return selectedContext;
     }
 
     public void setSelectedContext(String selectedContext) {
         this.selectedContext = selectedContext;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
+
+    public Date getModifiedTime() {
+        return modifiedTime;
+    }
+
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
+    }
+
+    public String getModifiedBy() {
+        return modifiedBy;
+    }
+
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
     }
 }

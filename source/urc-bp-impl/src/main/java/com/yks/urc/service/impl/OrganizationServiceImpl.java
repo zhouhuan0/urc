@@ -20,7 +20,7 @@ import com.yks.urc.vo.OrgVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
 
-@Service
+//@Service
 public class OrganizationServiceImpl implements IOrganizationService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	

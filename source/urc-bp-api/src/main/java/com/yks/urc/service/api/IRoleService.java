@@ -11,7 +11,7 @@ public interface IRoleService {
 
     List<RoleVO> getRolesByInfo(RoleVO roleVO);
 
-    Integer addOrUpdateRoleInfo(RoleVO roleVO);
+    Integer addOrUpdateRoleInfo(String userName, RoleVO roleVO);
 
     RoleDO getRoleByRoleId(Integer roleId);
 

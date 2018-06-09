@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -64,4 +65,7 @@ public interface IRoleMapper {
 //    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 
      RoleDO getRoleByRoleId(Integer roleId);
+
+
+
 }

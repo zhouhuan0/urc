@@ -1,6 +1,6 @@
 package com.yks.urc.vo.helper;
 
-import com.yks.urc.enums.UrCenterStatusEnum;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.vo.ResultVO;
 
 /**
@@ -12,7 +12,7 @@ import com.yks.urc.vo.ResultVO;
  */
 public class VoHelper {
 	public static ResultVO getSuccessResult() {
-		return getSuccessResult(null, UrCenterStatusEnum.SUCCESS.getCode(), UrCenterStatusEnum.SUCCESS.getDesc());
+		return getSuccessResult(null, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
 	}
 
 	public static <T> ResultVO getSuccessResult(T data, String state, String strMsg) {

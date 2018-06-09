@@ -1,16 +1,17 @@
 package com.yks.urc.service.impl;
 
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IRoleService;
 
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemRootVO;
-import com.yks.urc.vo.helper.VoHelper;
+import com.yks.urc.vo.UserPermissionVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,25 +67,81 @@ public class RoleServiceImpl implements IRoleService {
 
     /**
      * Description: 新增或更新角色基础信息、功能权限、用户
-     * 1、角色Id存在则更新
-     * 2、角色Id不存在则新增
+     * 1、roleName存在则更新
+     * 2、roleName不存在则新增
+     * 3、
      *
-     * @param :
+     * @param :userName
      * @param roleVO
      * @return:
      * @auther: lvcr
      * @date: 2018/6/6 14:23
      * @see
      */
+    @Transactional
     @Override
-    public Integer addOrUpdateRoleInfo(RoleVO roleVO) {
-        /*需要判断是否管理员、普通业务员只能编辑自己创建的角色
+    public Integer addOrUpdateRoleInfo(String userName, RoleVO roleVO) {
+        /*需要判断当前用户是否管理员、普通业务员只能编辑自己创建的角色
           业务员是否需要再次对权限范围校验*/
+//        if (!roleDO.isAuthorizable()) {
+//            RoleDO roleDO1 = roleMapper.ge
+//        }
         /*1、新增或更新角色基础信息*/
+        RoleDO roleDO = new RoleDO();
+        BeanUtils.copyProperties(roleVO, roleDO);
+        int rtn = roleMapper.insertOrUpdate(roleDO);
+         /*2、新增或更新 角色-功能权限 信息*/
+           /*1、获取功能权限信息*/
+        List<PermissionVO> permissionVOS = roleVO.getSelectedContext();
+          /*2、功能权限数据为空，说明没有赋权操作，故不需要添加或更新角色-功能权限 信息*/
+        if (permissionVOS == null || permissionVOS.isEmpty()) {
+            //permissionVOS没有数据时候，说明没有更改角色-权限数据
+        }else{
+            insertOrUpdateRolePermission(userName, permissionVOS, roleDO, rtn);
+        }
         /*2、根据角色Id删除用户角色关系，再新增*/
         /*3、根据角色Id删除角色权限关系，再新增*/
         return null;
     }
+
+    private void insertOrUpdateRolePermission(String userName, List<PermissionVO> permissionVOS, RoleDO roleDO, Integer rtn) {
+
+            if (rtn == 1) {
+            /*2.1 rtn=1，表示是新增角色操作*/
+                List<RolePermissionDO> rolePermissionDOS = new ArrayList<>();
+                for (PermissionVO permissionVO : permissionVOS) {
+                    RolePermissionDO rolePermissionDO = new RolePermissionDO();
+                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                    rolePermissionDO.setSysKey(permissionVO.getSysKey());
+                    rolePermissionDO.setRoleId(roleDO.getId());
+                    rolePermissionDO.setCreateBy(userName);
+                    rolePermissionDO.setCreateTime(new Date());
+                    rolePermissionDO.setModifiedBy(userName);
+                    rolePermissionDO.setModifiedTime(new Date());
+                    rolePermissionDOS.add(rolePermissionDO);
+                }
+               /*批量添加 角色-操作权限映射关系*/
+                rolePermissionMapper.insertBatch(rolePermissionDOS);
+            } else if (rtn > 1) {
+              /*2.2 如果rtn>1，表示是更新角色操作；*/
+                List<RolePermissionDO> rolePermissionDOS = new ArrayList<>();
+                for (PermissionVO permissionVO : permissionVOS) {
+                    RolePermissionDO rolePermissionDO = new RolePermissionDO();
+                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                    rolePermissionDO.setSysKey(permissionVO.getSysKey());
+                    rolePermissionDO.setRoleId(roleDO.getId());
+                    rolePermissionDO.setCreateBy(userName);
+                    rolePermissionDO.setCreateTime(new Date());
+                    rolePermissionDO.setModifiedBy(userName);
+                    rolePermissionDO.setModifiedTime(new Date());
+                    rolePermissionDOS.add(rolePermissionDO);
+                }
+                /*批量更新或添加 角色-操作权限映射关系*/
+                rolePermissionMapper.insertAndUpdateBatch(rolePermissionDOS);
+            }
+        }
+    }
+
 
     /**
      * Description: 根据角色Id获取角色信息
