@@ -4,22 +4,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.logging.FileHandler;
 import java.util.regex.Pattern;
 
-import javax.sound.sampled.AudioFormat.Encoding;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.yks.urc.entity.DingDingUser;
 
 public class StringUtility {
     public static String convertStreamToString(InputStream is) {
@@ -1168,5 +1162,18 @@ public class StringUtility {
     public static List jsonToList(String json, Class classzz) {
         List jsonList = JSON.parseArray(json, classzz);
         return jsonList;
+    }
+    /**
+     * stirng  转date
+     * @param  strDate
+     * @param  dateFormat
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/9 17:25
+     */
+    public static Date stringToDate(String strDate, String dateFormat) throws ParseException {
+        Date date = null;
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+        date = simpleDateFormat.parse(strDate);
+        return date;
     }
 }

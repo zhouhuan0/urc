@@ -10,7 +10,7 @@ package com.yks.urc.entity;
 
 import java.io.Serializable;
 
-public class DingDingUser implements Serializable {
+public class UserInfo implements Serializable {
     private static final long serialVersionUID = 8572322957045776482L;
     /**
      * 钉钉用户名
@@ -24,4 +24,8 @@ public class DingDingUser implements Serializable {
      * 表示是否启用， 66050表示禁用，其他的表示启用。
      */
     public String userAccountControl;
+    /**
+     *  启用时间
+     */
+    public String date_joined;
 }
