@@ -10,11 +10,26 @@
 	<name>democlient</name>
 	<description>Demo project for Spring Boot</description>
 
-	 <parent>
+	 <!--<parent>
         <groupId>com.yks.urc</groupId>
         <artifactId>urc-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-    </parent>
+    </parent>-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.0.2.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>1.8</java.version>
+		<motan.version>1.1.1</motan.version>
+		<urc.version>0.0.1-SNAPSHOT</urc.version>
+	</properties>
 
 	
 	<dependencies>
@@ -28,6 +43,51 @@
 			<artifactId>urc-service-api</artifactId>
 			<version>${urc.version}</version>
 		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--weibo motan-->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-core</artifactId>
+			<version>${motan.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-transport-netty</artifactId>
+			<version>${motan.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-springsupport</artifactId>
+			<version>${motan.version}</version>
+		</dependency>
+
+		<!--<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-registry-consul</artifactId>
+			<version>${motan.version}</version>
+		</dependency>-->
+		<dependency>
+			<groupId>com.weibo</groupId>
+			<artifactId>motan-registry-zookeeper</artifactId>
+			<version>${motan.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

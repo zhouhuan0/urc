@@ -34,6 +34,13 @@ public class MotanUserController {
 		return urcService.syncUserInfo(curUser);// .sayHello(msg);
 	}
 
+	@RequestMapping("/sayHello2/{msg}")
+	public String sayHello2(@PathVariable String msg) {
+		// ResultVO rslt = userService.syncUserInfo();
+		// return "110";
+		return urcService.sayHello2(msg);// .sayHello(msg);
+	}
+
 	@RequestMapping("/login/{userName}/{pwd}")
 	public ResultVO login(@PathVariable String userName, @PathVariable String pwd) {
 		return loginTest(userName, pwd);

@@ -54,7 +54,7 @@ public class MotanConfiguration {
      * @date: 2018/5/29 14:59
      * @see
      */
-    @Bean(name = "demoMotan")
+    @Bean(name = "motan2")
     @ConfigurationProperties(prefix = "motan.protocol")
     public ProtocolConfigBean protocolConfig1() {
         return new ProtocolConfigBean();

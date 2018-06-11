@@ -21,4 +21,6 @@ public interface IUrcService {
 	 * @date 2018年6月6日 下午12:22:35
 	 */
 	ResultVO login(UserVO curUser, UserVO authUser);
+
+
 }

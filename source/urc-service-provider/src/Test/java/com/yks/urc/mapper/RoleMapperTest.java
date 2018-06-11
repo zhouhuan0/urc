@@ -36,7 +36,7 @@ public class RoleMapperTest extends BaseMapperTest {
         roleDO.setEffectiveTime(new Date());
         roleDO.setCreateTime(new Date());
         roleDO.setForever(Boolean.FALSE);
-        roleDO.setRoleName("admin");
+        roleDO.setRoleName("admin"+System.currentTimeMillis());
         int rtn = roleMapper.insert(roleDO);
         Assert.assertEquals(1, rtn);
     }
