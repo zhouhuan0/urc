@@ -1,6 +1,9 @@
 package com.yks.urc.vo.helper;
 
+import java.util.List;
+
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.entity.Person;
 import com.yks.urc.vo.ResultVO;
 
 /**
@@ -24,5 +27,9 @@ public class VoHelper {
 	}
 	public static ResultVO getErrorResult() {
 		return getSuccessResult(null, CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+	}
+
+	public static <T> ResultVO getSuccessResult(T data ) {
+		return getSuccessResult(data, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
 	}
 }

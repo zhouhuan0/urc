@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.dingding.client.vo.DingApiRespVO;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
@@ -45,6 +46,9 @@ public class DingApiProxyImpl implements  DingApiProxy{
     
     @Value("${yks.ding.user_url}")
     private String userUrl;
+    
+    @Value("${yks.ding.parent_sub_dept_url}")
+    private String parentSubDeptUrl;
     
 	@Autowired
 	SystemParameterMapper systemParameterMapper;
@@ -213,6 +217,35 @@ public class DingApiProxyImpl implements  DingApiProxy{
  			throw new Exception(e.getMessage());
          }
         return userlist;
+    }
+    
+
+    /**
+     * 得到部门到跟部门的ID [123,79789,1]
+     * @param departmentId
+     * @return
+     * @throws Exception
+     */
+    public  JSONArray getDingParentDepts(String departmentId) throws Exception {
+    	JSONArray array = null;
+    	 try {
+    		String accToken = getDingAccessToken();
+         	StringBuffer param=new StringBuffer();
+         	param.append("access_token=").append(accToken).append("&id=").append(departmentId);
+         	LOG.info("调用钉钉获取所有子部门到跟部门的路径ID,departmentId={},parama={}",departmentId,param.toString());
+			String strResp = HttpUtility.sendGet(parentSubDeptUrl, param.toString());
+			LOG.info("调用钉钉获取所有子部门到跟部门的路径响应,strResp={}",strResp);
+			JSONObject jsonObject= JSONObject.parseObject(strResp);
+			Integer code=(Integer) jsonObject.get("errcode");
+			if(code==0){
+				array=  (JSONArray) jsonObject.get("parentIds");
+			}
+			
+         } catch (Exception e) {
+         	LOG.error("调用钉钉获取所有子部门到跟部门的路径ID，message={}",e.getMessage());
+ 			throw new Exception(e.getMessage());
+         }
+        return array;
     }
     
     

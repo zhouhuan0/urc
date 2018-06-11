@@ -20,17 +20,79 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
   </resultMap>
+  
+  
+    <resultMap id="BasePersonVOResultMap" type="com.yks.urc.vo.PersonVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="person_name" jdbcType="VARCHAR" property="personName" />
+    <result column="gender" jdbcType="TINYINT" property="gender" />
+    <result column="phone_num" jdbcType="VARCHAR" property="phoneNum" />
+    <result column="ding_user_id" jdbcType="VARCHAR" property="dingUserId" />
+    <result column="ding_id" jdbcType="VARCHAR" property="dingId" />
+    <result column="ding_unionid" jdbcType="VARCHAR" property="dingUnionid" />
+    <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="join_date" jdbcType="DATE" property="joinDate" />
+    <result column="leave_date" jdbcType="DATE" property="leaveDate" />
+    <result column="job_number" jdbcType="VARCHAR" property="jobNumber" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="position" jdbcType="VARCHAR" property="position" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+  </resultMap>
+  
+  
   <sql id="Base_Column_List">
-    id, person_name, gender, phone_num, ding_user_id, ding_id, ding_unionid, birthday, 
-    join_date, leave_date, job_number, email, position, create_time, create_by, modified_time, 
-    modified_by
+    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, 
+    up.join_date, up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
+    up.modified_by
   </sql>
+  
+    <sql id="Base_User_Column_List">
+    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, 
+    up.join_date, up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
+    up.modified_by,uu.user_name
+  </sql>
+  
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from urc_person
-    where id = #{id,jdbcType=BIGINT}
+    from urc_person up
+    where up.id = #{id,jdbcType=BIGINT}
   </select>
+  
+    <select id="getUserByDingOrgId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" /> 
+     from urc_person up left join  urc_person_org upo on upo.ding_org_id=up.ding_user_id 
+     where upo.ding_org_id = #{dingOrgId,jdbcType=VARCHAR} 
+   	 
+  </select>
+  
+  
+  <select id="getUserByUserInfo" parameterType="com.yks.urc.vo.PersonVO" resultMap="BasePersonVOResultMap">
+    select 
+     <include refid="Base_User_Column_List" /> 
+     from urc_person up INNER JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
+     <where>
+     		 <if test="jobNumber != null and jobNumber != '' ">
+     		 	up.job_number=#{jobNumber,jdbcType=VARCHAR}
+     		 </if>
+     		 
+     		 <if test="phoneNum != null and phoneNum != '' ">
+     		 	and up.phone_num=#{phoneNum,jdbcType=VARCHAR}
+     		 </if>
+     		 
+     		<if test="personName != null and personName != '' ">
+     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+     		 </if>
+     </where>
+   	 ORDER BY up.create_time desc 
+  </select>
+  
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_person
     where id = #{id,jdbcType=BIGINT}

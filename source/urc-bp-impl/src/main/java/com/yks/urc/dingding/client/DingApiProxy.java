@@ -1,5 +1,6 @@
 package com.yks.urc.dingding.client;
 
+import com.alibaba.fastjson.JSONArray;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
 
@@ -44,5 +45,12 @@ public interface DingApiProxy {
      * @return
      */
     List<DingUserVO> getDingMemberByDepId(String departmentId) throws Exception;
+
+    /**
+     * 根据部门id得到父部门id路径
+     * @param departmentId
+     * @return
+     */
+    JSONArray getDingParentDepts(String departmentId) throws Exception;
 
 }
