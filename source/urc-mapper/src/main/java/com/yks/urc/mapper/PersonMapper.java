@@ -22,5 +22,16 @@ public interface PersonMapper {
 	List<Person> getUserByDingOrgId(String dingOrgId);
 
 	List<PersonVO> getUserByUserInfo(PersonVO personVO);
+
+	/**
+	 * 批量插入人员
+	 * @param personList
+	 */
+	int insertBatchPerson(List<Person> personList);
+
+	/**
+	 * 清空所有的人员表
+	 */
+	void deleteAllPerson();
 	
 }

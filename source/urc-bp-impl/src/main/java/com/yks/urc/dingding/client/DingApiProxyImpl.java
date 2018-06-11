@@ -88,7 +88,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
         		   systemParameter.setParameterValue(jsontemp.toJSONString());
         		   systemParameterMapper.updateByPrimaryKeySelective(systemParameter);
         	   } catch (Exception e) {
-        		   LOG.info("钉钉获取accessToken出错，message={}",e.getMessage());
+        		   LOG.error("钉钉获取accessToken出错，message={}",e.getMessage());
         		   throw new Exception(e.getMessage());
         	   }
            }else{
@@ -113,7 +113,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
          	LOG.info("调用钉钉获取所有部门信息参数,parama={}",param.toString());
          	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
-         	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
+         	LOG.error("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
          }
         return department;
@@ -134,7 +134,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
          	LOG.info("调用钉钉获取所有部门信息参数,departmentId={},parama={}",departmentId,param.toString());
          	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
-         	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
+         	LOG.error("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
          }
         return department;
@@ -155,7 +155,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
          	LOG.info("调用钉钉获取所有子部门信息参数,departmentId={},parama={}",departmentId,param.toString());
          	department=getDingInfo(department, param.toString());
          } catch (Exception e) {
-         	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
+         	LOG.error("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
          }
         return department;
@@ -172,7 +172,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
 				department=resp.department;
 			}
 		} catch (Exception e) {
-         	LOG.info("钉钉获取所有部门出错，message={}",e.getMessage());
+         	LOG.error("钉钉获取所有部门出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
 		}
 		return department;
@@ -213,7 +213,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
 				userlist=resp.userlist;
 			}
          } catch (Exception e) {
-         	LOG.info("钉钉获取部门下的成员出错，message={}",e.getMessage());
+         	LOG.error("钉钉获取部门下的成员出错，message={}",e.getMessage());
  			throw new Exception(e.getMessage());
          }
         return userlist;

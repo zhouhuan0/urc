@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,7 +22,9 @@ import com.yks.urc.dingding.client.vo.DingUserVO;
 import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
+import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
+import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
@@ -31,12 +34,17 @@ import com.yks.urc.vo.helper.VoHelper;
 public class PersonServiceImpl implements IPersonService {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-
 	@Autowired
 	private DingApiProxy dingApiProxy;
 	
 	@Autowired
 	private PersonMapper personMapper;
+	
+	@Autowired
+	private PersonOrgMapper personOrgMapper;
+	
+	@Autowired
+	private OrganizationMapper organizationMapper;
 
 	@Override
 	public ResultVO getUserByDingOrgId(String dingOrgId) {
@@ -60,33 +68,50 @@ public class PersonServiceImpl implements IPersonService {
 	}
 
 	
-	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
-
-	@Override
-	public void SynUserFromUserInfo(String userName) {
 	
+	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
+	public void SynUserFromUserInfo(String userName) {
 		//得到钉钉所有的部门
 		try {
-			List<DingDeptVO> dingAllDept=dingApiProxy.getDingAllDept();
-			Map<String,List> initInfo=initOrgValues(dingAllDept,userName);
-
-			//删除部门表org，删除人员表person,删除，关系表
+		  //先准备初始化参数	
+	      Future<Map<String,List> >  future= fixedThreadPool.submit(new Callable<Map<String,List>>() {
+	            @Override
+	            public Map<String,List> call() throws Exception {
+	            	List<DingDeptVO> dingAllDept=dingApiProxy.getDingAllDept();
+	    			Map<String,List> initInfo=initInfoValues(dingAllDept,userName);
+					return initInfo;
+	            }
+	        });
 			
+			//删除部门表org，删除人员表person,删除，关系表
+			organizationMapper.deleteAllOrg();
+			personMapper.deleteAllPerson();
+			personOrgMapper.deleteAllPersonOrg();
+			
+			//如果初始化参数全部正常并且已经完成,必须等待初始化参数，异步堵塞...
+	      	Map<String,List> initInfo= future.get();
 			
 			//初始化人员表person,org,personOrg
+			List<Organization> orgList=initInfo.get("org");
+			List<Person> personList=initInfo.get("person");
+			List<PersonOrg> personOrgList=initInfo.get("personOrg");
 			
-			
+			//插入部门表
+			organizationMapper.insertBatchOrg(orgList);
+			//插入人员表
+			personMapper.insertBatchPerson(personList);
+			//插入部门人员表
+			personOrgMapper.insertBatchPersonOrg(personOrgList);
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error("同步钉钉数据出错，message={}",e.getMessage());
 		}
 		
 	}
 	
 
 
-	private Map<String,List> initOrgValues(List<DingDeptVO> dingAllDept, String userName) throws Exception{
-		
+	private Map<String,List> initInfoValues(List<DingDeptVO> dingAllDept, String userName) throws Exception{
 		 Map<String,List> mapInfo=new HashMap<String, List>();
 		List<Organization> initOrg=new ArrayList<Organization>();
 		List<Person> initPerson=new ArrayList<Person>();
@@ -141,13 +166,11 @@ public class PersonServiceImpl implements IPersonService {
 				personOrg.setModifiedBy(userName);
 				personOrg.setModifiedTime(new Date());
 				initPersonOrg.add(personOrg);
-				
 			}
-			
 		}
 		mapInfo.put("org", initOrg);//部门集合
 		mapInfo.put("person", initPerson);//人员集合
-		mapInfo.put("personOrg", initPersonOrg);//人员集合
+		mapInfo.put("personOrg", initPersonOrg);//人员部门关联集合
 		return mapInfo;
 		
 	}

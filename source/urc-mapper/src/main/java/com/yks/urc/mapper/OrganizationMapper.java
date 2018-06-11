@@ -19,5 +19,21 @@ public interface OrganizationMapper {
     int updateByPrimaryKey(Organization record);
     
     
+    /**
+     * 得到所有的部门
+     * @return
+     */
     List<Organization> queryAllDept();
+
+    /**
+     * 批量插入部门
+     * @param orgList
+     * @return
+     */
+    int insertBatchOrg(List<Organization> orgList);
+    
+    /**
+     * 清空部门表
+     */
+	void deleteAllOrg();
 }

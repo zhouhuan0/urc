@@ -36,6 +36,17 @@
     delete from urc_organization
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
+  
+   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from urc_organization
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  
+    <delete id="deleteAllOrg">
+        TRUNCATE  TABLE  urc_entity
+    </delete>
+  
   <insert id="insert" parameterType="com.yks.urc.entity.Organization">
     insert into urc_organization (id, ding_org_id, org_name, 
       full_id_path, full_name_path, org_level, 
@@ -46,6 +57,31 @@
       #{parentDingOrgId,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
+  
+  
+   	<insert id="insertBatchOrg" parameterType="com.yks.urc.entity.Organization">
+        insert into urc_organization 
+        (ding_org_id, org_name, 
+      full_id_path, full_name_path, org_level, 
+      parent_ding_org_id, create_time, create_by, 
+      modified_time, modified_by)
+        values
+        <foreach collection="orgList" item="list" separator=",">
+            (#{list.dingOrgId},
+            #{list.orgName},
+            #{list.fullIdPath},
+            #{list.fullNamePath},
+            #{list.orgLevel},
+            #{list.parentDingOrgId}),
+            #{list.createTime}),
+            #{list.createBy}),
+            #{list.modifiedTime}),
+            #{list.modifiedBy})
+        </foreach>
+    </insert>
+  
+  
+  
   <insert id="insertSelective" parameterType="com.yks.urc.entity.Organization">
     insert into urc_organization
     <trim prefix="(" suffix=")" suffixOverrides=",">

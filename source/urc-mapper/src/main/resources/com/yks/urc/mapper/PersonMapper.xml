@@ -97,6 +97,11 @@
     delete from urc_person
     where id = #{id,jdbcType=BIGINT}
   </delete>
+    
+    <delete id="deleteAllPerson">
+        TRUNCATE  TABLE  urc_person
+    </delete>
+  
   <insert id="insert" parameterType="com.yks.urc.entity.Person">
     insert into urc_person (id, person_name, gender, 
       phone_num, ding_user_id, ding_id, 
@@ -111,6 +116,39 @@
       #{position,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
+  
+  
+   <insert id="insertBatchPerson" parameterType="com.yks.urc.entity.Person">
+        insert into urc_person 
+        (person_name, gender, 
+      phone_num, ding_user_id, ding_id, 
+      ding_unionid, birthday, join_date, 
+      leave_date, job_number, email, 
+      position, create_time, create_by, 
+      modified_time, modified_by)
+        values
+        <foreach collection="personList" item="list" separator=",">
+            (#{list.personName},
+            #{list.gender},
+            #{list.phoneNum},
+            #{list.dingUserId},
+            #{list.dingId},
+            #{list.dingUnionid}),
+            #{list.birthday}),
+            #{list.joinDate}),
+            #{list.leaveDate}),
+            #{list.jobNumber}),
+            #{list.email}),
+            #{list.position}),
+            #{list.createTime}),
+            #{list.createBy}),
+            #{list.modifiedTime}),
+            #{list.modifiedBy})
+        </foreach>
+    </insert>
+  
+  
+  
   <insert id="insertSelective" parameterType="com.yks.urc.entity.Person">
     insert into urc_person
     <trim prefix="(" suffix=")" suffixOverrides=",">

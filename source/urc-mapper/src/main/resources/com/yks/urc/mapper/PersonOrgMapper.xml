@@ -23,6 +23,11 @@
     delete from urc_person_org
     where id = #{id,jdbcType=BIGINT}
   </delete>
+  
+    <delete id="deleteAllPerson">
+        TRUNCATE  TABLE  urc_person_org
+    </delete>
+  
   <insert id="insert" parameterType="com.yks.urc.entity.PersonOrg">
     insert into urc_person_org (id, ding_org_id, ding_user_id, 
       create_by, create_time, modified_by, 
@@ -31,6 +36,25 @@
       #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, 
       #{modifiedTime,jdbcType=TIMESTAMP})
   </insert>
+  
+     <insert id="insertBatchPersonOrg" parameterType="com.yks.urc.entity.PersonOrg">
+        insert into urc_person_org 
+      (ding_org_id, ding_user_id, 
+      create_by, create_time, modified_by, 
+      modified_time) 
+        values
+        <foreach collection="personOrgList" item="list" separator=",">
+            (#{list.dingOrgId},
+            #{list.dingUserId},
+            #{list.createBy},
+            #{list.createTime},
+            #{list.modifiedBy},
+            #{list.modifiedTime}
+        </foreach>
+    </insert>
+  
+  
+  
   <insert id="insertSelective" parameterType="com.yks.urc.entity.PersonOrg">
     insert into urc_person_org
     <trim prefix="(" suffix=")" suffixOverrides=",">
