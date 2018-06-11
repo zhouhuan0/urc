@@ -6,7 +6,7 @@
 	</formats>
 	<files>
 		<file>
-			<source>${project.build.directory}/yks-demo-project.jar</source>
+			<source>${project.build.directory}/urc-service-provider.jar</source>
 			<outputDirectory>lib</outputDirectory>
 		</file>
 	</files>
