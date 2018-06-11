@@ -140,7 +140,6 @@ public class RoleServiceImpl implements IRoleService {
                 rolePermissionMapper.insertAndUpdateBatch(rolePermissionDOS);
             }
         }
-    }
 
 
     /**
