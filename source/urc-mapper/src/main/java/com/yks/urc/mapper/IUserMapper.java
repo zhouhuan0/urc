@@ -18,4 +18,6 @@ public interface IUserMapper {
     int updateByPrimaryKey(UserDO record);
 
     List<UserDO> listUsersByRoleId(Integer roleId);
+
+	UserDO getUserInfoByDingUserId(String userId);
 }

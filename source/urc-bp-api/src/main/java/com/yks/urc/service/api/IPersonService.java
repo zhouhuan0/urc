@@ -22,6 +22,6 @@ public interface IPersonService {
 	
 	
 	
-	void SynUserFromUserInfo(String userName);
+	void SynPersonOrgFromDing(String userName);
 
 }

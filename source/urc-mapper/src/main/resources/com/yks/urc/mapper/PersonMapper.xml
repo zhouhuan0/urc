@@ -118,7 +118,7 @@
   </insert>
   
   
-   <insert id="insertBatchPerson" parameterType="com.yks.urc.entity.Person">
+      <insert id="insertBatchPerson" parameterType="com.yks.urc.entity.Person">
         insert into urc_person 
         (person_name, gender, 
       phone_num, ding_user_id, ding_id, 
@@ -127,23 +127,23 @@
       position, create_time, create_by, 
       modified_time, modified_by)
         values
-        <foreach collection="personList" item="list" separator=",">
-            (#{list.personName},
-            #{list.gender},
-            #{list.phoneNum},
-            #{list.dingUserId},
-            #{list.dingId},
-            #{list.dingUnionid}),
-            #{list.birthday}),
-            #{list.joinDate}),
-            #{list.leaveDate}),
-            #{list.jobNumber}),
-            #{list.email}),
-            #{list.position}),
-            #{list.createTime}),
-            #{list.createBy}),
-            #{list.modifiedTime}),
-            #{list.modifiedBy})
+        <foreach collection="list" item="personList" separator=",">
+            (#{personList.personName},
+            #{personList.gender},
+            #{personList.phoneNum},
+            #{personList.dingUserId},
+            #{personList.dingId},
+            #{personList.dingUnionid},
+            #{personList.birthday},
+            #{personList.joinDate},
+            #{personList.leaveDate},
+            #{personList.jobNumber},
+            #{personList.email},
+            #{personList.position},
+            #{personList.createTime},
+            #{personList.createBy},
+            #{personList.modifiedTime},
+            #{personList.modifiedBy})
         </foreach>
     </insert>
   

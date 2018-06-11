@@ -30,7 +30,7 @@ public class TestOrgService extends BaseServiceTest {
     	personVO.setPersonName("aaa");
     	System.out.println(personService.getUserByUserInfo(personVO));*/
     	
-    	System.out.println(	dingApiProxy.getDingParentDepts("64271064"));
+    	personService.SynPersonOrgFromDing("system");
     }
     
 }

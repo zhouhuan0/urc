@@ -24,7 +24,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   
-    <delete id="deleteAllPerson">
+    <delete id="deleteAllPersonOrg">
         TRUNCATE  TABLE  urc_person_org
     </delete>
   
@@ -37,19 +37,20 @@
       #{modifiedTime,jdbcType=TIMESTAMP})
   </insert>
   
+  
      <insert id="insertBatchPersonOrg" parameterType="com.yks.urc.entity.PersonOrg">
         insert into urc_person_org 
       (ding_org_id, ding_user_id, 
       create_by, create_time, modified_by, 
       modified_time) 
         values
-        <foreach collection="personOrgList" item="list" separator=",">
-            (#{list.dingOrgId},
-            #{list.dingUserId},
-            #{list.createBy},
-            #{list.createTime},
-            #{list.modifiedBy},
-            #{list.modifiedTime}
+        <foreach collection="list" item="personOrgList" separator=",">
+            (#{personOrgList.dingOrgId},
+            #{personOrgList.dingUserId},
+            #{personOrgList.createBy},
+            #{personOrgList.createTime},
+            #{personOrgList.modifiedBy},
+            #{personOrgList.modifiedTime})
         </foreach>
     </insert>
   

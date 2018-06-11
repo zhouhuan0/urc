@@ -60,17 +60,17 @@
       parent_ding_org_id, create_time, create_by, 
       modified_time, modified_by)
         values
-        <foreach collection="orgList" item="list" separator=",">
-            (#{list.dingOrgId},
-            #{list.orgName},
-            #{list.fullIdPath},
-            #{list.fullNamePath},
-            #{list.orgLevel},
-            #{list.parentDingOrgId}),
-            #{list.createTime}),
-            #{list.createBy}),
-            #{list.modifiedTime}),
-            #{list.modifiedBy})
+        <foreach collection="list" item="orgList" separator=",">
+            (#{orgList.dingOrgId},
+            #{orgList.orgName},
+            #{orgList.fullIdPath},
+            #{orgList.fullNamePath},
+            #{orgList.orgLevel},
+            #{orgList.parentDingOrgId},
+            #{orgList.createTime},
+            #{orgList.createBy},
+            #{orgList.modifiedTime},
+            #{orgList.modifiedBy})
         </foreach>
     </insert>
   

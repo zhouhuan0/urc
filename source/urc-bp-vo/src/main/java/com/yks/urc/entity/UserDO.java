@@ -7,7 +7,7 @@ public class UserDO {
 
     private String userName;
 
-    private Byte isActive;
+    private int isActive;
 
     private Date activeTime;
 
@@ -37,11 +37,11 @@ public class UserDO {
         this.userName = userName == null ? null : userName.trim();
     }
 
-    public Byte getIsActive() {
+    public int getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Byte isActive) {
+    public void setIsActive(int isActive) {
         this.isActive = isActive;
     }
 

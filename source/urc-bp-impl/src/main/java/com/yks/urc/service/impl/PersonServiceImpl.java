@@ -14,14 +14,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
+import com.yks.common.util.StringUtil;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
 import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
+import com.yks.urc.entity.UserDO;
+import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
@@ -45,6 +49,9 @@ public class PersonServiceImpl implements IPersonService {
 	
 	@Autowired
 	private OrganizationMapper organizationMapper;
+	
+    @Autowired
+    private IUserMapper userMapper;
 
 	@Override
 	public ResultVO getUserByDingOrgId(String dingOrgId) {
@@ -70,7 +77,8 @@ public class PersonServiceImpl implements IPersonService {
 	
 	
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-	public void SynUserFromUserInfo(String userName) {
+	@Transactional(rollbackFor = Exception.class)
+	public void SynPersonOrgFromDing(String userName) {
 		//得到钉钉所有的部门
 		try {
 		  //先准备初始化参数	
@@ -146,7 +154,15 @@ public class PersonServiceImpl implements IPersonService {
 				person.setDingUnionid(user.unionid);
 				person.setDingUserId(user.userid);
 				person.setEmail(user.email);
-				person.setGender(Integer.parseInt(user.gender));
+				if(!StringUtil.isEmpty(user.gender)){
+					if(user.gender.equals("男")){
+						person.setGender(1);
+					}else if (user.gender.equals("女")){
+						person.setGender(0);
+					}else{
+						person.setGender(2);
+					}
+				}
 				person.setJobNumber(user.jobnumber);
 				person.setJoinDate(new Date(user.hiredDate));
 				person.setLeaveDate(null);
@@ -156,6 +172,22 @@ public class PersonServiceImpl implements IPersonService {
 				person.setPhoneNum(user.mobile);
 				person.setPosition(user.position);
 				initPerson.add(person);
+				
+				
+				//这里需要查看由UserInfo接口同步过来的数据,如果urc_user有数据不处理，没有数据,需要插入urc_user数据
+				UserDO userInfo= userMapper.getUserInfoByDingUserId(String.valueOf(user.userid));
+				if(userInfo==null){
+					UserDO userDo = new UserDO();
+					userDo.setActiveTime(new Date());
+					userDo.setCreateTime(new Date());
+					userDo.setModifiedTime(new Date());
+					userDo.setCreateBy("system");
+					userDo.setDingUserId(user.userid);
+					userDo.setIsActive(1);
+					userDo.setModifiedBy("system");
+					userDo.setUserName(user.name);
+					userMapper.insert(userDo);
+				}
 				
 				//初始化人员、部门信息
 				PersonOrg personOrg=new PersonOrg();
