@@ -23,6 +23,6 @@ public class VoHelper {
 		return rslt;
 	}
 	public static ResultVO getErrorResult() {
-		return getSuccessResult(null, UrCenterStatusEnum.FAIL.getCode(), UrCenterStatusEnum.FAIL.getDesc());
+		return getSuccessResult(null, CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
 	}
 }
