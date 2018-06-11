@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2018/6/8 8:26:18                             */
+/* Created on:     2018/6/11 16:43:16                           */
 /*==============================================================*/
 
 
@@ -71,6 +71,7 @@ alter table system_parameter comment '系统参数配置表';
 create table urc_auth_way
 (
    id                   bigint not null auto_increment comment '主键',
+   auth_way_id          bigint comment 'auth_way_id',
    sys_key              char(3) comment 'sys_key',
    create_time          datetime(3) comment '创建时间',
    create_by            varchar(32) default '' comment '创建人',
@@ -87,6 +88,7 @@ alter table urc_auth_way comment '授权方式定义';
 create table urc_data_rule
 (
    id                   bigint not null auto_increment comment '主键',
+   data_rule_id         bigint comment '数据权限id',
    user_name            varchar(50) default '' comment '域账号',
    create_time          datetime(3) comment '创建时间',
    create_by            varchar(32) default '' comment '创建人',
@@ -122,6 +124,7 @@ alter table urc_data_rule_filed comment '配置字段用于select OR where';
 create table urc_data_rule_obj
 (
    id                   bigint not null auto_increment comment '主键',
+   data_rule_obj_id     bigint comment 'data_rule_obj_id',
    auth_way_id          bigint comment 'FK:urc_auth_way.id',
    entity_code          varchar(32) default '' comment 'entity_code',
    obj_name             varchar(100) default '' comment 'obj_name',
@@ -141,7 +144,8 @@ alter table urc_data_rule_obj comment '可授权的数据权限对象';
 create table urc_data_rule_sys
 (
    id                   bigint not null comment '主键',
-   data_rule_id         bigint comment 'data_rule_id',
+   data_rule_sys_id     bigint comment '业务主键',
+   data_rule_id         bigint comment 'FK:data_rule_id',
    sys_key              char(3) comment 'sys_key',
    create_time          datetime(3) comment '创建时间',
    create_by            varchar(32) default '' comment '创建人',
@@ -158,6 +162,7 @@ alter table urc_data_rule_sys comment '数据权限sys';
 create table urc_data_rule_templ
 (
    id                   bigint not null auto_increment comment '主键',
+   templ_id             bigint comment 'templ_id',
    templ_name           varchar(100) default '' comment 'templ_name',
    user_name            varchar(100) default '' comment 'user_name',
    remark               varchar(2000) default '' comment '备注',
@@ -218,7 +223,7 @@ create table urc_field
    id                   bigint not null auto_increment comment '主键',
    field_code           varchar(32) default '' comment '字段code',
    field_name           varchar(50) default '' comment '名称',
-   entity_code          bigint comment 'FK:urc_entity.id',
+   entity_code          varchar(32) comment 'FK:urc_entity.entity_code',
    data_type            varchar(50) default '' comment '字段类型',
    maxlength            int comment '最大长度',
    create_time          datetime(3) comment '创建时间',
@@ -348,6 +353,7 @@ alter table urc_person_org comment '人员-部门关系表';
 create table urc_role
 (
    id                   bigint not null auto_increment comment '主键',
+   role_id              bigint comment '角色Id',
    role_name            varchar(50) default '' comment '角色名称',
    is_active            tinyint unsigned comment '是否启用',
    is_authorizable      tinyint unsigned comment '是否管理员角色',
@@ -358,6 +364,7 @@ create table urc_role
    create_by            varchar(100) default '' comment '创建人',
    modified_time        datetime comment '更新时间',
    modified_by          varchar(100) default '' comment '更新人',
+   remark               varchar(100) default '' comment '备注',
    primary key (id)
 );
 
@@ -387,7 +394,8 @@ alter table urc_role_permission comment '角色-功能权限关系表';
 create table urc_sql
 (
    id                   bigint not null auto_increment comment '主键',
-   data_rule_sys_id     bigint comment 'data_rule_sys_id',
+   sql_id               bigint comment 'sql_id',
+   data_rule_sys_id     bigint comment 'FK:data_rule_sys_id',
    entity_code          varchar(32) default '' comment 'entity_code',
    hidden_fields        varchar(2000) comment '隐藏的fieldCodeArr',
    create_time          datetime(3) comment '创建时间',
@@ -453,20 +461,4 @@ create table urc_user_role
 );
 
 alter table urc_user_role comment '用户-角色关系表';
-
-
-
-CREATE TABLE `user_login_log` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_name` varchar(100) DEFAULT NULL,
-  `ip` varchar(30) DEFAULT NULL,
-  `ldap_cost` bigint(20) DEFAULT NULL,
-  `is_login_success` tinyint(3) unsigned DEFAULT NULL,
-  `remark` varchar(2000) DEFAULT NULL,
-  `login_time` datetime(3) DEFAULT NULL,
-  `create_time` datetime(3) DEFAULT NULL,
-  `modified_time` datetime(3) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14254 DEFAULT CHARSET=utf8;
-
 
