@@ -12,7 +12,7 @@
 
 		<property name="clientMode" value="true" />
 
-		<property name="igniteInstanceName" value="oms" />
+		<property name="igniteInstanceName" value="urc" />
 		
 		<property name="persistentStoreConfiguration" ref="persistentStoreConfiguration" />
 
@@ -34,7 +34,7 @@
 		<property name="zkConnectionString"
 			value="192.168.201.211:2181,192.168.201.212:2181,192.168.201.213:2181" />
 		
-		<property name="basePath" value="/ignite-cluster/oms" />
+		<property name="basePath" value="/ignite-cluster/urc" />
 	</bean>
 
 	<bean id="cacheConfiguration" class="org.apache.ignite.configuration.CacheConfiguration">

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<bean id="igniteConfiguration"
+		class="org.apache.ignite.configuration.IgniteConfiguration">
+		<property name="peerClassLoadingEnabled" value="true" />
+
+		<property name="clientMode" value="false" />
+
+		<property name="igniteInstanceName" value="urc" />
+
+		<property name="discoverySpi" ref="tcpDiscoverySpi" />
+	</bean>
+
+	<bean id="tcpDiscoverySpi"
+		class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+		<property name="ipFinder" ref="tcpDiscoveryZookeeperIpFinder"></property>
+	</bean>
+
+	<bean id="tcpDiscoveryZookeeperIpFinder"
+		class="org.apache.ignite.spi.discovery.tcp.ipfinder.zk.TcpDiscoveryZookeeperIpFinder">
+		<property name="zkConnectionString"
+			value="192.168.201.211:2181,192.168.201.212:2181,192.168.201.213:2181" />
+
+		<property name="basePath" value="/ignite-cluster/urc" />
+	</bean>
+</beans>
