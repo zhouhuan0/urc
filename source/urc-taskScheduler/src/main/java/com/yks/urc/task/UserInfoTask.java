@@ -27,6 +27,10 @@ public class UserInfoTask {
     @Scheduled(cron = "0/5 * * * * ?")
     public void executeGetUserInfo() {
         logger.info("开始同步数据");
-        userBp.SynUserFromUserInfo(SYSTEM);
+        try {
+            userBp.SynUserFromUserInfo(SYSTEM);
+        } catch (Exception e) {
+           logger.error(e.getMessage());
+        }
     }
 }
