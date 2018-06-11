@@ -16,7 +16,7 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <urc.version>0.0.1-SNAPSHOT</urc.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
         <yks.eventbus.version>1.0.0</yks.eventbus.version>
         <yks.config.file.center.version>1.0.0</yks.config.file.center.version>
         <yks.mq.client.version>1.0.0</yks.mq.client.version>
@@ -51,6 +51,14 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <version>${spring.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
         <dependency>
             <groupId>com.yks.eventbus</groupId>
             <artifactId>yks-eventbus</artifactId>
