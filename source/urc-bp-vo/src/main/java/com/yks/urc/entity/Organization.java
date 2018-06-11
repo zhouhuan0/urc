@@ -13,7 +13,7 @@ public class Organization {
 
     private String fullNamePath;
 
-    private Integer orgLevel;
+    private int orgLevel;
 
     private String parentDingOrgId;
 
@@ -65,11 +65,11 @@ public class Organization {
         this.fullNamePath = fullNamePath == null ? null : fullNamePath.trim();
     }
 
-    public Integer getOrgLevel() {
+    public int getOrgLevel() {
         return orgLevel;
     }
 
-    public void setOrgLevel(Integer orgLevel) {
+    public void setOrgLevel(int orgLevel) {
         this.orgLevel = orgLevel;
     }
 

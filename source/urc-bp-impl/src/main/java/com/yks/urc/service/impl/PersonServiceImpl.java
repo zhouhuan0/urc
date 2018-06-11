@@ -20,6 +20,7 @@ import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
 import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
+import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.vo.PersonVO;
@@ -63,41 +64,18 @@ public class PersonServiceImpl implements IPersonService {
 
 	@Override
 	public void SynUserFromUserInfo(String userName) {
-/*		try {
-			fixedThreadPool.submit(new Callable<String>() {
-
-				@Override
-				public String call() throws Exception {
-					//得到钉钉所有的部门
-					List<DingDeptVO> dingAllDept=dingApiProxy.getDingAllDept();
-					
-					//删除部门表org，删除人员表person,删除，关系表
-					
-					
-					//添加操作
-					
-					return null;
-				}
-			
-			
-			});
-		} catch (Exception e) {
-			e.printStackTrace();
-		}*/
-		
+	
 		//得到钉钉所有的部门
 		try {
 			List<DingDeptVO> dingAllDept=dingApiProxy.getDingAllDept();
-			
-			
-			
-			
+			Map<String,List> initInfo=initOrgValues(dingAllDept,userName);
+
 			//删除部门表org，删除人员表person,删除，关系表
 			
-			//添加操作
-			//初始化部门表org参数
-			//List<Organization> initOrg=initOrgValues(dingAllDept,userName);
-			//初始化人员表person
+			
+			//初始化人员表person,org,personOrg
+			
+			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -112,10 +90,9 @@ public class PersonServiceImpl implements IPersonService {
 		 Map<String,List> mapInfo=new HashMap<String, List>();
 		List<Organization> initOrg=new ArrayList<Organization>();
 		List<Person> initPerson=new ArrayList<Person>();
+		List<PersonOrg> initPersonOrg=new ArrayList<PersonOrg>();
 		for (int i = 0; i < dingAllDept.size(); i++) {
 			DingDeptVO dept=dingAllDept.get(i);
-			
-			
 			Organization org=new Organization();
 			JSONArray array=dingApiProxy.getDingParentDepts(String.valueOf(dept.id));
 			org.setCreateBy(userName);
@@ -131,18 +108,16 @@ public class PersonServiceImpl implements IPersonService {
 			org.setParentDingOrgId(String.valueOf(dept.parentid));
 			initOrg.add(org);
 			
-			
 			//根据部门查询人员信息
-			
 			List<DingUserVO> userList=dingApiProxy.getDingMemberByDepId(String.valueOf(dept.id));
 			for (int j = 0; j < userList.size(); j++) {
 				//初始化人员信息
-/*				DingUserVO user=userList.get(j);
+				DingUserVO user=userList.get(j);
 				Person person=new Person();
 				person.setBirthday(user.birthday);
 				person.setCreateBy(userName);
 				person.setCreateTime(new Date());
-				person.setDingId(dingId);
+				person.setDingId(user.unionid);
 				person.setDingUnionid(user.unionid);
 				person.setDingUserId(user.userid);
 				person.setEmail(user.email);
@@ -154,14 +129,26 @@ public class PersonServiceImpl implements IPersonService {
 				person.setModifiedTime(new Date());
 				person.setPersonName(user.name);
 				person.setPhoneNum(user.mobile);
-				person.setPosition(user.position);*/
+				person.setPosition(user.position);
+				initPerson.add(person);
+				
+				//初始化人员、部门信息
+				PersonOrg personOrg=new PersonOrg();
+				personOrg.setCreateBy(userName);
+				personOrg.setCreateTime(new Date());
+				personOrg.setDingOrgId(String.valueOf(dept.id));
+				personOrg.setDingUserId(user.userid);
+				personOrg.setModifiedBy(userName);
+				personOrg.setModifiedTime(new Date());
+				initPersonOrg.add(personOrg);
 				
 			}
 			
 		}
 		mapInfo.put("org", initOrg);//部门集合
-		
-		return null;
+		mapInfo.put("person", initPerson);//人员集合
+		mapInfo.put("personOrg", initPersonOrg);//人员集合
+		return mapInfo;
 		
 	}
 

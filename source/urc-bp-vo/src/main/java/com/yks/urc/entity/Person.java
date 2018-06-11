@@ -7,7 +7,7 @@ public class Person {
 
     private String personName;
 
-    private Byte gender;
+    private int gender;
 
     private String phoneNum;
 
@@ -53,11 +53,11 @@ public class Person {
         this.personName = personName == null ? null : personName.trim();
     }
 
-    public Byte getGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(Byte gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 
