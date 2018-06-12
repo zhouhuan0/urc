@@ -1,13 +1,14 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.RoleDO;
+import com.yks.urc.bp.impl.UserBp;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.fw.StringUtility;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -31,6 +32,41 @@ public class UserMapperTest extends BaseMapperTest {
         Assert.assertNotNull(users);
     }
 
+    @Autowired
+    UserBp userBp;
+
+    @Test
+    public void insert() {
+        insert2();
+    }
+
+    @Transactional
+    public void insert2() {
+        UserDO userDo = new UserDO();
+        userDo.setUserName("test");
+        userDo.setIsActive(1);
+        userDo.setDingUserId("1232");
+        userDo.setActiveTime(StringUtility.getDateTimeNow());
+        userDo.setModifiedBy("lwx");
+        userDo.setCreateBy("lwx");
+
+        UserDO userDo1 = new UserDO();
+        userDo1.setUserName("123");
+        userDo1.setIsActive(1);
+        userDo1.setDingUserId("1232");
+        userDo1.setActiveTime(StringUtility.getDateTimeNow());
+        userDo1.setModifiedBy("lll");
+        userDo1.setCreateBy("lll");
+        List<UserDO> list = new ArrayList<>();
+        list.add(userDo);
+        list.add(userDo1);
+
+        int delete = userMapper.deleteUrcUser();
+        System.out.println("-------------"+delete);
+        int result = userMapper.insertBatchUser(list);
+        System.out.println(result);
+//        userBp.insert();
+    }
 
 
 }

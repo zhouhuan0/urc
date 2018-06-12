@@ -4,19 +4,31 @@ import java.util.Date;
 
 public class Permission {
     private Long id;
-
+    /**
+     * 系统名称
+     */
     private String sysName;
-
+    /**
+     * 系统key
+     */
     private String sysKey;
 
     private String createBy;
-
+    /**
+     *
+     */
     private Date createTime;
-
+    /**
+     *
+     */
     private String modifiedBy;
-
+    /**
+     *
+     */
     private Date modifiedTime;
-
+    /**
+     *
+     */
     private String sysContext;
 
     public Long getId() {

@@ -1,16 +1,39 @@
-package com.yks.urc.bp.impl;
+package com.yks.urc.userValidate.bp.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.PageVO;
 import com.yks.urc.vo.SystemRootVO;
 
-public class UserValidateBp {
+@Component
+public class UserValidateBp implements IUserValidateBp {
+	@Autowired
+	IRoleMapper roleMapper;
+
+	/**
+	 * 根据username/syskey获取角色功能权限json
+	 * 
+	 * @param userName
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月12日 下午2:36:05
+	 */
+	public List<String> getFuncJsonByUserAndSysKey(String userName, String sysKey) {
+		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
+	}
+
 	public static void main(String[] args) throws IOException {
 		// 读取func1.json文件
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));

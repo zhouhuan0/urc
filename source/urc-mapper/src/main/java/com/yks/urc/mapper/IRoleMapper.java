@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,8 +53,10 @@ public interface IRoleMapper {
      * @see
      */
     Integer deleteBatch(List<Integer> ids);
+
     /**
      * Description: 根据多个条件搜索角色，并分页显示
+     *
      * @param : roleDO 角色对象作为条件
      *          currPage 页数
      *          pageSize  每页条数
@@ -64,8 +67,17 @@ public interface IRoleMapper {
      */
 //    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 
-     RoleDO getRoleByRoleId(Integer roleId);
+    RoleDO getRoleByRoleId(Integer roleId);
 
-
+    /**
+     * 根据用户名 获取角色名称
+     *
+     * @param roleName
+     * @return String
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 16:57
+     */
+    String selectRoleName(@Param("roleName") String roleName);
+	List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
 
 }

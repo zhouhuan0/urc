@@ -11,7 +11,19 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <!--用户-角色关系表-->
+        <collection property="userRoleDOList" ofType="com.yks.urc.entity.UserRoleDO">
+            <id column="id" jdbcType="TINYINT" property="id"/>
+            <result column="role_id" jdbcType="TINYINT" property="roleId"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+            <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+            <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+            <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+            <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        </collection>
     </resultMap>
+
+
     <sql id="Base_Column_List">
     id, user_name, is_active, active_time, ding_user_id, create_by, create_time, modified_by, 
     modified_time
@@ -24,6 +36,14 @@
         where exists
         (select user_name from urc_user_role where role_id=#{id,jdbcType=BIGINT})
     </select>
+    
+    
+    <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_user 
+        where ding_user_id = #{userId,jdbcType=VARCHAR}
+    </select>
 
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -32,15 +52,6 @@
         from urc_user
         where id = #{id,jdbcType=BIGINT}
     </select>
-    
-        <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_user
-        where ding_user_id = #{userId,jdbcType=VARCHAR}
-    </select>
-    
-    
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_user
     where id = #{id,jdbcType=BIGINT}
@@ -158,4 +169,42 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+    <insert id="insertBatchUser" parameterType="com.yks.urc.entity.UserDO">
+        insert into urc_user
+        (user_name,is_active,active_time,ding_user_id,create_by,modified_by)
+        values
+        <foreach collection="userDoList" item="list" separator=",">
+            (#{list.userName},
+            #{list.isActive},
+            #{list.activeTime},
+            #{list.dingUserId},
+            #{list.createBy},
+            #{list.modifiedBy})
+        </foreach>
+    </insert>
+    <delete id="deleteUrcUser">
+      truncate  urc_user
+    </delete>
+
+    <select id="getUsersByUserInfo" resultType="java.util.List">
+        select u.user_name,p.person_name,u.active_time,u.is_active
+        from urc_user u
+        INNER JOIN urc_person p
+        on u.ding_user_id = p.ding_user_id
+        INNER JOIN urc_user_role r on u.user_name=r.user_name
+        <if test="userVO.userName != null and userVO.userName !=''">
+         AND   u.user_name = #{userVO.userName}
+        </if>
+        limit #{pageNumber},#{pageData}
+    </select>
+    <select id="getUsersByUserInfoCount">
+        SELECT count(*) FROM urc_user u
+        INNER JOIN urc_person p
+        on u.ding_user_id = p.ding_user_id
+        INNER JOIN urc_user_role r on u.user_name=r.user_name
+        <if test="userVO.userName != null and userVO.userName !=''">
+            AND  u.user_name = #{userVO.userName}
+        </if>
+    </select>
 </mapper>
