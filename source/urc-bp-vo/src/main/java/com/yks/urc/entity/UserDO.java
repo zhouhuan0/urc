@@ -1,25 +1,46 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class UserDO {
     private Long id;
-
+    /**
+     * 上网账号
+     */
     private String userName;
-
+    /**
+     * 表示是否启用， 66050表示禁用，其他的表示启用。
+     */
     private int isActive;
-
+    /**
+     * 启用时间
+     */
     private Date activeTime;
-
+    /**
+     * 钉钉用户id
+     */
     private String dingUserId;
-
+    /**
+     * 创建人
+     */
     private String createBy;
 
     private Date createTime;
-
+    /**
+     * 修改人
+     */
     private String modifiedBy;
 
     private Date modifiedTime;
+    /**
+     * Person 实体
+     */
+    private Person person;
+    /**
+     * 用户权限关系集合
+     */
+    private List<UserRoleDO> userRoleDOList;
 
     public Long getId() {
         return id;
@@ -91,5 +112,21 @@ public class UserDO {
 
     public void setModifiedTime(Date modifiedTime) {
         this.modifiedTime = modifiedTime;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+    public List<UserRoleDO> getUserRoleDOList() {
+        return userRoleDOList;
+    }
+
+    public void setUserRoleDOList(List<UserRoleDO> userRoleDOList) {
+        this.userRoleDOList = userRoleDOList;
     }
 }

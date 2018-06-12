@@ -1,6 +1,9 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.UrcUserDo;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.vo.UserVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,5 +22,48 @@ public interface IUserMapper {
 
     List<UserDO> listUsersByRoleId(Integer roleId);
 
-	UserDO getUserInfoByDingUserId(String userId);
+    /**
+     *
+     * @param  userName
+     * @return UserVO
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 10:44
+     */
+    UserVO getUserByName(String userName);
+
+    /**
+     * 搜索用户
+     *
+     * @param userVO
+     * @param pageNumber
+     * @param pageData
+     * @return  List<UserDO>
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 10:34
+     */
+    List<UserDO> getUsersByUserInfo(@Param("userVO") UserVO userVO, @Param("pageNumber") int pageNumber,@Param("pageData") int pageData);
+    /**
+     * 获取搜索用户分页的总数
+     * @param  userVO
+     * @return int
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 17:05
+     */
+   int getUsersByUserInfoCount(@Param("userVO") UserVO userVO);
+    /**
+     * 批量同步到数据库
+     *
+     * @param userDoList
+     * @return
+     */
+    int insertBatchUser(@Param("userDoList") List<UserDO> userDoList);
+
+    /**
+     *
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 10:43
+     */
+    int deleteUrcUser();
+
 }

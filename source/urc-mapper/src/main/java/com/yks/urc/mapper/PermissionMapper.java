@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.Permission;
+import org.apache.ibatis.annotations.Param;
 
 public interface PermissionMapper {
     int deleteByPrimaryKey(Long id);
@@ -16,4 +17,14 @@ public interface PermissionMapper {
     int updateByPrimaryKeyWithBLOBs(Permission record);
 
     int updateByPrimaryKey(Permission record);
+
+    /**
+     * 获取systemKey
+     *
+     * @param sysKey
+     * @return Permission
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/12 9:28
+     */
+    Permission getSystemKey(@Param("sysName") String sysKey);
 }
