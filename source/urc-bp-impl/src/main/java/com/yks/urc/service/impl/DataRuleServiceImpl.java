@@ -1,15 +1,9 @@
 package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.entity.DataRuleSysDO;
-import com.yks.urc.entity.DataRuleTemplDO;
-import com.yks.urc.entity.ExpressionDO;
-import com.yks.urc.entity.UrcSqlDO;
+import com.yks.urc.entity.*;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.IDataRuleSysMapper;
-import com.yks.urc.mapper.IDataRuleTemplMapper;
-import com.yks.urc.mapper.IExpressionMapper;
-import com.yks.urc.mapper.IUrcSqlMapper;
+import com.yks.urc.mapper.*;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleTemplVO;
@@ -48,6 +42,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private IExpressionMapper expressionMapper;
+
+
+    @Autowired
+    private IDataRuleMapper dataRuleMapper;
 
     /**
      * Description: 根据模板Id获取数据权限模板
@@ -138,6 +136,33 @@ public class DataRuleServiceImpl implements IDataRuleService {
         Long total = dataRuleTemplMapper.getCounts();
         PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, pageSize);
         return VoHelper.getSuccessResult(pageResultVO);
+    }
+
+    /**
+     * Description: 数据授权方案-快速分配
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/12 21:03
+     * @see
+     */
+    @Override
+    public ResultVO assignDataRuleTempl2User(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String createBy = jsonObject.get("operator").toString();
+        Long templId = Long.valueOf(jsonObject.get("templId").toString());
+        List<String> lstUserName = StringUtility.jsonToList(jsonObject.get("lstUserName").toString(), String.class);
+        List<DataRuleDO> dataRuleDOS = new ArrayList<>();
+        for (String userName : lstUserName) {
+            DataRuleDO dataRuleDO = new DataRuleDO();
+            dataRuleDO.setCreateBy(createBy);
+            dataRuleDO.setCreateTime(new Date());
+            dataRuleDO.setUserName(userName);
+            dataRuleDO.setDataRuleId(templId);
+        }
+        dataRuleMapper.insertBatch(dataRuleDOS);
+        return VoHelper.getSuccessResult();
     }
 
     private List<DataRuleTemplVO> convertDoToVO(List<DataRuleTemplDO> dataRuleTemplDOS) {

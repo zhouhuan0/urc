@@ -2,8 +2,10 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class DataRule {
+public class DataRuleDO {
     private Long id;
+
+    private Long dataRuleId;
 
     private String userName;
 
@@ -21,6 +23,14 @@ public class DataRule {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getDataRuleId() {
+        return dataRuleId;
+    }
+
+    public void setDataRuleId(Long dataRuleId) {
+        this.dataRuleId = dataRuleId;
     }
 
     public String getUserName() {
