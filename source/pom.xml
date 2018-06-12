@@ -178,12 +178,12 @@
         </dependency>
 
 
-      <!--  &lt;!&ndash; ignite h2版本必须使用1.4.195,springboot 1.5.10以上才需要指定这个配置 &ndash;&gt;
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.195</version>
-        </dependency>-->
+        <!--  &lt;!&ndash; ignite h2版本必须使用1.4.195,springboot 1.5.10以上才需要指定这个配置 &ndash;&gt;
+          <dependency>
+              <groupId>com.h2database</groupId>
+              <artifactId>h2</artifactId>
+              <version>1.4.195</version>
+          </dependency>-->
     </dependencies>
 
     <modules>
@@ -283,14 +283,6 @@
     <build>
         <finalName>${artifactId}-${version}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -300,6 +292,16 @@
                     <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+
+
         </plugins>
     </build>
 </project>
