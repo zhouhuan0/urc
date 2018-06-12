@@ -52,6 +52,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO login(UserVO curUser, UserVO authUser) {
+    	try {
         long startTime = System.currentTimeMillis();
         boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
         long endTime = System.currentTimeMillis();
@@ -65,6 +66,10 @@ public class UserServiceImpl implements IUserService {
         loginLog.loginTime = new Date();
         this.insertLoginLog(loginLog);
         return VoHelper.getSuccessResult(null, blnOk ? "00001" : "00000", null);
+    	}
+    	catch(Exception ex) {
+    		return VoHelper.getSuccessResult(null, "00000", "login error");
+    	}
     }
 
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);

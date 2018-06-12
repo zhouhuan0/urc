@@ -76,7 +76,8 @@ public class UserLoginRunnable implements Runnable {
 		UserVO authUser = new UserVO();
 		authUser.userName = userName;
 		authUser.pwd = pwd;
-		return _urcService.login(curUser, authUser);
+		authUser.ip = curUser.ip;
+		return _urcService.login(StringUtility.toJSONString_NoException(authUser));
 	}
 
 	@Override

@@ -27,15 +27,13 @@ public class MotanUserServiceTest {
 	@Test
 	public void testSayHello() {
 		try {
-			UserVO curUser = new UserVO();
-			curUser.ip = "127.0.0.1";
-
 			UserVO authUser = new UserVO();
 			authUser.userName = "panyun";
 			authUser.pwd = "ASDFhjkl1234";
+			authUser.ip = "127.0.0.1";
 
 			// com.yks.urc.motan.service.api.IUrcService
-			ResultVO rslt = urcService.login(curUser, authUser);
+			ResultVO rslt = urcService.login(StringUtility.toJSONString_NoException(authUser));
 			System.out.println(StringUtility.toJSONString_NoException(rslt));
 
 //			for (int i = 0; i < 10; i++) {

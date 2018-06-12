@@ -53,7 +53,8 @@ public class MotanUserController {
 		UserVO authUser = new UserVO();
 		authUser.userName = userName;
 		authUser.pwd = pwd;
-		return urcService.login(curUser, authUser);
+		authUser.ip = curUser.ip;
+		return urcService.login(StringUtility.toJSONString_NoException(authUser));
 	}
 
 	private ExecutorService service = Executors.newCachedThreadPool(); // 创建一个线程池

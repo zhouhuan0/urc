@@ -1,10 +1,14 @@
 package com.yks.urc.motan.service.impl;
 
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UrcServiceImpl implements IUrcService {
@@ -21,8 +25,12 @@ public class UrcServiceImpl implements IUrcService {
 	}
 
 	@Override
-	public ResultVO login(UserVO curUser, UserVO authUser) {
-		return userService.login(curUser,authUser);
+	public ResultVO login(Map<String, String> map) {
+		UserVO authUser = new UserVO();
+		authUser.userName = map.get("userName");
+		authUser.pwd = map.get("pwd");
+		authUser.ip = map.get("ip");
+		// UserVO curUser, UserVO authUser
+		return userService.login(authUser, authUser);
 	}
-
 }
