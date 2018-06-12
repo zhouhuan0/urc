@@ -24,5 +24,13 @@ public interface IUrcService {
 	 */
 	ResultVO login(Map<String,String> map);
 
+	
+	/**
+	 * 手动触发“同步钉钉部门及人员”信息
+	 * @param str
+	 * @return
+	 */
+	ResultVO syncDingOrgAndUser(String str);
+
 
 }

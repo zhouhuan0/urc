@@ -50,8 +50,21 @@ public class PersonVO implements Serializable {
     //冗余字段
     private String userName;
     
+    //冗余字段
+    private String orgId;
+    
+    
+    
 
-    public Long getId() {
+    public String getOrgId() {
+		return orgId;
+	}
+
+	public void setOrgId(String orgId) {
+		this.orgId = orgId;
+	}
+
+	public Long getId() {
         return id;
     }
 

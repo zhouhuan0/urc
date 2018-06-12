@@ -63,16 +63,27 @@
     where up.id = #{id,jdbcType=BIGINT}
   </select>
   
-    <select id="getUserByDingOrgId" parameterType="java.lang.String" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" /> 
+  
+  
+    <select id="getUserByDingOrgId"   resultMap="BaseResultMap">
+	    select 
+	    <include refid="Base_Column_List" /> 
+	     from urc_person up left join  urc_person_org upo on upo.ding_org_id=up.ding_user_id 
+	     where upo.ding_org_id = #{orgId,jdbcType=VARCHAR} 
+   	     limit #{offset},#{limit}
+  </select>
+  
+   <select id="getUserByDingOrgIdCount"  resultType="java.lang.Long">
+     SELECT count(*) 
      from urc_person up left join  urc_person_org upo on upo.ding_org_id=up.ding_user_id 
-     where upo.ding_org_id = #{dingOrgId,jdbcType=VARCHAR} 
-   	 
+	  where upo.ding_org_id = #{orgId,jdbcType=VARCHAR} 
+     
   </select>
   
   
-  <select id="getUserByUserInfo" parameterType="com.yks.urc.vo.PersonVO" resultMap="BasePersonVOResultMap">
+  
+  
+  <select id="list"  resultMap="BasePersonVOResultMap">
     select 
      <include refid="Base_User_Column_List" /> 
      from urc_person up INNER JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
@@ -90,6 +101,27 @@
      		 </if>
      </where>
    	 ORDER BY up.create_time desc 
+   	 limit #{offset},#{limit}
+  </select>
+  
+  
+   <select id="count"  resultType="java.lang.Long">
+     SELECT count(*)
+     from urc_person up INNER JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
+     <where>
+     		 <if test="jobNumber != null and jobNumber != '' ">
+     		 	up.job_number=#{jobNumber,jdbcType=VARCHAR}
+     		 </if>
+     		 
+     		 <if test="phoneNum != null and phoneNum != '' ">
+     		 	and up.phone_num=#{phoneNum,jdbcType=VARCHAR}
+     		 </if>
+     		 
+     		<if test="personName != null and personName != '' ">
+     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+     		 </if>
+     </where>
+     
   </select>
   
   

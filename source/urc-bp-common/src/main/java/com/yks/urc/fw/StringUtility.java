@@ -1,9 +1,14 @@
 package com.yks.urc.fw;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.text.ParseException;
@@ -1176,4 +1181,36 @@ public class StringUtility {
         date = simpleDateFormat.parse(strDate);
         return date;
     }
+    
+    
+    public static Map ConvertObjToMap(Object obj){
+    	  Map<String,Object> reMap = new HashMap<String,Object>();
+    	  if (obj == null) 
+    	   return null;
+    	  Field[] fields = obj.getClass().getDeclaredFields();
+    	  try {
+    	   for(int i=0;i<fields.length;i++){
+    	    try {
+    	     Field f = obj.getClass().getDeclaredField(fields[i].getName());
+    	     f.setAccessible(true);
+    	           Object o = f.get(obj);
+    	           reMap.put(fields[i].getName(), o);
+    	    } catch (NoSuchFieldException e) {
+    	     // TODO Auto-generated catch block
+    	     e.printStackTrace();
+    	    } catch (IllegalArgumentException e) {
+    	     // TODO Auto-generated catch block
+    	     e.printStackTrace();
+    	    } catch (IllegalAccessException e) {
+    	     // TODO Auto-generated catch block
+    	     e.printStackTrace();
+    	    }
+    	   }
+    	  } catch (SecurityException e) {
+    	   // TODO Auto-generated catch block
+    	   e.printStackTrace();
+    	  } 
+    	  return reMap;
+    	 }  
+      
 }

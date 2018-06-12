@@ -2,6 +2,7 @@ package com.yks.urc.motan.service.impl;
 
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
+import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.vo.ResultVO;
@@ -18,6 +19,9 @@ public class UrcServiceImpl implements IUrcService {
 
 	@Autowired
 	private IRoleService roleService;
+	
+	@Autowired
+	private IPersonService personService;
 
 	@Override
 	public ResultVO syncUserInfo(UserVO curUser) {
@@ -33,4 +37,11 @@ public class UrcServiceImpl implements IUrcService {
 		// UserVO curUser, UserVO authUser
 		return userService.login(authUser, authUser);
 	}
+	
+	@Override
+	public ResultVO syncDingOrgAndUser(String str) {
+		return personService.SynPersonOrgFromDing(str);
+	}
+	
+	
 }

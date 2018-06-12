@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yks.urc.entity.Person;
 import com.yks.urc.vo.PersonVO;
+import com.yks.urc.vo.helper.Query;
 
 public interface PersonMapper {
     int deleteByPrimaryKey(Long id);
@@ -19,9 +20,21 @@ public interface PersonMapper {
     int updateByPrimaryKey(Person record);
     
 
-	List<Person> getUserByDingOrgId(String dingOrgId);
 
-	List<PersonVO> getUserByUserInfo(PersonVO personVO);
+
+	/**
+	 * 搜索人员信息全局
+	 * @param query
+	 * @return
+	 */
+	List<PersonVO> list(Query query);
+	
+	/**
+	 * 人员搜索数量
+	 * @param query
+	 * @return
+	 */
+	long count(Query query);
 
 	/**
 	 * 批量插入人员
@@ -33,5 +46,21 @@ public interface PersonMapper {
 	 * 清空所有的人员表
 	 */
 	void deleteAllPerson();
+
+	/**
+	 * 根据部门id查询数据
+	 * @param query
+	 * @return
+	 */
+	List<PersonVO> getUserByDingOrgId(Query query);
+
+	/**
+	 * 根据部门id查询数据总数
+	 * @param query
+	 * @return
+	 */
+	long getUserByDingOrgIdCount(Query query);
+
+
 	
 }

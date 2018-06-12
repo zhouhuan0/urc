@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
+import com.fasterxml.jackson.databind.util.BeanUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
@@ -31,8 +32,10 @@ import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.service.api.IPersonService;
+import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
 @Service
@@ -55,33 +58,30 @@ public class PersonServiceImpl implements IPersonService {
     private IUserMapper userMapper;
 
 	@Override
-	public ResultVO getUserByDingOrgId(String dingOrgId) {
-		List<Person> personList= personMapper.getUserByDingOrgId(dingOrgId);
-		if(personList!=null&&personList.size()>0){
-			return VoHelper.getSuccessResult(personList);
-		}else{
-			return  VoHelper.getErrorResult();
-		}
+	public ResultVO getUserByDingOrgId(PersonVO person,int pageNumber, int pageData) {
+		Query query=new Query(person, pageNumber, pageData);
+		List<PersonVO> personList= personMapper.getUserByDingOrgId(query);
+		long count= personMapper.getUserByDingOrgIdCount(query);
+		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
 	}
 
 
 	@Override
-	public ResultVO getUserByUserInfo(PersonVO person) {
-		List<PersonVO> personList= personMapper.getUserByUserInfo(person);
-		if(personList!=null&&personList.size()>0){
-			return VoHelper.getSuccessResult(personList);
-		}else{
-			return  VoHelper.getErrorResult();
-		}
+	public ResultVO getUserByUserInfo(PersonVO person,int pageNumber, int pageData) {
+		Query query=new Query(person, pageNumber, pageData);
+		List<PersonVO> personList= personMapper.list(query);
+		long count= personMapper.count(query);
+		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
 	}
-
-	
 	
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
 	DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
 	@Transactional(rollbackFor = Exception.class)
-	public void SynPersonOrgFromDing(String userName) {
+	public ResultVO SynPersonOrgFromDing(String userName) {
 		if(lock.tryLock()){
+			logger.info("开始同步钉钉数据");
 			//得到钉钉所有的部门
 			try {
 			  //先准备初始化参数	
@@ -113,14 +113,18 @@ public class PersonServiceImpl implements IPersonService {
 				personMapper.insertBatchPerson(personList);
 				//插入部门人员表
 				personOrgMapper.insertBatchPersonOrg(personOrgList);
+				return VoHelper.getSuccessResult();
 				
 			} catch (Exception e) {
 				logger.error("同步钉钉数据出错，message={}",e.getMessage());
+				return VoHelper.getErrorResult();
 			}finally{
 				lock.unlock();
+				logger.info("同步钉钉数据完成");
 			}
 		}else{
 	        logger.info("同步钉钉数据正在执行...,");
+	        return VoHelper.getSuccessResult("正在同步");
 		}
 		
 	}

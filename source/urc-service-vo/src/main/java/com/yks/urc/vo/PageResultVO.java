@@ -29,4 +29,32 @@ public class PageResultVO implements Serializable {
      * 总条数
      */
     public long total;
+    
+    public PageResultVO() {
+	}
+    
+    public PageResultVO(List<?> list, long total,int pageSize) {
+		this.lst = list;
+		this.total = total;
+		this.pageSize= (pageSize==0 ? 10 : pageSize);
+		this.totalPage= (int) ((this.total  +  this.pageSize  - 1) / this.pageSize);  
+	}
+
+    public long getTotal() {
+		return total;
+	}
+
+	public void setTotal(long total) {
+		this.total = total;
+	}
+
+	public List<?> getRows() {
+		return lst;
+	}
+
+	public void setRows(List<?> rows) {
+		this.lst = rows;
+	}
+    
+    
 }
