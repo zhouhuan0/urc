@@ -153,7 +153,7 @@ public class UserBp {
      * @Date 2018/6/12 9:34
      */
     public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
-        List<UserRoleDO> userRoleDOS =userRoleMapper.getSysKeyByUser(userName);
+        List<String> userRoleDOS =userRoleMapper.getSysKeyByUser(userName);
         try {
 
             //功能版本的生成逻辑 根据userName/syskey取context,进行MD5;
