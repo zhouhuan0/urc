@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.yks.urc.mapper.DataRuleTemplMapper">
-  <resultMap id="BaseResultMap" type="com.yks.urc.entity.DataRuleTempl">
+<mapper namespace="com.yks.urc.mapper.IDataRuleTemplMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.DataRuleTemplDO">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="templ_id" jdbcType="BIGINT" property="templId" />
     <result column="templ_name" jdbcType="VARCHAR" property="templName" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
@@ -12,19 +13,21 @@
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, templ_name, user_name, remark, create_time, create_by, modified_time, modified_by
+    id, templ_id,templ_name, user_name, remark, create_time, create_by, modified_time, modified_by
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <!--根据模板Id获取数据-->
+  <select id="selectByTemplId" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from urc_data_rule_templ
-    where id = #{id,jdbcType=BIGINT}
+    where templ_id = #{templId,jdbcType=BIGINT}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_data_rule_templ
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.yks.urc.entity.DataRuleTempl">
+  <insert id="insert" parameterType="com.yks.urc.entity.DataRuleTemplDO">
     insert into urc_data_rule_templ (id, templ_name, user_name, 
       remark, create_time, create_by, 
       modified_time, modified_by)
@@ -32,7 +35,7 @@
       #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, 
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleTempl">
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
     insert into urc_data_rule_templ
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -87,7 +90,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleTempl">
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
     update urc_data_rule_templ
     <set>
       <if test="templName != null">
@@ -114,7 +117,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleTempl">
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleTemplDO">
     update urc_data_rule_templ
     set templ_name = #{templName,jdbcType=VARCHAR},
       user_name = #{userName,jdbcType=VARCHAR},
