@@ -65,5 +65,12 @@ public interface IUserMapper {
      * @Date 2018/6/11 10:43
      */
     int deleteUrcUser();
+    
+    /**
+     * 通过钉钉
+     * @param userId获取用户
+     * @return
+     */
+	UserDO getUserInfoByDingUserId(String userId);
 
 }

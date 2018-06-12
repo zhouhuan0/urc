@@ -7,6 +7,7 @@ import com.yks.urc.entity.UserInfo;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.MD5Utils;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.PermissionMapper;
@@ -52,38 +53,46 @@ public class UserBp {
      * @Author: linwanxian@youkeshu.com
      * @Date: 2018/6/8 15:29
      */
+	DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
     @Transactional(rollbackFor = Exception.class)
     public void SynUserFromUserInfo(String username) {
-        List<UserInfo> userInfoList = this.getUserInfo();
-        UserDO userDo = new UserDO();
-        for (UserInfo user : userInfoList) {
-            userDo.setUserName(user.username);
-            userDo.setDingUserId(user.ding_userid);
-            userDo.setCreateBy(username);
-            userDo.setModifiedBy(username);
-            try {
-                userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
-                //1 表示启用,0表示禁用
-                if ("66050".equals(user.userAccountControl)) {
-                    userDo.setIsActive(0);
-                } else if ("66048".equals(user.userAccountControl) || "512".equals(user.userAccountControl)) {
-                    userDo.setIsActive(1);
-                } else {
-                    userDo.setIsActive(Integer.parseInt(user.userAccountControl));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        //传入手动同步的创建人员
-        userDo.setCreateBy(username);
-        userDo.setModifiedBy(username);
-        List<UserDO> userDoList = new ArrayList<>();
-        userDoList.add(userDo);
-        //先清理数据表
-        userMapper.deleteUrcUser();
-        logger.info("清理完成,开始同步");
-        userMapper.insertBatchUser(userDoList);
+    	if(lock.tryLock()){
+    		List<UserInfo> userInfoList = this.getUserInfo();
+    		UserDO userDo = new UserDO();
+    		for (UserInfo user : userInfoList) {
+    			userDo.setUserName(user.username);
+    			userDo.setDingUserId(user.ding_userid);
+    			userDo.setCreateBy(username);
+    			userDo.setModifiedBy(username);
+    			try {
+    				userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
+    				//1 表示启用,0表示禁用
+    				if ("66050".equals(user.userAccountControl)) {
+    					userDo.setIsActive(0);
+    				} else if ("66048".equals(user.userAccountControl) || "512".equals(user.userAccountControl)) {
+    					userDo.setIsActive(1);
+    				} else {
+    					userDo.setIsActive(Integer.parseInt(user.userAccountControl));
+    				}
+    				//传入手动同步的创建人员
+    				userDo.setCreateBy(username);
+    				userDo.setModifiedBy(username);
+    				List<UserDO> userDoList = new ArrayList<>();
+    				userDoList.add(userDo);
+    				//先清理数据表
+    				userMapper.deleteUrcUser();
+    				logger.info("清理完成,开始同步");
+    				userMapper.insertBatchUser(userDoList);
+    			} catch (Exception e) {
+    				e.printStackTrace();
+    			}finally{
+    				lock.unlock();
+    			}
+    		}
+    	}else{
+	        logger.info("同步userInfo数据正在执行...,");
+		}
+      
     }
 
     /**
