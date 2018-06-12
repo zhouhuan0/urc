@@ -3,6 +3,7 @@ package com.yks.urc.mapper;
 import com.yks.urc.bp.impl.UserBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.vo.UserVO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +27,8 @@ public class UserMapperTest extends BaseMapperTest {
     @Autowired
     private IUserMapper userMapper;
 
-    @Test
-    public void testInsert() {
-        List<UserDO> users = userMapper.listUsersByRoleId(1);
-        Assert.assertNotNull(users);
-    }
-
-    @Autowired
-    UserBp userBp;
+    /*@Autowired
+    UserBp userBp;*/
 
     @Test
     public void insert() {
@@ -68,5 +63,23 @@ public class UserMapperTest extends BaseMapperTest {
 //        userBp.insert();
     }
 
+    @Test
+    public void testInsert() {
+        List<UserDO> users = userMapper.listUsersByRoleId(1);
+        Assert.assertNotNull(users);
+    }
+
+    @Test
+    public void testgetUserInfo() {
+        UserVO userVO = new UserVO();
+        int pagaNum = 0;
+        int pageData = 10;
+        userVO.userName = "linwanxian";
+        List<UserDO> list = new ArrayList<>();
+        list = userMapper.getUsersByUserInfo(userVO, pagaNum, pageData);
+        for (UserDO user : list) {
+            System.out.println(user.getUserName());
+        }
+    }
 
 }

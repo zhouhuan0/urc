@@ -1,16 +1,16 @@
 package com.yks.urc.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.MD5Utils;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
-import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class UserBp {
     @Autowired
     private IRoleMapper roleMapper;
     @Autowired
-    private PermissionMapper permissionMapper;
+    private IUserRoleMapper userRoleMapper;
 
     /**
      * 同步UserInfo数据
@@ -145,7 +145,7 @@ public class UserBp {
         return resultVO;
     }
 
-    /**
+    /** 获取system
      * @param userName
      * @param sysKey
      * @param ticket
@@ -153,15 +153,12 @@ public class UserBp {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 9:34
      */
-    public ResultVO<UserSysVO> getAllFuncPermit(String userName, String sysKey, String ticket) {
-        Permission permission = new Permission();
-        permission = permissionMapper.getSystemKey(sysKey);
+    public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
+        List<UserRoleDO> userRoleDOS =userRoleMapper.getSysKeyByUser(userName);
         try {
-            //功能版本的生成逻辑 根据userName/syskey取context,进行MD5;
-            String productFunVersion = MD5Utils.md5(userName, permission.getSysKey());
-            //获取功能权限
-            String functionRole = permission.getSysContext();
 
+            //功能版本的生成逻辑 根据userName/syskey取context,进行MD5;
+            //获取功能权限
         } catch (Exception e) {
             e.printStackTrace();
         }

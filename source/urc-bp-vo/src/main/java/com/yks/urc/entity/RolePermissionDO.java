@@ -4,11 +4,17 @@ import java.util.Date;
 
 public class RolePermissionDO {
     private Integer id;
-
+    /**
+     * 角色id
+     */
     private Integer roleId;
-
+    /**
+     * 业务系统key
+     */
     private String sysKey;
-
+    /**
+     * 功能权限json
+     */
     private String selectedContext;
 
     private Date createTime;

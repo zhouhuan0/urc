@@ -28,8 +28,8 @@ public class UrcServiceTest extends BaseServiceTest {
 
 	@Test
 	public void test2() {
-		List<String> lstRslt = userValidateBp.getFuncJsonByUserAndSysKey("panyun", "001");
-		System.out.print(lstRslt.get(0));
+	/*	List<String> lstRslt = userValidateBp.getFuncJsonByUserAndSysKey("panyun", "001");
+		System.out.print(lstRslt.get(0));*/
 		// testSync();
 	}
 

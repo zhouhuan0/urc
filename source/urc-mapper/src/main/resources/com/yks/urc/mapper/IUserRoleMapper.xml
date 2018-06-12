@@ -12,6 +12,7 @@
         <!--用户角色关系表 与角色表一对多-->
         <collection property="roleDOS" ofType="com.yks.urc.entity.RoleDO">
             <id column="id" jdbcType="TINYINT" property="id"/>
+            <result column="role_id" jdbcType="TINYINT" property="roleId"/>
             <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
             <result column="is_active" jdbcType="TINYINT" property="isActive"/>
             <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
@@ -132,8 +133,8 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=CHAR}
   </update>
-    <select id="getSysKey" resultMap="java.util.List">
-        select p.sys_key,p.selected_context
+    <select id="getSysKeyByUser" resultMap="BaseResultMap">
+        select p.sys_key
         from urc_user_role u
         INNER JOIN urc_role r on u.role_id =r.role_id
         INNER JOIN urc_role_permission p on r.role_id=p.role_id

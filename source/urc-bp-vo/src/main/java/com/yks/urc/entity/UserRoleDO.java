@@ -37,6 +37,7 @@ public class UserRoleDO {
      *  角色
      */
     private List<RoleDO> roleDOS;
+
     public String getId() {
         return id;
     }

@@ -7,6 +7,10 @@ public class RoleDO {
 
     private Integer id;
     /**
+     * 角色Id
+     */
+    private Integer roleId;
+    /**
      * 角色名称
      */
     private String roleName;
@@ -47,7 +51,10 @@ public class RoleDO {
      * 更新人
      */
     private String modifiedBy;
-
+    /**
+     *   角色-功能权限关系表
+     */
+    private RolePermissionDO permissionDO;
 
     public Integer getId() {
         return id;
@@ -136,5 +143,21 @@ public class RoleDO {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
+    }
+
+    public RolePermissionDO getPermissionDO() {
+        return permissionDO;
+    }
+
+    public void setPermissionDO(RolePermissionDO permissionDO) {
+        this.permissionDO = permissionDO;
     }
 }
