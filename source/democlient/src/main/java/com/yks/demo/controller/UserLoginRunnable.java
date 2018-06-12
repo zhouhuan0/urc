@@ -70,14 +70,11 @@ public class UserLoginRunnable implements Runnable {
 	}
 
 	private ResultVO loginTest(String userName, String pwd) {
-		UserVO curUser = new UserVO();
-		curUser.ip = "127.0.0.1";
-
-		UserVO authUser = new UserVO();
-		authUser.userName = userName;
-		authUser.pwd = pwd;
-		authUser.ip = curUser.ip;
-		return _urcService.login(StringUtility.toJSONString_NoException(authUser));
+		Map<String,String> map=new HashMap<String,String>();
+		map.put("userName", userName);
+		map.put("pwd", pwd);
+		map.put("ip", "127.0.0.1");
+		return _urcService.login(map);
 	}
 
 	@Override

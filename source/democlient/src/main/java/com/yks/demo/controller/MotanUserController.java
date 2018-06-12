@@ -7,6 +7,8 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,14 +49,11 @@ public class MotanUserController {
 	}
 
 	private ResultVO loginTest(String userName, String pwd) {
-		UserVO curUser = new UserVO();
-		curUser.ip = "127.0.0.1";
-
-		UserVO authUser = new UserVO();
-		authUser.userName = userName;
-		authUser.pwd = pwd;
-		authUser.ip = curUser.ip;
-		return urcService.login(StringUtility.toJSONString_NoException(authUser));
+		Map<String,String> map=new HashMap<String,String>();
+		map.put("userName", userName);
+		map.put("pwd", pwd);
+		map.put("ip", "127.0.0.1");
+		return urcService.login(map);
 	}
 
 	private ExecutorService service = Executors.newCachedThreadPool(); // 创建一个线程池

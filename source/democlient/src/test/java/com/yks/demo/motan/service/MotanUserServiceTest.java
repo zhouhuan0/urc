@@ -15,7 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DemoClientApplication.class)
@@ -27,13 +29,11 @@ public class MotanUserServiceTest {
 	@Test
 	public void testSayHello() {
 		try {
-			UserVO authUser = new UserVO();
-			authUser.userName = "panyun";
-			authUser.pwd = "ASDFhjkl1234";
-			authUser.ip = "127.0.0.1";
-
-			// com.yks.urc.motan.service.api.IUrcService
-			ResultVO rslt = urcService.login(StringUtility.toJSONString_NoException(authUser));
+			Map<String,String> map=new HashMap<String,String>();
+			map.put("userName", "panyun");
+			map.put("pwd", "123456");
+			map.put("ip", "127.0.0.1");
+			ResultVO rslt = urcService.login(map);
 			System.out.println(StringUtility.toJSONString_NoException(rslt));
 
 //			for (int i = 0; i < 10; i++) {
