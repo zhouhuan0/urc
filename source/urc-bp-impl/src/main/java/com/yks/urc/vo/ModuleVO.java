@@ -10,4 +10,8 @@ public class ModuleVO {
 	public List<ModuleVO> module;
 	public List<FunctionVO> function;
 
+	public String sysKey;
+	public List<String> lstChildFunc;
+	public StringBuilder pageFullPathName = new StringBuilder();
+
 }

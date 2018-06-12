@@ -2,11 +2,14 @@ package com.yks.urc.userValidate.bp.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
+import com.weibo.api.motan.util.CollectionUtil;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
@@ -51,19 +54,114 @@ public class UserValidateBp implements IUserValidateBp {
 		return StringUtility.toJSONString_NoException(sys1);
 	}
 
+	/**
+	 * 打平所有module
+	 * 
+	 * @param sys1
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月12日 下午7:22:38
+	 */
+	private List<ModuleVO> plainSys(SystemRootVO sys1) {
+		List<MenuVO> lstMenu = sys1.menu;
+
+		List<ModuleVO> lstModuleRslt = new ArrayList<>();
+		for (MenuVO menu : lstMenu) {
+			List<ModuleVO> lstModule = menu.module;
+			if (lstModule == null)
+				continue;
+			for (ModuleVO m : lstModule) {
+				m.pageFullPathName.append(m.name);
+				m.lstChildFunc = getChildrenFuncDesc(m);
+				m.sysKey = sys1.system.key;
+				lstModuleRslt.add(m);
+				plainModule(m, lstModuleRslt);
+			}
+		}
+
+		for (ModuleVO m : lstModuleRslt) {
+			System.out.println(m.sysKey + " " + m.pageFullPathName + " " + StringUtility.toJSONString_NoException(m.lstChildFunc));
+		}
+		
+		return lstModuleRslt;
+	}
+
+	/**
+	 * 按module节点打平
+	 * 
+	 * @param m
+	 * @param lstModuleRslt
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月12日 下午7:21:54
+	 */
+	private void plainModule(ModuleVO m, List<ModuleVO> lstModuleRslt) {
+		if (m.module != null) {
+			for (ModuleVO mem : m.module) {
+				// if (mem.pageFullPathName == null)
+				// mem.pageFullPathName = new StringBuilder();
+				mem.pageFullPathName.append(m.pageFullPathName);
+				mem.pageFullPathName.append("/");
+				mem.pageFullPathName.append(mem.name);
+				mem.lstChildFunc = getChildrenFuncDesc(mem);
+				mem.sysKey = m.sysKey;
+				lstModuleRslt.add(mem);
+				plainModule(mem, lstModuleRslt);
+			}
+		}
+	}
+
+	/**
+	 * 获取module所有子级function name
+	 * 
+	 * @param mem
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月12日 下午7:09:28
+	 */
+	private List<String> getChildrenFuncDesc(ModuleVO mem) {
+		if (mem == null || mem.function == null || mem.function.size() == 0)
+			return null;
+		List<String> sbFunc = new ArrayList();
+		for (FunctionVO f : mem.function) {
+			calcFuncDesc(f, sbFunc);
+		}
+		return sbFunc;
+	}
+
+	/**
+	 * 递归查询所有function name
+	 * 
+	 * @param f
+	 * @param sbRslt
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月12日 下午7:09:00
+	 */
+	private void calcFuncDesc(FunctionVO f, List<String> sbRslt) {
+		sbRslt.add(f.name);
+		if (f.function != null) {
+			for (FunctionVO fMem : f.function) {
+				calcFuncDesc(fMem, sbRslt);
+			}
+		}
+	}
+
 	public static void main(String[] args) throws IOException {
 		// 读取func1.json文件
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
 		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
+		System.out.println(StringUtility.toJSONString_NoException(sys1));
+		new UserValidateBp().plainSys(sys1);
 
 		// 读取func2.json文件
-		String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
-		SystemRootVO sys2 = StringUtility.parseObject(strJson2, SystemRootVO.class);
-
-		System.out.println("合并前的sys1:" + StringUtility.toJSONString_NoException(sys1));
-		// sys2中的功能权限合并到sys1中
-		distinctSystemRootVO(sys1, sys2);
-		System.out.println("合并后的sys1:" + StringUtility.toJSONString_NoException(sys1));
+		// String strJson2 =
+		// StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
+		// SystemRootVO sys2 = StringUtility.parseObject(strJson2, SystemRootVO.class);
+		//
+		// System.out.println("合并前的sys1:" +
+		// StringUtility.toJSONString_NoException(sys1));
+		// // sys2中的功能权限合并到sys1中
+		// distinctSystemRootVO(sys1, sys2);
+		// System.out.println("合并后的sys1:" +
+		// StringUtility.toJSONString_NoException(sys1));
 	}
 
 	/**
