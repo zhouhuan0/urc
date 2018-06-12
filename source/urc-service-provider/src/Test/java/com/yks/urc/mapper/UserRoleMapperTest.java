@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.UserVO;
 import org.junit.Assert;
 import org.junit.Test;
@@ -57,8 +58,8 @@ public class UserRoleMapperTest extends BaseMapperTest {
     @Test
     public void getSysKeyByUserName() {
         String userName = "linwanxian";
-        List<UserRoleDO> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
-        System.out.println(1);
+        List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
+        System.out.println(StringUtility.toJSONString_NoException(userRoleDOS));
     }
 
 }

@@ -133,7 +133,7 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=CHAR}
   </update>
-    <select id="getSysKeyByUser" resultMap="BaseResultMap">
+    <select id="getSysKeyByUser" resultType="java.lang.String">
         select p.sys_key
         from urc_user_role u
         INNER JOIN urc_role r on u.role_id =r.role_id

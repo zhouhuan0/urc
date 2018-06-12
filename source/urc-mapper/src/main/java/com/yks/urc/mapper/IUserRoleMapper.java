@@ -37,5 +37,5 @@ public interface IUserRoleMapper {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 15:59
      */
-    List<UserRoleDO> getSysKeyByUser(@Param("userName") String userName);
+    List<String> getSysKeyByUser(@Param("userName") String userName);
 }

@@ -7,6 +7,7 @@ import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.MD5Utils;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
@@ -52,10 +53,10 @@ public class UserBp {
      * @Author: linwanxian@youkeshu.com
      * @Date: 2018/6/8 15:29
      */
-	//DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
+	DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
     @Transactional(rollbackFor = Exception.class)
     public void SynUserFromUserInfo(String username) {
-    	//if(lock.tryLock()){
+    	if(lock.tryLock()){
     		List<UserInfo> userInfoList = this.getUserInfo();
     		UserDO userDo = new UserDO();
     		for (UserInfo user : userInfoList) {
@@ -84,12 +85,12 @@ public class UserBp {
     				userMapper.insertBatchUser(userDoList);
     			} catch (Exception e) {
     				e.printStackTrace();
-    			//}finally{
-    			//	lock.unlock();
-    			//}
+    			}finally{
+    				lock.unlock();
+    			}
     		}
-    	//}else{
-	       // logger.info("同步userInfo数据正在执行...,");
+    	}else{
+	        logger.info("同步userInfo数据正在执行...,");
 		}
       
     }
@@ -153,7 +154,7 @@ public class UserBp {
      * @Date 2018/6/12 9:34
      */
     public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
-        List<UserRoleDO> userRoleDOS =userRoleMapper.getSysKeyByUser(userName);
+        List<String> userRoleDOS =userRoleMapper.getSysKeyByUser(userName);
         try {
 
             //功能版本的生成逻辑 根据userName/syskey取context,进行MD5;

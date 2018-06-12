@@ -22,6 +22,19 @@
             <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         </collection>
     </resultMap>
+    
+    
+    <resultMap id="BaseUserResultMap" type="com.yks.urc.entity.UserDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="is_active" jdbcType="TINYINT" property="isActive"/>
+        <result column="active_time" jdbcType="TIMESTAMP" property="activeTime"/>
+        <result column="ding_user_id" jdbcType="VARCHAR" property="dingUserId"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+    </resultMap>
 
 
     <sql id="Base_Column_List">
@@ -29,7 +42,7 @@
     modified_time
   </sql>
     <!--根据roleId查询用户-->
-    <select id="listUsersByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="listUsersByRoleId" parameterType="java.lang.Integer" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
@@ -38,7 +51,7 @@
     </select>
     
     
-    <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user 
@@ -46,7 +59,7 @@
     </select>
 
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
