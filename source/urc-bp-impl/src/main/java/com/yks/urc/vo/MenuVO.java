@@ -6,5 +6,5 @@ public class MenuVO {
 	public String name;
 	public String key;
 	public String url;
-	public List<PageVO> page;
+	public List<ModuleVO> module;
 }

@@ -13,7 +13,7 @@ import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.MenuVO;
-import com.yks.urc.vo.PageVO;
+import com.yks.urc.vo.ModuleVO;
 import com.yks.urc.vo.SystemRootVO;
 
 @Component
@@ -21,17 +21,34 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	IRoleMapper roleMapper;
 
+	public List<String> getFuncJsonLstByUserAndSysKey(String userName, String sysKey) {
+		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
+	}
+
 	/**
-	 * 根据username/syskey获取角色功能权限json
+	 * 计算funcVersion
 	 * 
-	 * @param userName
-	 * @param sysKey
+	 * @param strFuncJson
 	 * @return
 	 * @author panyun@youkeshu.com
-	 * @date 2018年6月12日 下午2:36:05
+	 * @date 2018年6月12日 下午3:56:19
 	 */
-	public List<String> getFuncJsonByUserAndSysKey(String userName, String sysKey) {
-		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
+	public String calcFuncVersion(String strFuncJson) {
+		return StringUtility.md5_NoException(strFuncJson);
+	}
+
+	public String getFuncJsonByUserAndSysKey(String userName, String sysKey) {
+		List<String> lstJson = getFuncJsonLstByUserAndSysKey(userName, sysKey);
+		if (lstJson == null || lstJson.size() == 0)
+			return StringUtility.Empty;
+		SystemRootVO sys1 = StringUtility.parseObject(lstJson.get(0), SystemRootVO.class);
+		for (String strMem : lstJson) {
+			// sys2中的功能权限合并到sys1中
+			SystemRootVO sys2 = StringUtility.parseObject(strMem, SystemRootVO.class);
+
+			distinctSystemRootVO(sys1, sys2);
+		}
+		return StringUtility.toJSONString_NoException(sys1);
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -58,12 +75,12 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @date 2018年5月26日 上午11:51:59
 	 */
 	private static void distinctSystemRootVO(SystemRootVO sys1, SystemRootVO sys2) {
-		if (sys1.system.menu == null)
-			sys1.system.menu = new ArrayList<>();
-		if (sys2.system.menu == null)
-			sys2.system.menu = new ArrayList<>();
-		List<MenuVO> menu1 = sys1.system.menu;
-		List<MenuVO> menu2 = sys2.system.menu;
+		if (sys1.menu == null)
+			sys1.menu = new ArrayList<>();
+		if (sys2.menu == null)
+			sys2.menu = new ArrayList<>();
+		List<MenuVO> menu1 = sys1.menu;
+		List<MenuVO> menu2 = sys2.menu;
 
 		boolean hasSameMenu = false;
 		for (int j = 0; j < menu2.size(); j++) {
@@ -91,17 +108,17 @@ public class UserValidateBp implements IUserValidateBp {
 
 	private static void distinctMenu(MenuVO menu1, MenuVO menu2) {
 		// 合并menu下的page
-		if (menu1.page == null)
-			menu1.page = new ArrayList<>();
-		if (menu2.page == null)
-			menu2.page = new ArrayList<>();
+		if (menu1.module == null)
+			menu1.module = new ArrayList<>();
+		if (menu2.module == null)
+			menu2.module = new ArrayList<>();
 
-		List<PageVO> page1 = menu1.page;
-		List<PageVO> page2 = menu2.page;
+		List<ModuleVO> page1 = menu1.module;
+		List<ModuleVO> page2 = menu2.module;
 		distinctPages(page1, page2);
 	}
 
-	private static void distinctPages(List<PageVO> page1, List<PageVO> page2) {
+	private static void distinctPages(List<ModuleVO> page1, List<ModuleVO> page2) {
 		if (page1 == null)
 			page1 = new ArrayList<>();
 		if (page2 == null)
@@ -130,9 +147,9 @@ public class UserValidateBp implements IUserValidateBp {
 		}
 	}
 
-	private static void distinctPage(PageVO page1, PageVO page2) {
+	private static void distinctPage(ModuleVO page1, ModuleVO page2) {
 		// 合并page下的pages
-		distinctPages(page1.page, page2.page);
+		distinctPages(page1.module, page2.module);
 		// 合并page下的functions
 		distinctFunctions(page1.function, page2.function);
 	}
