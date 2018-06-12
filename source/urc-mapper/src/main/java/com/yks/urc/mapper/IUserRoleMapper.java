@@ -27,5 +27,5 @@ public interface IUserRoleMapper {
      */
     Integer deleteBatch(List<Integer> ids);
 
-
+    List<UserRoleDO>  getSysKey();
 }

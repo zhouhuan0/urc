@@ -1,6 +1,5 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.UrcUserDo;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
