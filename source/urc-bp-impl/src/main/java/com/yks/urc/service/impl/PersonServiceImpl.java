@@ -25,7 +25,6 @@ import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.entity.UserDO;
-import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
@@ -78,10 +77,10 @@ public class PersonServiceImpl implements IPersonService {
 	
 	
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-	DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
+	//DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
 	@Transactional(rollbackFor = Exception.class)
 	public void SynPersonOrgFromDing(String userName) {
-		if(lock.tryLock()){
+		//if(lock.tryLock()){
 			//得到钉钉所有的部门
 			try {
 			  //先准备初始化参数	
@@ -116,11 +115,11 @@ public class PersonServiceImpl implements IPersonService {
 				
 			} catch (Exception e) {
 				logger.error("同步钉钉数据出错，message={}",e.getMessage());
-			}finally{
-				lock.unlock();
-			}
-		}else{
-	        logger.info("同步钉钉数据正在执行...,");
+			//}finally{
+			//	lock.unlock();
+			//}
+		//}else{
+	    //    logger.info("同步钉钉数据正在执行...,");
 		}
 		
 		

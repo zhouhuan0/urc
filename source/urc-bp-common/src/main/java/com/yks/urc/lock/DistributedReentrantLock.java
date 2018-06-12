@@ -1,4 +1,4 @@
-package com.yks.urc.lock;
+/*package com.yks.urc.lock;
 
 import java.util.concurrent.TimeUnit;
 
@@ -8,11 +8,11 @@ import org.apache.curator.framework.recipes.locks.InterProcessMutex;
 import com.yks.urc.fw.SpringUtils;
 
 
-/**
+*//**
  *  分布式可重入锁
  * @author wujianghui@youkeshu.com
  * @date 2018年6月12日
- */
+ *//*
 public class DistributedReentrantLock implements DistributedLock
 {
 	private final InterProcessMutex lock;
@@ -70,3 +70,4 @@ public class DistributedReentrantLock implements DistributedLock
 	}
 
 }
+*/
