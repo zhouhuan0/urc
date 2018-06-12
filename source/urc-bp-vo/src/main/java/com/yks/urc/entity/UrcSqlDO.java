@@ -2,12 +2,16 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class DataRuleSys {
+public class UrcSqlDO {
     private Long id;
 
-    private Long dataRuleId;
+    private Long sqlId;
 
-    private String sysKey;
+    private Long dataRuleSysId;
+
+    private String entityCode;
+
+    private String hiddenFields;
 
     private Date createTime;
 
@@ -25,20 +29,36 @@ public class DataRuleSys {
         this.id = id;
     }
 
-    public Long getDataRuleId() {
-        return dataRuleId;
+    public Long getSqlId() {
+        return sqlId;
     }
 
-    public void setDataRuleId(Long dataRuleId) {
-        this.dataRuleId = dataRuleId;
+    public void setSqlId(Long sqlId) {
+        this.sqlId = sqlId;
     }
 
-    public String getSysKey() {
-        return sysKey;
+    public Long getDataRuleSysId() {
+        return dataRuleSysId;
     }
 
-    public void setSysKey(String sysKey) {
-        this.sysKey = sysKey == null ? null : sysKey.trim();
+    public void setDataRuleSysId(Long dataRuleSysId) {
+        this.dataRuleSysId = dataRuleSysId;
+    }
+
+    public String getEntityCode() {
+        return entityCode;
+    }
+
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode == null ? null : entityCode.trim();
+    }
+
+    public String getHiddenFields() {
+        return hiddenFields;
+    }
+
+    public void setHiddenFields(String hiddenFields) {
+        this.hiddenFields = hiddenFields == null ? null : hiddenFields.trim();
     }
 
     public Date getCreateTime() {

@@ -2,14 +2,20 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class UrcSql {
+public class ExpressionDO {
     private Long id;
 
-    private Long dataRuleSysId;
+    private Long sqlId;
+
+    private String fieldCode;
 
     private String entityCode;
 
-    private String hiddenFields;
+    private String oper;
+
+    private Long parentExpressionId;
+
+    private Byte isAnd;
 
     private Date createTime;
 
@@ -19,6 +25,8 @@ public class UrcSql {
 
     private String modifiedBy;
 
+    private String operValues;
+
     public Long getId() {
         return id;
     }
@@ -27,12 +35,20 @@ public class UrcSql {
         this.id = id;
     }
 
-    public Long getDataRuleSysId() {
-        return dataRuleSysId;
+    public Long getSqlId() {
+        return sqlId;
     }
 
-    public void setDataRuleSysId(Long dataRuleSysId) {
-        this.dataRuleSysId = dataRuleSysId;
+    public void setSqlId(Long sqlId) {
+        this.sqlId = sqlId;
+    }
+
+    public String getFieldCode() {
+        return fieldCode;
+    }
+
+    public void setFieldCode(String fieldCode) {
+        this.fieldCode = fieldCode == null ? null : fieldCode.trim();
     }
 
     public String getEntityCode() {
@@ -43,12 +59,28 @@ public class UrcSql {
         this.entityCode = entityCode == null ? null : entityCode.trim();
     }
 
-    public String getHiddenFields() {
-        return hiddenFields;
+    public String getOper() {
+        return oper;
     }
 
-    public void setHiddenFields(String hiddenFields) {
-        this.hiddenFields = hiddenFields == null ? null : hiddenFields.trim();
+    public void setOper(String oper) {
+        this.oper = oper == null ? null : oper.trim();
+    }
+
+    public Long getParentExpressionId() {
+        return parentExpressionId;
+    }
+
+    public void setParentExpressionId(Long parentExpressionId) {
+        this.parentExpressionId = parentExpressionId;
+    }
+
+    public Byte getIsAnd() {
+        return isAnd;
+    }
+
+    public void setIsAnd(Byte isAnd) {
+        this.isAnd = isAnd;
     }
 
     public Date getCreateTime() {
@@ -81,5 +113,13 @@ public class UrcSql {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
+    }
+
+    public String getOperValues() {
+        return operValues;
+    }
+
+    public void setOperValues(String operValues) {
+        this.operValues = operValues == null ? null : operValues.trim();
     }
 }
