@@ -78,5 +78,6 @@ public interface IRoleMapper {
      * @Date 2018/6/11 16:57
      */
     String selectRoleName(@Param("roleName") String roleName);
+	List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
 
 }
