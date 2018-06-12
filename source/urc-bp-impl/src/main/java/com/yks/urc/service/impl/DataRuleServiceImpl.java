@@ -1,25 +1,27 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.DataRuleSysDO;
 import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.UrcSqlDO;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IDataRuleSysMapper;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.mapper.IExpressionMapper;
 import com.yks.urc.mapper.IUrcSqlMapper;
 import com.yks.urc.service.api.IDataRuleService;
+import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleTemplVO;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉
@@ -79,12 +81,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
          * 3、获取urc_sql list数据
          */
         Set<Long> dataRuleSysIds = new HashSet<>();
-        for(DataRuleSysDO dataRuleSysDO:dataRuleSysDOList){
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOList) {
             dataRuleSysIds.add(dataRuleSysDO.getDataRuleSysId());
         }
-        Long[] array = (Long[])dataRuleSysIds.toArray();
+        Long[] array = (Long[]) dataRuleSysIds.toArray();
         List<UrcSqlDO> urcSqlDOS = urcSqlMapper.listUrcSqlDOs(array);
-        if(urcSqlDOS==null || urcSqlDOS.isEmpty()){
+        if (urcSqlDOS == null || urcSqlDOS.isEmpty()) {
             logger.info("数据权限模板对应的数据权限sys为空");
             return resultVO;
         }
@@ -92,16 +94,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
          * 4、获取条件表达式列表信息
          */
         Set<Long> urcSqlIds = new HashSet<>();
-        for(UrcSqlDO urcSqlDO:urcSqlDOS){
+        for (UrcSqlDO urcSqlDO : urcSqlDOS) {
             urcSqlIds.add(urcSqlDO.getSqlId());
         }
-        Long[] urcSqlIdsArray = (Long[])urcSqlIds.toArray();
+        Long[] urcSqlIdsArray = (Long[]) urcSqlIds.toArray();
         List<ExpressionDO> expressionDOS = expressionMapper.listExpressionDOs(urcSqlIdsArray);
-        if(expressionDOS==null || expressionDOS.isEmpty()){
+        if (expressionDOS == null || expressionDOS.isEmpty()) {
             logger.info("数据权限模板对应的数据权限sys为空");
             return resultVO;
         }
-
 
 
         /**
@@ -110,8 +111,43 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return null;
     }
 
+    /**
+     * Description: 根据方案名称、创建人等条件获取数据授权方案（分页）
+     *
+     * @param : jsonStr
+     * @return: ResultVO<PageResultVO>
+     * @auther: lvcr
+     * @date: 2018/6/12 20:54
+     * @see
+     */
     @Override
     public ResultVO<PageResultVO> getDataRuleTempl(String jsonStr) {
-        return null;
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String createBy = jsonObject.get("operator").toString();
+        int currPage = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageSize = Integer.valueOf(jsonObject.get("pageData").toString());
+        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleTemplVO.class);
+        String[] templNames = dataRuleTemplVO.templName.split("/r/n");
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("createBy", createBy);
+        queryMap.put("templNames", templNames);
+        queryMap.put("currIndex", (currPage - 1) * pageSize);
+        queryMap.put("pageSize", pageSize);
+        List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
+        List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
+        Long total = dataRuleTemplMapper.getCounts();
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, pageSize);
+        return VoHelper.getSuccessResult(pageResultVO);
     }
+
+    private List<DataRuleTemplVO> convertDoToVO(List<DataRuleTemplDO> dataRuleTemplDOS) {
+        List<DataRuleTemplVO> dataRuleTemplVOS = new ArrayList<>();
+        for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
+            DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
+            BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
+            dataRuleTemplVOS.add(dataRuleTemplVO);
+        }
+        return dataRuleTemplVOS;
+    }
+
 }

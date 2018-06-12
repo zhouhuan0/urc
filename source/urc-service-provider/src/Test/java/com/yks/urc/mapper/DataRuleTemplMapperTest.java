@@ -36,7 +36,8 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
         int pageSize = 3;
 
         Map<String, Object> map = new HashMap<>();
-        String[] templNames = {"admin", "edison"};
+        String[] templNames = {"数据权限模板1", "数据权限模板2", "数据权限模板8", "数据权限模板9", "数据权限模板5", "数据权限模板6", "数据权限模板7"};
+        map.put("createBy","edison");
         map.put("templNames", templNames);
         map.put("currIndex", (currPage - 1) * pageSize);
         map.put("pageSize", pageSize);

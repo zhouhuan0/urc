@@ -11,7 +11,18 @@ public interface IDataRuleTemplMapper {
 
     DataRuleTemplDO selectByTemplId(Long id);
 
+    /**
+     * Description: 根据条件分页获取 dataRuleTempDOs List数据
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/12 20:18
+     * @see
+     */
     List<DataRuleTemplDO> listDataRuleTemplDOsByPage(Map<String, Object> data);
+
+    Long getCounts();
 
 
 }

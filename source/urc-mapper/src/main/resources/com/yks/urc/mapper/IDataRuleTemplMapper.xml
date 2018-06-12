@@ -23,7 +23,7 @@
         where templ_id = #{templId,jdbcType=BIGINT}
     </select>
     <!--分页-->
-    <select id="listDataRuleTemplDOsByPage" parameterType="HashMap" resultMap="BaseResultMap">
+    <select id="listDataRuleTemplDOsByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_data_rule_templ
@@ -36,8 +36,12 @@
                 </foreach>
             </if>
         </where>
-        limit  currIndex,pageSize
+        limit  #{currIndex},#{pageSize}
     </select>
+    <select id="getCounts" resultType="java.lang.Long">
+         select count(*) from urc_data_rule_templ
+    </select>
+
 
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
