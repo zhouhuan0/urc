@@ -5,7 +5,7 @@ if [ -z "$JAVA_HOME" ] ; then
     JAVA_HOME=/usr/local/java/jdk1.8.0_151
 fi
 
-BASE_HOME=/usr/local/service/yks-demo-project
+BASE_HOME=/usr/local/service/urc-service-provider
 
 #==============================================================================
 #set JAVA_OPTS
@@ -41,11 +41,11 @@ done
 RUN_CMD="$JAVA_HOME/bin/java"
 RUN_CMD="$RUN_CMD -classpath $TEMP_CLASSPATH"
 RUN_CMD="$RUN_CMD $JAVA_OPTS"
-RUN_CMD="$RUN_CMD com.yks.demo.project.main.ApplicationStarter >>/dev/null 2>&1 &"
+RUN_CMD="$RUN_CMD com.yks.urc.main.UrcServiceProviderStarter >>/dev/null 2>&1 &"
 
 echo $RUN_CMD
 
 eval $RUN_CMD
 
-echo "yks-demo-project start !"
+echo "urc-service-provider start !"
 #==============================================================================

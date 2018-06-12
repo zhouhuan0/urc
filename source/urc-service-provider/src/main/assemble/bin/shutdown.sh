@@ -11,7 +11,7 @@ JAVA_OPTS="-Xss256k"
 #==============================================================================
 
 #stop Server
-$(ps -ef | grep yks-demo-project | awk '{print $2}' | xargs kill -9 )
+$(ps -ef | grep urc-service-provider | awk '{print $2}' | xargs kill -9 )
 
-echo "Shutdown yks-demo-project is done....."
+echo "Shutdown urc-service-provider is done....."
 #==============================================================================
