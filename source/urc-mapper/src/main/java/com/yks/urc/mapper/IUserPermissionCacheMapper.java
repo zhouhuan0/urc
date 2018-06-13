@@ -1,6 +1,9 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.UserPermissionCache;
+import java.util.List;
+
+import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.entity.UserPermitStatDO;
 
 public interface IUserPermissionCacheMapper {
 
@@ -23,5 +26,25 @@ public interface IUserPermissionCacheMapper {
 	 * @date 2018年6月13日 下午3:00:35
 	 */
 	int deletePermitStatByUser(String userName);
+
+	/**
+	 * insert urc_user_permission_cache table
+	 * 
+	 * @param lstCacheToAdd
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月13日 下午4:05:50
+	 */
+	int insertPermitCache(List<UserPermissionCacheDO> lstCacheToAdd);
+
+	/**
+	 * insert urc_user_permit_stat table
+	 * 
+	 * @param lstStatToAdd
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月13日 下午4:06:00
+	 */
+	int insertPermitStat(List<UserPermitStatDO> lstStatToAdd);
 
 }

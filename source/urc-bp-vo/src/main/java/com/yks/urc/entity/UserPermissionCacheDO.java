@@ -2,7 +2,7 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class UserPermissionCache {
+public class UserPermissionCacheDO {
     private Long id;
 
     private String userName;
