@@ -139,5 +139,7 @@
         INNER JOIN urc_role r on u.role_id =r.role_id
         INNER JOIN urc_role_permission p on r.role_id=p.role_id
         where u.user_name =#{userName}
+        AND r.is_active=1
+		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
 </mapper>

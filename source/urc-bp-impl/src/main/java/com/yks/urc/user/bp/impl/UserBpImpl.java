@@ -1,6 +1,7 @@
 package com.yks.urc.user.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
@@ -64,10 +65,12 @@ public class UserBpImpl implements IUserBp {
 	private IRoleMapper roleMapper;
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
-	
-    @Autowired
-    private IOperationBp operationBp;
 
+	@Autowired
+	private IOperationBp operationBp;
+
+	@Autowired
+	private ICacheBp cacheBp;
 
 	/**
 	 * 同步UserInfo数据
@@ -115,15 +118,15 @@ public class UserBpImpl implements IUserBp {
 				}
 			}
 		} else {
-			if("system".equals(username)){
-				//手动触发正在执行..记录日志
+			if ("system".equals(username)) {
+				// 手动触发正在执行..记录日志
 				operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
-			}else{
-				//定时任务触发正在执行..记录日志
+			} else {
+				// 定时任务触发正在执行..记录日志
 				operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
 			}
-	        logger.info("同步userInfo数据正在执行...,");
-	        
+			logger.info("同步userInfo数据正在执行...,");
+
 		}
 
 	}
@@ -250,8 +253,19 @@ public class UserBpImpl implements IUserBp {
 			loginLog.loginTime = new Date();
 			this.insertLoginLog(loginLog);
 			resp.userName = authUser.userName;
-			resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
-			resp.ticket = userValidateBp.getFuncJsonByUserAndSysKey(authUser.userName, authUser.ip);
+			if (blnOk) {
+				// 先从缓存取
+				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
+				if (lstSysKey == null) {
+					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
+					if (resp.sysKey == null)
+						resp.sysKey = new ArrayList<>();
+					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
+				} else {
+					resp.sysKey = lstSysKey;
+				}
+				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
+			}
 			return VoHelper.getSuccessResult(resp, blnOk ? "00001" : "00000", null);
 		} catch (Exception ex) {
 			return VoHelper.getSuccessResult(null, "00000", "login error");

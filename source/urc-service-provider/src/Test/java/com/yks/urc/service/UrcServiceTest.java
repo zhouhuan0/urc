@@ -8,6 +8,7 @@
  */
 package com.yks.urc.service;
 
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
@@ -16,6 +17,7 @@ import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.UserVO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -35,6 +37,18 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	IRoleMapper roleMapper;
 
+	@Autowired
+	private ICacheBp cacheBp;
+
+	@Test
+	public void testCache() {
+		List<String> lstFromDb = new ArrayList<>();
+		lstFromDb.add("110");
+//		cacheBp.insertUserSysKey("py", lstFromDb);
+		List<String> lst = cacheBp.getUserSysKey("py");
+		System.out.println("----------------SysKey:" + StringUtility.toJSONString_NoException(lst));
+	}
+
 	@Test
 	public void testSeq() {
 		RoleDO roleDO = new RoleDO();
@@ -42,7 +56,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		roleDO.setRoleName("py");
 		roleMapper.insert(roleDO);
 		System.out.println(StringUtility.toJSONString_NoException(roleDO));
-//		System.out.println(seqBp.getNextSeq("roleId"));
+		// System.out.println(seqBp.getNextSeq("roleId"));
 	}
 
 	public void test2() {

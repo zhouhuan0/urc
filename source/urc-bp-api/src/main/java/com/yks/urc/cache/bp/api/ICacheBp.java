@@ -12,7 +12,7 @@ public interface ICacheBp {
 
 	String getUserSysFuncVersion(String userName, String sysKey);
 
-	List<BizSysVO> getUserSysKey(String userName);
+	List<String> getUserSysKey(String userName);
 
 	void insertUser(UserVO u);
 
@@ -20,5 +20,5 @@ public interface ICacheBp {
 
 	void insertUserSysFuncVersion(String userName, String sysKey, String funcVersion);
 
-	void insertUserSysKey(String userName, List<BizSysVO> lst);
+	void insertUserSysKey(String userName, List<String> lst);
 }
