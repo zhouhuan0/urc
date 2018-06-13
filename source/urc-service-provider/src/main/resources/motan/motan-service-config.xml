@@ -13,14 +13,14 @@
     <!--<motan:protocol id="motan2" default="true" name="motan2"
                     serialization="simple" maxServerConnection="80000" maxContentLength="1048576"
                     maxWorkerThread="800" minWorkerThread="20"/>-->
-    <motan:protocol id="motan2" default="true" name="motan2" haStrategy="failover"
+    <motan:protocol id="motan2" default="true" name="motan2" serialization="simple" haStrategy="failover"
                     loadbalance="roundrobin" maxServerConnection="80000" maxContentLength="1048576"
                     maxWorkerThread="800" minWorkerThread="20"/>
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
     <motan:basicService id="serviceBasicConfig"
-                        registry="zkRegistry" export="motan2:8002" group="urc-service-provider-lvcr-test"
-                        version="1.0" accessLog="true" shareChannel="true" module="urc-service-provider-lvcr-test"
+                        registry="zkRegistry" export="motan2:8002" group="urc-service-provider-group"
+                        version="1.0" accessLog="true" shareChannel="true" module="urc-service-provider-module"
                         application="urc-service-provider"/>
 
     <!-- 业务具体实现类 -->
