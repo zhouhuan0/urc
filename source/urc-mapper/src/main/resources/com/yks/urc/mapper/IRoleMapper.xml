@@ -133,5 +133,16 @@
         WHERE ur.user_name=#{userName} and rp.sys_key=#{sysKey}
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
-    </select>  
+    </select>
+
+    <!--获取给定角色名的数据数量-->
+    <select id="selectCountByRoleName" resultType="Integer">
+        SELECT count(id) FROM urc_role r
+        <where>
+            r.role_name = #{newRoleName}
+            <if test="roleId != null">
+                and r.id != #{roleId}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -8,10 +8,8 @@ import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IRoleService;
 
-import com.yks.urc.vo.PermissionVO;
-import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.SystemRootVO;
-import com.yks.urc.vo.UserPermissionVO;
+import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -300,5 +298,11 @@ public class RoleServiceImpl implements IRoleService {
     public void copyRole(String strUserName, String newRoleName, String sourceRoleId) {
         /*非admin用户只能管理自己创建的角色*/
         /*复制对应的角色权功能限关系*/
+    }
+
+    @Override
+    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, Integer roleId) {
+        int count = roleMapper.selectCountByRoleName(newRoleName, roleId);
+        return VoHelper.getSuccessResult(count > 0 ? 1 : 0);
     }
 }

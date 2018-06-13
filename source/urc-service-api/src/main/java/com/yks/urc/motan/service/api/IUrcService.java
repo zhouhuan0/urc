@@ -7,24 +7,22 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
 public interface IUrcService {
-    /**
-     * 同步数据
-     *
-     * @param curUser
-     * @return
-     */
-    String syncUserInfo(UserVO curUser);
+	/**
+	 * 同步数据
+	 * @param curUser
+	 * @return
+	 */
+	String syncUserInfo(UserVO curUser);
 
-    /**
-     * 登陆校验：用户名密码检验
-     *
-     * @param curUser
-     * @param authUser
-     * @return
-     * @author panyun@youkeshu.com
-     * @date 2018年6月6日 下午12:22:35
-     */
-    String login(Map<String, String> map);
+	/**
+	 * 登陆校验：用户名密码检验
+	 * @param curUser
+	 * @param authUser
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月6日 下午12:22:35
+	 */
+	String login(Map<String,String> map);
 
 
     /**
@@ -97,4 +95,13 @@ public interface IUrcService {
      */
     String getDataRuleTempl(String jsonStr);
 
+	/**
+	 * 角色名判重
+	 * @param operator
+	 * @param newRoleName
+	 * @param roleId
+	 * @return 返回值为0--表示不重复, 1--表示重复
+	 * @author oujie@youkeshu.com
+	 */
+	String checkDuplicateRoleName(String operator, String newRoleName, Integer roleId);
 }
