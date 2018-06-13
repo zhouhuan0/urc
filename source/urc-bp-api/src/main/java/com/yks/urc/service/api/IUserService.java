@@ -7,7 +7,7 @@ import com.yks.urc.vo.UserVO;
 public interface IUserService {
 	ResultVO syncUserInfo(UserVO curUser);
 
-	ResultVO login(UserVO curUser, UserVO authUser);
+	ResultVO login(UserVO authUser);
 
 
 }

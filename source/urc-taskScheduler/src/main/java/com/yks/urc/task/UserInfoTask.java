@@ -8,19 +8,20 @@
  */
 package com.yks.urc.task;
 
-import com.yks.urc.bp.impl.UserBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import com.yks.urc.user.bp.impl.UserBpImpl;
+
 @Component
 public class UserInfoTask {
     private static Logger logger = LoggerFactory.getLogger(UserInfoTask.class);
 
     @Autowired
-    private UserBp userBp;
+    private UserBpImpl userBp;
 
     public static final String SYSTEM = "system";
 

@@ -24,4 +24,15 @@ public interface IUserValidateBp {
 	 * @date 2018年6月12日 下午3:44:55
 	 */
 	String getFuncJsonByUserAndSysKey(String userName, String sysKey);
+
+	/**
+	 * 生成ticket
+	 * 
+	 * @param strUserName
+	 * @param ip
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月13日 上午9:57:37
+	 */
+	String createTicket(String strUserName, String ip);
 }

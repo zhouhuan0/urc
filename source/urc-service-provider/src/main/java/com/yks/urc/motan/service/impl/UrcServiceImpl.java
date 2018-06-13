@@ -35,7 +35,7 @@ public class UrcServiceImpl implements IUrcService {
 		authUser.pwd = map.get("pwd");
 		authUser.ip = map.get("ip");
 		// UserVO curUser, UserVO authUser
-		return StringUtility.toJSONString_NoException(userService.login(authUser, authUser));
+		return StringUtility.toJSONString_NoException(userService.login(authUser));
 	}
 	
 	@Override

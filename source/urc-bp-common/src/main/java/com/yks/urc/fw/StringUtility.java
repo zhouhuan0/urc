@@ -790,7 +790,7 @@ public class StringUtility {
         try {
             return md5(encryptStr);
         } catch (Exception ex) {
-            return encryptStr;
+            return Empty;
         }
     }
 
