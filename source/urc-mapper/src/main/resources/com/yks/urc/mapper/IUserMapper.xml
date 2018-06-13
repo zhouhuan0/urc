@@ -42,12 +42,12 @@
     modified_time
   </sql>
     <!--根据roleId查询用户-->
-    <select id="listUsersByRoleId" parameterType="java.lang.Integer" resultMap="BaseUserResultMap">
+    <select id="listUsersByRoleId" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
         where exists
-        (select user_name from urc_user_role where role_id=#{id,jdbcType=BIGINT})
+        (select user_name from urc_user_role where role_id=#{roleId,jdbcType=BIGINT})
     </select>
     
     
@@ -91,12 +91,36 @@
     </select>
 
 
+	<select id="listAllUsersUserName"  resultMap="java.lang.String">
+        select
+        user_name as userName 
+        from urc_user 
+    </select>
+    
+
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
         where id = #{id,jdbcType=BIGINT}
     </select>
+    
+    
+        
+   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultMap="java.lang.String">
+        select
+        user_name as userName 
+        from urc_user  left JOIN urc_user_role ur ON ur.user_name=user_name 
+          <where>
+     		 <if test="roleId != null and roleId != '' ">
+     		 	 ur.role_id  = #{roleId,jdbcType=BIGINT} 
+     		 </if>
+    	  </where> 
+        
+         
+    </select>
+    
+    
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_user
     where id = #{id,jdbcType=BIGINT}

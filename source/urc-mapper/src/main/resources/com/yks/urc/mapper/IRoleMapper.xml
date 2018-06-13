@@ -3,6 +3,7 @@
 <mapper namespace="com.yks.urc.mapper.IRoleMapper">
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleDO">
         <id column="id" jdbcType="TINYINT" property="id"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="is_active" jdbcType="TINYINT" property="isActive"/>
         <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
@@ -65,14 +66,12 @@
         </foreach>
     </delete>
     <!--根据角色Id获取角色信息-->
-    <select id="getRoleByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from urc_role
-        where role_id = #{roleId}
+        where role_id = #{roleId,jdbcType=TINYINT}
     </select>
-
-
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
         update urc_role
         <set>

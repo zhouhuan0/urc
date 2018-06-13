@@ -67,7 +67,8 @@ public interface IRoleMapper {
      */
 //    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 
-    RoleDO getRoleByRoleId(@Param("roleId")String roleId);
+    RoleDO getRoleByRoleId(long roleId);
+
 
     /**
      * 根据用户名 获取角色名称

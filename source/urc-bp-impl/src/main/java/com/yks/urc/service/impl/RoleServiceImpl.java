@@ -5,6 +5,7 @@ import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
@@ -46,6 +47,9 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private IUserRoleMapper userRoleMapper;
+    
+    @Autowired
+    private IUserMapper userMapper;
 
     @Autowired
     private ISeqBp seqBp;
@@ -266,10 +270,27 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<RoleVO> getRoleUser(List<String> lstRoleId) {
+    public ResultVO getRoleUser(List<String> lstRoleId) {
         /*非管理员只能查看自己创建的角色*/
+    	List<RoleVO> roleList=new ArrayList<>();
+    	for (int i = 0; i < lstRoleId.size(); i++) {
+    		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+    		RoleVO roleVO=new RoleVO();
+    		roleVO.setRoleName(roleDO.getRoleName());
+    		roleVO.setRoleId(roleDO.getRoleId());
+    		if(roleDO.isAuthorizable()){
+    			//管理员
+    			List<String> lstUserName= userMapper.listAllUsersUserName();
+    			roleVO.setLstUserName(lstUserName);
+    		}else{
+    			//非管理员
+    			List<String> lstUserName =userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
+    			roleVO.setLstUserName(lstUserName);
+    		}
+    		roleList.add(roleVO);
+		}
         /*查询用户角色关系表*/
-        return null;
+        return VoHelper.getSuccessResult(roleList);
     }
 
     /**
