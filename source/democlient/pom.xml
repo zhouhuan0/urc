@@ -44,6 +44,12 @@
 			<version>${urc.version}</version>
 		</dependency>
 
+        <!-- ignite h2版本必须使用1.4.195,springboot 1.5.10以上才需要指定这个配置 -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.4.195</version>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
