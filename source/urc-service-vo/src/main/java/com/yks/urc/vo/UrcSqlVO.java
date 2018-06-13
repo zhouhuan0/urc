@@ -11,7 +11,7 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class SqlVO implements Serializable {
+public class UrcSqlVO implements Serializable {
     private static final long serialVersionUID = -451388606819738586L;
     /**
      *

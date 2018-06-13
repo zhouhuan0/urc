@@ -22,8 +22,9 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
    @Autowired
    private IDataRuleSysMapper dataRuleSysMapper;
 
+
    @Test
-   public void selectByTemplId() {
+    public void listByDataRuleId(){
        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.listByDataRuleId(1L);
        Assert.assertNotNull(dataRuleSysDOs);
    }

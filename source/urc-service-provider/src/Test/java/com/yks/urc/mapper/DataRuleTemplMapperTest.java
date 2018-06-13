@@ -30,6 +30,13 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
     }
 
     @Test
+    public void getCounts() {
+        String creatBy = "";
+        Long counts = dataRuleTemplMapper.getCounts(creatBy);
+        System.out.println(counts);
+    }
+
+    @Test
     public void listDataRuleTemplDOsByPage() {
         //通过接收currPage参数表示显示第几页的数据，pageSize表示每页显示的数据条数。
         int currPage = 1;
@@ -37,7 +44,7 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
 
         Map<String, Object> map = new HashMap<>();
         String[] templNames = {"数据权限模板1", "数据权限模板2", "数据权限模板8", "数据权限模板9", "数据权限模板5", "数据权限模板6", "数据权限模板7"};
-        map.put("createBy","edison");
+        map.put("createBy", "edison");
         map.put("templNames", templNames);
         map.put("currIndex", (currPage - 1) * pageSize);
         map.put("pageSize", pageSize);

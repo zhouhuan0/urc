@@ -1,10 +1,10 @@
 package com.yks.urc.mapper;
 
-import java.util.List;
-
 import com.yks.urc.entity.Person;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.helper.Query;
+
+import java.util.List;
 
 public interface PersonMapper {
     int deleteByPrimaryKey(Long id);

@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleSysDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -14,7 +15,7 @@ public interface IDataRuleSysMapper {
      * @date: 2018/6/12 14:47
      * @see
      */
-    List<DataRuleSysDO> listByDataRuleId(Long dataRuleId);
+    List<DataRuleSysDO> listByDataRuleId(@Param("dataRuleId") Long dataRuleId);
 
     int deleteByPrimaryKey(Long id);
 

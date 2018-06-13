@@ -6,7 +6,7 @@ import com.yks.urc.vo.ResultVO;
 
 public interface IDataRuleService {
 
-    ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String templId);
+    ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr);
 
     ResultVO<PageResultVO> getDataRuleTempl(String jsonStr);
 

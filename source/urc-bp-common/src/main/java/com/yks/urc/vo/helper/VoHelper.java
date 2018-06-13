@@ -29,6 +29,10 @@ public class VoHelper {
 		return getSuccessResult(null, CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
 	}
 
+	public static ResultVO getErrorResult(String state, String strMsg) {
+		return getSuccessResult(null, state, strMsg);
+	}
+
 	public static <T> ResultVO getSuccessResult(T data ) {
 		return getSuccessResult(data, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
 	}

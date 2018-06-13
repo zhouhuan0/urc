@@ -28,7 +28,9 @@
         <include refid="Base_Column_List"/>
         from urc_data_rule_templ
         <where>
-             create_by=#{createBy,jdbcType=VARCHAR}
+            <if test="createBy != null and createBy != ''">
+                create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
             <if test="templNames != null and templNames != ''">
                 and templ_name in
                 <foreach item="item" index="index" collection="templNames" open="(" separator="," close=")">
@@ -36,12 +38,16 @@
                 </foreach>
             </if>
         </where>
-        limit  #{currIndex},#{pageSize}
+        limit #{currIndex},#{pageSize}
     </select>
     <select id="getCounts" resultType="java.lang.Long">
-         select count(*) from urc_data_rule_templ
+        select count(*) from urc_data_rule_templ
+        <where>
+            <if test="createBy != null and createBy != ''">
+                create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
-
 
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">

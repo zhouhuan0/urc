@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleTemplDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -21,8 +22,15 @@ public interface IDataRuleTemplMapper {
      * @see
      */
     List<DataRuleTemplDO> listDataRuleTemplDOsByPage(Map<String, Object> data);
-
-    Long getCounts();
+    /**
+     * Description: 获取总数
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/6/13 11:26
+     * @see
+     */
+    Long getCounts(@Param("createBy") String createBy);
 
 
 }

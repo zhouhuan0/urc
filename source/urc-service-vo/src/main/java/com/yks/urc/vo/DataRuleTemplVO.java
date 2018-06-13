@@ -31,4 +31,35 @@ public class DataRuleTemplVO implements Serializable {
     public List<DataRuleSysVO> lstDataRuleSys;
 
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getTemplName() {
+        return templName;
+    }
+
+    public void setTemplName(String templName) {
+        this.templName = templName;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public List<DataRuleSysVO> getLstDataRuleSys() {
+        return lstDataRuleSys;
+    }
+
+    public void setLstDataRuleSys(List<DataRuleSysVO> lstDataRuleSys) {
+        this.lstDataRuleSys = lstDataRuleSys;
+    }
 }

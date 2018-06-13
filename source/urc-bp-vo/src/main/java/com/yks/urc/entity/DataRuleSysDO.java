@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class DataRuleSysDO {
     private Long id;
@@ -18,6 +19,17 @@ public class DataRuleSysDO {
     private Date modifiedTime;
 
     private String modifiedBy;
+
+
+    private List<UrcSqlDO> urcSqlDOList;
+
+    public List<UrcSqlDO> getUrcSqlDOList() {
+        return urcSqlDOList;
+    }
+
+    public void setUrcSqlDOList(List<UrcSqlDO> urcSqlDOList) {
+        this.urcSqlDOList = urcSqlDOList;
+    }
 
     public Long getId() {
         return id;

@@ -15,7 +15,7 @@ public class ExpressionDO {
 
     private Long parentExpressionId;
 
-    private Byte isAnd;
+    private Integer isAnd;
 
     private Date createTime;
 
@@ -75,11 +75,11 @@ public class ExpressionDO {
         this.parentExpressionId = parentExpressionId;
     }
 
-    public Byte getIsAnd() {
+    public Integer getIsAnd() {
         return isAnd;
     }
 
-    public void setIsAnd(Byte isAnd) {
+    public void setIsAnd(Integer isAnd) {
         this.isAnd = isAnd;
     }
 

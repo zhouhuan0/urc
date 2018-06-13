@@ -1,38 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yks.urc.mapper.IDataRuleSysMapper">
-  <resultMap id="BaseResultMap" type="com.yks.urc.entity.DataRuleSysDO">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="data_rule_sys_id" jdbcType="BIGINT" property="dataRuleSysId"/>
-    <result column="data_rule_id" jdbcType="BIGINT" property="dataRuleId" />
-    <result column="sys_key" jdbcType="CHAR" property="sysKey" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-    <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
-  </resultMap>
-  <sql id="Base_Column_List">
+    <resultMap id="BaseResultMap" type="com.yks.urc.entity.DataRuleSysDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="data_rule_sys_id" jdbcType="BIGINT" property="dataRuleSysId"/>
+        <result column="data_rule_id" jdbcType="BIGINT" property="dataRuleId"/>
+        <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+    </resultMap>
+
+    <resultMap id="queryForListMap" type="com.yks.urc.entity.DataRuleSysDO">
+        <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
+        <!--数据权限sys-urcsql关系-->
+        <collection property="urcSqlDOList" ofType="com.yks.urc.entity.UrcSqlDO">
+            <result column="sql_id" jdbcType="TINYINT" property="sqlId"/>
+            <result column="entity_code" jdbcType="VARCHAR" property="entityCode"/>
+            <result column="hidden_fields" jdbcType="VARCHAR" property="hiddenFields"/>
+            <!--urcSql-urc_expression 关系-->
+            <collection property="expressionDOS" ofType="com.yks.urc.entity.ExpressionDO">
+                <id column="id" jdbcType="TINYINT" property="id"/>
+                <result column="is_and" jdbcType="INTEGER" property="isAnd"/>
+                <result column="field_code" jdbcType="VARCHAR" property="fieldCode"/>
+                <result column="entity_code" jdbcType="VARCHAR" property="entityCode"/>
+            </collection>
+        </collection>
+
+
+    </resultMap>
+
+    <sql id="Base_Column_List">
     id, data_rule_sys_id, data_rule_id, sys_key, create_time, create_by, modified_time, modified_by
   </sql>
-  <!--根据dataRuleId获取数据权限sys-->
-  <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from urc_data_rule_sys
-    where data_rule_id = #{id,jdbcType=BIGINT}
-  </select>
+    <!--根据dataRuleId获取数据权限sys-->
+    <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="queryForListMap">
+        select
+        ud.sys_key,us.sql_id,us.entity_code,us.hidden_fields,ue.field_code,ue.entity_code
+        from urc_data_rule_sys ud
+        LEFT JOIN urc_sql us ON ud.data_rule_sys_id = us.data_rule_sys_id
+        LEFT JOIN urc_expression ue ON us.sql_id = ue.sql_id
+        where ud.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
+    </select>
+    <!-- <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+       select
+       <include refid="Base_Column_List" />
+       from urc_data_rule_sys
+       where data_rule_id = #{id,jdbcType=BIGINT}
+     </select>-->
 
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from urc_data_rule_sys
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_data_rule_sys
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_data_rule_sys
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.yks.urc.entity.DataRuleSysDO">
+    <insert id="insert" parameterType="com.yks.urc.entity.DataRuleSysDO">
     insert into urc_data_rule_sys (id, data_rule_id, sys_key, 
       create_time, create_by, modified_time, 
       modified_by)
@@ -40,80 +68,80 @@
       #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{modifiedTime,jdbcType=TIMESTAMP}, 
       #{modifiedBy,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleSysDO">
-    insert into urc_data_rule_sys
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="dataRuleId != null">
-        data_rule_id,
-      </if>
-      <if test="sysKey != null">
-        sys_key,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
-      <if test="modifiedTime != null">
-        modified_time,
-      </if>
-      <if test="modifiedBy != null">
-        modified_by,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="dataRuleId != null">
-        #{dataRuleId,jdbcType=BIGINT},
-      </if>
-      <if test="sysKey != null">
-        #{sysKey,jdbcType=CHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="modifiedTime != null">
-        #{modifiedTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifiedBy != null">
-        #{modifiedBy,jdbcType=VARCHAR},
-      </if>
-    </trim>
-  </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleSysDO">
-    update urc_data_rule_sys
-    <set>
-      <if test="dataRuleId != null">
-        data_rule_id = #{dataRuleId,jdbcType=BIGINT},
-      </if>
-      <if test="sysKey != null">
-        sys_key = #{sysKey,jdbcType=CHAR},
-      </if>
-      <if test="createTime != null">
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="modifiedTime != null">
-        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifiedBy != null">
-        modified_by = #{modifiedBy,jdbcType=VARCHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleSysDO">
+    <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleSysDO">
+        insert into urc_data_rule_sys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="dataRuleId != null">
+                data_rule_id,
+            </if>
+            <if test="sysKey != null">
+                sys_key,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="modifiedTime != null">
+                modified_time,
+            </if>
+            <if test="modifiedBy != null">
+                modified_by,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="dataRuleId != null">
+                #{dataRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="sysKey != null">
+                #{sysKey,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedTime != null">
+                #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleSysDO">
+        update urc_data_rule_sys
+        <set>
+            <if test="dataRuleId != null">
+                data_rule_id = #{dataRuleId,jdbcType=BIGINT},
+            </if>
+            <if test="sysKey != null">
+                sys_key = #{sysKey,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                modified_by = #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleSysDO">
     update urc_data_rule_sys
     set data_rule_id = #{dataRuleId,jdbcType=BIGINT},
       sys_key = #{sysKey,jdbcType=CHAR},

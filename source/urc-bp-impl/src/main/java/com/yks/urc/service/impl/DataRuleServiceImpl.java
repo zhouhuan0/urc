@@ -1,14 +1,15 @@
 package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.*;
+import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.service.api.IDataRuleService;
-import com.yks.urc.vo.DataRuleSysVO;
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -38,14 +39,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private IDataRuleSysMapper dataRuleSysMapper;
 
     @Autowired
-    private IUrcSqlMapper urcSqlMapper;
-
-    @Autowired
-    private IExpressionMapper expressionMapper;
-
-
-    @Autowired
     private IDataRuleMapper dataRuleMapper;
+
+    @Autowired
+    private IMqBp mqBp;
 
     /**
      * Description: 根据模板Id获取数据权限模板
@@ -57,7 +54,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @see
      */
     @Override
-    public ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String templId) {
+    public ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String createBy = jsonObject.get("operator").toString();
+        Long templId = Long.valueOf(jsonObject.get("templId").toString());
         ResultVO resultVO = new ResultVO();
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
         /**
@@ -67,46 +67,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(tempId);
         BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
         resultVO.data = dataRuleTemplVO;
-        /**
-         * 2、获取数据权限模板对应的数据权限sys
-         */
-        List<DataRuleSysDO> dataRuleSysDOList = dataRuleSysMapper.listByDataRuleId(tempId);
-        if (dataRuleSysDOList == null || dataRuleSysDOList.isEmpty()) {
-            logger.info("数据权限模板对应的数据权限sys为空");
-            return resultVO;
+        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.listByDataRuleId(tempId);
+        List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
+            DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+            BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
+            dataRuleSysVOS.add(dataRuleSysVO);
         }
-        /**
-         * 3、获取urc_sql list数据
-         */
-        Set<Long> dataRuleSysIds = new HashSet<>();
-        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOList) {
-            dataRuleSysIds.add(dataRuleSysDO.getDataRuleSysId());
-        }
-        Long[] array = (Long[]) dataRuleSysIds.toArray();
-        List<UrcSqlDO> urcSqlDOS = urcSqlMapper.listUrcSqlDOs(array);
-        if (urcSqlDOS == null || urcSqlDOS.isEmpty()) {
-            logger.info("数据权限模板对应的数据权限sys为空");
-            return resultVO;
-        }
-        /**
-         * 4、获取条件表达式列表信息
-         */
-        Set<Long> urcSqlIds = new HashSet<>();
-        for (UrcSqlDO urcSqlDO : urcSqlDOS) {
-            urcSqlIds.add(urcSqlDO.getSqlId());
-        }
-        Long[] urcSqlIdsArray = (Long[]) urcSqlIds.toArray();
-        List<ExpressionDO> expressionDOS = expressionMapper.listExpressionDOs(urcSqlIdsArray);
-        if (expressionDOS == null || expressionDOS.isEmpty()) {
-            logger.info("数据权限模板对应的数据权限sys为空");
-            return resultVO;
-        }
-
-
-        /**
-         *
-         */
-        return null;
+        dataRuleTemplVO.lstDataRuleSys = dataRuleSysVOS;
+        return VoHelper.getSuccessResult(dataRuleTemplVO);
     }
 
     /**
@@ -121,25 +90,65 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     public ResultVO<PageResultVO> getDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String createBy = jsonObject.get("operator").toString();
-        int currPage = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageSize = Integer.valueOf(jsonObject.get("pageData").toString());
-        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleTemplVO.class);
-        String[] templNames = dataRuleTemplVO.templName.split("/r/n");
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("createBy", createBy);
-        queryMap.put("templNames", templNames);
-        queryMap.put("currIndex", (currPage - 1) * pageSize);
-        queryMap.put("pageSize", pageSize);
+        Boolean rtn = checkAndConvertParam(queryMap, jsonObject);
+        if (!rtn) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
         List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
-        Long total = dataRuleTemplMapper.getCounts();
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, pageSize);
+        Long total = dataRuleTemplMapper.getCounts(queryMap.get("createBy").toString());
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
     /**
-     * Description: 数据授权方案-快速分配
+     * Description: 检查输入参数并转换
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/13 11:54
+     * @see
+     */
+    private Boolean checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
+         /*获取当前用户*/
+        String createBy = jsonObject.get("operator").toString();
+        if (StringUtility.isNullOrEmpty(createBy)) {
+            logger.error("当期用户为空");
+            return Boolean.FALSE;
+        }
+        queryMap.put("createBy", createBy);
+        String pageNumber = jsonObject.get("pageNumber").toString();
+        String pageData = jsonObject.get("pageData").toString();
+        if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+            logger.error("分页参数有误");
+            return Boolean.FALSE;
+        }
+        int currPage = Integer.valueOf(pageNumber);
+        int pageSize = Integer.valueOf(pageData);
+        queryMap.put("currIndex", (currPage - 1) * pageSize);
+        queryMap.put("pageSize", pageSize);
+
+        /*获取当前用户的角色*/
+        RoleDO roleDO = new RoleDO();
+        if (roleDO.isAuthorizable()) {
+            //如果是管理员,createBy不作为查询条件
+            queryMap.put("createBy", null);
+        }
+        /*获取模板名称*/
+        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleTemplVO.class);
+
+        String[] templNames = dataRuleTemplVO.templName.split("/r/n");
+        queryMap.put("templNames", templNames);
+
+        return Boolean.TRUE;
+
+
+    }
+
+    /**
+     * Description: 数据授权方案-快速分配 -发送到MQ
      *
      * @param :
      * @return:
@@ -162,6 +171,24 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleDO.setDataRuleId(templId);
         }
         dataRuleMapper.insertBatch(dataRuleDOS);
+
+        /*发送消息到kafka*/
+        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.listByDataRuleId(templId);
+        List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
+            DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+            BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
+            dataRuleSysVOS.add(dataRuleSysVO);
+        }
+
+        List<DataRuleVO> dataRuleVOS = new ArrayList<>();
+        for (String userName : lstUserName) {
+            DataRuleVO dataRuleVO = new DataRuleVO();
+            dataRuleVO.userName = userName;
+            dataRuleVO.lstDataRuleSys = dataRuleSysVOS;
+            dataRuleVOS.add(dataRuleVO);
+        }
+        mqBp.send2Mq(dataRuleVOS);
         return VoHelper.getSuccessResult();
     }
 

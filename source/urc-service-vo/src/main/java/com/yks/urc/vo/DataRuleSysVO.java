@@ -20,5 +20,21 @@ public class DataRuleSysVO  implements Serializable{
     /**
      *
      */
-    public List<DataRuleSqlVO> lstSql;
+    public List<DataRuleSqlVO> urcSqlDOList;
+
+    public String getSysKey() {
+        return sysKey;
+    }
+
+    public void setSysKey(String sysKey) {
+        this.sysKey = sysKey;
+    }
+
+    public List<DataRuleSqlVO> getUrcSqlDOList() {
+        return urcSqlDOList;
+    }
+
+    public void setUrcSqlDOList(List<DataRuleSqlVO> urcSqlDOList) {
+        this.urcSqlDOList = urcSqlDOList;
+    }
 }

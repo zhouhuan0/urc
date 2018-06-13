@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class UrcSqlDO {
     private Long id;
@@ -20,6 +21,16 @@ public class UrcSqlDO {
     private Date modifiedTime;
 
     private String modifiedBy;
+
+    private List<ExpressionDO> expressionDOS;
+
+    public List<ExpressionDO> getExpressionDOS() {
+        return expressionDOS;
+    }
+
+    public void setExpressionDOS(List<ExpressionDO> expressionDOS) {
+        this.expressionDOS = expressionDOS;
+    }
 
     public Long getId() {
         return id;
