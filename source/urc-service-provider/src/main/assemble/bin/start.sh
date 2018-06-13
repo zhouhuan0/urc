@@ -5,7 +5,8 @@ if [ -z "$JAVA_HOME" ] ; then
     JAVA_HOME=/usr/local/java/jdk1.8.0_151
 fi
 
-BASE_HOME=/usr/local/service/urc-service-provider
+#BASE_HOME=/usr/local/service/urc-service-provider
+BASE_HOME=../
 
 #==============================================================================
 #set JAVA_OPTS
