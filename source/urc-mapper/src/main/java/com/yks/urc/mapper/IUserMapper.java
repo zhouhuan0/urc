@@ -66,8 +66,8 @@ public interface IUserMapper {
     int deleteUrcUser();
     
     /**
-     * 通过钉钉
-     * @param userId获取用户
+     * 通过钉钉userId获取用户
+     * @param userId
      * @return
      */
 	UserDO getUserInfoByDingUserId(String userId);
