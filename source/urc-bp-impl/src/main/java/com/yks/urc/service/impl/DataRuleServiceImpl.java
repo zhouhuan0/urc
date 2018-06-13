@@ -98,7 +98,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
         /*3、查询数据群贤模板列表信息*/
-        List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);、
+        List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
         /*4、List<DO> 转 List<VO>*/
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
         /*5、获取总条数*/
