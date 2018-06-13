@@ -5,11 +5,11 @@ import java.util.Date;
 
 public class RoleDO {
 
-    private Integer id;
+    private Long id;
     /**
      * 角色Id
      */
-    private Integer roleId;
+    private Long roleId;
     /**
      * 角色名称
      */
@@ -56,11 +56,11 @@ public class RoleDO {
      */
     private RolePermissionDO permissionDO;
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -145,11 +145,11 @@ public class RoleDO {
         this.createTime = createTime;
     }
 
-    public Integer getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 

@@ -21,12 +21,12 @@
 
     <insert id="insert" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
-     (role_name, is_active,
+     (role_id,role_name, is_active,
       is_authorizable, is_forever, effective_time,
       expire_time, create_time, create_by,
       modified_time, modified_by)
     values
-     ( #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
+     (#{roleId}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
       #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})

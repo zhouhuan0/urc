@@ -7,7 +7,7 @@ public class RolePermissionDO {
     /**
      * 角色id
      */
-    private Integer roleId;
+    private Long roleId;
     /**
      * 业务系统key
      */
@@ -34,11 +34,11 @@ public class RolePermissionDO {
         this.id = id;
     }
 
-    public Integer getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId( Long roleId) {
         this.roleId = roleId;
     }
 

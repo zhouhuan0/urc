@@ -8,7 +8,11 @@
  */
 package com.yks.urc.service;
 
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.UserVO;
 
@@ -25,9 +29,24 @@ public class UrcServiceTest extends BaseServiceTest {
 	private UrcServiceImpl service;
 	@Autowired
 	private IUserValidateBp userValidateBp;
+	@Autowired
+	private ISeqBp seqBp;
+
+	@Autowired
+	IRoleMapper roleMapper;
 
 	@Test
+	public void testSeq() {
+		RoleDO roleDO = new RoleDO();
+		roleDO.setRoleId(seqBp.getNextRoleId());
+		roleDO.setRoleName("py");
+		roleMapper.insert(roleDO);
+		System.out.println(StringUtility.toJSONString_NoException(roleDO));
+//		System.out.println(seqBp.getNextSeq("roleId"));
+	}
+
 	public void test2() {
+
 		String userName = "panyun";
 		String sysKey = "001";
 		List<String> lstRslt = userValidateBp.getFuncJsonLstByUserAndSysKey(userName, sysKey);
