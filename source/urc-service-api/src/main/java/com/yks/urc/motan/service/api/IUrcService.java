@@ -96,5 +96,25 @@ public interface IUrcService {
      * @return
      */
     String getDataRuleTempl(String jsonStr);
+    
+    
+    
+    /**
+     * 根据dataRuleId获取数据权限的用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    String showDataRuleTempl2User(String jsonStr);
+    
+    
+    /**
+     * 根据dataRuleId获取没有数据权限的用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    String showNoDataRuleTempl2User(String jsonStr);
+    
 
 }
