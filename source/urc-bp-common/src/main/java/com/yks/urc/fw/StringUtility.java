@@ -425,7 +425,7 @@ public class StringUtility {
         try {
             return JSON.toJSONString(objSrc, mapping);
         } catch (Exception ex) {
-            return ex.getMessage();
+            return "";
         }
     }
 
