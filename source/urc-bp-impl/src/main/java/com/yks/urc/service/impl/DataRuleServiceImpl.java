@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -56,7 +57,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     public ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String createBy = jsonObject.get("operator").toString();
+        String operator = jsonObject.get("operator").toString();
         Long templId = Long.valueOf(jsonObject.get("templId").toString());
         ResultVO resultVO = new ResultVO();
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
@@ -64,7 +65,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
          * 1、获取权限模板信息
          */
         Long tempId = Long.valueOf(templId);
-        DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(tempId);
+        String createBy = operator;
+        DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, createBy);
         BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
         resultVO.data = dataRuleTemplVO;
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.listByDataRuleId(tempId);
@@ -148,12 +150,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return Boolean.FALSE;
         }
         DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(templJson.toString(), DataRuleTemplVO.class);
-        String[] templNames = dataRuleTemplVO.templName.split("/r/n");
+        String[] templNames = dataRuleTemplVO.templName.split(System.getProperty("line.separator"));
         queryMap.put("templNames", templNames);
         return Boolean.TRUE;
 
 
     }
+
 
     /**
      * Description: 数据授权方案1-快速分配   2-发送到MQ
@@ -164,6 +167,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/12 21:03
      * @see
      */
+    @Transactional
     @Override
     public ResultVO assignDataRuleTempl2User(String jsonStr) {
         /*1、将json字符串转为Json对象*/
@@ -198,6 +202,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleDO.setCreateTime(new Date());
             dataRuleDO.setUserName(userName);
             dataRuleDO.setDataRuleId(templId);
+            dataRuleDOS.add(dataRuleDO);
         }
         dataRuleMapper.insertBatch(dataRuleDOS);
 

@@ -10,7 +10,7 @@ public interface IDataRuleTemplMapper {
 
     int insert(DataRuleTemplDO record);
 
-    DataRuleTemplDO selectByTemplId(Long id);
+    DataRuleTemplDO selectByTemplId(@Param("templId") Long id,@Param("createBy") String createBy);
 
     /**
      * Description: 根据条件分页获取 dataRuleTempDOs List数据

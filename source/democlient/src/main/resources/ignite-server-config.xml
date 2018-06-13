@@ -14,7 +14,7 @@
 
 		<property name="clientMode" value="false" />
 
-		<property name="igniteInstanceName" value="urc" />
+		<property name="igniteInstanceName" value="oms" />
 
 		<property name="discoverySpi" ref="tcpDiscoverySpi" />
 	</bean>
@@ -29,6 +29,6 @@
 		<property name="zkConnectionString"
 			value="192.168.201.211:2181,192.168.201.212:2181,192.168.201.213:2181" />
 
-		<property name="basePath" value="/ignite-cluster/urc" />
+		<property name="basePath" value="/ignite-cluster/oms" />
 	</bean>
 </beans>

@@ -1,12 +1,16 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.DataRuleDO;
+import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.UserVO;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,7 +137,29 @@ public class UrcServiceImpl implements IUrcService {
 		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
 	}
 
+	@Override
+	public String showDataRuleTempl2User(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
+		return StringUtility.toJSONString_NoException(userService.queryUserDataByRuleId(ruleDO));
+	}
 
+	@Override
+	public String showNoDataRuleTempl2User(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
+		return StringUtility.toJSONString_NoException(userService.queryUserNoDataByRuleId(ruleDO));
+	}
+
+
+    public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
+        return userService.getPlatformList(operator);
+    }
+
+
+    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
+        return userService.getShopList(operator, platform);
+    }
 
     @Override
     public String checkDuplicateRoleName(String operator, String newRoleName, Integer roleId) {

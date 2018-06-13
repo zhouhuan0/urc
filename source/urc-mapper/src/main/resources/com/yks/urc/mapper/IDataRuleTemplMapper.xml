@@ -16,11 +16,16 @@
     id, templ_id,templ_name, user_name, remark, create_time, create_by, modified_time, modified_by
   </sql>
     <!--根据模板Id获取数据-->
-    <select id="selectByTemplId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="selectByTemplId"  resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_data_rule_templ
-        where templ_id = #{templId,jdbcType=BIGINT}
+        <where>
+            templ_id = #{templId,jdbcType=BIGINT}
+            <if test="createBy != null and createBy != ''">
+               and create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+        </where>
     </select>
     <!--分页-->
     <select id="listDataRuleTemplDOsByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -38,6 +43,7 @@
                 </foreach>
             </if>
         </where>
+        order by create_time desc
         limit #{currIndex},#{pageSize}
     </select>
     <select id="getCounts" resultType="java.lang.Long">

@@ -1,10 +1,9 @@
 package com.yks.urc.service.api;
 
 import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.vo.NullVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
+
+import java.util.List;
 
 public interface IUserService {
 	ResultVO syncUserInfo(UserVO curUser);
@@ -34,5 +33,18 @@ public interface IUserService {
 	 * @return
 	 */
 	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
+	/**
+	 *  获取所有平台
+	 * @param operator
+	 * @return
+	 */
+	ResultVO<List<OmsPlatformVO>> getPlatformList(String operator);
+	/**
+	 *  获取指定平台下的账号,站点
+	 * @param operator
+	 * @param platform
+	 * @return
+	 */
+	ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
 
 }
