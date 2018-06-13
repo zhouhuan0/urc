@@ -89,14 +89,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
      */
     @Override
     public ResultVO<PageResultVO> getDataRuleTempl(String jsonStr) {
+        /*1、json字符串转json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        /*2、请求参数的基本校验并转换为内部使用的Map*/
         Map<String, Object> queryMap = new HashMap<>();
         Boolean rtn = checkAndConvertParam(queryMap, jsonObject);
         if (!rtn) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
-        List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
+        /*3、查询数据群贤模板列表信息*/
+        List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);、
+        /*4、List<DO> 转 List<VO>*/
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
+        /*5、获取总条数*/
         Long total = dataRuleTemplMapper.getCounts(queryMap.get("createBy").toString());
         PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
         return VoHelper.getSuccessResult(pageResultVO);
@@ -136,19 +141,22 @@ public class DataRuleServiceImpl implements IDataRuleService {
             //如果是管理员,createBy不作为查询条件
             queryMap.put("createBy", null);
         }
-        /*获取模板名称*/
-        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleTemplVO.class);
-
+        /*获取复数模板名称*/
+        JSONObject templJson = jsonObject.getJSONObject("templ");
+        if (templJson == null) {
+            logger.error("分页参数 templ 有误");
+            return Boolean.FALSE;
+        }
+        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(templJson.toString(), DataRuleTemplVO.class);
         String[] templNames = dataRuleTemplVO.templName.split("/r/n");
         queryMap.put("templNames", templNames);
-
         return Boolean.TRUE;
 
 
     }
 
     /**
-     * Description: 数据授权方案-快速分配 -发送到MQ
+     * Description: 数据授权方案1-快速分配   2-发送到MQ
      *
      * @param :
      * @return:
@@ -158,10 +166,31 @@ public class DataRuleServiceImpl implements IDataRuleService {
      */
     @Override
     public ResultVO assignDataRuleTempl2User(String jsonStr) {
+        /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        /*2、获取参数并校验*/
         String createBy = jsonObject.get("operator").toString();
-        Long templId = Long.valueOf(jsonObject.get("templId").toString());
-        List<String> lstUserName = StringUtility.jsonToList(jsonObject.get("lstUserName").toString(), String.class);
+        if (StringUtil.isEmpty(createBy)) {
+            logger.error("当前用户为空");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        String templIdStr = jsonObject.get("templId").toString();
+        if (!StringUtil.isNum(templIdStr)) {
+            logger.error("参数有误");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
+        Long templId = Long.valueOf(templIdStr);
+        String lstUserNameStr = jsonObject.get("lstUserName").toString();
+        if (StringUtil.isEmpty(templIdStr)) {
+            logger.error("参数有误");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        List<String> lstUserName = StringUtility.jsonToList(lstUserNameStr, String.class);
+        if (lstUserName == null || lstUserName.isEmpty()) {
+            logger.error("参数有误");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
+        /*3、批量添加用户-数据权限关系到数据库*/
         List<DataRuleDO> dataRuleDOS = new ArrayList<>();
         for (String userName : lstUserName) {
             DataRuleDO dataRuleDO = new DataRuleDO();
@@ -172,7 +201,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         dataRuleMapper.insertBatch(dataRuleDOS);
 
-        /*发送消息到kafka*/
+        /*4、发送消息到kafka*/
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.listByDataRuleId(templId);
         List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
@@ -180,7 +209,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
             BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
             dataRuleSysVOS.add(dataRuleSysVO);
         }
-
         List<DataRuleVO> dataRuleVOS = new ArrayList<>();
         for (String userName : lstUserName) {
             DataRuleVO dataRuleVO = new DataRuleVO();
@@ -192,6 +220,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return VoHelper.getSuccessResult();
     }
 
+    /**
+     * Description: List<DO> 转List<VO>
+     *
+     * @param : dataRuleTemplDOS
+     * @return: List<DataRuleTemplVO>
+     * @auther: lvcr
+     * @date: 2018/6/13 13:00
+     * @see
+     */
     private List<DataRuleTemplVO> convertDoToVO(List<DataRuleTemplDO> dataRuleTemplDOS) {
         List<DataRuleTemplVO> dataRuleTemplVOS = new ArrayList<>();
         for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
