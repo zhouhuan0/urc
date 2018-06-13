@@ -1,11 +1,13 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.DataRuleTemplVO;
+import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
@@ -134,6 +136,20 @@ public class UrcServiceImpl implements IUrcService {
 		UserVO curUser=new UserVO();
 		curUser.userName="hand";
 		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
+	}
+
+	@Override
+	public String showDataRuleTempl2User(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
+		return StringUtility.toJSONString_NoException(userService.queryUserDataByRuleId(ruleDO));
+	}
+
+	@Override
+	public String showNoDataRuleTempl2User(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
+		return StringUtility.toJSONString_NoException(userService.queryUserNoDataByRuleId(ruleDO));
 	}
 
 
