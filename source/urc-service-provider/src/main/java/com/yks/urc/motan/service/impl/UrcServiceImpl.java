@@ -6,12 +6,9 @@ import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.PersonVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,5 +150,13 @@ public class UrcServiceImpl implements IUrcService {
 	}
 
 
+    public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
+        return userService.getPlatformList(operator);
+    }
+
+
+    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
+        return userService.getShopList(operator, platform);
+    }
 
 }
