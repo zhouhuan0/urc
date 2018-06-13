@@ -1,8 +1,8 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.bp.impl.UserBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.UserVO;
 import org.junit.Assert;
 import org.junit.Test;

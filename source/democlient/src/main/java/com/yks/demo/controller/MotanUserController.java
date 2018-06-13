@@ -33,15 +33,14 @@ public class MotanUserController {
 		UserVO curUser = new UserVO();
 		curUser.userName = "py";
 		curUser.userName = "py_" + UUID.randomUUID().toString();
-		return urcService.syncUserInfo(curUser);// .sayHello(msg);
+		return StringUtility.parseObject(urcService.syncUserInfo(curUser), ResultVO.class);// .sayHello(msg);
 	}
 
-	/*@RequestMapping("/sayHello2/{msg}")
-	public String sayHello2(@PathVariable String msg) {
-		// ResultVO rslt = userService.syncUserInfo();
-		// return "110";
-		return urcService.sayHello2(msg);// .sayHello(msg);
-	}*/
+	/*
+	 * @RequestMapping("/sayHello2/{msg}") public String sayHello2(@PathVariable
+	 * String msg) { // ResultVO rslt = userService.syncUserInfo(); // return "110";
+	 * return urcService.sayHello2(msg);// .sayHello(msg); }
+	 */
 
 	@RequestMapping("/login/{userName}/{pwd}")
 	public ResultVO login(@PathVariable String userName, @PathVariable String pwd) {
@@ -49,11 +48,11 @@ public class MotanUserController {
 	}
 
 	private ResultVO loginTest(String userName, String pwd) {
-		Map<String,String> map=new HashMap<String,String>();
+		Map<String, String> map = new HashMap<String, String>();
 		map.put("userName", userName);
 		map.put("pwd", pwd);
 		map.put("ip", "127.0.0.1");
-		return urcService.login(map);
+		return StringUtility.parseObject(urcService.login(map), ResultVO.class);
 	}
 
 	private ExecutorService service = Executors.newCachedThreadPool(); // 创建一个线程池
