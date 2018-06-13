@@ -30,6 +30,8 @@ import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
+import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.operation.bp.imp.OperationBpImpl;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.PersonVO;
@@ -55,6 +57,9 @@ public class PersonServiceImpl implements IPersonService {
 	
     @Autowired
     private IUserMapper userMapper;
+    
+    @Autowired
+    private IOperationBp operationBp;
 
 	@Override
 	public ResultVO getUserByDingOrgId(PersonVO person,int pageNumber, int pageData) {
@@ -112,16 +117,25 @@ public class PersonServiceImpl implements IPersonService {
 				personMapper.insertBatchPerson(personList);
 				//插入部门人员表
 				personOrgMapper.insertBatchPersonOrg(personOrgList);
+				operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
 				return VoHelper.getSuccessResult();
 				
 			} catch (Exception e) {
 				logger.error("同步钉钉数据出错，message={}",e.getMessage());
+				operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
 				return VoHelper.getErrorResult();
 			}finally{
 				lock.unlock();
 				logger.info("同步钉钉数据完成");
 			}
 		}else{
+			if("system".equals(userName)){
+				//手动触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
+			}else{
+				//定时任务触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
+			}
 	        logger.info("同步钉钉数据正在执行...,");
 	        return VoHelper.getSuccessResult("正在同步");
 		}

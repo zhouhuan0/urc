@@ -81,7 +81,7 @@ public class UserValidateBp implements IUserValidateBp {
 		for (ModuleVO m : lstModuleRslt) {
 			System.out.println(m.sysKey + " " + m.pageFullPathName + " " + StringUtility.toJSONString_NoException(m.lstChildFunc));
 		}
-		
+
 		return lstModuleRslt;
 	}
 
@@ -284,5 +284,12 @@ public class UserValidateBp implements IUserValidateBp {
 	private static void distinctFunction(FunctionVO function1, FunctionVO function2) {
 		// 合并function下的functions
 		distinctFunctions(function1.function, function2.function);
+	}
+
+	
+	@Override
+	public String createTicket(String strUserName, String ip) {
+		return StringUtility.md5_NoException(String.format("%s%s%s", strUserName, ip, StringUtility.getUUIDLowercase_Dt()));
+
 	}
 }

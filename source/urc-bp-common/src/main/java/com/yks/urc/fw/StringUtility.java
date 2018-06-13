@@ -425,7 +425,7 @@ public class StringUtility {
         try {
             return JSON.toJSONString(objSrc, mapping);
         } catch (Exception ex) {
-            return ex.getMessage();
+            return "";
         }
     }
 
@@ -790,7 +790,7 @@ public class StringUtility {
         try {
             return md5(encryptStr);
         } catch (Exception ex) {
-            return encryptStr;
+            return Empty;
         }
     }
 

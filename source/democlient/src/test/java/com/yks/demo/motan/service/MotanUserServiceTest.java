@@ -29,17 +29,17 @@ public class MotanUserServiceTest {
 	@Test
 	public void testSayHello() {
 		try {
-			Map<String,String> map=new HashMap<String,String>();
+			Map<String, String> map = new HashMap<String, String>();
 			map.put("userName", "panyun");
 			map.put("pwd", "123456");
 			map.put("ip", "127.0.0.1");
-			ResultVO rslt = urcService.login(map);
-			System.out.println(StringUtility.toJSONString_NoException(rslt));
+			String rslt = urcService.login(map);
+			System.out.println(rslt);
 
-//			for (int i = 0; i < 10; i++) {
-//				authUser.userName = "panyun" + i;
-//				urcService.login(curUser, authUser);
-//			}
+			// for (int i = 0; i < 10; i++) {
+			// authUser.userName = "panyun" + i;
+			// urcService.login(curUser, authUser);
+			// }
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

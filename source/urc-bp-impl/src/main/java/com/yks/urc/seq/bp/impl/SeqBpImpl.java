@@ -12,9 +12,9 @@ public class SeqBpImpl implements ISeqBp {
 
 	public long getNextSeq(String strSeqName) {
 		String seqName = strSeqName;
-		String strSeq = AtomicSequenceGenerator.generateSequenceStr(seqName, 5);
+		String strSeq = AtomicSequenceGenerator.generateSequenceStr(seqName);
 		System.out.println(strSeq);
-		String lSeq = strSeq.substring(seqName.length() + 8);
+		String lSeq = strSeq.substring(seqName.length() + 10);
 		long lNow = System.currentTimeMillis();
 		long uuid = Long.parseLong(String.format("%s%s", lNow, lSeq));
 		return uuid;
