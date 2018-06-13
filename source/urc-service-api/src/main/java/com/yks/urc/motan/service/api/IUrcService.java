@@ -34,8 +34,20 @@ public interface IUrcService {
      * @return
      */
     String syncDingOrgAndUser();
+    
+    /**
+     * 同步userInfo数据
+     * @return
+     */
+    String syncUserInfo();
 
-
+    /**
+     * 用户管理搜索用户
+     * @return
+     */
+    String getUsersByUserInfo(String params);
+    
+    
     /**
      * 根据DingOrgId获取人员信息含有分页
      *

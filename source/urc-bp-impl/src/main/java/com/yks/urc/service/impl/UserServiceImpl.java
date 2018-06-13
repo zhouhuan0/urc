@@ -26,6 +26,7 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.LoginRespVO;
+import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.VoHelper;
@@ -80,6 +81,11 @@ public class UserServiceImpl implements IUserService {
 			return VoHelper.getSuccessResult(userList);
 		}
 		return VoHelper.getErrorResult();
+	}
+
+	@Override
+	public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
+		return userBp.getUsersByUserInfo(userVO, pageNumber, pageData);
 	}
 
 }

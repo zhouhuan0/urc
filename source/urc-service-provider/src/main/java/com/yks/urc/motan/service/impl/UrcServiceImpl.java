@@ -75,6 +75,18 @@ public class UrcServiceImpl implements IUrcService {
         return StringUtility.toJSONString_NoException(organizationService.getAllOrgTree());
     }
 
+    
+	@Override
+	public String getUsersByUserInfo(String params) {
+        JSONObject jsonObject = StringUtility.parseString(params);
+        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        UserVO userVO = StringUtility.parseObject(jsonObject.get("templ").toString(), UserVO.class);
+		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(userVO, pageNumber, pageData));
+	}
+
+	
+	
     /**
      * Description: 快速分配数据权限模板给用户
      *
@@ -116,6 +128,14 @@ public class UrcServiceImpl implements IUrcService {
     public String getDataRuleTempl(String jsonStr) {
         return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleTempl(jsonStr));
     }
+
+	@Override
+	public String syncUserInfo() {
+		UserVO curUser=new UserVO();
+		curUser.userName="hand";
+		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
+	}
+
 
 
 }
