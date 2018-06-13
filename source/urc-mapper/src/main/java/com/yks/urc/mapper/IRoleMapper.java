@@ -80,4 +80,13 @@ public interface IRoleMapper {
     String selectRoleName(@Param("roleName") String roleName);
 	List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
 
+    /**
+     * 获取给定角色名的数据数量
+     * @param newRoleName
+     * @param roleId
+     * @return 数量
+     * @Author oujie
+     * @Date 2018/6/12 16:57
+     */
+	int selectCountByRoleName(@Param("newRoleName") String newRoleName, @Param("roleId") String roleId);
 }

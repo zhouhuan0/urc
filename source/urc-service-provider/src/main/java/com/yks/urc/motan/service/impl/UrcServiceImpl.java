@@ -7,6 +7,8 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.PersonVO;
+import com.yks.urc.vo.UserVO;
 
 import java.util.List;
 import java.util.Map;
@@ -159,4 +161,8 @@ public class UrcServiceImpl implements IUrcService {
         return userService.getShopList(operator, platform);
     }
 
+    @Override
+    public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+        return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
+    }
 }
