@@ -20,7 +20,7 @@ public class DataRuleSysVO  implements Serializable{
     /**
      *
      */
-    public List<DataRuleSqlVO> urcSqlDOList;
+    public List<UrcSqlVO> urcSqlDOList;
 
     public String getSysKey() {
         return sysKey;
@@ -30,11 +30,11 @@ public class DataRuleSysVO  implements Serializable{
         this.sysKey = sysKey;
     }
 
-    public List<DataRuleSqlVO> getUrcSqlDOList() {
+    public List<UrcSqlVO> getUrcSqlDOList() {
         return urcSqlDOList;
     }
 
-    public void setUrcSqlDOList(List<DataRuleSqlVO> urcSqlDOList) {
+    public void setUrcSqlDOList(List<UrcSqlVO> urcSqlDOList) {
         this.urcSqlDOList = urcSqlDOList;
     }
 }

@@ -11,4 +11,6 @@ public interface IDataRuleService {
     ResultVO<PageResultVO> getDataRuleTempl(String jsonStr);
 
     ResultVO assignDataRuleTempl2User(String jsonStr);
+
+    ResultVO<DataRuleTemplVO> addOrUpdateDataRuleTempl(String jsonStr);
 }

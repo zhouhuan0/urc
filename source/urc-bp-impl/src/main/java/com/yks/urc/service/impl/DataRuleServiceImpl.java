@@ -8,6 +8,7 @@ import com.yks.urc.entity.*;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.*;
 import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
@@ -44,6 +45,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private IMqBp mqBp;
+
+    @Autowired
+    private ISeqBp seqBp;
 
     /**
      * Description: 根据模板Id获取数据权限模板
@@ -120,14 +124,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
      */
     private Boolean checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
          /*获取当前用户*/
-        String createBy = jsonObject.get("operator").toString();
+        String createBy = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(createBy)) {
             logger.error("当期用户为空");
             return Boolean.FALSE;
         }
         queryMap.put("createBy", createBy);
-        String pageNumber = jsonObject.get("pageNumber").toString();
-        String pageData = jsonObject.get("pageData").toString();
+        String pageNumber = jsonObject.getString("pageNumber");
+        String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
             logger.error("分页参数有误");
             return Boolean.FALSE;
@@ -173,18 +177,18 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数并校验*/
-        String createBy = jsonObject.get("operator").toString();
+        String createBy = jsonObject.getString("operator");
         if (StringUtil.isEmpty(createBy)) {
             logger.error("当前用户为空");
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
-        String templIdStr = jsonObject.get("templId").toString();
+        String templIdStr = jsonObject.getString("templId");
         if (!StringUtil.isNum(templIdStr)) {
             logger.error("参数有误");
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
         Long templId = Long.valueOf(templIdStr);
-        String lstUserNameStr = jsonObject.get("lstUserName").toString();
+        String lstUserNameStr = jsonObject.getString("lstUserName");
         if (StringUtil.isEmpty(templIdStr)) {
             logger.error("参数有误");
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
@@ -223,6 +227,51 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         mqBp.send2Mq(dataRuleVOS);
         return VoHelper.getSuccessResult();
+    }
+
+    /**
+     * Description:新增或编辑一个方案
+     *
+     * @param :jsonStr
+     * @return: ResultVO<DataRuleTemplVO>
+     * @auther: lvcr
+     * @date: 2018/6/13 15:06
+     * @see
+     */
+    @Transactional
+    @Override
+    public ResultVO<DataRuleTemplVO> addOrUpdateDataRuleTempl(String jsonStr) {
+        /*1、将json字符串转为Json对象*/
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        /*2、获取参数*/
+        String operator = jsonObject.getString("operator");
+        DataRuleTemplVO templVO = StringUtility.parseObject(jsonObject.getString("templ"), DataRuleTemplVO.class);
+        /*3、新增数据权限模板  urc_data_rule_templ记录*/
+        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
+        dataRuleTemplDO.setCreateBy(operator);
+        dataRuleTemplDO.setCreateTime(new Date());
+        Long templId = seqBp.getNextDataRuleTemplId();
+        dataRuleTemplDO.setTemplId(templId);
+        dataRuleTemplMapper.insert(dataRuleTemplDO);
+        /*4、操作数据权限系统 urc_data_rule_sys*/
+        List<DataRuleSysVO> dataRuleSysVOList = templVO.getLstDataRuleSys();
+        List<DataRuleSysDO> dataRuleSysDOS = new ArrayList<>();
+        for (DataRuleSysVO dataRuleSysVO : dataRuleSysVOList) {
+            DataRuleSysDO dataRuleSysDO = new DataRuleSysDO();
+            BeanUtils.copyProperties(dataRuleSysVO, dataRuleSysDO);
+            dataRuleSysDO.setDataRuleId(templId);
+            Long dataRuleSysId = seqBp.getNextDataRuleSysId();
+            dataRuleSysDO.setDataRuleSysId(dataRuleSysId);
+            dataRuleSysDO.setCreateBy(operator);
+            dataRuleSysDO.setCreateTime(new Date());
+            dataRuleSysDOS.add(dataRuleSysDO);
+            /*5、操作urc_sql数据*/
+            List<UrcSqlVO> urcSqlVOS = dataRuleSysVO.urcSqlDOList;
+        }
+
+
+        return null;
     }
 
     /**
