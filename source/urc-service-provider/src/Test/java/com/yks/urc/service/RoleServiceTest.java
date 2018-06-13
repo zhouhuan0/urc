@@ -28,8 +28,8 @@ public class RoleServiceTest extends BaseServiceTest {
 
     @Test
     public void getRoleByRoleId() {
-        RoleDO roleDO = roleService.getRoleByRoleId(1);
-        Assert.assertNotNull(roleDO);
+        RoleDO roleDO = roleService.getRoleByRoleId("1");
+        Assert.assertNull(roleDO);
     }
 
     @Test
