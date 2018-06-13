@@ -67,7 +67,8 @@ public interface IRoleMapper {
      */
 //    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 
-    RoleDO getRoleByRoleId(Integer roleId);
+    RoleDO getRoleByRoleId(long roleId);
+
 
     /**
      * 根据用户名 获取角色名称
@@ -81,12 +82,21 @@ public interface IRoleMapper {
 	List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
 
     /**
-     * 获取给定角色名的数据数量
+     * 给定角色名的数据是否已存在
      * @param newRoleName
      * @param roleId
      * @return 数量
      * @Author oujie
      * @Date 2018/6/12 16:57
      */
-	int selectCountByRoleName(@Param("newRoleName") String newRoleName, @Param("roleId") String roleId);
+	boolean checkDuplicateRoleName(@Param("newRoleName") String newRoleName, @Param("roleId") String roleId);
+
+    /**
+     * 判断当前用户是否为超级管理员用户
+     * @param userName
+     * @return true-是 false-否
+     * @Author oujie
+     * @Date 2018/6/13 17:27
+     */
+	boolean isAdminAccount(@Param("userName") String userName);
 }

@@ -14,6 +14,9 @@ import java.util.List;
 
 public class RoleVO implements Serializable {
     private static final long serialVersionUID = -706052625111152853L;
+    
+    public long roleId;
+    
     /**
      *
      */
@@ -175,4 +178,15 @@ public class RoleVO implements Serializable {
     public void setLstUserName(List<String> lstUserName) {
         this.lstUserName = lstUserName;
     }
+
+	public long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(long roleId) {
+		this.roleId = roleId;
+	}
+    
+    
+    
 }

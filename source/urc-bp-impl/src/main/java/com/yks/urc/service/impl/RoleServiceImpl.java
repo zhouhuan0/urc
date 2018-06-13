@@ -11,6 +11,7 @@ import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
@@ -24,7 +25,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.Role;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -50,6 +53,12 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private IUserRoleMapper userRoleMapper;
+    
+    @Autowired
+    private IUserMapper userMapper;
+
+    @Autowired
+    private ISeqBp seqBp;
 
     @Autowired
     private ISeqBp seqBp;
@@ -334,10 +343,27 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<RoleVO> getRoleUser(List<String> lstRoleId) {
+    public ResultVO getRoleUser(List<String> lstRoleId) {
         /*非管理员只能查看自己创建的角色*/
+    	List<RoleVO> roleList=new ArrayList<>();
+    	for (int i = 0; i < lstRoleId.size(); i++) {
+    		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+    		RoleVO roleVO=new RoleVO();
+    		roleVO.setRoleName(roleDO.getRoleName());
+    		roleVO.setRoleId(roleDO.getRoleId());
+    		if(roleDO.isAuthorizable()){
+    			//管理员
+    			List<String> lstUserName= userMapper.listAllUsersUserName();
+    			roleVO.setLstUserName(lstUserName);
+    		}else{
+    			//非管理员
+    			List<String> lstUserName =userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
+    			roleVO.setLstUserName(lstUserName);
+    		}
+    		roleList.add(roleVO);
+		}
         /*查询用户角色关系表*/
-        return null;
+        return VoHelper.getSuccessResult(roleList);
     }
 
     /**
@@ -361,7 +387,7 @@ public class RoleServiceImpl implements IRoleService {
     /**
      * Description:
      * 1、复制角色
-     *
+     *  复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
      * @param :
      * @return:
      * @auther: lvcr
@@ -369,14 +395,42 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public void copyRole(String strUserName, String newRoleName, String sourceRoleId) {
+    @Transactional(rollbackFor = Exception.class)
+    public void copyRole(String operator, String newRoleName, String sourceRoleId) {
         /*非admin用户只能管理自己创建的角色*/
+        RoleDO roleDO = getRoleInfo(operator, newRoleName, Long.parseLong(sourceRoleId));
+        //复制角色信息
+        roleDO.setRoleId(seqBp.getNextRoleId());
+        roleDO.setRoleName(newRoleName);
+        roleMapper.insert(roleDO);
         /*复制对应的角色权功能限关系*/
+        List<RoleDO> rolePermission = getRolePermission(Arrays.asList(sourceRoleId));
+//        rolePermission.stream().forEach(role -> {
+//            role.getPermissionDO()
+//        });
+    }
+
+    /**
+     *
+     * 判断当前操作者权限,再获取被复制角色信息
+     * 1.管理员用户可以复制所有角色信息
+     * 2.普通用户只能复制自己创建的角色信息
+     */
+    private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId){
+        if (roleMapper.checkDuplicateRoleName(newRoleName, null)){
+            throw new RuntimeException("角色名已存在");
+        }
+        //判断当前被复制角色是否为当前用户创建的角色
+        RoleDO roleDO = roleMapper.getRoleByRoleId(sourceRoleId);
+        //判断当前用户是否为管理员用户
+        if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())){
+            return roleDO;
+        }
+        throw new RuntimeException("普通用户只能复制自己创建的角色信息");
     }
 
     @Override
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
-        int count = roleMapper.selectCountByRoleName(newRoleName, roleId);
-        return VoHelper.getSuccessResult(count > 0 ? 1 : 0);
+        return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId)?1:0);
     }
 }

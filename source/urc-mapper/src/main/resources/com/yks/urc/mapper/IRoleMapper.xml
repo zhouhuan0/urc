@@ -3,6 +3,7 @@
 <mapper namespace="com.yks.urc.mapper.IRoleMapper">
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleDO">
         <id column="id" jdbcType="TINYINT" property="id"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="is_active" jdbcType="TINYINT" property="isActive"/>
         <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
@@ -65,14 +66,12 @@
         </foreach>
     </delete>
     <!--根据角色Id获取角色信息-->
-    <select id="getRoleByRoleId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from urc_role
-        where id = #{id,jdbcType=TINYINT}
+        where role_id = #{roleId,jdbcType=TINYINT}
     </select>
-
-
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
         update urc_role
         <set>
@@ -135,14 +134,21 @@
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
 
-    <!--获取给定角色名的数据数量-->
-    <select id="selectCountByRoleName" resultType="Integer">
-        SELECT count(id) FROM urc_role r
+    <!--给定角色名的数据是否已存在-->
+    <select id="checkDuplicateRoleName" resultType="Boolean">
+        SELECT COUNT(id) > 0 FROM urc_role r
         <where>
             r.role_name = #{newRoleName}
             <if test="roleId != null">
                 and r.id != #{roleId}
             </if>
         </where>
+    </select>
+
+    <!--判断给定的用户是否是管理员角色-->
+    <select id="isAdminAccount" resultType="Boolean">
+        SELECT COUNT(r.role_id) > 0 FROM urc_user_role ur
+        LEFT JOIN urc_role r ON ur.role_id = r.role_id AND r.is_authorizable = 1
+        WHERE ur.user_name = #{userName}
     </select>
 </mapper>

@@ -73,8 +73,14 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
         RoleDO roleDO = roleMapper.getRoleByRoleId(1);
-        Assert.assertNotNull(roleDO);
+        Assert.assertNull(roleDO);
     }
 
-
+    @Test
+    public void testIsAdminAccount(){
+        //非管理员用户
+        Assert.assertEquals(roleMapper.isAdminAccount("panyun"), false);
+        //管理员用户
+        Assert.assertEquals(roleMapper.isAdminAccount("oujie"), true);
+    }
 }

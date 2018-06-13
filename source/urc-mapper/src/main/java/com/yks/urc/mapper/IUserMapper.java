@@ -20,7 +20,7 @@ public interface IUserMapper {
 
     int updateByPrimaryKey(UserDO record);
 
-    List<UserDO> listUsersByRoleId(Integer roleId);
+    List<UserDO> listUsersByRoleId(long roleId);
 
     /**
      *
@@ -86,5 +86,20 @@ public interface IUserMapper {
 	 * @return
 	 */
 	List<UserDO> queryUserNoDataByRuleId(DataRuleDO ruleDO);
+
+	/**
+	 * 获取所有的用户
+	 * @return
+	 */
+	List<String> listAllUsersUserName();
+	
+	
+    /**
+     * 根据roleId查看所有用户名称
+     * @param roleId
+     * @return
+     */
+    List<String> listUsersUserNameByRoleId(Long roleId);
+
 
 }
