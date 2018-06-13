@@ -11,6 +11,8 @@ import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
 
+import java.util.List;
+
 @Component
 public class MqBpImpl implements IMqBp {
 
@@ -37,5 +39,10 @@ public class MqBpImpl implements IMqBp {
 			};
 			KafkaProducerSingleton.getInstance().send(arg0, arg1);
 		}
+	}
+
+	@Override
+	public void send2Mq(List<DataRuleVO> dataRuleVOList) {
+
 	}
 }
