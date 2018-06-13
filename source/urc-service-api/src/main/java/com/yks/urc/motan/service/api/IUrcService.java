@@ -1,8 +1,11 @@
 package com.yks.urc.motan.service.api;
 
+import java.util.List;
 import java.util.Map;
 
 import com.weibo.api.motan.config.springsupport.annotation.MotanService;
+import com.yks.urc.vo.OmsAccountVO;
+import com.yks.urc.vo.OmsPlatformVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
@@ -115,6 +118,19 @@ public interface IUrcService {
      * @return
      */
     String showNoDataRuleTempl2User(String jsonStr);
-    
 
+    /**
+     *  获取所有平台
+     * @param operator
+     * @return
+     */
+    ResultVO<List<OmsPlatformVO>> getPlatformList(String operator);
+
+    /**
+     *  获取指定平台下的店铺名称和站点
+     * @param operator
+     * @param platform
+     * @return
+     */
+    ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
 }

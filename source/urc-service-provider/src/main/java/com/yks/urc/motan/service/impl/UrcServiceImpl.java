@@ -149,12 +149,12 @@ public class UrcServiceImpl implements IUrcService {
 		return StringUtility.toJSONString_NoException(userService.queryUserNoDataByRuleId(ruleDO));
 	}
 
-
+    @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
         return userService.getPlatformList(operator);
     }
 
-
+    @Override
     public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
         return userService.getShopList(operator, platform);
     }
