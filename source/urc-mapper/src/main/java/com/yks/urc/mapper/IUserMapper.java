@@ -1,5 +1,6 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
@@ -71,5 +72,19 @@ public interface IUserMapper {
      * @return
      */
 	UserDO getUserInfoByDingUserId(String userId);
+
+	/**
+	 * 根据ruleId查看哪些用户已经拥有数据权限
+	 * @param ruleDO
+	 * @return
+	 */
+	List<UserDO> queryUserDataByRuleId(DataRuleDO ruleDO);
+	
+	/**
+	 * 根据ruleId查看哪些用户没有数据权限
+	 * @param ruleDO
+	 * @return
+	 */
+	List<UserDO> queryUserNoDataByRuleId(DataRuleDO ruleDO);
 
 }

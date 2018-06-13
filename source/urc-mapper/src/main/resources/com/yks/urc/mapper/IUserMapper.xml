@@ -57,6 +57,38 @@
         from urc_user 
         where ding_user_id = #{userId,jdbcType=VARCHAR}
     </select>
+    
+   <select id="queryUserDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_user 
+        where  user_name  in 
+        ( SELECT user_name from urc_data_rule 
+          <where>
+     		 <if test="dataRuleId != null and dataRuleId != '' ">
+     		 	data_rule_id = #{dataRuleId,jdbcType=BIGINT} 
+     		 </if>
+    		 </where> 
+       )
+    </select>
+    
+    <select id="queryUserNoDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_user 
+        where  user_name  not in 
+        ( SELECT user_name from urc_data_rule 
+          <where>
+     		 <if test="dataRuleId != null and dataRuleId != '' ">
+     		 	data_rule_id = #{dataRuleId,jdbcType=BIGINT} 
+     		 </if>
+    	  </where> 
+       )
+        <if test="userName != null and userName != '' ">
+ 		 	 and user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+ 		</if>
+       
+    </select>
 
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
