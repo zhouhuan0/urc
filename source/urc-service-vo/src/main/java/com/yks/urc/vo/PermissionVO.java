@@ -6,7 +6,7 @@ import java.io.Serializable;
   * 〈功能权限VO〉
   * @author lvcr
   * @version 1.0 
-  * @see PermissionVO 
+  * @see PermissionVO
   * @since JDK1.8
   * @date 2018/6/9 10:46
   */ 

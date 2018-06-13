@@ -27,7 +27,7 @@ public interface IUserRoleMapper {
      * @date: 2018/6/8 15:06
      * @see
      */
-    Integer deleteBatch(List<Integer> ids);
+    Integer deleteBatch(List<Long> ids);
 
     /**
      * 根据用户名获取sysKey
@@ -38,4 +38,26 @@ public interface IUserRoleMapper {
      * @Date 2018/6/12 15:59
      */
     List<String> getSysKeyByUser(@Param("userName") String userName);
+
+    /**
+     * Description: 批量新增或更新用户-角色关系表
+     *
+     * @param :userRoleDOS
+     * @return:Integer
+     * @auther: lvcr
+     * @date: 2018/6/13 20:17
+     * @see
+     */
+    Integer insertBatch(List<UserRoleDO> userRoleDOS);
+
+    /**
+     * Description: 根据roleId删除
+     *
+     * @param :roleId
+     * @return: Integer
+     * @auther: lvcr
+     * @date: 2018/6/13 20:51
+     * @see
+     */
+    Integer deleteByRoleId(Long roleId);
 }

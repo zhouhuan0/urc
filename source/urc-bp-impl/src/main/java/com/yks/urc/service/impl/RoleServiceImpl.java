@@ -1,11 +1,18 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.enums.UserCentralStatusEnum;
+import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserInfoDO;
+import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
 
 import com.yks.urc.vo.*;
@@ -44,6 +51,9 @@ public class RoleServiceImpl implements IRoleService {
     @Autowired
     private IUserRoleMapper userRoleMapper;
 
+    @Autowired
+    private ISeqBp seqBp;
+
     /**
      * Description:
      * 1、根据多个条件获取角色列表
@@ -67,7 +77,6 @@ public class RoleServiceImpl implements IRoleService {
      * Description: 新增或更新角色基础信息、功能权限、用户
      * 1、roleName存在则更新
      * 2、roleName不存在则新增
-     * 3、
      *
      * @param :userName
      * @param roleVO
@@ -94,50 +103,115 @@ public class RoleServiceImpl implements IRoleService {
           /*2、功能权限数据为空，说明没有赋权操作，故不需要添加或更新角色-功能权限 信息*/
         if (permissionVOS == null || permissionVOS.isEmpty()) {
             //permissionVOS没有数据时候，说明没有更改角色-权限数据
-        }else{
-            insertOrUpdateRolePermission(userName, permissionVOS, roleDO, rtn);
+        } else {
+//            insertOrUpdateRolePermission(userName, permissionVOS, roleDO, rtn);
         }
         /*2、根据角色Id删除用户角色关系，再新增*/
         /*3、根据角色Id删除角色权限关系，再新增*/
         return null;
     }
 
-    private void insertOrUpdateRolePermission(String userName, List<PermissionVO> permissionVOS, RoleDO roleDO, Integer rtn) {
-
-            if (rtn == 1) {
-            /*2.1 rtn=1，表示是新增角色操作*/
-                List<RolePermissionDO> rolePermissionDOS = new ArrayList<>();
-                for (PermissionVO permissionVO : permissionVOS) {
-                    RolePermissionDO rolePermissionDO = new RolePermissionDO();
-                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
-                    rolePermissionDO.setSysKey(permissionVO.getSysKey());
-                    rolePermissionDO.setRoleId(roleDO.getId());
-                    rolePermissionDO.setCreateBy(userName);
-                    rolePermissionDO.setCreateTime(new Date());
-                    rolePermissionDO.setModifiedBy(userName);
-                    rolePermissionDO.setModifiedTime(new Date());
-                    rolePermissionDOS.add(rolePermissionDO);
-                }
-               /*批量添加 角色-操作权限映射关系*/
-                rolePermissionMapper.insertBatch(rolePermissionDOS);
-            } else if (rtn > 1) {
-              /*2.2 如果rtn>1，表示是更新角色操作；*/
-                List<RolePermissionDO> rolePermissionDOS = new ArrayList<>();
-                for (PermissionVO permissionVO : permissionVOS) {
-                    RolePermissionDO rolePermissionDO = new RolePermissionDO();
-                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
-                    rolePermissionDO.setSysKey(permissionVO.getSysKey());
-                    rolePermissionDO.setRoleId(roleDO.getId());
-                    rolePermissionDO.setCreateBy(userName);
-                    rolePermissionDO.setCreateTime(new Date());
-                    rolePermissionDO.setModifiedBy(userName);
-                    rolePermissionDO.setModifiedTime(new Date());
-                    rolePermissionDOS.add(rolePermissionDO);
-                }
-                /*批量更新或添加 角色-操作权限映射关系*/
-                rolePermissionMapper.insertAndUpdateBatch(rolePermissionDOS);
-            }
+    /**
+     * Description:新增或更新角色基础信息、功能权限、用户
+     *
+     * @param : jsonStr
+     * @return: ResultVO
+     * @auther: lvcr
+     * @date: 2018/6/13 20:42
+     * @see
+     */
+    @Override
+    public ResultVO addOrUpdateRoleInfo(String jsonStr) {
+        /*1、将json字符串转为Json对象*/
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        /*2、获取参数并校验*/
+        String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
+        RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
+        if (roleVO == null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        /*3、*/
+        // RoleDO roleDO = roleMapper.selectRoleName(operator);
+        RoleDO currentRoleDO = new RoleDO();
+        /*4.判断当前用户是否是管理员——管理员管理员可以直接进行操作*/
+        if (currentRoleDO.isAuthorizable()) {
+            insertOrUpdateRole(operator, roleVO);
+        } else {
+            /*5、非管理员，查询需要操作的角色*/
+//            RoleDO opRoleDo = roleMapper.
+            RoleDO opRoleDO = new RoleDO();
+            /*5.1 非管理员———该角色存在但是创建人不是当前用户*/
+            if (opRoleDO != null && !opRoleDO.getCreateBy().equals(operator)) {
+                return VoHelper.getErrorResult(UserCentralStatusEnum.No_PERMISSION.getCode(), UserCentralStatusEnum.No_PERMISSION.getDesc());
+            } else {
+                /*5.2 非管理员———该角色存在且创建人是当前用户*/
+                insertOrUpdateRole(operator, roleVO);
+            }
+
+        }
+        return VoHelper.getSuccessResult();
+    }
+
+    /**
+     * Description: 操作角色表、角色-操作权限关系表、用户-角色关系表
+     *
+     * @param : operator
+     *          roleVO
+     * @return: ResultVO
+     * @auther: lvcr
+     * @date: 2018/6/13 20:44
+     * @see
+     */
+    private ResultVO insertOrUpdateRole(String operator, RoleVO roleVO) {
+        /*1、添加或更新角色表*/
+        RoleDO roleDO = new RoleDO();
+        BeanUtils.copyProperties(roleVO, roleDO);
+        Long roleId = seqBp.getNextRoleId();
+        roleDO.setRoleId(roleId);
+        roleDO.setCreateBy(operator);
+        roleDO.setCreateTime(new Date());
+        int rtn = roleMapper.insertOrUpdate(roleDO);
+        /*2、批量操作角色-操作权限关系*/
+        List<PermissionVO> permissionVOS = roleVO.getSelectedContext();
+        if (permissionVOS != null && !permissionVOS.isEmpty()) {
+            List<RolePermissionDO> rolePermissionDOS = new ArrayList<>();
+            for (PermissionVO permissionVO : permissionVOS) {
+                RolePermissionDO rolePermissionDO = new RolePermissionDO();
+                rolePermissionDO.setCreateTime(new Date());
+                rolePermissionDO.setCreateBy(operator);
+                rolePermissionDO.setModifiedTime(new Date());
+                rolePermissionDO.setModifiedBy(operator);
+                rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                rolePermissionDO.setRoleId(roleId);
+                rolePermissionDO.setSysKey(permissionVO.getSysKey());
+                rolePermissionDOS.add(rolePermissionDO);
+            }
+            rolePermissionMapper.insertAndUpdateBatch(rolePermissionDOS);
+        }
+        /*3、批量操作用户-角色关系*/
+        List<String> lstUserName = roleVO.getLstUserName();
+        if (lstUserName != null && !lstUserName.isEmpty()) {
+            List<UserRoleDO> userRoleDOS = new ArrayList<>();
+            for (String userName : lstUserName) {
+                UserRoleDO userRoleDO = new UserRoleDO();
+                userRoleDO.setUserName(userName);
+                userRoleDO.setRoleId(roleId);
+                userRoleDO.setCreateBy(operator);
+                userRoleDO.setCreateTime(new Date());
+                userRoleDO.setModifiedBy(operator);
+                userRoleDO.setModifiedTime(new Date());
+                userRoleDOS.add(userRoleDO);
+            }
+            /*4、先根据roleId删除用户-角色关系表数据*/
+            userRoleMapper.deleteByRoleId(roleId);
+            /*5、批量新增用户-角色关系数据*/
+            userRoleMapper.insertBatch(userRoleDOS);
+        }
+        return VoHelper.getSuccessResult();
+    }
 
 
     /**
@@ -191,7 +265,7 @@ public class RoleServiceImpl implements IRoleService {
         /** 1、 删除角色权限关系*/
         rolePermissionMapper.deleteBatch(lstRoleId);
         /*2、删除用户角色关系*/
-        userRoleMapper.deleteBatch(lstRoleId);
+        //userRoleMapper.deleteBatch(lstRoleId);
         /*3、删除角色信息*/
         roleMapper.deleteBatch(lstRoleId);
 

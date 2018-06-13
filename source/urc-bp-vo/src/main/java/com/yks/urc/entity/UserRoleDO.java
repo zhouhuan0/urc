@@ -12,7 +12,7 @@ public class UserRoleDO {
     /**
      * 角色id
      */
-    private Integer roleId;
+    private Long roleId;
     /**
      * 域账号
      */
@@ -20,7 +20,7 @@ public class UserRoleDO {
     /**
      * 创建人
      */
-    private String createdBy;
+    private String createBy;
     /**
      * 创建时间
      */
@@ -34,7 +34,7 @@ public class UserRoleDO {
      */
     private Date modifiedTime;
     /**
-     *  角色
+     * 角色
      */
     private List<RoleDO> roleDOS;
 
@@ -46,11 +46,11 @@ public class UserRoleDO {
         this.id = id;
     }
 
-    public Integer getRoleId() {
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(Integer roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
@@ -62,12 +62,12 @@ public class UserRoleDO {
         this.userName = userName;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCreateBy() {
+        return createBy;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 
     public Date getCreateTime() {

@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.UserVO;
@@ -46,20 +47,60 @@ public class UserRoleMapperTest extends BaseMapperTest {
 
     @Test
     public void deleteBatch() {
-        List<Integer> ids = new ArrayList<>();
-        ids.add(2);
-        ids.add(3);
-        ids.add(4);
+        List<Long> ids = new ArrayList<>();
+        ids.add(2L);
+        ids.add(3L);
+        ids.add(4L);
         int rtn = userRoleMapper.deleteBatch(ids);
         System.out.println(rtn);
 
     }
+
 
     @Test
     public void getSysKeyByUserName() {
         String userName = "linwanxian";
         List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
         System.out.println(StringUtility.toJSONString_NoException(userRoleDOS));
+    }
+
+
+    @Test
+    public void insertBatch(){
+        List<UserRoleDO> userRoleDOS = new ArrayList<>();
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(1l);
+        userRoleDO.setUserName("admin");
+        userRoleDO.setCreateTime(new Date());
+        userRoleDO.setCreateBy("admin");
+        userRoleDOS.add(userRoleDO);
+
+
+        UserRoleDO userRoleDO1 = new UserRoleDO();
+        userRoleDO1.setRoleId(1l);
+        userRoleDO1.setUserName("admin1");
+        userRoleDO1.setCreateTime(new Date());
+        userRoleDO1.setCreateBy("admin1");
+        userRoleDOS.add(userRoleDO1);
+
+
+        UserRoleDO userRoleDO2 = new UserRoleDO();
+        userRoleDO2.setRoleId(2l);
+        userRoleDO2.setUserName("admin2");
+        userRoleDO2.setCreateTime(new Date());
+        userRoleDO2.setCreateBy("admin2");
+        userRoleDOS.add(userRoleDO2);
+
+        int rtn = userRoleMapper.insertBatch(userRoleDOS);
+        System.out.println(rtn);
+    }
+
+
+    @Test
+    public void deleteByRoleId(){
+        int rtn =  userRoleMapper.deleteByRoleId(1L);
+        System.out.println(rtn);
+
     }
 
 }

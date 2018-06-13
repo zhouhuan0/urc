@@ -14,6 +14,8 @@ public interface IRoleService {
 
     Integer addOrUpdateRoleInfo(String userName, RoleVO roleVO);
 
+    ResultVO addOrUpdateRoleInfo(String jsonStr);
+
     RoleDO getRoleByRoleId(Integer roleId);
 
     List<UserInfoDO> getUserByRoleId(String roleId);
