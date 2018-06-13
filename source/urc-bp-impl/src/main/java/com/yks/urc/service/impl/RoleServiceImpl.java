@@ -60,9 +60,6 @@ public class RoleServiceImpl implements IRoleService {
     @Autowired
     private ISeqBp seqBp;
 
-    @Autowired
-    private ISeqBp seqBp;
-
     /**
      * Description:
      * 1、根据多个条件获取角色列表
