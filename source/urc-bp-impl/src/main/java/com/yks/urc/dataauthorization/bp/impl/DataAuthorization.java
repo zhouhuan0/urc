@@ -68,7 +68,6 @@ public class DataAuthorization {
         List<OmsAccountVO> omsAccountVoList = null;
         String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
-        System.out.println(getShopAndSiteResult);
         JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
