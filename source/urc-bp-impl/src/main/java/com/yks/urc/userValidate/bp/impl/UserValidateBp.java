@@ -11,6 +11,7 @@ import org.springframework.util.CollectionUtils;
 
 import com.weibo.api.motan.util.CollectionUtil;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
@@ -40,28 +41,15 @@ public class UserValidateBp implements IUserValidateBp {
 		return StringUtility.md5_NoException(strFuncJson);
 	}
 
-	public String getFuncJsonByUserAndSysKey(String userName, String sysKey) {
-		List<String> lstJson = getFuncJsonLstByUserAndSysKey(userName, sysKey);
-		if (lstJson == null || lstJson.size() == 0)
-			return StringUtility.Empty;
-		SystemRootVO sys1 = StringUtility.parseObject(lstJson.get(0), SystemRootVO.class);
-		for (String strMem : lstJson) {
-			// sys2中的功能权限合并到sys1中
-			SystemRootVO sys2 = StringUtility.parseObject(strMem, SystemRootVO.class);
-
-			distinctSystemRootVO(sys1, sys2);
-		}
-		return StringUtility.toJSONString_NoException(sys1);
-	}
-
 	/**
 	 * 打平所有module
 	 * 
 	 * @param sys1
 	 * @author panyun@youkeshu.com
+	 * @param userName
 	 * @date 2018年6月12日 下午7:22:38
 	 */
-	private List<ModuleVO> plainSys(SystemRootVO sys1) {
+	public List<UserPermitStatDO> plainSys(SystemRootVO sys1, String userName) {
 		List<MenuVO> lstMenu = sys1.menu;
 
 		List<ModuleVO> lstModuleRslt = new ArrayList<>();
@@ -78,11 +66,18 @@ public class UserValidateBp implements IUserValidateBp {
 			}
 		}
 
+		List<UserPermitStatDO> lstRslt = new ArrayList<>();
 		for (ModuleVO m : lstModuleRslt) {
-			System.out.println(m.sysKey + " " + m.pageFullPathName + " " + StringUtility.toJSONString_NoException(m.lstChildFunc));
+			UserPermitStatDO statDo = new UserPermitStatDO();
+			statDo.setUserName(userName);
+			statDo.setSysKey(sys1.system.key);
+			statDo.setModuleName(m.pageFullPathName.toString());
+			statDo.setFuncJson(StringUtility.toJSONString_NoException(m.lstChildFunc));
+			// System.out.println(m.sysKey + " " + m.pageFullPathName + " " +
+			// StringUtility.toJSONString_NoException(m.lstChildFunc));
 		}
 
-		return lstModuleRslt;
+		return lstRslt;
 	}
 
 	/**
@@ -149,7 +144,7 @@ public class UserValidateBp implements IUserValidateBp {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
 		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
 		System.out.println(StringUtility.toJSONString_NoException(sys1));
-		new UserValidateBp().plainSys(sys1);
+		new UserValidateBp().plainSys(sys1, "panyun");
 
 		// 读取func2.json文件
 		// String strJson2 =
@@ -286,10 +281,34 @@ public class UserValidateBp implements IUserValidateBp {
 		distinctFunctions(function1.function, function2.function);
 	}
 
-	
 	@Override
 	public String createTicket(String strUserName, String ip) {
 		return StringUtility.md5_NoException(String.format("%s%s%s", strUserName, ip, StringUtility.getUUIDLowercase_Dt()));
 
+	}
+
+	@Override
+	public String getFuncJsonByUserAndSysKey(String userName, String sysKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String mergeFuncJson(List<String> lstJson) {
+		return StringUtility.toJSONString_NoException(mergeFuncJson2Obj(lstJson));
+	}
+
+	@Override
+	public SystemRootVO mergeFuncJson2Obj(List<String> lstJson) {
+		if (lstJson == null || lstJson.size() == 0)
+			return null;
+		SystemRootVO sys1 = StringUtility.parseObject(lstJson.get(0), SystemRootVO.class);
+		for (String strMem : lstJson) {
+			// sys2中的功能权限合并到sys1中
+			SystemRootVO sys2 = StringUtility.parseObject(strMem, SystemRootVO.class);
+
+			distinctSystemRootVO(sys1, sys2);
+		}
+		return sys1;
 	}
 }

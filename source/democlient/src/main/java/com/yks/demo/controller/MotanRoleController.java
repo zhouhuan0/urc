@@ -35,7 +35,7 @@ public class MotanRoleController {
 
     @RequestMapping("checkDupName/{newRoleName}")
     @ResponseBody
-    public ResultVO checkDuplicateRoleName(@PathVariable("newRoleName") String roleName, @RequestParam(value = "roleId", required = false) Integer roleId){
+    public ResultVO checkDuplicateRoleName(@PathVariable("newRoleName") String roleName, @RequestParam(value = "roleId", required = false) String roleId){
         return parseResultVO(urcService.checkDuplicateRoleName(mockOperator().userName, roleName, roleId));
     }
 

@@ -53,5 +53,18 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
         System.out.println(dataRuleTemplDOS);
     }
 
+    @Test
+    public void insert(){
+        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+        dataRuleTemplDO.setTemplName("自己创建的模板");
+        dataRuleTemplDO.setUserName("admin");
+        dataRuleTemplDO.setCreateTime(new Date());
+        dataRuleTemplDO.setCreateBy("admin");
+        dataRuleTemplDO.setRemark("模板备注");
+        dataRuleTemplDO.setTemplId(1L);
+        int rtn = dataRuleTemplMapper.insert(dataRuleTemplDO);
+        Assert.assertEquals(1,rtn);
+    }
+
 
 }

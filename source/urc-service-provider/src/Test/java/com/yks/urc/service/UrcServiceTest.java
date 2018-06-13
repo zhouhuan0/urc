@@ -13,6 +13,7 @@ import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.UserVO;
@@ -40,16 +41,26 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	private ICacheBp cacheBp;
 
+	@Autowired
+	private IPermitStatBp permitStatBp;
+
 	@Test
+	public void testPermitCache() {
+		List<String> lstUserName = new ArrayList<>();
+		lstUserName.add("panyun12");
+		permitStatBp.updateUserPermitCache(lstUserName);
+	}
+
+	// @Test
 	public void testCache() {
 		List<String> lstFromDb = new ArrayList<>();
 		lstFromDb.add("110");
-//		cacheBp.insertUserSysKey("py", lstFromDb);
+		// cacheBp.insertUserSysKey("py", lstFromDb);
 		List<String> lst = cacheBp.getUserSysKey("py");
 		System.out.println("----------------SysKey:" + StringUtility.toJSONString_NoException(lst));
 	}
 
-	@Test
+	// @Test
 	public void testSeq() {
 		RoleDO roleDO = new RoleDO();
 		roleDO.setRoleId(seqBp.getNextRoleId());

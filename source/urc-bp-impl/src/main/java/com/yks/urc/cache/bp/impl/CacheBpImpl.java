@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.BizSysVO;
@@ -38,19 +39,12 @@ public class CacheBpImpl implements ICacheBp {
 	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys", 1, TimeUnit.DAYS);
 
 	/**
-	 * 用户某个系统功能权限版本号
+	 * 用户所有系统功能权限及版本号
 	 * 
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月5日 上午10:06:36
 	 */
-	private Cache<String, String> userSysFuncVersionCache = new DistributedCache<>("URC-User-Sys-FuncVersion", 2, TimeUnit.HOURS);
-	/**
-	 * 用户某个系统系统功能权限json
-	 * 
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月5日 上午10:06:20
-	 */
-	private Cache<String, String> userSysFuncJsonCache = new DistributedCache<>("URC-User-Sys-FuncJson", 2, TimeUnit.HOURS);
+	private Cache<String, List<UserPermissionCacheDO>> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion", 2, TimeUnit.HOURS);
 
 	public void insertUser(UserVO u) {
 		try {
@@ -86,36 +80,19 @@ public class CacheBpImpl implements ICacheBp {
 		}
 	}
 
-	public void insertUserSysFuncVersion(String userName, String sysKey, String funcVersion) {
+	public void insertUserFunc(String userName, List<UserPermissionCacheDO> lstPermitCache) {
 		try {
-			userSysFuncVersionCache.put(String.format("%s_%s", userName, sysKey), funcVersion);
+			userFuncCache.put(userName, lstPermitCache);
 		} catch (Exception ex) {
-			logger.error(String.format("insertUserSysFuncVersion:%s %s %s", userName, sysKey, funcVersion), ex);
+			logger.error(String.format("insertUserFunc:%s %s", userName, StringUtility.toJSONString_NoException(lstPermitCache)), ex);
 		}
 	}
 
-	public String getUserSysFuncVersion(String userName, String sysKey) {
+	public List<UserPermissionCacheDO> getUserFunc(String userName) {
 		try {
-			return userSysFuncVersionCache.get(String.format("%s_%s", userName, sysKey));
+			return userFuncCache.get(userName);
 		} catch (Exception ex) {
-			logger.error(String.format("getUserSysFuncVersion:%s %s", userName, sysKey), ex);
-			return null;
-		}
-	}
-
-	public void insertUserSysFuncJson(String userName, String sysKey, String funcJson) {
-		try {
-			userSysFuncJsonCache.put(String.format("%s_%s", userName, sysKey), funcJson);
-		} catch (Exception ex) {
-			logger.error(String.format("insertUserSysFuncJson:%s %s %s", userName, sysKey, funcJson), ex);
-		}
-	}
-
-	public String getUserSysFuncJson(String userName, String sysKey) {
-		try {
-			return userSysFuncJsonCache.get(String.format("%s_%s", userName, sysKey));
-		} catch (Exception ex) {
-			logger.error(String.format("getUserSysFuncJson:%s %s", userName, sysKey), ex);
+			logger.error(String.format("getUserFunc:%s", userName), ex);
 			return null;
 		}
 	}
@@ -129,5 +106,23 @@ public class CacheBpImpl implements ICacheBp {
 
 		// System.out.println("-----------------------" +
 		// cacheTest1.get("player").getAge());
+	}
+
+	@Override
+	public void removeUserSysKey(String userName) {
+		try {
+			userSysKeyCache.remove(userName);
+		} catch (Exception ex) {
+			logger.error(String.format("removeUserSysKey:%s", userName), ex);
+		}
+	}
+
+	@Override
+	public void removeUserFunc(String userName) {
+		try {
+			userFuncCache.remove(userName);
+		} catch (Exception ex) {
+			logger.error(String.format("removeUserFunc:%s", userName), ex);
+		}
 	}
 }
