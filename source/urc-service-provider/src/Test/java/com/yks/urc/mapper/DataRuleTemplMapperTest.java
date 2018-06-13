@@ -25,7 +25,7 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
 
     @Test
     public void selectByTemplId() {
-        DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(1L);
+        DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(1L,"admin");
         Assert.assertNotNull(dataRuleTemplDO);
     }
 

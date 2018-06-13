@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface IDataRuleMapper {
 
-    int insertBatch(List<DataRuleDO> dataRuleDOList);
+    Integer insertBatch(List<DataRuleDO> dataRuleDOList);
 
 }

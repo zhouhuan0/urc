@@ -16,33 +16,54 @@ import java.util.List;
 @Component
 public class MqBpImpl implements IMqBp {
 
-	private String getDataRuleTopic(String sysKey) {
-		return String.format("URC_USER_DATARULE_%s", sysKey);
-	}
+    private String getDataRuleTopic(String sysKey) {
+        return String.format("URC_USER_DATARULE_%s", sysKey);
+    }
 
-	@Override
-	public void send2Mq(DataRuleVO dr) {
-		if (dr == null || dr.lstDataRuleSys == null || dr.lstDataRuleSys.size() == 0)
-			return;
-		for (DataRuleSysVO drSys : dr.lstDataRuleSys) {
-			if (StringUtility.isNullOrEmpty(drSys.sysKey))
-				continue;
-			String sysKey = drSys.sysKey;
-			String topic = getDataRuleTopic(sysKey);
-			String value = StringUtility.toJSONString_NoException(drSys);
-			ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
-			Callback arg1 = new Callback() {
-				@Override
-				public void onCompletion(RecordMetadata arg0, Exception arg1) {
+    @Override
+    public void send2Mq(DataRuleVO dr) {
+        if (dr == null || dr.lstDataRuleSys == null || dr.lstDataRuleSys.size() == 0)
+            return;
+        for (DataRuleSysVO drSys : dr.lstDataRuleSys) {
+            if (StringUtility.isNullOrEmpty(drSys.sysKey))
+                continue;
+            String sysKey = drSys.sysKey;
+            String topic = getDataRuleTopic(sysKey);
+            String value = StringUtility.toJSONString_NoException(drSys);
+            ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
+            Callback arg1 = new Callback() {
+                @Override
+                public void onCompletion(RecordMetadata arg0, Exception arg1) {
 
-				}
-			};
-			KafkaProducerSingleton.getInstance().send(arg0, arg1);
-		}
-	}
+                }
+            };
+            KafkaProducerSingleton.getInstance().send(arg0, arg1);
+        }
+    }
 
-	@Override
-	public void send2Mq(List<DataRuleVO> dataRuleVOList) {
+    @Override
+    public void send2Mq(List<DataRuleVO> dataRuleVOList) {
+        if (dataRuleVOList == null || dataRuleVOList.isEmpty()) {
+            return;
+        }
+        for (DataRuleVO dataRuleVO : dataRuleVOList) {
+            List<DataRuleSysVO> dataRuleSysVOS = dataRuleVO.lstDataRuleSys;
+            for (DataRuleSysVO drSys : dataRuleSysVOS) {
+                if (StringUtility.isNullOrEmpty(drSys.sysKey)) {
+                    continue;
+                }
+                String sysKey = drSys.sysKey;
+                String topic = getDataRuleTopic(sysKey);
+                String value = StringUtility.toJSONString_NoException(drSys);
+                ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
+                Callback arg1 = new Callback() {
+                    @Override
+                    public void onCompletion(RecordMetadata arg0, Exception arg1) {
 
-	}
+                    }
+                };
+                KafkaProducerSingleton.getInstance().send(arg0, arg1);
+            }
+        }
+    }
 }

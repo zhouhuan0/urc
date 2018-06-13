@@ -33,7 +33,7 @@ public class TestOrgService extends BaseServiceTest {
     	personVO.setPersonName("aaa");
     	System.out.println(personService.getUserByUserInfo(personVO));*/
     	PersonVO person=new PersonVO();
-    	person.setOrgId("11111");
+//    	person.setOrgId("11111");
     	//person.setPhoneNum("17771054080");
     	personService.getUserByDingOrgId(person, 0, 10);
     }
