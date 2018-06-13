@@ -32,7 +32,7 @@ public interface IUserRoleMapper {
     /**
      * 根据用户名获取sysKey
      *
-     * @param String
+     * @param userName
      * @return List<UserRoleDO>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 15:59
