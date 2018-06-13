@@ -1,10 +1,15 @@
 package com.yks.urc.motan.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
+import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.vo.DataRuleTemplVO;
+import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
@@ -22,6 +27,10 @@ public class UrcServiceImpl implements IUrcService {
 	
 	@Autowired
 	private IPersonService personService;
+	
+	
+	@Autowired
+	private IOrganizationService organizationService;
 
 	@Override
 	public String syncUserInfo(UserVO curUser) {
@@ -39,9 +48,34 @@ public class UrcServiceImpl implements IUrcService {
 	}
 	
 	@Override
-	public ResultVO syncDingOrgAndUser(String str) {
-		return personService.SynPersonOrgFromDing(str);
+	public String syncDingOrgAndUser() {
+		return StringUtility.toJSONString_NoException(personService.SynPersonOrgFromDing("hand"));
 	}
+
+	@Override
+	public String getUserByDingOrgId(String params) {
+        JSONObject jsonObject = StringUtility.parseString(params);
+        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        PersonVO personVo = StringUtility.parseObject(jsonObject.get("templ").toString(), PersonVO.class);
+		return StringUtility.toJSONString_NoException(personService.getUserByDingOrgId(personVo, pageNumber, pageData));
+	}
+
+	@Override
+	public String getUserByUserInfo(String params) {
+        JSONObject jsonObject = StringUtility.parseString(params);
+        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        PersonVO personVo = StringUtility.parseObject(jsonObject.get("templ").toString(), PersonVO.class);
+		return StringUtility.toJSONString_NoException(personService.getUserByUserInfo(personVo, pageNumber, pageData));
+	}
+
+	@Override
+	public String getAllOrgTree() {
+		return StringUtility.toJSONString_NoException(organizationService.getAllOrgTree());
+	}
+	
+	
 	
 	
 }

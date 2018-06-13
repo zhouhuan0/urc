@@ -30,7 +30,31 @@ public interface IUrcService {
 	 * @param str
 	 * @return
 	 */
-	ResultVO syncDingOrgAndUser(String str);
+	String syncDingOrgAndUser();
+	
+	
+	
+	/**
+	 * 根据DingOrgId获取人员信息含有分页
+	 * @param str
+	 * @return
+	 */
+	String getUserByDingOrgId(String params);
+	
+	
+	/**
+	 * 组织架构搜索用户
+	 * @param params
+	 * @return
+	 */
+	String getUserByUserInfo(String params);
+	
+	/**
+	 * 组织结构树
+	 * @param params
+	 * @return
+	 */
+	String getAllOrgTree();
 
 
 }

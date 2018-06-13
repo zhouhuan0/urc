@@ -39,10 +39,10 @@ public class OrganizationServiceImpl implements IOrganizationService {
 			BeanUtils.copyProperties(orgListVO,orgList );
 			deptJosn=treeDingDeptList(orgListVO, 0);
 		} catch (Exception e) {
-			VoHelper.getSuccessResult(null, "00000", "获取部门树出错");
+			VoHelper.getErrorResult();
 		}
 		
-		return VoHelper.getSuccessResult(deptJosn, "00001", null);
+		return VoHelper.getSuccessResult(deptJosn);
 	}
 	
 	
