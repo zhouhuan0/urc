@@ -160,7 +160,7 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public RoleDO getRoleByRoleId(String roleId) {
+    public RoleDO getRoleByRoleId(Integer roleId) {
         RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
         return roleDO;
     }
@@ -325,7 +325,7 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public void copyRole(String operator, String newRoleName, String sourceRoleId) {
         /*非admin用户只能管理自己创建的角色*/
-        RoleDO roleDO = getRoleInfo(operator, newRoleName, sourceRoleId);
+        RoleDO roleDO = getRoleInfo(operator, newRoleName, Long.parseLong(sourceRoleId));
         //复制角色信息
         roleDO.setRoleId(seqBp.getNextRoleId());
         roleDO.setRoleName(newRoleName);
@@ -343,7 +343,7 @@ public class RoleServiceImpl implements IRoleService {
      * 1.管理员用户可以复制所有角色信息
      * 2.普通用户只能复制自己创建的角色信息
      */
-    private RoleDO getRoleInfo(String operator, String newRoleName, String sourceRoleId){
+    private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId){
         if (roleMapper.checkDuplicateRoleName(newRoleName, null)){
             throw new RuntimeException("角色名已存在");
         }
