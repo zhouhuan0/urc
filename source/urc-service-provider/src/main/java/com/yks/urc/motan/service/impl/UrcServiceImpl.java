@@ -162,7 +162,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public String checkDuplicateRoleName(String operator, String newRoleName, Integer roleId) {
+    public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
     }
 }

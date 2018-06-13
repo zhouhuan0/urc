@@ -301,7 +301,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, Integer roleId) {
+    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         int count = roleMapper.selectCountByRoleName(newRoleName, roleId);
         return VoHelper.getSuccessResult(count > 0 ? 1 : 0);
     }

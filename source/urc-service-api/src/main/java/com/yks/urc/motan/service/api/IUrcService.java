@@ -119,9 +119,9 @@ public interface IUrcService {
 	 * 角色名判重
 	 * @param operator
 	 * @param newRoleName
-	 * @param roleId
+	 * @param roleId 可为空，若为修改情况下，会排除自身进行校重
 	 * @return 返回值为0--表示不重复, 1--表示重复
 	 * @author oujie@youkeshu.com
 	 */
-	String checkDuplicateRoleName(String operator, String newRoleName, Integer roleId);
+	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
 }

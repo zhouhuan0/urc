@@ -88,5 +88,5 @@ public interface IRoleMapper {
      * @Author oujie
      * @Date 2018/6/12 16:57
      */
-	int selectCountByRoleName(@Param("newRoleName") String newRoleName, @Param("roleId") Integer roleId);
+	int selectCountByRoleName(@Param("newRoleName") String newRoleName, @Param("roleId") String roleId);
 }

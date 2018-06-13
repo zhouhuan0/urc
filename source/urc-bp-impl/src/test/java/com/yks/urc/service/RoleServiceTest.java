@@ -70,14 +70,18 @@ public class RoleServiceTest extends AbstractSpringTest {
 
     @Test
     public void testCheckDuplicateRoleName(){
-        String newRoleName = "admin";
-        Integer roleId = null;
+        String newRoleName = "admin1";
+        String roleId = null;
         ResultVO<Integer> resultVO = roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
         //当前角色名重复---新增情况
         Assert.assertEquals(Optional.of(resultVO.data), Optional.of(1));
 //        当前角色名重复---修改情况
-        roleId = 10;
+        roleId = "12";
         resultVO = roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
         Assert.assertEquals(Optional.of(resultVO.data), Optional.of(1));
+//        当前角色名不重复---修改情况
+        roleId = "7";
+        resultVO = roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
+        Assert.assertEquals(Optional.of(resultVO.data), Optional.of(0));
     }
 }

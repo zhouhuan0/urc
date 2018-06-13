@@ -40,5 +40,5 @@ public interface IRoleService {
      * @Author oujie
      * @Date 2018/6/12 16:57
      */
-    ResultVO checkDuplicateRoleName(String operator, String newRoleName, Integer roleId);
+    ResultVO checkDuplicateRoleName(String operator, String newRoleName, String roleId);
 }
