@@ -3,113 +3,104 @@ package com.yks.urc.entity;
 import java.util.Date;
 
 public class OperationLog {
-    private Long id;
+	private Long id;
 
-    private String targetTable;
+	private String logger;
 
-    private String targetIdentify;
+	private String log_level;
 
-    private String targetName;
+	public Long getId() {
+		return id;
+	}
 
-    private String targetResult;
+	public void setId(Long id) {
+		this.id = id;
+	}
 
-    private String description;
+	public String getLogger() {
+		return logger;
+	}
 
-    private Date operatorTime;
+	public void setLogger(String logger) {
+		this.logger = logger;
+	}
 
-    private Date createTime;
+	public String getLog_level() {
+		return log_level;
+	}
 
-    private String createBy;
+	public void setLog_level(String log_level) {
+		this.log_level = log_level;
+	}
 
-    private Date modifiedTime;
+	public String getMsg() {
+		return msg;
+	}
 
-    private String modifiedBy;
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
 
-    public Long getId() {
-        return id;
-    }
+	public String getExceptionDetail() {
+		return exceptionDetail;
+	}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public void setExceptionDetail(String exceptionDetail) {
+		this.exceptionDetail = exceptionDetail;
+	}
 
-    public String getTargetTable() {
-        return targetTable;
-    }
+	public Date getOperatorTime() {
+		return operatorTime;
+	}
 
-    public void setTargetTable(String targetTable) {
-        this.targetTable = targetTable == null ? null : targetTable.trim();
-    }
+	public void setOperatorTime(Date operatorTime) {
+		this.operatorTime = operatorTime;
+	}
 
-    public String getTargetIdentify() {
-        return targetIdentify;
-    }
+	public Date getCreateTime() {
+		return createTime;
+	}
 
-    public void setTargetIdentify(String targetIdentify) {
-        this.targetIdentify = targetIdentify == null ? null : targetIdentify.trim();
-    }
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
-    public String getTargetName() {
-        return targetName;
-    }
+	public String getCreateBy() {
+		return createBy;
+	}
 
-    public void setTargetName(String targetName) {
-        this.targetName = targetName == null ? null : targetName.trim();
-    }
+	public void setCreateBy(String createBy) {
+		this.createBy = createBy;
+	}
 
-    public String getTargetResult() {
-        return targetResult;
-    }
+	public Date getModifiedTime() {
+		return modifiedTime;
+	}
 
-    public void setTargetResult(String targetResult) {
-        this.targetResult = targetResult == null ? null : targetResult.trim();
-    }
+	public void setModifiedTime(Date modifiedTime) {
+		this.modifiedTime = modifiedTime;
+	}
 
-    public String getDescription() {
-        return description;
-    }
+	public String getModifiedBy() {
+		return modifiedBy;
+	}
 
-    public void setDescription(String description) {
-        this.description = description == null ? null : description.trim();
-    }
+	public void setModifiedBy(String modifiedBy) {
+		this.modifiedBy = modifiedBy;
+	}
 
-    public Date getOperatorTime() {
-        return operatorTime;
-    }
+	private String msg;
 
-    public void setOperatorTime(Date operatorTime) {
-        this.operatorTime = operatorTime;
-    }
+	private String exceptionDetail;
 
-    public Date getCreateTime() {
-        return createTime;
-    }
+	private Date operatorTime;
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	private Date createTime;
 
-    public String getCreateBy() {
-        return createBy;
-    }
+	private String createBy;
 
-    public void setCreateBy(String createBy) {
-        this.createBy = createBy == null ? null : createBy.trim();
-    }
+	private Date modifiedTime;
 
-    public Date getModifiedTime() {
-        return modifiedTime;
-    }
+	private String modifiedBy;
 
-    public void setModifiedTime(Date modifiedTime) {
-        this.modifiedTime = modifiedTime;
-    }
-
-    public String getModifiedBy() {
-        return modifiedBy;
-    }
-
-    public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
-    }
 }
