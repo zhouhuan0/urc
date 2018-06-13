@@ -20,17 +20,17 @@ public class UrcServiceImpl implements IUrcService {
 	private IRoleService roleService;
 
 	@Override
-	public ResultVO syncUserInfo(UserVO curUser) {
-		return userService.syncUserInfo(curUser);
+	public String syncUserInfo(UserVO curUser) {
+		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
 	}
 
 	@Override
-	public ResultVO login(Map<String, String> map) {
+	public String login(Map<String, String> map) {
 		UserVO authUser = new UserVO();
 		authUser.userName = map.get("userName");
 		authUser.pwd = map.get("pwd");
 		authUser.ip = map.get("ip");
 		// UserVO curUser, UserVO authUser
-		return userService.login(authUser, authUser);
+		return StringUtility.toJSONString_NoException(userService.login(authUser, authUser));
 	}
 }

@@ -12,7 +12,7 @@ public interface IUrcService {
 	 * @param curUser
 	 * @return
 	 */
-	ResultVO syncUserInfo(UserVO curUser);
+	String syncUserInfo(UserVO curUser);
 
 	/**
 	 * 登陆校验：用户名密码检验
@@ -22,7 +22,7 @@ public interface IUrcService {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月6日 下午12:22:35
 	 */
-	ResultVO login(Map<String,String> map);
+	String login(Map<String,String> map);
 
 
 }
