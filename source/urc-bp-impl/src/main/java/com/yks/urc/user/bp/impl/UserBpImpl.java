@@ -12,6 +12,7 @@ import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserLoginLogMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -63,6 +64,10 @@ public class UserBpImpl implements IUserBp {
 	private IRoleMapper roleMapper;
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
+	
+    @Autowired
+    private IOperationBp operationBp;
+
 
 	/**
 	 * 同步UserInfo数据
@@ -101,14 +106,24 @@ public class UserBpImpl implements IUserBp {
 					userMapper.deleteUrcUser();
 					logger.info("清理完成,开始同步");
 					userMapper.insertBatchUser(userDoList);
+					operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
 				} catch (Exception e) {
+					operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
 					e.printStackTrace();
 				} finally {
 					lock.unlock();
 				}
 			}
 		} else {
-			logger.info("同步userInfo数据正在执行...,");
+			if("system".equals(username)){
+				//手动触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
+			}else{
+				//定时任务触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
+			}
+	        logger.info("同步userInfo数据正在执行...,");
+	        
 		}
 
 	}

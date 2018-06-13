@@ -69,6 +69,7 @@
 	    select 
 	    <include refid="Base_Column_List" /> 
 	     from urc_person up left join  urc_person_org upo on upo.ding_org_id=up.ding_user_id 
+	     LEFT JOIN urc_user uu on up.ding_user_id=uu.ding_user_id 
 	     where upo.ding_org_id = #{orgId,jdbcType=VARCHAR} 
    	     limit #{offset},#{limit}
   </select>
