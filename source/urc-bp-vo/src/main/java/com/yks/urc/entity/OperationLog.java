@@ -7,7 +7,7 @@ public class OperationLog {
 
 	private String logger;
 
-	private String log_level;
+	private String logLevel;
 
 	public Long getId() {
 		return id;
@@ -25,12 +25,12 @@ public class OperationLog {
 		this.logger = logger;
 	}
 
-	public String getLog_level() {
-		return log_level;
+	public String getLogLevel() {
+		return logLevel;
 	}
 
-	public void setLog_level(String log_level) {
-		this.log_level = log_level;
+	public void setLogLevel(String log_level) {
+		this.logLevel = log_level;
 	}
 
 	public String getMsg() {

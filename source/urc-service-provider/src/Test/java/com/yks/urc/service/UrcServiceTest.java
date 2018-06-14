@@ -56,17 +56,25 @@ public class UrcServiceTest extends BaseServiceTest {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/");
 		map.put("moduleUrl", "/");
-		map.put(StringConstant.operator, "/");
-		map.put(StringConstant.ticket, "/");
-		map.put(StringConstant.ip, "/");
-		map.put(StringConstant.funcVersion, "/");
-		map.put(StringConstant.sysKey, "/");
+		map.put(StringConstant.operator, "dcadmin");
+		map.put(StringConstant.ticket, "6564f1028df12d7d893ac5344bc07b2e");
+		map.put(StringConstant.ip, "pyIP");
+		map.put(StringConstant.funcVersion, "eb1043692883ef9010cd6cdc8b624e90");
+		map.put(StringConstant.sysKey, "001");
 		System.out.println("----------------------" + userService.funcPermitValidate(map));
 	}
 
+	public void testLogin() {
+		UserVO authUser = new UserVO();
+		authUser.userName = "dcadmin";
+		authUser.pwd = "Ldap_test";
+		authUser.ip = "pyIP";
+		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
+	}
+	
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
-		lstUserName.add("panyun");
+		lstUserName.add("dcadmin");
 		permitStatBp.updateUserPermitCache(lstUserName);
 	}
 

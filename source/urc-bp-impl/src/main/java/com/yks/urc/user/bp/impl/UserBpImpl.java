@@ -75,10 +75,10 @@ public class UserBpImpl implements IUserBp {
 
 	@Autowired
 	private ICacheBp cacheBp;
-	
+
 	@Autowired
 	private IPermitStatBp permitStatBp;
-	
+
 	/**
 	 * 同步UserInfo数据
 	 *
@@ -138,51 +138,51 @@ public class UserBpImpl implements IUserBp {
 
 	}
 
-    /**
-     * 搜索用户
-     *
-     * @param userVO
-     * @param pageNumber
-     * @param pageData
-     * @return ResultVO
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/11 10:28
-     */
-    @Override
-    public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
-        // 1.首先查询出所有数据,将userDo的数据组装到uservo
-        List<UserVO> userVOList = new ArrayList<>();
-        //分页
-        Query query = new Query(userVO, pageNumber, pageData);
-        List<UserDO> userDOList = userMapper.getUsersByUserInfo(query);
+	/**
+	 * 搜索用户
+	 *
+	 * @param userVO
+	 * @param pageNumber
+	 * @param pageData
+	 * @return ResultVO
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/11 10:28
+	 */
+	@Override
+	public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
+		// 1.首先查询出所有数据,将userDo的数据组装到uservo
+		List<UserVO> userVOList = new ArrayList<>();
+		// 分页
+		Query query = new Query(userVO, pageNumber, pageData);
+		List<UserDO> userDOList = userMapper.getUsersByUserInfo(query);
 
-        for (UserDO userDO : userDOList) {
-            userVO.userName = userDO.getUserName();
-            userVO.personName = userDO.getPerson().getPersonName();
-            userVO.activeTime = userDO.getActiveTime().toString();
-            // 1 为启用
-            userVO.isActive = userDO.getIsActive() == 1 ? true : false;
-        }
+		for (UserDO userDO : userDOList) {
+			userVO.userName = userDO.getUserName();
+			userVO.personName = userDO.getPerson().getPersonName();
+			userVO.activeTime = userDO.getActiveTime().toString();
+			// 1 为启用
+			userVO.isActive = userDO.getIsActive() == 1 ? true : false;
+		}
 
-        // 2.将拿到的用户名再去获取角色名称
-        RoleVO roleVO = new RoleVO();
-        for (UserDO user : userDOList) {
-            String username = roleMapper.selectRoleName(user.getUserName());
-            roleVO.roleName = username;
-        }
+		// 2.将拿到的用户名再去获取角色名称
+		RoleVO roleVO = new RoleVO();
+		for (UserDO user : userDOList) {
+			String username = roleMapper.selectRoleName(user.getUserName());
+			roleVO.roleName = username;
+		}
 
-        // 3.将拿到的角色对象组装到uservo里面
-        List<RoleVO> list = new ArrayList();
-        list.add(roleVO);
-        userVO.roles = list;
+		// 3.将拿到的角色对象组装到uservo里面
+		List<RoleVO> list = new ArrayList();
+		list.add(roleVO);
+		userVO.roles = list;
 
-        // 4.组装userVo
-        userVOList.add(userVO);
-        // 获取总条数
-        int total = userMapper.getUsersByUserInfoCount(query);
-        PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
-        return VoHelper.getSuccessResult(pageResultVO);
-    }
+		// 4.组装userVo
+		userVOList.add(userVO);
+		// 获取总条数
+		int total = userMapper.getUsersByUserInfoCount(query);
+		PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
+	}
 
 	/**
 	 * 获取system
@@ -268,6 +268,12 @@ public class UserBpImpl implements IUserBp {
 					resp.sysKey = lstSysKey;
 				}
 				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
+				// 缓存用户信息
+				UserVO u = new UserVO();
+				u.userName = authUser.userName;
+				u.ticket = resp.ticket;
+				u.ip = authUser.ip;
+				cacheBp.insertUser(u);
 			}
 			return VoHelper.getResultVO(resp, blnOk ? "000001" : "000000", null);
 		} catch (Exception ex) {
@@ -300,7 +306,6 @@ public class UserBpImpl implements IUserBp {
 		});
 	}
 
-	
 	@Override
 	public ResultVO<List<UserSysVO>> getAllFuncPermit(String operator) {
 		// 先从缓存取

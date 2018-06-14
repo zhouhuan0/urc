@@ -143,8 +143,9 @@ public class CacheBpImpl implements ICacheBp {
 					return mem.getPermissionVersion();
 				}
 			}
+			return StringUtility.Empty;
 		}
-		return StringUtility.Empty;
+		return null;
 	}
 
 	@Override

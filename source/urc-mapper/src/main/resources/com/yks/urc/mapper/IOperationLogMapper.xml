@@ -23,6 +23,6 @@
   INSERT INTO urc_operation_log(logger,log_level,msg,exception_detail,operator_time,
   	create_time,create_by,modified_time,modified_by)
   VALUES(#{logger},#{logLevel},#{msg},#{exceptionDetail},#{operatorTime},
-  	#{createTime},#{create_by},#{modifiedTime},#{modifedBy})
+  	#{createTime},#{createBy},#{modifiedTime},#{modifedBy})
   </insert>
 </mapper>
