@@ -165,4 +165,14 @@ public class UrcServiceImpl implements IUrcService {
     public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
     }
+
+	@Override
+	public String getAllFuncPermit(String jsonStr) {
+		return userService.getAllFuncPermit(jsonStr);
+	}
+
+	@Override
+	public String funcPermitValidate(Map<String, String> map) {
+		return userService.funcPermitValidate(map);
+	}
 }

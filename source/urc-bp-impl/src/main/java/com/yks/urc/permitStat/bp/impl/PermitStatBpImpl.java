@@ -56,7 +56,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private ICacheBp cacheBp;
 
-	private void updateUserPermitCache(String userName) {
+	public List<UserPermissionCacheDO> updateUserPermitCache(String userName) {
 		try {
 			// 获取用户所有的sysKey
 			List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
@@ -68,7 +68,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			if (lstSysKey == null || lstSysKey.size() == 0) {
 				// 清除缓存
 				cacheBp.removeUserSysKey(userName);
-				return;
+				return new ArrayList<>();
 			}
 
 			List<UserPermissionCacheDO> lstCacheToAdd = new ArrayList<>(lstSysKey.size());
@@ -107,9 +107,10 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			// 更新缓存
 			cacheBp.insertUserSysKey(userName, lstSysKey);
 			cacheBp.insertUserFunc(userName, lstCacheToAdd);
-
+			return lstCacheToAdd;
 		} catch (Exception ex) {
 			logger.error(String.format("updateUserPermitCache:%s", userName), ex);
 		}
+		return new ArrayList<>();
 	}
 }

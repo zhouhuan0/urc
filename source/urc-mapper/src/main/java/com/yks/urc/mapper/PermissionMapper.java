@@ -27,4 +27,6 @@ public interface PermissionMapper {
      * @Date 2018/6/12 9:28
      */
     Permission getSystemKey(@Param("sysName") String sysKey);
+    
+    Permission getPermissionBySysKey(@Param("sysKey") String sysKey);
 }

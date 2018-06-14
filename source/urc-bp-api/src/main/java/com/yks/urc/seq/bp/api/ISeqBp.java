@@ -53,7 +53,7 @@ public interface ISeqBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 上午8:43:03
 	 */
-	long getNextSqlId();
+	long getExpressionId();
 
 	/**
 	 * urc_auth_way.auth_way_id
