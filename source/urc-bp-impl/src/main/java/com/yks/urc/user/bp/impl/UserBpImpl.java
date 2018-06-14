@@ -259,9 +259,9 @@ public class UserBpImpl implements IUserBp {
 				}
 				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
 			}
-			return VoHelper.getSuccessResult(resp, blnOk ? "00001" : "00000", null);
+			return VoHelper.getSuccessResult(resp, blnOk ? "000001" : "000000", null);
 		} catch (Exception ex) {
-			return VoHelper.getSuccessResult(null, "00000", "login error");
+			return VoHelper.getSuccessResult(null, "000000", "login error");
 		}
 	}
 
