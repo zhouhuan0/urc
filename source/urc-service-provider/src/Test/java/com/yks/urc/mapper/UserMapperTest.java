@@ -66,7 +66,7 @@ public class UserMapperTest extends BaseMapperTest {
 
     @Test
     public void testInsert() {
-        List<UserDO> users = userMapper.listUsersByRoleId(1);
+        List<UserDO> users = userMapper.listUsersByRoleId("1");
         Assert.assertNotNull(users);
     }
 

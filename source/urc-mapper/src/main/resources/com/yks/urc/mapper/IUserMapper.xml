@@ -111,14 +111,7 @@
         select
         uu.user_name as userName 
         from urc_user uu  left JOIN urc_user_role ur ON ur.user_name=uu.user_name 
-        
-       <where>
-    		 <if test="roleId != null and roleId != '' ">
-    		 	 ur.role_id  = #{roleId,jdbcType=BIGINT} 
-    		 </if>
-   	   </where> 
-        
-         
+    	where ur.role_id  = #{roleId,jdbcType=BIGINT} 
     </select>
     
     
