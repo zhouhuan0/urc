@@ -163,4 +163,11 @@
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
+    
+    
+     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="java.lang.String" >
+			SELECT  user_name from urc_user_role WHERE role_id=#{roleId}
+    </select>
+    
+    
 </mapper>
