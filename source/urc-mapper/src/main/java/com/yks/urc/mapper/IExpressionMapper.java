@@ -14,5 +14,7 @@ public interface IExpressionMapper {
 
     int insertBatch(List<ExpressionDO> expressionDOS);
 
+    List<ExpressionDO> listExpressionDOsBySysKey(String sysKey);
+
 
 }
