@@ -54,6 +54,16 @@ public interface IDataRuleTemplMapper {
     Integer deleteByTemplId(@Param("templId") Long templId);
 
     /**
+     * Description: 根据templId删除 权限模板数据、权限数据Sys、行权限、列权限
+     * @param : templId
+     * @return:  Integer
+     * @auther: lvcr
+     * @date: 2018/6/14 17:26
+     * @see
+     */
+    Integer delTemplDatasById(@Param("templId") Long templId);
+
+    /**
      * 获取用户可选择的所有数据授权方案
      * @param userName
      * @return

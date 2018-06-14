@@ -1,5 +1,7 @@
 package com.yks.urc.service;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.service.api.IDataRuleService;
@@ -69,6 +71,78 @@ public class DataRuleServiceTest extends BaseServiceTest {
         dataRuleTemplVO.templName=stringBuilder.toString();
         jsonObject.put("templ",dataRuleTemplVO);
         ResultVO<PageResultVO> resultVO = dataRuleService.getDataRuleTempl(jsonObject.toString());
+        System.out.println(resultVO);
+    }
+
+
+    @Test
+    public void addOrUpdateDataRuleTempl(){
+        JSONObject colObject = new JSONObject();
+
+        JSONArray jsonArray = new JSONArray();
+        /*列权限1*/
+        JSONObject calJsonObj1 = new JSONObject();
+        calJsonObj1.put("entityCode","entityProduct");
+           JSONObject colJson1 = new JSONObject();
+           colJson1.put("fieldCode","name");
+           colJson1.put("showType",0);
+        calJsonObj1.put("colJson",colJson1);
+            JSONObject colJson2 = new JSONObject();
+            colJson2.put("fieldCode","price");
+            colJson2.put("showType",0);
+        calJsonObj1.put("colJson",colJson2);
+        jsonArray.add(calJsonObj1);
+
+        /*列权限2*/
+        JSONObject calJsonObj2 = new JSONObject();
+        calJsonObj2.put("entityCode","entitySupplier");
+        JSONObject colJson21 = new JSONObject();
+            colJson21.put("fieldCode","addr");
+            colJson21.put("showType",0);
+        calJsonObj2.put("colJson",colJson21);
+        JSONObject colJson22 = new JSONObject();
+            colJson22.put("fieldCode","city");
+            colJson2.put("showType",0);
+        calJsonObj2.put("colJson",colJson22);
+        jsonArray.add(calJsonObj2);
+        colObject.put("col",jsonArray);
+
+        /*行权限*/
+        JSONObject rowObject = new JSONObject();
+        rowObject.put("isAnd",1);
+        JSONArray subWhereClause = new JSONArray();
+         JSONObject subWhereClause1 = new JSONObject();
+         subWhereClause1.put("fieldCode","fieldPlatform");
+         subWhereClause1.put("entityCode","platform");
+         subWhereClause1.put("oper","in");
+         subWhereClause1.put("operValues","[\"eBay\"，\"WISH\"]");
+         subWhereClause.add(subWhereClause1);
+
+        JSONObject subWhereClause2 = new JSONObject();
+        subWhereClause2.put("fieldCode","fieldSite");
+        subWhereClause2.put("oper","in");
+        subWhereClause2.put("operValues","[\"美国\"，\"英国\"]");
+        subWhereClause.add(subWhereClause2);
+
+        JSONObject subWhereClause3 = new JSONObject();
+        subWhereClause3.put("fieldCode","fieldProductSku");
+        subWhereClause3.put("oper","in");
+        subWhereClause3.put("operValues","[\"SKU001\"]");
+        subWhereClause.add(subWhereClause3);
+
+        rowObject.put("subWhereClause",subWhereClause);
+
+
+        JSONObject listDataRuleSys = new JSONObject();
+        listDataRuleSys.put("sysKey","001");
+        listDataRuleSys.put("row",rowObject);
+        listDataRuleSys.put("col",colObject);
+
+        JSONObject dataRuleTemplVO = new JSONObject();
+        dataRuleTemplVO.put("templName","采购一部3C产品组方案1");
+        dataRuleTemplVO.put("remark","给xxxx的方案");
+        dataRuleTemplVO.put("lstDataRuleSys",listDataRuleSys);
+        ResultVO resultVO = dataRuleService.addOrUpdateDataRuleTempl(dataRuleTemplVO.toString());
         System.out.println(resultVO);
     }
 
