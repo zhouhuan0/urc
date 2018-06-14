@@ -91,7 +91,7 @@
     </select> -->
 
 
-	<select id="listAllUsersUserName"  resultMap="java.lang.String">
+	<select id="listAllUsersUserName"  resultType="java.lang.String">
         select
         user_name as userName 
         from urc_user 
@@ -107,7 +107,7 @@
     
     
         
-   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultMap="java.lang.String">
+   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultType="java.lang.String">
         select
         user_name as userName 
         from urc_user  left JOIN urc_user_role ur ON ur.user_name=user_name 
@@ -256,24 +256,24 @@
       truncate  urc_user
     </delete>
 
-    <select id="getUsersByUserInfo" resultType="java.util.List">
+    <select id="getUsersByUserInfo" resultType="com.yks.urc.entity.UserDO">
         select u.user_name,p.person_name,u.active_time,u.is_active
         from urc_user u
         INNER JOIN urc_person p
         on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name
-        <if test="userVO.userName != null and userVO.userName !=''">
-         AND   u.user_name = #{userVO.userName}
+        <if test="query.userName != null and query.userName !=''">
+         AND   u.user_name = #{query.userName}
         </if>
-        limit #{pageNumber},#{pageData}
+        limit #{query.offset},#{query.limit}
     </select>
-    <select id="getUsersByUserInfoCount">
+    <select id="getUsersByUserInfoCount" resultType="java.lang.Integer">
         SELECT count(*) FROM urc_user u
         INNER JOIN urc_person p
         on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name
-        <if test="userVO.userName != null and userVO.userName !=''">
-            AND  u.user_name = #{userVO.userName}
+        <if test="query.userName != null and query.userName !=''">
+            AND  u.user_name = #{query.userName}
         </if>
     </select>
 </mapper>

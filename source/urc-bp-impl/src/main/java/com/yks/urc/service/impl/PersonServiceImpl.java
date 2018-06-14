@@ -240,7 +240,7 @@ public class PersonServiceImpl implements IPersonService {
 			for (int j = 0; j < dingAllDept.size(); j++) {
 				DingDeptVO dep=dingAllDept.get(j);
 				if(dingId==dep.id){
-					arrayName.add(i, dep.name);;
+					arrayName.add(i, dep.name);
 				}
 			}
 		}

@@ -4,6 +4,7 @@ import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.Query;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +75,14 @@ public class UserMapperTest extends BaseMapperTest {
         UserVO userVO = new UserVO();
         int pagaNum = 0;
         int pageData = 10;
-        userVO.userName = "linwanxian";
+        userVO.userName = "苏林";
         List<UserDO> list = new ArrayList<>();
-        list = userMapper.getUsersByUserInfo(userVO, pagaNum, pageData);
+        Query query = new Query(userVO, pagaNum, pageData);
+        list = userMapper.getUsersByUserInfo(query);
+        int count = userMapper.getUsersByUserInfoCount(query);
+        System.out.println(count);
         for (UserDO user : list) {
+            System.out.println("==============");
             System.out.println(user.getUserName());
         }
     }
