@@ -91,7 +91,7 @@
     </select>
 
 
-	<select id="listAllUsersUserName"  resultMap="java.lang.String">
+	<select id="listAllUsersUserName"  resultType="java.lang.String">
         select
         user_name as userName 
         from urc_user 
@@ -107,7 +107,7 @@
     
     
         
-   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultMap="java.lang.String">
+   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultType="java.lang.String">
         select
         user_name as userName 
         from urc_user  left JOIN urc_user_role ur ON ur.user_name=user_name 

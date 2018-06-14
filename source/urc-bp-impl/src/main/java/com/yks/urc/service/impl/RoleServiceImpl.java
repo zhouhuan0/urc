@@ -26,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.management.relation.Role;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 角色操作service实现类
@@ -41,6 +38,7 @@ import java.util.List;
  * @since JDK1.8
  */
 @Service
+@Transactional
 public class RoleServiceImpl implements IRoleService {
 
     private Logger logger = LoggerFactory.getLogger(RoleServiceImpl.class);
@@ -53,7 +51,7 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private IUserRoleMapper userRoleMapper;
-    
+
     @Autowired
     private IUserMapper userMapper;
 
@@ -72,49 +70,52 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<RoleVO> getRolesByInfo(RoleVO roleVO) {
-        /*1、判断当前用户是否是管理员*/
-        /*2、1如果是管理员，则根据条件查询所有角色*/
-        /*2、2如果非管理员，则只能查询当前用户创建的角色*/
-        return null;
-    }
-
-    /**
-     * Description: 新增或更新角色基础信息、功能权限、用户
-     * 1、roleName存在则更新
-     * 2、roleName不存在则新增
-     *
-     * @param :userName
-     * @param roleVO
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 14:23
-     * @see
-     */
-    @Transactional
-    @Override
-    public Integer addOrUpdateRoleInfo(String userName, RoleVO roleVO) {
-        /*需要判断当前用户是否管理员、普通业务员只能编辑自己创建的角色
-          业务员是否需要再次对权限范围校验*/
-//        if (!roleDO.isAuthorizable()) {
-//            RoleDO roleDO1 = roleMapper.ge
-//        }
-        /*1、新增或更新角色基础信息*/
+    public ResultVO<PageResultVO> getRolesByInfo(String jsonStr) {
+          /*1、将json字符串转为Json对象*/
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        Map<String, Object> queryMap = new HashMap<>();
+        /*2、获取参数并校验*/
+        String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        if (isAdmin) {
+            queryMap.put("createBy", "");
+        }
+        queryMap.put("createBy", operator);
+        RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
+        if (roleVO == null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
         RoleDO roleDO = new RoleDO();
         BeanUtils.copyProperties(roleVO, roleDO);
-        int rtn = roleMapper.insertOrUpdate(roleDO);
-         /*2、新增或更新 角色-功能权限 信息*/
-           /*1、获取功能权限信息*/
-        List<PermissionVO> permissionVOS = roleVO.getSelectedContext();
-          /*2、功能权限数据为空，说明没有赋权操作，故不需要添加或更新角色-功能权限 信息*/
-        if (permissionVOS == null || permissionVOS.isEmpty()) {
-            //permissionVOS没有数据时候，说明没有更改角色-权限数据
-        } else {
-//            insertOrUpdateRolePermission(userName, permissionVOS, roleDO, rtn);
+        String pageNumber = jsonObject.getString("pageNumber");
+        String pageData = jsonObject.getString("pageData");
+        if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
-        /*2、根据角色Id删除用户角色关系，再新增*/
-        /*3、根据角色Id删除角色权限关系，再新增*/
-        return null;
+        int currPage = Integer.valueOf(pageNumber);
+        int pageSize = Integer.valueOf(pageData);
+        queryMap.put("currIndex", (currPage - 1) * pageSize);
+        queryMap.put("pageSize", pageSize);
+        List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
+        /*4、List<DO> 转 List<VO>*/
+        List<RoleVO> roleVOS = convertDoToVO(roleDOS);
+        /*5、获取总条数*/
+        Long total = roleMapper.getCounts(queryMap.get("createBy").toString());
+        PageResultVO pageResultVO = new PageResultVO(roleVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
+        return VoHelper.getSuccessResult(pageResultVO);
+    }
+
+    private List<RoleVO> convertDoToVO(List<RoleDO> roleDOS) {
+        List<RoleVO> roleVOS = new ArrayList<>();
+        for (RoleDO roleDO : roleDOS) {
+            RoleVO roleVO = new RoleVO();
+            BeanUtils.copyProperties(roleDO, roleVO);
+            roleVOS.add(roleVO);
+        }
+        return roleVOS;
     }
 
     /**
@@ -139,21 +140,18 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
-        /*3、*/
-        // RoleDO roleDO = roleMapper.selectRoleName(operator);
-        RoleDO currentRoleDO = new RoleDO();
-        /*4.判断当前用户是否是管理员——管理员管理员可以直接进行操作*/
-        if (currentRoleDO.isAuthorizable()) {
+        /*3.判断当前用户是否是管理员——管理员管理员可以直接进行操作*/
+        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        if (isAdmin) {
             insertOrUpdateRole(operator, roleVO);
         } else {
-            /*5、非管理员，查询需要操作的角色*/
-//            RoleDO opRoleDo = roleMapper.
-            RoleDO opRoleDO = new RoleDO();
-            /*5.1 非管理员———该角色存在但是创建人不是当前用户*/
+            /*4、非管理员，查询需要操作的角色*/
+            RoleDO opRoleDO = roleMapper.getByRoleName(roleVO.getRoleName());
+            /*4.1 非管理员———该角色存在但是创建人不是当前用户*/
             if (opRoleDO != null && !opRoleDO.getCreateBy().equals(operator)) {
                 return VoHelper.getErrorResult(UserCentralStatusEnum.No_PERMISSION.getCode(), UserCentralStatusEnum.No_PERMISSION.getDesc());
             } else {
-                /*5.2 非管理员———该角色存在且创建人是当前用户*/
+                /*4.2 非管理员———a.该角色存在且创建人是当前用户；b.该角色不存在*/
                 insertOrUpdateRole(operator, roleVO);
             }
 
@@ -230,9 +228,29 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public RoleDO getRoleByRoleId(Integer roleId) {
-        RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
-        return roleDO;
+    public ResultVO<RoleVO> getRoleByRoleId(String jsonStr) {
+          /*1、将json字符串转为Json对象*/
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        /*2、获取参数并校验*/
+        String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        String roleIdStr = jsonObject.getString("roleId");
+        if (!StringUtil.isNum(roleIdStr)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
+        RoleDO roleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleIdStr));
+        if (roleDO == null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
+        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        }
+        RoleVO roleVO = new RoleVO();
+        BeanUtils.copyProperties(roleDO, roleVO);
+        return VoHelper.getSuccessResult(roleVO);
     }
 
     /**
@@ -342,23 +360,23 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public ResultVO getRoleUser(List<String> lstRoleId) {
         /*非管理员只能查看自己创建的角色*/
-    	List<RoleVO> roleList=new ArrayList<>();
-    	for (int i = 0; i < lstRoleId.size(); i++) {
-    		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
-    		RoleVO roleVO=new RoleVO();
-    		roleVO.setRoleName(roleDO.getRoleName());
-    		roleVO.setRoleId(roleDO.getRoleId());
-    		if(roleDO.isAuthorizable()){
-    			//管理员
-    			List<String> lstUserName= userMapper.listAllUsersUserName();
-    			roleVO.setLstUserName(lstUserName);
-    		}else{
-    			//非管理员
-    			List<String> lstUserName =userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
-    			roleVO.setLstUserName(lstUserName);
-    		}
-    		roleList.add(roleVO);
-		}
+        List<RoleVO> roleList = new ArrayList<>();
+        for (int i = 0; i < lstRoleId.size(); i++) {
+            RoleDO roleDO = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+            RoleVO roleVO = new RoleVO();
+            roleVO.setRoleName(roleDO.getRoleName());
+            roleVO.setRoleId(roleDO.getRoleId());
+            if (roleDO.isAuthorizable()) {
+                //管理员
+                List<String> lstUserName = userMapper.listAllUsersUserName();
+                roleVO.setLstUserName(lstUserName);
+            } else {
+                //非管理员
+                List<String> lstUserName = userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
+                roleVO.setLstUserName(lstUserName);
+            }
+            roleList.add(roleVO);
+        }
         /*查询用户角色关系表*/
         return VoHelper.getSuccessResult(roleList);
     }
@@ -384,7 +402,8 @@ public class RoleServiceImpl implements IRoleService {
     /**
      * Description:
      * 1、复制角色
-     *  复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
+     * 复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
+     *
      * @param :
      * @return:
      * @auther: lvcr
@@ -408,19 +427,18 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
-     *
      * 判断当前操作者权限,再获取被复制角色信息
      * 1.管理员用户可以复制所有角色信息
      * 2.普通用户只能复制自己创建的角色信息
      */
-    private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId){
-        if (roleMapper.checkDuplicateRoleName(newRoleName, null)){
+    private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId) {
+        if (roleMapper.checkDuplicateRoleName(newRoleName, null)) {
             throw new RuntimeException("角色名已存在");
         }
         //判断当前被复制角色是否为当前用户创建的角色
         RoleDO roleDO = roleMapper.getRoleByRoleId(sourceRoleId);
         //判断当前用户是否为管理员用户
-        if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())){
+        if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())) {
             return roleDO;
         }
         throw new RuntimeException("普通用户只能复制自己创建的角色信息");
@@ -428,6 +446,6 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
-        return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId)?1:0);
+        return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
 }
