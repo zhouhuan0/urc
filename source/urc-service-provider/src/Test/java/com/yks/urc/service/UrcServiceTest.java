@@ -17,6 +17,7 @@ import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.UserVO;
 
@@ -37,6 +38,8 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	private IUserValidateBp userValidateBp;
 	@Autowired
+	private IUserBp userBp;
+	@Autowired
 	private ISeqBp seqBp;
 
 	@Autowired
@@ -51,19 +54,23 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	private IUserService userService;
 
+	
+	public void testGetAllFuncPermit() {
+		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
+	}
 	@Test
 	public void test_funcPermitValidate() {
 		Map<String, String> map = new HashMap<>();
-		map.put("apiUrl", "/");
+		map.put("apiUrl", "/api/grab/smt/batchMarking");
 		map.put("moduleUrl", "/");
 		map.put(StringConstant.operator, "dcadmin");
-		map.put(StringConstant.ticket, "6564f1028df12d7d893ac5344bc07b2e");
+		map.put(StringConstant.ticket, "bfba159f79a0f4b77ee82fabd41507f2");
 		map.put(StringConstant.ip, "pyIP");
 		map.put(StringConstant.urcVersion, "eb1043692883ef9010cd6cdc8b624e90");
 		map.put(StringConstant.sysKey, "001");
 		System.out.println("----------------------" + userService.funcPermitValidate(map));
 	}
-
+	
 	public void testLogin() {
 		UserVO authUser = new UserVO();
 		authUser.userName = "dcadmin";

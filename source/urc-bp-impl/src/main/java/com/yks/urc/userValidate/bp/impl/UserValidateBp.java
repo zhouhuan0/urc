@@ -348,7 +348,7 @@ public class UserValidateBp implements IUserValidateBp {
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
 
-		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", apiUrl)) {
+		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", moduleUrl)) {
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 		}
 
