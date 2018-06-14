@@ -1,6 +1,9 @@
 package com.yks.urc.service.api;
 
+import java.util.List;
+
 import com.yks.urc.vo.DataRuleTemplVO;
+import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 
@@ -20,5 +23,12 @@ public interface IDataRuleService {
      * @return
      */
     ResultVO getMyDataRuleTempl(String userName);
+    
+    /**
+     * 获取多个用户的所有数据权限
+     * @param lstUserName
+     * @return
+     */
+    public List<DataRuleVO> getDataRuleByUser(List<String> lstUserName);
     
 }

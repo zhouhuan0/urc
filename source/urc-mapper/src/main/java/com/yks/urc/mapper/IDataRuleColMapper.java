@@ -21,4 +21,7 @@ public interface IDataRuleColMapper {
     int updateByPrimaryKeyWithBLOBs(DataRuleColDO record);
 
     int updateByPrimaryKey(DataRuleColDO record);
+    
+    
+	List<DataRuleColDO> listRuleColBySysKey(String syskeyList);
 }
