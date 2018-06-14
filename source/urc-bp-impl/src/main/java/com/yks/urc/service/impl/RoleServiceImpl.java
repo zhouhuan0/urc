@@ -231,7 +231,7 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     public RoleDO getRoleByRoleId(Integer roleId) {
-        RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
+        RoleDO roleDO = roleMapper.getRoleByRoleId(String.valueOf(roleId));
         return roleDO;
     }
 
@@ -344,7 +344,7 @@ public class RoleServiceImpl implements IRoleService {
         /*非管理员只能查看自己创建的角色*/
     	List<RoleVO> roleList=new ArrayList<>();
     	for (int i = 0; i < lstRoleId.size(); i++) {
-    		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+    		RoleDO roleDO=roleMapper.getRoleByRoleId(String.valueOf((lstRoleId.get(i))));
     		RoleVO roleVO=new RoleVO();
     		roleVO.setRoleName(roleDO.getRoleName());
     		roleVO.setRoleId(roleDO.getRoleId());
@@ -354,7 +354,7 @@ public class RoleServiceImpl implements IRoleService {
     			roleVO.setLstUserName(lstUserName);
     		}else{
     			//非管理员
-    			List<String> lstUserName =userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
+    			List<String> lstUserName =userMapper.listUsersUserNameByRoleId(String.valueOf(roleDO.getRoleId()));
     			roleVO.setLstUserName(lstUserName);
     		}
     		roleList.add(roleVO);
@@ -418,7 +418,7 @@ public class RoleServiceImpl implements IRoleService {
             throw new RuntimeException("角色名已存在");
         }
         //判断当前被复制角色是否为当前用户创建的角色
-        RoleDO roleDO = roleMapper.getRoleByRoleId(sourceRoleId);
+        RoleDO roleDO = roleMapper.getRoleByRoleId(String.valueOf(sourceRoleId));
         //判断当前用户是否为管理员用户
         if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())){
             return roleDO;
