@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉
@@ -72,7 +69,7 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-        RoleDO roleDO = roleMapper.getRoleByRoleId(1);
+        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
         Assert.assertNull(roleDO);
     }
 
@@ -82,5 +79,28 @@ public class RoleMapperTest extends BaseMapperTest {
         Assert.assertEquals(roleMapper.isAdminAccount("panyun"), false);
         //管理员用户
         Assert.assertEquals(roleMapper.isAdminAccount("oujie"), true);
+    }
+    @Test
+    public void testGetByRoleName(){
+       RoleDO roleDO = roleMapper.getByRoleName("admin");
+       Assert.assertNotNull(roleDO);
+    }
+
+    @Test
+    public void testListRolesByPage(){
+        int currPage = 1;
+        int pageSize = 3;
+        RoleDO roleDO = new RoleDO();
+        roleDO.setRoleName("admin");
+        roleDO.setRemark("hehe");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("createBy", "admin");
+        map.put("roleDO", roleDO);
+        map.put("currIndex", (currPage - 1) * pageSize);
+        map.put("pageSize", pageSize);
+
+        List<RoleDO> roleDOS = roleMapper.listRolesByPage(map);
+        Assert.assertNotNull(roleDOS);
     }
 }

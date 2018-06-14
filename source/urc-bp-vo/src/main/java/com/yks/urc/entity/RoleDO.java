@@ -1,6 +1,5 @@
 package com.yks.urc.entity;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 public class RoleDO {
@@ -52,6 +51,11 @@ public class RoleDO {
      */
     private String modifiedBy;
     /**
+     * 备注
+     */
+    private String remark;
+
+    /**
      *   角色-功能权限关系表
      */
     private RolePermissionDO permissionDO;
@@ -62,6 +66,14 @@ public class RoleDO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public String getRoleName() {
@@ -112,6 +124,13 @@ public class RoleDO {
         this.expireTime = expireTime;
     }
 
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
     public String getCreateBy() {
         return createBy;
@@ -137,20 +156,12 @@ public class RoleDO {
         this.modifiedBy = modifiedBy;
     }
 
-    public Date getCreateTime() {
-        return createTime;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Long getRoleId() {
-        return roleId;
-    }
-
-    public void setRoleId(Long roleId) {
-        this.roleId = roleId;
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public RolePermissionDO getPermissionDO() {

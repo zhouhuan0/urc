@@ -35,102 +35,102 @@ import java.util.concurrent.Executors;
 
 @Component
 public class UserBpImpl implements IUserBp {
-    private static Logger logger = LoggerFactory.getLogger(UserBpImpl.class);
+	private static Logger logger = LoggerFactory.getLogger(UserBpImpl.class);
 
-    @Autowired
-    IUserValidateBp userValidateBp;
+	@Autowired
+	IUserValidateBp userValidateBp;
 
-    @Autowired
-    ILdapBp ldapBpImpl;
+	@Autowired
+	ILdapBp ldapBpImpl;
 
-    @Autowired
-    IUserLoginLogMapper userLoginLogMapper;
-    /**
-     * token 请求地址
-     */
-    @Value("${userInfo.token}")
-    private static String GET_TOKEN;
-    /**
-     * 获取UserInfo信息地址
-     */
-    @Value("${userInfo.address}")
-    private static String USER_INFO_ADDRESS;
-    @Value("${userInfo.username}")
-    private static String username;
-    @Value("${userInfo.password}")
-    private static String password;
+	@Autowired
+	IUserLoginLogMapper userLoginLogMapper;
+	/**
+	 * token 请求地址
+	 */
+	@Value("${userInfo.token}")
+	private static String GET_TOKEN;
+	/**
+	 * 获取UserInfo信息地址
+	 */
+	@Value("${userInfo.address}")
+	private static String USER_INFO_ADDRESS;
+	@Value("${userInfo.username}")
+	private static String username;
+	@Value("${userInfo.password}")
+	private static String password;
 
-    @Autowired
-    private IUserMapper userMapper;
-    @Autowired
-    private IRoleMapper roleMapper;
-    @Autowired
-    private IUserRoleMapper userRoleMapper;
+	@Autowired
+	private IUserMapper userMapper;
+	@Autowired
+	private IRoleMapper roleMapper;
+	@Autowired
+	private IUserRoleMapper userRoleMapper;
 
-    @Autowired
-    private IOperationBp operationBp;
+	@Autowired
+	private IOperationBp operationBp;
 
-    @Autowired
-    private ICacheBp cacheBp;
+	@Autowired
+	private ICacheBp cacheBp;
 
-    /**
-     * 同步UserInfo数据
-     *
-     * @Author: linwanxian@youkeshu.com
-     * @Date: 2018/6/8 15:29
-     */
-    DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
+	/**
+	 * 同步UserInfo数据
+	 *
+	 * @Author: linwanxian@youkeshu.com
+	 * @Date: 2018/6/8 15:29
+	 */
+	DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
 
-    @Transactional(rollbackFor = Exception.class)
-    public void SynUserFromUserInfo(String username) {
-        if (lock.tryLock()) {
-            List<UserInfo> userInfoList = this.getUserInfo();
-            UserDO userDo = new UserDO();
-            for (UserInfo user : userInfoList) {
-                userDo.setUserName(user.username);
-                userDo.setDingUserId(user.ding_userid);
-                userDo.setCreateBy(username);
-                userDo.setModifiedBy(username);
-                try {
-                    userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
-                    // 1 表示启用,0表示禁用
-                    if ("66050".equals(user.userAccountControl)) {
-                        userDo.setIsActive(0);
-                    } else if ("66048".equals(user.userAccountControl) || "512".equals(user.userAccountControl)) {
-                        userDo.setIsActive(1);
-                    } else {
-                        userDo.setIsActive(Integer.parseInt(user.userAccountControl));
-                    }
-                    // 传入手动同步的创建人员
-                    userDo.setCreateBy(username);
-                    userDo.setModifiedBy(username);
-                    List<UserDO> userDoList = new ArrayList<>();
-                    userDoList.add(userDo);
-                    // 先清理数据表
-                    userMapper.deleteUrcUser();
-                    logger.info("清理完成,开始同步");
-                    userMapper.insertBatchUser(userDoList);
-                    operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
-                } catch (Exception e) {
-                    operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
-                    e.printStackTrace();
-                } finally {
-                    lock.unlock();
-                }
-            }
-        } else {
-            if ("system".equals(username)) {
-                // 手动触发正在执行..记录日志
-                operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
-            } else {
-                // 定时任务触发正在执行..记录日志
-                operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
-            }
-            logger.info("同步userInfo数据正在执行...,");
+	@Transactional(rollbackFor = Exception.class)
+	public void SynUserFromUserInfo(String username) {
+		if (lock.tryLock()) {
+			List<UserInfo> userInfoList = this.getUserInfo();
+			UserDO userDo = new UserDO();
+			for (UserInfo user : userInfoList) {
+				userDo.setUserName(user.username);
+				userDo.setDingUserId(user.ding_userid);
+				userDo.setCreateBy(username);
+				userDo.setModifiedBy(username);
+				try {
+					userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
+					// 1 表示启用,0表示禁用
+					if ("66050".equals(user.userAccountControl)) {
+						userDo.setIsActive(0);
+					} else if ("66048".equals(user.userAccountControl) || "512".equals(user.userAccountControl)) {
+						userDo.setIsActive(1);
+					} else {
+						userDo.setIsActive(Integer.parseInt(user.userAccountControl));
+					}
+					// 传入手动同步的创建人员
+					userDo.setCreateBy(username);
+					userDo.setModifiedBy(username);
+					List<UserDO> userDoList = new ArrayList<>();
+					userDoList.add(userDo);
+					// 先清理数据表
+					userMapper.deleteUrcUser();
+					logger.info("清理完成,开始同步");
+					userMapper.insertBatchUser(userDoList);
+					operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
+				} catch (Exception e) {
+					operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
+					e.printStackTrace();
+				} finally {
+					lock.unlock();
+				}
+			}
+		} else {
+			if ("system".equals(username)) {
+				// 手动触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
+			} else {
+				// 定时任务触发正在执行..记录日志
+				operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
+			}
+			logger.info("同步userInfo数据正在执行...,");
 
-        }
+		}
 
-    }
+	}
 
     /**
      * 搜索用户
@@ -178,119 +178,119 @@ public class UserBpImpl implements IUserBp {
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
-    /**
-     * 获取system
-     *
-     * @param userName
-     * @param sysKey
-     * @param ticket
-     * @return ResultVO<UserSysVO>
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/12 9:34
-     */
-    public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
-        List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
-        try {
+	/**
+	 * 获取system
+	 * 
+	 * @param userName
+	 * @param sysKey
+	 * @param ticket
+	 * @return ResultVO<UserSysVO>
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/12 9:34
+	 */
+	public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
+		List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
+		try {
 
-            // 功能版本的生成逻辑 根据userName/syskey取context,进行MD5;
-            // 获取功能权限
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+			// 功能版本的生成逻辑 根据userName/syskey取context,进行MD5;
+			// 获取功能权限
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
-    /**
-     * 请求userInfo
-     *
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/8 20:43
-     */
-    public List getUserInfo() {
-        List<UserInfo> dingUserList = null;
-        // 1.请求token
-        JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("password", password);
-        try {
-            String accessToken = HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
-            logger.info("获取token");
-            // 将拿到的string 转为json
-            JSONObject jsonToken = StringUtility.parseString(accessToken);
-            String token = jsonToken.getString("token");
-            // 2.只调用UserInfo接口，同步UserInfo数据
-            String userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
-            // 解析json数组
-            logger.info("获取userInfo");
-            dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-        }
-        return dingUserList;
-    }
+	/**
+	 * 请求userInfo
+	 *
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/8 20:43
+	 */
+	public List getUserInfo() {
+		List<UserInfo> dingUserList = null;
+		// 1.请求token
+		JSONObject object = new JSONObject();
+		object.put("username", username);
+		object.put("password", password);
+		try {
+			String accessToken = HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
+			logger.info("获取token");
+			// 将拿到的string 转为json
+			JSONObject jsonToken = StringUtility.parseString(accessToken);
+			String token = jsonToken.getString("token");
+			// 2.只调用UserInfo接口，同步UserInfo数据
+			String userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
+			// 解析json数组
+			logger.info("获取userInfo");
+			dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+		}
+		return dingUserList;
+	}
 
-    public static void main(String[] args) {
-        UserBpImpl userBp = new UserBpImpl();
-        userBp.SynUserFromUserInfo("lwx");
-    }
+	public static void main(String[] args) {
+		UserBpImpl userBp = new UserBpImpl();
+		userBp.SynUserFromUserInfo("lwx");
+	}
 
-    public ResultVO login(UserVO authUser) {
-        try {
-            LoginRespVO resp = new LoginRespVO();
-            long startTime = System.currentTimeMillis();
-            boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
-            long endTime = System.currentTimeMillis();
+	public ResultVO login(UserVO authUser) {
+		try {
+			LoginRespVO resp = new LoginRespVO();
+			long startTime = System.currentTimeMillis();
+			boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
+			long endTime = System.currentTimeMillis();
 
-            UserLoginLogDO loginLog = new UserLoginLogDO();
-            loginLog.userName = authUser.userName;
-            loginLog.ip = authUser.ip;
-            loginLog.ldapCost = endTime - startTime;
-            loginLog.loginSuccess = blnOk ? 1 : 0;
-            loginLog.remark = String.format("PWD:%s", authUser.pwd);
-            loginLog.loginTime = new Date();
-            this.insertLoginLog(loginLog);
-            resp.userName = authUser.userName;
-            if (blnOk) {
-                // 先从缓存取
-                List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
-                if (lstSysKey == null) {
-                    resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
-                    if (resp.sysKey == null)
-                        resp.sysKey = new ArrayList<>();
-                    cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
-                } else {
-                    resp.sysKey = lstSysKey;
-                }
-                resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
-            }
-            return VoHelper.getSuccessResult(resp, blnOk ? "00001" : "00000", null);
-        } catch (Exception ex) {
-            return VoHelper.getSuccessResult(null, "00000", "login error");
-        }
-    }
+			UserLoginLogDO loginLog = new UserLoginLogDO();
+			loginLog.userName = authUser.userName;
+			loginLog.ip = authUser.ip;
+			loginLog.ldapCost = endTime - startTime;
+			loginLog.loginSuccess = blnOk ? 1 : 0;
+			loginLog.remark = String.format("PWD:%s", authUser.pwd);
+			loginLog.loginTime = new Date();
+			this.insertLoginLog(loginLog);
+			resp.userName = authUser.userName;
+			if (blnOk) {
+				// 先从缓存取
+				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
+				if (lstSysKey == null) {
+					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
+					if (resp.sysKey == null)
+						resp.sysKey = new ArrayList<>();
+					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
+				} else {
+					resp.sysKey = lstSysKey;
+				}
+				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
+			}
+			return VoHelper.getSuccessResult(resp, blnOk ? "000001" : "000000", null);
+		} catch (Exception ex) {
+			return VoHelper.getSuccessResult(null, "000000", "login error");
+		}
+	}
 
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
-    /**
-     * 登录日志入库
-     *
-     * @param loginLog
-     * @author panyun@youkeshu.com
-     * @date 2018年6月6日 下午2:20:46
-     */
-    private void insertLoginLog(UserLoginLogDO loginLog) {
-        fixedThreadPool.execute(new Runnable() {
+	/**
+	 * 登录日志入库
+	 *
+	 * @param loginLog
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月6日 下午2:20:46
+	 */
+	private void insertLoginLog(UserLoginLogDO loginLog) {
+		fixedThreadPool.execute(new Runnable() {
 
-            @Override
-            public void run() {
-                try {
-                    loginLog.createTime = new Date();
-                    loginLog.modifiedTime = new Date();
-                    userLoginLogMapper.insertUserLoginLog(loginLog);
-                } catch (Exception ex) {
-                    logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
-                }
-            }
-        });
-    }
+			@Override
+			public void run() {
+				try {
+					loginLog.createTime = new Date();
+					loginLog.modifiedTime = new Date();
+					userLoginLogMapper.insertUserLoginLog(loginLog);
+				} catch (Exception ex) {
+					logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
+				}
+			}
+		});
+	}
 }

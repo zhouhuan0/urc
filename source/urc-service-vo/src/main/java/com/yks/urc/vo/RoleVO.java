@@ -64,6 +64,10 @@ public class RoleVO implements Serializable {
      */
     private String modifiedBy;
 
+    /**
+     * 备注
+     */
+    private String remark;
 
     /**
      * 功能权限json
@@ -186,7 +190,12 @@ public class RoleVO implements Serializable {
 	public void setRoleId(long roleId) {
 		this.roleId = roleId;
 	}
-    
-    
-    
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
 }

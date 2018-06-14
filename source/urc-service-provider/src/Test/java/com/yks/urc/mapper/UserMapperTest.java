@@ -1,5 +1,6 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.user.bp.impl.UserBpImpl;
@@ -66,13 +67,21 @@ public class UserMapperTest extends BaseMapperTest {
 
     @Test
     public void testInsert() {
-        List<UserDO> users = userMapper.listUsersByRoleId(1);
+        List<UserDO> users = userMapper.listUsersByRoleId("1");
         Assert.assertNotNull(users);
     }
 
     @Test
     public void testgetUserInfo() {
-        UserVO userVO = new UserVO();
+		//List<String> lstUserName= userMapper.listAllUsersUserName();
+		
+		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
+
+        for (int i = 0; i < lstUserName.size(); i++) {
+			System.out.println(lstUserName.get(i));
+		}
+    	
+/*        UserVO userVO = new UserVO();
         int pagaNum = 0;
         int pageData = 10;
         userVO.userName = "苏林";
@@ -84,7 +93,7 @@ public class UserMapperTest extends BaseMapperTest {
         for (UserDO user : list) {
             System.out.println("==============");
             System.out.println(user.getUserName());
-        }
+        }*/
     }
 
 }

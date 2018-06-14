@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yks.urc.mapper.IRoleMapper">
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleDO">
-        <id column="id" jdbcType="TINYINT" property="id"/>
+        <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="role_id" jdbcType="BIGINT" property="roleId"/>
         <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
         <result column="is_active" jdbcType="TINYINT" property="isActive"/>
@@ -14,10 +14,11 @@
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
     <sql id="Base_Column_List">
-     id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
-     create_time, create_by, modified_time, modified_by
+     id,role_id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
+     create_time, create_by, modified_time, modified_by,remark
    </sql>
 
     <insert id="insert" parameterType="com.yks.urc.entity.RoleDO">
@@ -60,17 +61,17 @@
 
     <!--批量删除-->
     <delete id="deleteBatch" parameterType="java.util.List">
-      delete from urc_role where id in
-        <foreach collection="list" item = "roleId" open="(" separator="," close=")">
+        delete from urc_role where id in
+        <foreach collection="list" item="roleId" open="(" separator="," close=")">
             #{ roleId}
         </foreach>
     </delete>
     <!--根据角色Id获取角色信息-->
     <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
-        <include refid="Base_Column_List" />
+        <include refid="Base_Column_List"/>
         from urc_role
-        where role_id = #{roleId,jdbcType=TINYINT}
+        where role_id = #{roleId,jdbcType=BIGINT}
     </select>
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
         update urc_role
@@ -108,21 +109,6 @@
         </set>
         where role_id = #{roleId,jdbcType=CHAR}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.RoleDO">
-    update urc_role
-    set role_name = #{roleName,jdbcType=VARCHAR},
-      is_active = #{isActive,jdbcType=TINYINT},
-      is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
-      is_forever = #{isForever,jdbcType=TINYINT},
-      effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-      expire_time = #{expireTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
-      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-      modified_by = #{modifiedBy,jdbcType=VARCHAR}
-    where role_id = #{roleId,jdbcType=CHAR}
-  </update>
-  
     <!--根据username/syskey获取角色功能权限-->
     <select id="getFuncJsonByUserAndSysKey" resultType="java.lang.String">
         select rp.selected_context
@@ -151,4 +137,42 @@
         LEFT JOIN urc_role r ON ur.role_id = r.role_id AND r.is_authorizable = 1
         WHERE ur.user_name = #{userName}
     </select>
+
+    <!--根据角色名获取角色信息-->
+    <select id="getByRoleName" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_role
+        where role_name = #{roleName,jdbcType=VARCHAR}
+    </select>
+
+    <!--分页条件查询-->
+    <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_role
+        <where>
+            <if test="createBy != null and createBy != ''">
+                create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+            <if test="roleDO.roleName != null and roleDO.roleName != ''">
+                and role_name=#{roleDO.roleName,jdbcType=VARCHAR}
+            </if>
+            <if test="roleDO.remark != null and roleDO.remark != ''">
+                and remark=#{roleDO.remark,jdbcType=VARCHAR}
+            </if>
+        </where>
+        limit #{currIndex},#{pageSize}
+    </select>
+
+    <!--获取总条目-->
+    <select id="getCounts" resultType="java.lang.Long">
+        select count(1) from urc_role
+        <where>
+            <if test="createBy != null and createBy != ''">
+                create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
 </mapper>

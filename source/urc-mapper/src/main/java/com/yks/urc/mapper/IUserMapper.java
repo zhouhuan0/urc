@@ -20,7 +20,7 @@ public interface IUserMapper {
 
     int updateByPrimaryKey(UserDO record);
 
-    List<UserDO> listUsersByRoleId(long roleId);
+    List<UserDO> listUsersByRoleId(String roleId);
 
     /**
      *

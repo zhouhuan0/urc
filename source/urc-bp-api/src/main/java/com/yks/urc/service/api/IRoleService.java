@@ -2,6 +2,7 @@ package com.yks.urc.service.api;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserInfoDO;
+import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemRootVO;
@@ -10,13 +11,11 @@ import java.util.List;
 
 public interface IRoleService {
 
-    List<RoleVO> getRolesByInfo(RoleVO roleVO);
-
-    Integer addOrUpdateRoleInfo(String userName, RoleVO roleVO);
+    ResultVO<PageResultVO> getRolesByInfo(String jsonStr);
 
     ResultVO addOrUpdateRoleInfo(String jsonStr);
 
-    RoleDO getRoleByRoleId(Integer roleId);
+    ResultVO<RoleVO> getRoleByRoleId(String jsonStr);
 
     List<UserInfoDO> getUserByRoleId(String roleId);
 
