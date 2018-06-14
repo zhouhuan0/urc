@@ -175,4 +175,18 @@ public class UrcServiceImpl implements IUrcService {
 	public String funcPermitValidate(Map<String, String> map) {
 		return userService.funcPermitValidate(map);
 	}
+
+	@Override
+	public String getUserByRoleId(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        RoleVO roleVO = StringUtility.parseObject(jsonObject.get("templ").toString(), RoleVO.class);
+		return StringUtility.toJSONString_NoException(roleService.getUserByRoleId(String.valueOf(roleVO.getRoleId())));
+	}
+
+	@Override
+	public String getRoleUser(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        List<String> roleList = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
+		return StringUtility.toJSONString_NoException(roleService.getRoleUser(roleList));
+	}
 }

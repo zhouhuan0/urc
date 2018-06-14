@@ -265,9 +265,9 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<UserVO> getUserByRoleId(String roleId) {
+    public ResultVO getUserByRoleId(String roleId) {
     	List<UserVO> userList=userMapper.getUserByRoleId(roleId);
-        return userList;
+        return VoHelper.getSuccessResult(userList);
     }
 
     /**

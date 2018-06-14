@@ -160,4 +160,21 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午12:45:36
 	 */
 	String getAllFuncPermit(String jsonStr);
+	
+	
+	/**
+	 * 获取角色关联的用户
+	 * @param jsonStr
+	 * @return
+	 */
+	String getUserByRoleId(String jsonStr);
+	
+	/**
+	 * 获取多个角色已有的用户
+	 * @param jsonStr
+	 * @return
+	 */
+	String getRoleUser(String jsonStr);
+	
+	
 }
