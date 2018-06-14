@@ -14,7 +14,7 @@
 
     <!--task任务扫描注解-->
     <task:annotation-driven />
-    <task:scheduler  pool-size="5" /> 
+    <task:scheduler id="myScheduler" pool-size="5"/>
     <!-- 扫描对应包下所有使用注解的类型 -->
     <context:component-scan base-package="com.yks.urc"/>
 

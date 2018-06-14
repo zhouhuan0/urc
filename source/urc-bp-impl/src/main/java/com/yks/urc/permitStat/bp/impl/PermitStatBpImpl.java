@@ -90,7 +90,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				lstCacheToAdd.add(cacheDo);
 				List<UserPermitStatDO> lstStatCur = userValidateBp.plainSys(rootVO, userName);
 				if (lstStatCur != null && lstStatCur.size() > 0) {
-					lstStatToAdd.addAll(userValidateBp.plainSys(rootVO, userName));
+					lstStatToAdd.addAll(lstStatCur);
 				}
 			}
 

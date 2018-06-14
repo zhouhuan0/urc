@@ -144,7 +144,6 @@ public class UserBpImpl implements IUserBp {
 	public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
 		userMapper.getUsersByUserInfo(userVO, pageNumber, pageData);
 		// 1.首先查询出所有数据,将userDo的数据组装到uservo
-		PageResultVO pageResultVO = new PageResultVO();
 		List<UserVO> userVOList = new ArrayList<>();
 		List<UserDO> userDOList = userMapper.getUsersByUserInfo(userVO, pageNumber, pageData);
 		for (UserDO userDO : userDOList) {
@@ -169,16 +168,10 @@ public class UserBpImpl implements IUserBp {
 
 		// 4.组装userVo
 		userVOList.add(userVO);
-
-		// 5.在把所有的数据组装到pageresult中
-		pageResultVO.lst = userVOList;
 		// 获取总条数
-		pageResultVO.total = userMapper.getUsersByUserInfoCount(userVO);
-		ResultVO resultVO = new ResultVO();
-
-		// 将pagevo组装到resultvo中
-		resultVO.data = pageResultVO;
-		return resultVO;
+		int  total = userMapper.getUsersByUserInfoCount(userVO);
+		PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
 	}
 
 	/**
@@ -266,9 +259,9 @@ public class UserBpImpl implements IUserBp {
 				}
 				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
 			}
-			return VoHelper.getSuccessResult(resp, blnOk ? "00001" : "00000", null);
+			return VoHelper.getSuccessResult(resp, blnOk ? "000001" : "000000", null);
 		} catch (Exception ex) {
-			return VoHelper.getSuccessResult(null, "00000", "login error");
+			return VoHelper.getSuccessResult(null, "000000", "login error");
 		}
 	}
 

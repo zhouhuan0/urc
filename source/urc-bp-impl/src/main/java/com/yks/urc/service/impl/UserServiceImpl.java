@@ -53,7 +53,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-    public ResultVO queryUserDataByRuleId(DataRuleDO ruleDO) {
+/*    public ResultVO queryUserDataByRuleId(DataRuleDO ruleDO) {
         List<UserDO> userList = userMapper.queryUserDataByRuleId(ruleDO);
         if (userList != null && userList.size() > 0) {
             return VoHelper.getSuccessResult(userList);
@@ -67,7 +67,7 @@ public class UserServiceImpl implements IUserService {
             return VoHelper.getSuccessResult(userList);
         }
         return VoHelper.getErrorResult();
-    }
+    }*/
 
     @Override
     public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {

@@ -20,7 +20,7 @@ public interface IUserMapper {
 
     int updateByPrimaryKey(UserDO record);
 
-    List<UserDO> listUsersByRoleId(long roleId);
+    List<UserDO> listUsersByRoleId(String roleId);
 
     /**
      *
@@ -73,19 +73,19 @@ public interface IUserMapper {
      */
 	UserDO getUserInfoByDingUserId(String userId);
 
-	/**
+/*	*//**
 	 * 根据ruleId查看哪些用户已经拥有数据权限
 	 * @param ruleDO
 	 * @return
-	 */
+	 *//*
 	List<UserDO> queryUserDataByRuleId(DataRuleDO ruleDO);
 	
-	/**
+	*//**
 	 * 根据ruleId查看哪些用户没有数据权限
 	 * @param ruleDO
 	 * @return
-	 */
-	List<UserDO> queryUserNoDataByRuleId(DataRuleDO ruleDO);
+	 *//*
+	List<UserDO> queryUserNoDataByRuleId(DataRuleDO ruleDO);*/
 
 	/**
 	 * 获取所有的用户
