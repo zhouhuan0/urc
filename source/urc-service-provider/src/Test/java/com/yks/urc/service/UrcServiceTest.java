@@ -10,17 +10,20 @@ package com.yks.urc.service;
 
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.UserVO;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +31,7 @@ import java.util.Map;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,12 +57,23 @@ public class UrcServiceTest extends BaseServiceTest {
 
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	IPermissionService permissionService;
 
-	
+	@Value("${importSysPermit.aesPwd}")
+	private String aesPwd;
+
+	@Test
+	public void testIPermissionService() throws Exception {
+		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+		String strEncrypt = EncryptHelper.encryptAes_Base64(strJson1, aesPwd);
+		System.out.println(permissionService.importSysPermit(strEncrypt));
+	}
+
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
-	@Test
+
 	public void test_funcPermitValidate() {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/api/grab/smt/batchMarking");
@@ -70,7 +85,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put(StringConstant.sysKey, "001");
 		System.out.println("----------------------" + userService.funcPermitValidate(map));
 	}
-	
+
 	public void testLogin() {
 		UserVO authUser = new UserVO();
 		authUser.userName = "dcadmin";
@@ -78,7 +93,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		authUser.ip = "pyIP";
 		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
 	}
-	
+
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
 		lstUserName.add("dcadmin");

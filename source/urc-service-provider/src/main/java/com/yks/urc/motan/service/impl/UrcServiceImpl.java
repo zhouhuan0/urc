@@ -201,4 +201,11 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.get("operator").toString();
         return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(operator));
 	}
+
+	@Autowired
+	private IPermissionService permissionService;
+	@Override
+	public String importSysPermit(String jsonStr) {
+		return permissionService.importSysPermit(jsonStr);
+	}
 }
