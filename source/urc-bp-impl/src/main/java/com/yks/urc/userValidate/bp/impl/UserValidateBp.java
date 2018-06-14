@@ -4,26 +4,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.weibo.api.motan.util.CollectionUtil;
+import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.ModuleVO;
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	IRoleMapper roleMapper;
+	@Autowired
+	ICacheBp cacheBp;
+
+	@Autowired
+	IOperationBp operationBp;
 
 	public List<String> getFuncJsonLstByUserAndSysKey(String userName, String sysKey) {
 		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
@@ -312,5 +326,88 @@ public class UserValidateBp implements IUserValidateBp {
 			distinctSystemRootVO(sys1, sys2);
 		}
 		return sys1;
+	}
+
+	@Override
+	public ResultVO funcPermitValidate(Map<String, String> map) {
+		operationBp.addLog(UserValidateBp.class.getName(), StringUtility.toJSONString_NoException(map), null);
+		String apiUrl = map.get("apiUrl");
+		String moduleUrl = map.get("moduleUrl");
+		String operator = map.get(StringConstant.operator);
+		String ticket = map.get(StringConstant.ticket);
+		String ip = map.get(StringConstant.ip);
+		String funcVersion = map.get(StringConstant.funcVersion);
+		String sysKey = map.get(StringConstant.sysKey);
+
+		UserVO u = cacheBp.getUser(operator);
+		// 校验ticket
+		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+			// 100002
+			return VoHelper.getResultVO("100002", "登录超时");
+		}
+
+		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", apiUrl)) {
+			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+		}
+
+		// 校验功能权限版本
+		if (!StringUtility.stringEqualsIgnoreCase(funcVersion, cacheBp.getFuncVersion(operator, sysKey))) {
+			return VoHelper.getResultVO("100007", "功能权限版本错误");
+		}
+
+		// 校验是否有权限
+		if (!hasApiFunc(moduleUrl, apiUrl, operator, sysKey)) {
+			return VoHelper.getResultVO("100003", "没有权限");
+		}
+		return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+	}
+
+	/**
+	 * 判断是否有当前api权限
+	 * 
+	 * @param moduleUrl
+	 * @param apiUrl
+	 * @param operator
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午3:14:43
+	 */
+	private boolean hasApiFunc(String moduleUrl, String apiUrl, String operator, String sysKey) {
+		// 获取业务系统的功能权限定义 jsonA
+		String strSysFuncJson = cacheBp.getSysContext(sysKey);
+		if (strSysFuncJson == null) {
+			strSysFuncJson = this.getSysContextFromDb(sysKey);
+			cacheBp.insertSysContext(sysKey, strSysFuncJson);
+			if (StringUtility.isNullOrEmpty(strSysFuncJson))
+				return true;
+		}
+		
+		if (StringUtility.Empty.equals(strSysFuncJson))
+			return true;
+
+		// apiUrl在A不存在,返回true
+		if (!strSysFuncJson.contains("\"" + apiUrl + "\""))
+			return true;
+
+		// 获取用户当前业务系统的funcJson
+		String strCurUserFuncJson = cacheBp.getFuncJson(operator, sysKey);
+		if (strCurUserFuncJson == null)
+			return false;
+
+		// apiUrl在SubA中存在，返回true
+		if (strCurUserFuncJson.contains("\"" + apiUrl + "\""))
+			return true;
+		return false;
+	}
+
+	@Autowired
+	PermissionMapper permissionMapper;
+
+	private String getSysContextFromDb(String sysKey) {
+		Permission per = permissionMapper.getPermissionBySysKey(sysKey);
+		if (per == null || per.getSysContext() == null)
+			return StringUtility.Empty;
+		return per.getSysContext();
 	}
 }

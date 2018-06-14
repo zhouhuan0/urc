@@ -1,7 +1,10 @@
 package com.yks.urc.user.bp.api;
 
+import java.util.List;
+
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
 public interface IUserBp {
@@ -19,5 +22,14 @@ public interface IUserBp {
 	 * @return
 	 */
 	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
+
+	/**
+	 * 获取用户所有系统功能权限及version
+	 * @param operator
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午12:58:45
+	 */
+	ResultVO<List<UserSysVO>> getAllFuncPermit(String operator);
 
 }

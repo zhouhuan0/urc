@@ -29,6 +29,14 @@ public interface IUrcService {
      */
     String login(Map<String, String> map);
 
+    /**
+     * 校验ticket及功能权限版本
+     * @param map
+     * @return
+     * @author panyun@youkeshu.com
+     * @date 2018年6月14日 下午1:11:56
+     */
+    String funcPermitValidate(Map<String,String> map);
 
     /**
      * 手动触发“同步钉钉部门及人员”信息
@@ -142,4 +150,14 @@ public interface IUrcService {
 	 * @author oujie@youkeshu.com
 	 */
 	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+
+
+	/**
+	 * 获取功能权限及版本号
+	 * @param jsonStr
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午12:45:36
+	 */
+	String getAllFuncPermit(String jsonStr);
 }

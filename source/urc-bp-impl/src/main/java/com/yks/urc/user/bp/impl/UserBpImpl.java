@@ -5,6 +5,7 @@ import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
+import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.ldap.bp.api.ILdapBp;
@@ -14,6 +15,7 @@ import com.yks.urc.mapper.IUserLoginLogMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -72,7 +75,10 @@ public class UserBpImpl implements IUserBp {
 
 	@Autowired
 	private ICacheBp cacheBp;
-
+	
+	@Autowired
+	private IPermitStatBp permitStatBp;
+	
 	/**
 	 * 同步UserInfo数据
 	 *
@@ -263,9 +269,9 @@ public class UserBpImpl implements IUserBp {
 				}
 				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
 			}
-			return VoHelper.getSuccessResult(resp, blnOk ? "000001" : "000000", null);
+			return VoHelper.getResultVO(resp, blnOk ? "000001" : "000000", null);
 		} catch (Exception ex) {
-			return VoHelper.getSuccessResult(null, "000000", "login error");
+			return VoHelper.getResultVO(null, "000000", "login error");
 		}
 	}
 
@@ -292,5 +298,29 @@ public class UserBpImpl implements IUserBp {
 				}
 			}
 		});
+	}
+
+	
+	@Override
+	public ResultVO<List<UserSysVO>> getAllFuncPermit(String operator) {
+		// 先从缓存取
+		List<UserPermissionCacheDO> lstFromCache = cacheBp.getUserFunc(operator);
+		if (lstFromCache == null) {
+			// 从DB取,并更新缓存
+			lstFromCache = permitStatBp.updateUserPermitCache(operator);
+		}
+		if (lstFromCache != null) {
+			List<UserSysVO> lstRslt = new ArrayList<>(lstFromCache.size());
+
+			for (UserPermissionCacheDO mem : lstFromCache) {
+				UserSysVO us = new UserSysVO();
+				us.context = mem.getUserContext();
+				us.funcVersion = mem.getPermissionVersion();
+				us.sysKey = mem.getSysKey();
+				lstRslt.add(us);
+			}
+			return VoHelper.getSuccessResult(lstRslt);
+		}
+		return VoHelper.getSuccessResult(null);
 	}
 }
