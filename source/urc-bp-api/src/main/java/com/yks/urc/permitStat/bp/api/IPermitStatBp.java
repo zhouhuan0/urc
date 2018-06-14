@@ -22,10 +22,22 @@ public interface IPermitStatBp {
 
 	/**
 	 * 更新用户功能权限冗余表,并返回
+	 * 
 	 * @param userName
 	 * @return
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午1:06:15
 	 */
 	List<UserPermissionCacheDO> updateUserPermitCache(String userName);
+
+	/**
+	 * 更新用户功能权限冗余表,并返回sys对应的func
+	 * 
+	 * @param userName
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午4:40:59
+	 */
+	UserPermissionCacheDO updateUserPermitCache(String userName, String sysKey);
 }

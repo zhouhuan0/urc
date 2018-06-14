@@ -184,4 +184,20 @@ public interface IUrcService {
 	String getMyDataRuleTempl(String jsonStr);
 	
 	
+	
+	/**
+	 * 获取多个用户的所有数据权限
+	 * @param jsonStr
+	 * @return
+	 */
+	String getDataRuleByUser(String jsonStr);
+	
+	/**
+	 * 导入sys功能权限定义
+	 * @param jsonStr
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午7:17:14
+	 */
+	String importSysPermit(String jsonStr);
 }

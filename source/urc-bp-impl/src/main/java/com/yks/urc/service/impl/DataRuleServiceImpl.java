@@ -1,8 +1,6 @@
 package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.sun.jndi.cosnaming.ExceptionMapper;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
@@ -16,7 +14,6 @@ import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,13 +40,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private IDataRuleSysMapper dataRuleSysMapper;
 
     @Autowired
-    private IExpressionMapper expressionMapper;
+    private IDataRuleMapper dataRuleMapper;
+    
 
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
+    
+    @Autowired
+    private IExpressionMapper expressionMapper;
+    
     @Autowired
     private IDataRuleColMapper dataRuleColMapper;
-
-    @Autowired
-    private IDataRuleMapper dataRuleMapper;
 
     @Autowired
     private IMqBp mqBp;
@@ -405,5 +406,49 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         return VoHelper.getSuccessResult(dataRuleTempListVO);
     }
+
+	@Override
+	public List<DataRuleVO> getDataRuleByUser(List<String> lstUserName) {
+		List<DataRuleVO> dataRuel=new ArrayList<DataRuleVO>();
+		for (int i = 0; i < lstUserName.size(); i++) {
+			//通过用户名得到sys_key
+			List<String> syskeyList=userRoleMapper.getSysKeyByUser(lstUserName.get(i));
+			List<DataRuleSysVO> lstDataRuleSys =new ArrayList<DataRuleSysVO>();
+			for (int j = 0; j < syskeyList.size(); j++) {
+				//通过sysKey得到 行权限
+				List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i));
+				//通过sysKey得到列权限
+				List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i));
+				List<DataRuleColVO> dataRuleColVOList =new ArrayList<DataRuleColVO>();
+				 for (DataRuleColDO colDO : dataRuleColList) {
+					DataRuleColVO dataRuleColVO=new DataRuleColVO();
+					 BeanUtils.copyProperties(colDO, dataRuleColVO);
+					 dataRuleColVOList.add(dataRuleColVO);
+				}
+				List<ExpressionVO> expressionVOList =new ArrayList<ExpressionVO>();
+				 for (ExpressionDO  expressionDO : expressionList) {
+					 ExpressionVO expressionVO=new ExpressionVO();
+					 BeanUtils.copyProperties(expressionDO, expressionVO);
+					 expressionVOList.add(expressionVO);
+				}
+				DataRuleSysVO dataRuleSysVO=new DataRuleSysVO();	
+				JSONObject jsonObject=new JSONObject();
+				jsonObject.put("isAnd", "1");
+				jsonObject.put("subWhereClause", StringUtility.toJSONString_NoException(dataRuleColVOList));
+				dataRuleSysVO.sysKey=syskeyList.get(i);
+				dataRuleSysVO.col=dataRuleColVOList;
+				//dataRuleSysVO.row=jsonObject;
+				lstDataRuleSys.add(dataRuleSysVO);
+			}
+			DataRuleVO dataRuleVO=new DataRuleVO();
+			dataRuleVO.userName=lstUserName.get(i);
+			dataRuleVO.lstDataRuleSys=lstDataRuleSys;
+			dataRuel.add(dataRuleVO);
+		}
+		return dataRuel;
+	}
+	
+	
+	
 
 }

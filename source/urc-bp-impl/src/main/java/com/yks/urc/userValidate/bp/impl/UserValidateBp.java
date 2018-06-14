@@ -14,12 +14,14 @@ import com.weibo.api.motan.util.CollectionUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.MenuVO;
@@ -336,7 +338,7 @@ public class UserValidateBp implements IUserValidateBp {
 		String operator = map.get(StringConstant.operator);
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
-		String funcVersion = map.get(StringConstant.funcVersion);
+		String urcVersion = map.get(StringConstant.urcVersion);
 		String sysKey = map.get(StringConstant.sysKey);
 
 		UserVO u = cacheBp.getUser(operator);
@@ -346,12 +348,12 @@ public class UserValidateBp implements IUserValidateBp {
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
 
-		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", apiUrl)) {
+		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", moduleUrl)) {
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 		}
 
 		// 校验功能权限版本
-		if (!StringUtility.stringEqualsIgnoreCase(funcVersion, cacheBp.getFuncVersion(operator, sysKey))) {
+		if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator, sysKey))) {
 			return VoHelper.getResultVO("100007", "功能权限版本错误");
 		}
 
@@ -360,6 +362,29 @@ public class UserValidateBp implements IUserValidateBp {
 			return VoHelper.getResultVO("100003", "没有权限");
 		}
 		return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+	}
+
+	@Autowired
+	private IPermitStatBp permitStatBp;
+
+	/**
+	 * 从db或cache获取funcVersion
+	 * 
+	 * @param userName
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午4:43:27
+	 */
+	public String getFuncVersionFromDbOrCache(String userName, String sysKey) {
+		String funcVersion = cacheBp.getFuncVersion(userName, sysKey);
+		if (funcVersion == null) {
+			UserPermissionCacheDO ca = permitStatBp.updateUserPermitCache(userName, sysKey);
+			if (ca != null)
+				return ca.getPermissionVersion();
+		}
+		
+		return funcVersion;
 	}
 
 	/**
@@ -382,7 +407,7 @@ public class UserValidateBp implements IUserValidateBp {
 			if (StringUtility.isNullOrEmpty(strSysFuncJson))
 				return true;
 		}
-		
+
 		if (StringUtility.Empty.equals(strSysFuncJson))
 			return true;
 

@@ -11,6 +11,8 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
+
 public class DataRuleSysVO  implements Serializable{
     private static final long serialVersionUID = 6871231447375008701L;
     /**
@@ -21,14 +23,18 @@ public class DataRuleSysVO  implements Serializable{
      *
      */
     public String sysName;
+
+    
     /**
      * 行权限
      */
     public ExpressionVO row;
+    
     /**
      * 列权限
      */
     public List<DataRuleColVO> col;
+    
 
     public String getSysKey() {
         return sysKey;
@@ -46,13 +52,6 @@ public class DataRuleSysVO  implements Serializable{
         this.sysName = sysName;
     }
 
-    public ExpressionVO getRow() {
-        return row;
-    }
-
-    public void setRow(ExpressionVO row) {
-        this.row = row;
-    }
 
     public List<DataRuleColVO> getCol() {
         return col;
@@ -61,4 +60,16 @@ public class DataRuleSysVO  implements Serializable{
     public void setCol(List<DataRuleColVO> col) {
         this.col = col;
     }
+
+	public ExpressionVO getRow() {
+		return row;
+	}
+
+	public void setRow(ExpressionVO row) {
+		this.row = row;
+	}
+
+
+    
+    
 }

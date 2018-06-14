@@ -201,4 +201,18 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.get("operator").toString();
         return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(operator));
 	}
+
+	
+	public String getDataRuleByUser(String jsonStr) {
+		JSONObject jsonObject = StringUtility.parseString(jsonStr);
+		List<String> lstUserName = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
+		return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleByUser(lstUserName));
+	}
+
+	@Autowired
+	private IPermissionService permissionService;
+	@Override
+	public String importSysPermit(String jsonStr) {
+		return permissionService.importSysPermit(jsonStr);
+	}
 }

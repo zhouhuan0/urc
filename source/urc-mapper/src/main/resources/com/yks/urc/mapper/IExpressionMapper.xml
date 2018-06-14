@@ -19,8 +19,13 @@
         <result column="oper_values" jdbcType="LONGVARCHAR" property="operValues"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, sql_id, field_code, entity_code, oper, parent_expression_id, is_and, create_time, 
+    id, expression_id,data_rule_sys_id, field_code, entity_code, oper, parent_expression_id, is_and, create_time, 
     create_by, modified_time, modified_by
+  </sql>
+  
+  <sql id="Base_SYS_Column_List">
+    ue.id, ue.expression_id,ue.data_rule_sys_id, ue.field_code, ue.entity_code, ue.oper, ue.parent_expression_id, ue.is_and, ue.create_time, 
+    ue.create_by, ue.modified_time, ue.modified_by
   </sql>
     <sql id="Blob_Column_List">
     oper_values
@@ -29,11 +34,26 @@
     <select id="listExpressionDOs" resultMap="ResultMapWithBLOBs">
         select
         <include refid="Base_Column_List"/>
-        from urc_expression where sql_id in
+        from urc_expression where expression_id  in
         <foreach item="item" index="index" collection="array" open="(" separator="," close=")">
             #{item}
         </foreach>
     </select>
+    
+    
+    
+    <!--获取条件表达式 list列表-->
+    <select id="listExpressionDOsBySysKey" resultMap="ResultMapWithBLOBs">
+        SELECT
+			<include refid="Base_SYS_Column_List"/>
+		FROM
+			urc_expression ue
+		LEFT JOIN urc_data_rule_sys udrs ON ue.data_rule_sys_id = udrs.data_rule_sys_id
+		WHERE
+			udrs.sys_key=#{sysKey}
+    </select>
+    
+    
     <!--insert-->
     <insert id="insert" parameterType="com.yks.urc.entity.ExpressionDO">
         insert into urc_expression ( expression_id,data_rule_sys_id, field_code,
@@ -84,8 +104,8 @@
     <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.ExpressionDO">
         update urc_expression
         <set>
-            <if test="sqlId != null">
-                sql_id = #{sqlId,jdbcType=BIGINT},
+            <if test="expressionId != null">
+                expression_id = #{expressionId,jdbcType=BIGINT},
             </if>
             <if test="fieldCode != null">
                 field_code = #{fieldCode,jdbcType=VARCHAR},
@@ -122,7 +142,7 @@
     </update>
     <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.ExpressionDO">
     update urc_expression
-    set sql_id = #{sqlId,jdbcType=BIGINT},
+    set expression_id = #{expressionId,jdbcType=BIGINT},
       field_code = #{fieldCode,jdbcType=VARCHAR},
       entity_code = #{entityCode,jdbcType=VARCHAR},
       oper = #{oper,jdbcType=VARCHAR},
@@ -137,7 +157,7 @@
   </update>
     <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.ExpressionDO">
     update urc_expression
-    set sql_id = #{sqlId,jdbcType=BIGINT},
+    set expression_id = #{expressionId,jdbcType=BIGINT},
       field_code = #{fieldCode,jdbcType=VARCHAR},
       entity_code = #{entityCode,jdbcType=VARCHAR},
       oper = #{oper,jdbcType=VARCHAR},
