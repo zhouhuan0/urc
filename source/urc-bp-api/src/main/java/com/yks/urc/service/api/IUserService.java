@@ -10,20 +10,20 @@ public interface IUserService {
 
 	ResultVO login(UserVO authUser);
 
-	/**
+/*	*//**
 	 * 根据数据dataRuleId获取用户名
 	 * @param ruleDO
 	 * @return
-	 */
+	 *//*
 	ResultVO queryUserDataByRuleId(DataRuleDO ruleDO);
 	
-	/**
+	*//**
 	 * 根据数据没有dataRuleId获取用户名
 	 * @param ruleDO
 	 * @return
-	 */
+	 *//*
 	ResultVO queryUserNoDataByRuleId(DataRuleDO ruleDO);
-	
+	*/
 	
 	/**
 	 * 用户管理搜索用户
