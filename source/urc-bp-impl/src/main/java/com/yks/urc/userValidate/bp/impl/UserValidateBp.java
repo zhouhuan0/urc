@@ -75,6 +75,7 @@ public class UserValidateBp implements IUserValidateBp {
 			statDo.setFuncJson(StringUtility.toJSONString_NoException(m.lstChildFunc));
 			// System.out.println(m.sysKey + " " + m.pageFullPathName + " " +
 			// StringUtility.toJSONString_NoException(m.lstChildFunc));
+			lstRslt.add(statDo);
 		}
 
 		return lstRslt;
@@ -303,7 +304,8 @@ public class UserValidateBp implements IUserValidateBp {
 		if (lstJson == null || lstJson.size() == 0)
 			return null;
 		SystemRootVO sys1 = StringUtility.parseObject(lstJson.get(0), SystemRootVO.class);
-		for (String strMem : lstJson) {
+		for (int i = 1; i < lstJson.size(); i++) {
+			String strMem = lstJson.get(i);
 			// sys2中的功能权限合并到sys1中
 			SystemRootVO sys2 = StringUtility.parseObject(strMem, SystemRootVO.class);
 

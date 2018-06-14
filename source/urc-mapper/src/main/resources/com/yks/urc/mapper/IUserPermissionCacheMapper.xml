@@ -19,4 +19,37 @@
     modified_by
   </sql>
   
+  <delete id="deletePermitCacheByUser">
+  	delete from urc_user_permission_cache where user_name=#{userName}
+  </delete>
+    
+  <delete id="deletePermitStatByUser">
+  	delete from urc_user_permit_stat where user_name=#{userName}
+  </delete>
+  
+  <insert id="insertPermitCache">
+  	insert into urc_user_permission_cache (user_name,sys_key,permission_version,user_context,
+  	create_time,create_by,modified_time,modified_by)
+  	values
+        <foreach collection="lst" item="mem" index="index"
+            separator=",">
+            (
+            #{mem.userName},#{mem.sysKey},#{mem.permissionVersion},#{mem.userContext},
+            now(3),#{mem.createBy},now(3),#{mem.modifiedBy}
+            )
+        </foreach>  	
+  </insert>
+  
+  <insert id="insertPermitStat">
+  	insert into urc_user_permit_stat (user_name,sys_key,module_name,func_json,
+  	create_time,create_by,modified_time,modified_by)
+  	values
+        <foreach collection="lst" item="mem" index="index"
+            separator=",">
+            (
+            #{mem.userName},#{mem.sysKey},#{mem.moduleName},#{mem.funcJson},
+            now(3),#{mem.createBy},now(3),#{mem.modifiedBy}
+            )
+        </foreach>  	
+  </insert>
 </mapper>

@@ -47,7 +47,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
-		lstUserName.add("panyun12");
+		lstUserName.add("panyun");
 		permitStatBp.updateUserPermitCache(lstUserName);
 	}
 

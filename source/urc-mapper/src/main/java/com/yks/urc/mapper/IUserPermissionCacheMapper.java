@@ -2,6 +2,8 @@ package com.yks.urc.mapper;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.entity.UserPermitStatDO;
 
@@ -15,7 +17,7 @@ public interface IUserPermissionCacheMapper {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 下午3:00:40
 	 */
-	int deletePermitCacheByUser(String userName);
+	int deletePermitCacheByUser(@Param("userName") String userName);
 
 	/**
 	 * delete urc_user_permit_stat table
@@ -25,7 +27,7 @@ public interface IUserPermissionCacheMapper {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 下午3:00:35
 	 */
-	int deletePermitStatByUser(String userName);
+	int deletePermitStatByUser(@Param("userName") String userName);
 
 	/**
 	 * insert urc_user_permission_cache table
@@ -35,7 +37,7 @@ public interface IUserPermissionCacheMapper {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 下午4:05:50
 	 */
-	int insertPermitCache(List<UserPermissionCacheDO> lstCacheToAdd);
+	int insertPermitCache(@Param("lst") List<UserPermissionCacheDO> lstCacheToAdd);
 
 	/**
 	 * insert urc_user_permit_stat table
@@ -45,6 +47,6 @@ public interface IUserPermissionCacheMapper {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 下午4:06:00
 	 */
-	int insertPermitStat(List<UserPermitStatDO> lstStatToAdd);
+	int insertPermitStat(@Param("lst") List<UserPermitStatDO> lstStatToAdd);
 
 }

@@ -21,8 +21,4 @@ public class SystemVO implements Serializable {
      *
      */
     public String key;
-    /**
-     *
-     */
-    public List<MenuVO> menu;
 }

@@ -9,6 +9,7 @@
 package com.yks.urc.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class SystemRootVO implements Serializable {
     private static final long serialVersionUID = 280918960727443765L;
@@ -16,4 +17,5 @@ public class SystemRootVO implements Serializable {
      *
      */
     public SystemVO system;
+	public List<MenuVO> menu;
 }
