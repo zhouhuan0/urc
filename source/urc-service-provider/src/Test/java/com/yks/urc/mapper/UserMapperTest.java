@@ -74,7 +74,7 @@ public class UserMapperTest extends BaseMapperTest {
     public void testgetUserInfo() {
 		//List<String> lstUserName= userMapper.listAllUsersUserName();
 		
-		List<String> lstUserName =userMapper.listUsersUserNameByRoleId("2");
+		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
 
         for (int i = 0; i < lstUserName.size(); i++) {
 			System.out.println(lstUserName.get(i));

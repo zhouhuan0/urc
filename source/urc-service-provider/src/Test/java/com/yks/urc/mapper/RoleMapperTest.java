@@ -69,7 +69,7 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-        RoleDO roleDO = roleMapper.getRoleByRoleId("1");
+        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
         Assert.assertNull(roleDO);
     }
 
