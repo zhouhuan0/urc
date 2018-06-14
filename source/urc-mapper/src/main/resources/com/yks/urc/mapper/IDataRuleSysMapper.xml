@@ -12,14 +12,14 @@
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
     </resultMap>
 
-    <!--<resultMap id="queryForListMap" type="com.yks.urc.entity.DataRuleSysDO">
+    <resultMap id="queryForListMap" type="com.yks.urc.entity.DataRuleSysDO">
         <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
-        &lt;!&ndash;数据权限sys-urcsql关系&ndash;&gt;
+        <!--数据权限sys-urcsql关系-->
         <collection property="urcSqlDOList" ofType="com.yks.urc.entity.UrcSqlDO">
             <result column="sql_id" jdbcType="TINYINT" property="sqlId"/>
             <result column="entity_code" jdbcType="VARCHAR" property="entityCode"/>
             <result column="hidden_fields" jdbcType="VARCHAR" property="hiddenFields"/>
-            &lt;!&ndash;urcSql-urc_expression 关系&ndash;&gt;
+            <!--urcSql-urc_expression 关系-->
             <collection property="expressionDOS" ofType="com.yks.urc.entity.ExpressionDO">
                 <id column="id" jdbcType="TINYINT" property="id"/>
                 <result column="is_and" jdbcType="INTEGER" property="isAnd"/>
@@ -27,7 +27,7 @@
                 <result column="entity_code" jdbcType="VARCHAR" property="entityCode"/>
             </collection>
         </collection>
-    </resultMap>-->
+    </resultMap>
 
     <sql id="Base_Column_List">
     id, data_rule_sys_id, data_rule_id, sys_key, create_time, create_by, modified_time, modified_by
@@ -53,14 +53,14 @@
     </insert>
 
     <!--根据dataRuleId获取数据权限sys-->
-    <!-- <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="queryForListMap">
-         select
+     <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="queryForListMap">
+       /*  select
          ud.sys_key,us.sql_id,us.entity_code,us.hidden_fields,ue.field_code,ue.entity_code
          from urc_data_rule_sys ud
          LEFT JOIN urc_sql us ON ud.data_rule_sys_id = us.data_rule_sys_id
          LEFT JOIN urc_expression ue ON us.sql_id = ue.sql_id
-         where ud.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
-     </select>-->
+         where ud.data_rule_id = #{dataRuleId,jdbcType=BIGINT}*/
+     </select>
     <!-- <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
        select
        <include refid="Base_Column_List" />

@@ -134,7 +134,7 @@ public class RoleMapperTest extends BaseMapperTest {
 				jsonObject.put("subWhereClause", StringUtility.toJSONString_NoException(dataRuleColVOList));
 				dataRuleSysVO.sysKey=syskeyList.get(i);
 				dataRuleSysVO.col=dataRuleColVOList;
-				dataRuleSysVO.row=jsonObject;
+//				dataRuleSysVO.row=jsonObject;
 				lstDataRuleSys.add(dataRuleSysVO);
 			}
 			DataRuleVO dataRuleVO=new DataRuleVO();
