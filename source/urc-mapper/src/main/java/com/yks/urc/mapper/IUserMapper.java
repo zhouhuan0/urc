@@ -100,5 +100,13 @@ public interface IUserMapper {
      */
     List<String> listUsersUserNameByRoleId(Long roleId);
 
+    
+    /**
+     * 根据roleId得到User
+     * @param roleId
+     * @return
+     */
+	List<UserVO> getUserByRoleId(String roleId);
+
 
 }
