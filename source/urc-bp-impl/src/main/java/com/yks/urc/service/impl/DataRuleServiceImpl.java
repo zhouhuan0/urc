@@ -245,7 +245,30 @@ public class DataRuleServiceImpl implements IDataRuleService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
         DataRuleTemplVO templVO = StringUtility.parseObject(jsonObject.getString("templ"), DataRuleTemplVO.class);
+        if (templVO == null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        /** 3、判断该方案是否属于当前用户（非管理员角色）
+         *  1)、当temp方案存在时候， 2)、当前用户非管理员  3)、temp方案不属于当前用户
+         */
+        String tempIdStr = templVO.getTemplId();
+        if(!StringUtil.isEmpty(tempIdStr)){
+            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.valueOf(tempIdStr),operator);
+            if(dataRuleTemplDO == null){
+                logger.error("该方案不属于该用户，不能操作");
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            }
+        }
+
+        /*4、删除该方案对应的数据(包括对应的数据权限)*/
+        Long currentTemplId = Long.valueOf(tempIdStr);
+        deleteDataRuleTempl(currentTemplId);
+
+
         /*3、新增数据权限模板  urc_data_rule_templ记录*/
         DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
         BeanUtils.copyProperties(templVO, dataRuleTemplDO);
@@ -267,11 +290,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleSysDO.setCreateTime(new Date());
             dataRuleSysDOS.add(dataRuleSysDO);
             /*5、操作urc_sql数据*/
-            List<UrcSqlVO> urcSqlVOS = dataRuleSysVO.urcSqlDOList;
+            // List<UrcSqlVO> urcSqlVOS = dataRuleSysVO.urcSqlDOList;
         }
 
 
         return null;
+    }
+
+    private void deleteDataRuleTempl(Long templId) {
+//        dataRuleTemplMapper
+
     }
 
     /**

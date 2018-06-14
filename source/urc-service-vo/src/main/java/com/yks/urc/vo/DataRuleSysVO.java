@@ -20,7 +20,15 @@ public class DataRuleSysVO  implements Serializable{
     /**
      *
      */
-    public List<UrcSqlVO> urcSqlDOList;
+    public String sysName;
+    /**
+     * 行权限
+     */
+    public ExpressionVO row;
+    /**
+     * 列权限
+     */
+    public List<DataRuleColVO> col;
 
     public String getSysKey() {
         return sysKey;
@@ -30,11 +38,27 @@ public class DataRuleSysVO  implements Serializable{
         this.sysKey = sysKey;
     }
 
-    public List<UrcSqlVO> getUrcSqlDOList() {
-        return urcSqlDOList;
+    public String getSysName() {
+        return sysName;
     }
 
-    public void setUrcSqlDOList(List<UrcSqlVO> urcSqlDOList) {
-        this.urcSqlDOList = urcSqlDOList;
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
+    }
+
+    public ExpressionVO getRow() {
+        return row;
+    }
+
+    public void setRow(ExpressionVO row) {
+        this.row = row;
+    }
+
+    public List<DataRuleColVO> getCol() {
+        return col;
+    }
+
+    public void setCol(List<DataRuleColVO> col) {
+        this.col = col;
     }
 }

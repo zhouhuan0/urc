@@ -12,6 +12,7 @@ public interface IExpressionMapper {
 
     int insert(ExpressionDO record);
 
-    int insertSelective(ExpressionDO record);
+    int insertBatch(List<ExpressionDO> expressionDOS);
+
 
 }

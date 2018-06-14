@@ -5,7 +5,9 @@ import java.util.Date;
 public class ExpressionDO {
     private Long id;
 
-    private Long sqlId;
+    private Long expressionId;
+
+    private Long dataRuleSysId;
 
     private String fieldCode;
 
@@ -15,7 +17,7 @@ public class ExpressionDO {
 
     private Long parentExpressionId;
 
-    private Integer isAnd;
+    private Boolean isAnd;
 
     private Date createTime;
 
@@ -35,12 +37,20 @@ public class ExpressionDO {
         this.id = id;
     }
 
-    public Long getSqlId() {
-        return sqlId;
+    public Long getExpressionId() {
+        return expressionId;
     }
 
-    public void setSqlId(Long sqlId) {
-        this.sqlId = sqlId;
+    public void setExpressionId(Long expressionId) {
+        this.expressionId = expressionId;
+    }
+
+    public Long getDataRuleSysId() {
+        return dataRuleSysId;
+    }
+
+    public void setDataRuleSysId(Long dataRuleSysId) {
+        this.dataRuleSysId = dataRuleSysId;
     }
 
     public String getFieldCode() {
@@ -48,7 +58,7 @@ public class ExpressionDO {
     }
 
     public void setFieldCode(String fieldCode) {
-        this.fieldCode = fieldCode == null ? null : fieldCode.trim();
+        this.fieldCode = fieldCode;
     }
 
     public String getEntityCode() {
@@ -56,7 +66,7 @@ public class ExpressionDO {
     }
 
     public void setEntityCode(String entityCode) {
-        this.entityCode = entityCode == null ? null : entityCode.trim();
+        this.entityCode = entityCode;
     }
 
     public String getOper() {
@@ -64,7 +74,7 @@ public class ExpressionDO {
     }
 
     public void setOper(String oper) {
-        this.oper = oper == null ? null : oper.trim();
+        this.oper = oper;
     }
 
     public Long getParentExpressionId() {
@@ -75,12 +85,12 @@ public class ExpressionDO {
         this.parentExpressionId = parentExpressionId;
     }
 
-    public Integer getIsAnd() {
+    public Boolean getAnd() {
         return isAnd;
     }
 
-    public void setIsAnd(Integer isAnd) {
-        this.isAnd = isAnd;
+    public void setAnd(Boolean and) {
+        isAnd = and;
     }
 
     public Date getCreateTime() {
@@ -96,7 +106,7 @@ public class ExpressionDO {
     }
 
     public void setCreateBy(String createBy) {
-        this.createBy = createBy == null ? null : createBy.trim();
+        this.createBy = createBy;
     }
 
     public Date getModifiedTime() {
@@ -112,7 +122,7 @@ public class ExpressionDO {
     }
 
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
+        this.modifiedBy = modifiedBy;
     }
 
     public String getOperValues() {
@@ -120,6 +130,6 @@ public class ExpressionDO {
     }
 
     public void setOperValues(String operValues) {
-        this.operValues = operValues == null ? null : operValues.trim();
+        this.operValues = operValues;
     }
 }

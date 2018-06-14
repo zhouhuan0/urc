@@ -48,7 +48,7 @@
     </select>
     <!--获取总条目-->
     <select id="getCounts" resultType="java.lang.Long">
-        select count(*) from urc_data_rule_templ
+        select count(1) from urc_data_rule_templ
         <where>
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
@@ -62,12 +62,12 @@
         values (#{templId,jdbcType=BIGINT}, #{templName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
         #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR})
     </insert>
+    <!--根据templ_id删除记录-->
+    <delete id="deleteByTemplId" parameterType="java.lang.Long">
+        delete from urc_data_rule_templ
+        where templ_id = #{templId,jdbcType=BIGINT}
+    </delete>
 
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from urc_data_rule_templ
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
 
     <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
         insert into urc_data_rule_templ

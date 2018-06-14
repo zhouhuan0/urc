@@ -19,6 +19,17 @@ public interface IDataRuleSysMapper {
 
     int deleteByPrimaryKey(Long id);
 
+    /**
+     * Description: 新增
+     *
+     * @param : record
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/14 15:50
+     * @see
+     */
     int insert(DataRuleSysDO record);
+
+    int insertBatch(List<DataRuleSysDO> dataRuleSysDOS);
 
 }

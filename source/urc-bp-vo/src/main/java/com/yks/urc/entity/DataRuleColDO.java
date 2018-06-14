@@ -1,16 +1,22 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
-import java.util.List;
 
-public class DataRuleSysDO {
+ /**
+  * 〈一句话功能简述〉 
+  * 〈功能详细描述〉 
+  * @author lvcr
+  * @version 1.0 
+  * @see DataRuleColDO 
+  * @since JDK1.8
+  * @date 2018/6/14 14:57
+  */ 
+public class DataRuleColDO {
     private Long id;
 
     private Long dataRuleSysId;
 
-    private Long dataRuleId;
-
-    private String sysKey;
+    private String entityCode;
 
     private Date createTime;
 
@@ -19,6 +25,8 @@ public class DataRuleSysDO {
     private Date modifiedTime;
 
     private String modifiedBy;
+
+    private String colJson;
 
     public Long getId() {
         return id;
@@ -36,20 +44,12 @@ public class DataRuleSysDO {
         this.dataRuleSysId = dataRuleSysId;
     }
 
-    public Long getDataRuleId() {
-        return dataRuleId;
+    public String getEntityCode() {
+        return entityCode;
     }
 
-    public void setDataRuleId(Long dataRuleId) {
-        this.dataRuleId = dataRuleId;
-    }
-
-    public String getSysKey() {
-        return sysKey;
-    }
-
-    public void setSysKey(String sysKey) {
-        this.sysKey = sysKey == null ? null : sysKey.trim();
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode == null ? null : entityCode.trim();
     }
 
     public Date getCreateTime() {
@@ -82,5 +82,13 @@ public class DataRuleSysDO {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
+    }
+
+    public String getColJson() {
+        return colJson;
+    }
+
+    public void setColJson(String colJson) {
+        this.colJson = colJson == null ? null : colJson.trim();
     }
 }

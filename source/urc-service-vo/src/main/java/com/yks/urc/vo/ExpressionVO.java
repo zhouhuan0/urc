@@ -11,33 +11,103 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class ExpressionVO implements Serializable{
+public class ExpressionVO implements Serializable {
     private static final long serialVersionUID = 7054457903132702754L;
     /**
      *
      */
-    public String expressionId;
+    private String expressionId;
     /**
      * 子级where条件
      */
-    public List<ExpressionVO> subWhereClause;
+    private List<ExpressionVO> subWhereClause;
     /**
-     * 子级条件的关系符
+     * 子级条件的关系符  0-or,1-and
      */
-    public String andOr;
-    /**
-     *
-     */
-    public String filedCode;
+    private Integer isAnd;
     /**
      *
      */
-    public String entity_code;
+    private String filedCode;
     /**
      *
      */
-    public String whereClauseId;
+    private String entityCode;
+    /**
+     * in/eq/gt/lt
+     */
+    private String oper;
 
+    /**
+     * 操作值 [“v1”,”v2”]
+     */
+    private String operValues;
+    /**
+     * 父级ID
+     */
+    private String parentExpressionId;
 
+    public String getExpressionId() {
+        return expressionId;
+    }
 
+    public void setExpressionId(String expressionId) {
+        this.expressionId = expressionId;
+    }
+
+    public List<ExpressionVO> getSubWhereClause() {
+        return subWhereClause;
+    }
+
+    public void setSubWhereClause(List<ExpressionVO> subWhereClause) {
+        this.subWhereClause = subWhereClause;
+    }
+
+    public Integer getIsAnd() {
+        return isAnd;
+    }
+
+    public void setIsAnd(Integer isAnd) {
+        this.isAnd = isAnd;
+    }
+
+    public String getFiledCode() {
+        return filedCode;
+    }
+
+    public void setFiledCode(String filedCode) {
+        this.filedCode = filedCode;
+    }
+
+    public String getEntityCode() {
+        return entityCode;
+    }
+
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode;
+    }
+
+    public String getOper() {
+        return oper;
+    }
+
+    public void setOper(String oper) {
+        this.oper = oper;
+    }
+
+    public String getOperValues() {
+        return operValues;
+    }
+
+    public void setOperValues(String operValues) {
+        this.operValues = operValues;
+    }
+
+    public String getParentExpressionId() {
+        return parentExpressionId;
+    }
+
+    public void setParentExpressionId(String parentExpressionId) {
+        this.parentExpressionId = parentExpressionId;
+    }
 }

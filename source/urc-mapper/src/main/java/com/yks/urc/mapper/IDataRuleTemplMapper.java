@@ -42,6 +42,16 @@ public interface IDataRuleTemplMapper {
      * @see
      */
     Long getCounts(@Param("createBy") String createBy);
+    
+    /**
+     * Description: 根据templId删除记录
+     * @param : templId
+     * @return:  Integer
+     * @auther: lvcr
+     * @date: 2018/6/14 17:26
+     * @see
+     */
+    Integer deleteByTemplId(@Param("templId") Long templId);
 
 
 }
