@@ -43,5 +43,12 @@ public interface IDataRuleTemplMapper {
      */
     Long getCounts(@Param("createBy") String createBy);
 
+    /**
+     * 获取用户可选择的所有数据授权方案
+     * @param userName
+     * @return
+     */
+	List<DataRuleTemplDO>  getMyDataRuleTempl(String userName);
+
 
 }

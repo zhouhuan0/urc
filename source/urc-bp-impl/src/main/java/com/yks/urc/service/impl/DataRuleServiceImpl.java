@@ -293,4 +293,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return dataRuleTemplVOS;
     }
 
+	@Override
+	public ResultVO getMyDataRuleTempl(String userName) {
+		List<DataRuleTemplDO> dataRuleTempList=dataRuleTemplMapper.getMyDataRuleTempl(userName);
+		List<DataRuleTemplVO> dataRuleTempListVO= convertDoToVO(dataRuleTempList);
+		return VoHelper.getSuccessResult(dataRuleTempListVO);
+	}
+
 }

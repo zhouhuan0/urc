@@ -176,5 +176,12 @@ public interface IUrcService {
 	 */
 	String getRoleUser(String jsonStr);
 	
+	/**
+	 * 获取用户可选择的所有数据授权方案
+	 * @param jsonStr
+	 * @return
+	 */
+	String getMyDataRuleTempl(String jsonStr);
+	
 	
 }

@@ -1,5 +1,6 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.vo.UserVO;
 
@@ -25,6 +26,11 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Autowired
     private IRoleMapper roleMapper;
+    
+    
+    @Autowired
+    private IDataRuleTemplMapper dataRuleTemplMapper;
+    
     
 
     @Autowired
@@ -81,8 +87,9 @@ public class RoleMapperTest extends BaseMapperTest {
     public void getRoleByRoleId() {
 /*        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
         Assert.assertNull(roleDO);*/
-    	
-    	List<UserVO> userList=userMapper.getUserByRoleId("1528856724627000011");
+		List<DataRuleTemplDO> dataRuleTempList=dataRuleTemplMapper.getMyDataRuleTempl("admin");
+
+    	//List<UserVO> userList=userMapper.getUserByRoleId("1528856724627000011");
 
        // List<String> lstUserName= userRoleMapper.getUserNameByRoleId("1528856724627000011");
 
