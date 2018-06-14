@@ -1,6 +1,8 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.vo.UserVO;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,14 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Autowired
     private IRoleMapper roleMapper;
+    
+
+    @Autowired
+    private IUserMapper userMapper;
+    
+    
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
 
     @Test
     public void testInsert() {
@@ -69,8 +79,13 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
-        Assert.assertNull(roleDO);
+/*        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
+        Assert.assertNull(roleDO);*/
+    	
+    	List<UserVO> userList=userMapper.getUserByRoleId("1528856724627000011");
+
+       // List<String> lstUserName= userRoleMapper.getUserNameByRoleId("1528856724627000011");
+
     }
 
     @Test
