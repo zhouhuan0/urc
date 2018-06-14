@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.crud.jdbc.Transactional;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.Permission;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
@@ -32,6 +33,9 @@ public class PermissionServiceImpl implements IPermissionService {
 
 	@Autowired
 	IOperationBp operationBp;
+
+	@Autowired
+	ICacheBp cacheBp;
 
 	@Transactional
 	@Override
@@ -62,6 +66,11 @@ public class PermissionServiceImpl implements IPermissionService {
 				permissionMapper.deleteSyspermitDefine(lstPermit);
 				permissionMapper.insertSysPermitDefine(lstPermit);
 				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", plainTxt), null);
+
+				// 更新缓存
+				for (Permission p : lstPermit) {
+					cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
+				}
 				rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
 			} else {
 				rslt.state = CommonMessageCodeEnum.FAIL.getCode();

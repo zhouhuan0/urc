@@ -63,13 +63,14 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Value("${importSysPermit.aesPwd}")
 	private String aesPwd;
 
-	@Test
+	
 	public void testIPermissionService() throws Exception {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
 		String strEncrypt = EncryptHelper.encryptAes_Base64(strJson1, aesPwd);
 		System.out.println(permissionService.importSysPermit(strEncrypt));
 	}
 
+	@Test
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
