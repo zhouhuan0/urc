@@ -67,7 +67,7 @@ public interface IRoleMapper {
      */
 //    List<RoleDO> listRoleByPage(RoleDO roleDO,int currPage, int pageSize);
 
-    RoleDO getRoleByRoleId(long roleId);
+    RoleDO getRoleByRoleId(String roleId);
 
 
     /**

@@ -66,11 +66,11 @@
         </foreach>
     </delete>
     <!--根据角色Id获取角色信息-->
-    <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="getRoleByRoleId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from urc_role
-        where role_id = #{roleId,jdbcType=TINYINT}
+        where role_id = #{roleId,jdbcType=BIGINT}
     </select>
     <update id="update" parameterType="com.yks.urc.entity.RoleDO">
         update urc_role

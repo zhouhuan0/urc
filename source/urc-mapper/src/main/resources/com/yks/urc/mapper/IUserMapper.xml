@@ -42,7 +42,7 @@
     modified_time
   </sql>
     <!--根据roleId查询用户-->
-    <select id="listUsersByRoleId" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
+    <select id="listUsersByRoleId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
@@ -107,15 +107,16 @@
     
     
         
-   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultMap="java.lang.String">
+   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.String"  resultType="java.lang.String" >
         select
-        user_name as userName 
-        from urc_user  left JOIN urc_user_role ur ON ur.user_name=user_name 
-          <where>
-     		 <if test="roleId != null and roleId != '' ">
-     		 	 ur.role_id  = #{roleId,jdbcType=BIGINT} 
-     		 </if>
-    	  </where> 
+        uu.user_name as userName 
+        from urc_user uu  left JOIN urc_user_role ur ON ur.user_name=uu.user_name 
+        
+       <where>
+    		 <if test="roleId != null and roleId != '' ">
+    		 	 ur.role_id  = #{roleId,jdbcType=BIGINT} 
+    		 </if>
+   	   </where> 
         
          
     </select>
