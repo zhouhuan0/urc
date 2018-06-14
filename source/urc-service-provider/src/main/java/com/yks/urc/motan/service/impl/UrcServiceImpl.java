@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
@@ -25,6 +26,9 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private IPersonService personService;
+    
+    @Autowired
+    private IDataRuleTemplMapper dataRuleTemplMapper;
 
 
     @Autowired
@@ -165,4 +169,36 @@ public class UrcServiceImpl implements IUrcService {
     public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
     }
+
+	@Override
+	public String getAllFuncPermit(String jsonStr) {
+		return userService.getAllFuncPermit(jsonStr);
+	}
+
+	@Override
+	public String funcPermitValidate(Map<String, String> map) {
+		return userService.funcPermitValidate(map);
+	}
+
+	@Override
+	public String getUserByRoleId(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        RoleVO roleVO = StringUtility.parseObject(jsonObject.get("templ").toString(), RoleVO.class);
+		return StringUtility.toJSONString_NoException(roleService.getUserByRoleId(String.valueOf(roleVO.getRoleId())));
+	}
+
+	@Override
+	public String getRoleUser(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        List<String> roleList = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
+		return StringUtility.toJSONString_NoException(roleService.getRoleUser(roleList));
+	}
+
+	
+	
+	public String getMyDataRuleTempl(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(operator));
+	}
 }

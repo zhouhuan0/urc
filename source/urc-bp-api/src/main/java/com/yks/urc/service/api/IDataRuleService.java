@@ -13,4 +13,12 @@ public interface IDataRuleService {
     ResultVO assignDataRuleTempl2User(String jsonStr);
 
     ResultVO<DataRuleTemplVO> addOrUpdateDataRuleTempl(String jsonStr);
+    
+    /**
+     * 获取用户可选择的所有数据授权方案
+     * @param userName
+     * @return
+     */
+    ResultVO getMyDataRuleTempl(String userName);
+    
 }

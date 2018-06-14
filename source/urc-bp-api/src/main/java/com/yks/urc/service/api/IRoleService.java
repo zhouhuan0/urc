@@ -6,6 +6,7 @@ import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.UserVO;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ public interface IRoleService {
 
     ResultVO<RoleVO> getRoleByRoleId(String jsonStr);
 
-    List<UserInfoDO> getUserByRoleId(String roleId);
+    ResultVO getUserByRoleId(String roleId);
 
     void deleteRoles(List<Integer> lstRoleId);
 

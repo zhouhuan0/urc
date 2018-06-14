@@ -265,10 +265,9 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<UserInfoDO> getUserByRoleId(String roleId) {
-        /*1、非admin角色的用户需要判断该角色是否是自己创建的角色*/
-        /*2、根据roleId查询用户*/
-        return null;
+    public ResultVO getUserByRoleId(String roleId) {
+    	List<UserVO> userList=userMapper.getUserByRoleId(roleId);
+        return VoHelper.getSuccessResult(userList);
     }
 
     /**
@@ -366,15 +365,8 @@ public class RoleServiceImpl implements IRoleService {
             RoleVO roleVO = new RoleVO();
             roleVO.setRoleName(roleDO.getRoleName());
             roleVO.setRoleId(roleDO.getRoleId());
-            if (roleDO.isAuthorizable()) {
-                //管理员
-                List<String> lstUserName = userMapper.listAllUsersUserName();
-                roleVO.setLstUserName(lstUserName);
-            } else {
-                //非管理员
-                List<String> lstUserName = userMapper.listUsersUserNameByRoleId(roleDO.getRoleId());
-                roleVO.setLstUserName(lstUserName);
-            }
+            List<String> lstUserName= userRoleMapper.getUserNameByRoleId(lstRoleId.get(i));
+            roleVO.setLstUserName(lstUserName);
             roleList.add(roleVO);
         }
         /*查询用户角色关系表*/

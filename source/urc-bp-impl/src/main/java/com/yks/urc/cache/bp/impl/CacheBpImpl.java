@@ -39,6 +39,14 @@ public class CacheBpImpl implements ICacheBp {
 	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys", 1, TimeUnit.DAYS);
 
 	/**
+	 * 系统功能权限定义
+	 * 
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午3:00:25
+	 */
+	private Cache<String, String> sysFuncJsonCache = new DistributedCache<>("URC-SysFuncJson-Define");// , 100, TimeUnit.DAYS);
+
+	/**
 	 * 用户所有系统功能权限及版本号
 	 * 
 	 * @author panyun@youkeshu.com
@@ -124,5 +132,47 @@ public class CacheBpImpl implements ICacheBp {
 		} catch (Exception ex) {
 			logger.error(String.format("removeUserFunc:%s", userName), ex);
 		}
+	}
+
+	@Override
+	public String getFuncVersion(String userName, String sysKey) {
+		List<UserPermissionCacheDO> lstCache = this.getUserFunc(userName);
+		if (lstCache != null) {
+			for (UserPermissionCacheDO mem : lstCache) {
+				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
+					return mem.getPermissionVersion();
+				}
+			}
+		}
+		return StringUtility.Empty;
+	}
+
+	@Override
+	public String getSysContext(String sysKey) {
+		try {
+			return sysFuncJsonCache.get(sysKey);
+		} catch (Exception ex) {
+			logger.error(String.format("getSysContext:%s", sysKey), ex);
+			return StringUtility.Empty;
+		}
+	}
+
+	@Override
+	public String getFuncJson(String operator, String sysKey) {
+		List<UserPermissionCacheDO> lstCache = this.getUserFunc(operator);
+		if (lstCache != null) {
+			for (UserPermissionCacheDO mem : lstCache) {
+				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
+					return mem.getUserContext();
+				}
+			}
+		}
+		return StringUtility.Empty;
+	}
+
+	@Override
+	public void insertSysContext(String sysKey, String sysContext) {
+		sysFuncJsonCache.put(sysKey, sysContext);
+
 	}
 }

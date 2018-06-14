@@ -3,6 +3,7 @@ package com.yks.urc.mapper;
 import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -34,22 +35,20 @@ public interface IUserMapper {
     /**
      * 搜索用户
      *
-     * @param userVO
-     * @param pageNumber
-     * @param pageData
+     * @param query
      * @return  List<UserDO>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 10:34
      */
-    List<UserDO> getUsersByUserInfo(@Param("userVO") UserVO userVO, @Param("pageNumber") int pageNumber,@Param("pageData") int pageData);
+    List<UserDO> getUsersByUserInfo(@Param("query")Query query);
     /**
      * 获取搜索用户分页的总数
-     * @param  userVO
+     * @param  query
      * @return int
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 17:05
      */
-   int getUsersByUserInfoCount(@Param("userVO") UserVO userVO);
+   int getUsersByUserInfoCount(@Param("query")Query query);
     /**
      * 批量同步到数据库
      *
@@ -100,6 +99,14 @@ public interface IUserMapper {
      * @return
      */
     List<String> listUsersUserNameByRoleId(Long roleId);
+
+    
+    /**
+     * 根据roleId得到User
+     * @param roleId
+     * @return
+     */
+	List<UserVO> getUserByRoleId(String roleId);
 
 
 }

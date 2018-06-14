@@ -40,8 +40,8 @@ public class SeqBpImpl implements ISeqBp {
 	}
 
 	@Override
-	public long getNextSqlId() {
-		return getNextSeq("sqlId");
+	public long getExpressionId() {
+		return getNextSeq("expressionId");
 	}
 
 	@Override

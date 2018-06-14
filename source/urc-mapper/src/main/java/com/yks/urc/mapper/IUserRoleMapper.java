@@ -60,4 +60,6 @@ public interface IUserRoleMapper {
      * @see
      */
     Integer deleteByRoleId(Long roleId);
+
+	List<String> getUserNameByRoleId(String roleId);
 }
