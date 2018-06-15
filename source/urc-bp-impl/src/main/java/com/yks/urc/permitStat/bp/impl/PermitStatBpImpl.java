@@ -56,10 +56,14 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private ICacheBp cacheBp;
 
-	private void updateUserPermitCache(String userName) {
+	public List<UserPermissionCacheDO> updateUserPermitCache(String userName) {
 		try {
 			// 获取用户所有的sysKey
 			List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+			if (lstSysKey == null)
+				lstSysKey = new ArrayList<>();
+
+			List<UserPermissionCacheDO> lstCacheToAdd = new ArrayList<>(lstSysKey.size());
 
 			// 先删除冗余表数据
 			permissionCacheMapper.deletePermitCacheByUser(userName);
@@ -68,10 +72,12 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			if (lstSysKey == null || lstSysKey.size() == 0) {
 				// 清除缓存
 				cacheBp.removeUserSysKey(userName);
-				return;
+				// 更新缓存
+				cacheBp.insertUserSysKey(userName, lstSysKey);
+				cacheBp.insertUserFunc(userName, lstCacheToAdd);
+				return new ArrayList<>();
 			}
 
-			List<UserPermissionCacheDO> lstCacheToAdd = new ArrayList<>(lstSysKey.size());
 			List<UserPermitStatDO> lstStatToAdd = new ArrayList<>();
 
 			for (String sysKey : lstSysKey) {
@@ -107,9 +113,24 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			// 更新缓存
 			cacheBp.insertUserSysKey(userName, lstSysKey);
 			cacheBp.insertUserFunc(userName, lstCacheToAdd);
-
+			return lstCacheToAdd;
 		} catch (Exception ex) {
 			logger.error(String.format("updateUserPermitCache:%s", userName), ex);
 		}
+		return new ArrayList<>();
+	}
+	
+
+	@Override
+	public UserPermissionCacheDO updateUserPermitCache(String userName, String sysKey) {
+		List<UserPermissionCacheDO> lstCache = updateUserPermitCache(userName);
+		if (lstCache != null) {
+			for (UserPermissionCacheDO mem : lstCache) {
+				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
+					return mem;
+				}
+			}
+		}
+		return null;
 	}
 }

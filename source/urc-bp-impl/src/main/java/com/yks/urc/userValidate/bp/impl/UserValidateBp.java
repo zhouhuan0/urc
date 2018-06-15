@@ -4,26 +4,42 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import com.weibo.api.motan.util.CollectionUtil;
+import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.ModuleVO;
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	IRoleMapper roleMapper;
+	@Autowired
+	ICacheBp cacheBp;
+
+	@Autowired
+	IOperationBp operationBp;
 
 	public List<String> getFuncJsonLstByUserAndSysKey(String userName, String sysKey) {
 		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
@@ -143,9 +159,13 @@ public class UserValidateBp implements IUserValidateBp {
 	public static void main(String[] args) throws IOException {
 		// 读取func1.json文件
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
-		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
-		System.out.println(StringUtility.toJSONString_NoException(sys1));
-		new UserValidateBp().plainSys(sys1, "panyun");
+		String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
+		System.out.println(new UserValidateBp().cleanDeletedNode(strJson1, strJson2));
+		
+		
+//		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
+//		System.out.println(StringUtility.toJSONString_NoException(sys1));
+//		new UserValidateBp().plainSys(sys1, "panyun");
 
 		// 读取func2.json文件
 		// String strJson2 =
@@ -158,6 +178,144 @@ public class UserValidateBp implements IUserValidateBp {
 		// distinctSystemRootVO(sys1, sys2);
 		// System.out.println("合并后的sys1:" +
 		// StringUtility.toJSONString_NoException(sys1));
+	}
+
+	/**
+	 * 功能权限json清理：将old与newest对比，删除old中存在但newest不存在的node删除
+	 * 
+	 * @param strFuncJsonOld
+	 * @param strFuncJsonNewest
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:26:43
+	 */
+	public String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest) {
+		SystemRootVO sysOld = StringUtility.parseObject(strFuncJsonOld, SystemRootVO.class);
+		SystemRootVO sysNewest = StringUtility.parseObject(strFuncJsonNewest, SystemRootVO.class);
+
+		// 将newest中的所有key存入List
+		List<String> lstNewestKey = new ArrayList<>();
+		if (sysNewest.menu != null) {
+			for (MenuVO m : sysNewest.menu) {
+				lstNewestKey.add(m.key);
+				searchModuleKey(m.module, lstNewestKey);
+			}
+		}
+
+		// 若old中的key在List中不存在，则删除
+		// 判断 menu是否存在,不存在则删除
+		if (sysOld.menu != null) {
+			for (int i = 0; i < sysOld.menu.size(); i++) {
+				if (lstNewestKey.contains(sysOld.menu.get(i).key))
+					continue;
+				// 删除menu
+				sysOld.menu.remove(i);
+				i--;
+			}
+		}
+
+		for (MenuVO m : sysOld.menu) {
+			cleanDeletedModule(m.module, lstNewestKey);
+		}
+		
+		return StringUtility.toJSONString_NoException(sysOld);
+	}
+
+	/**
+	 * 递归删除module下不存在的子node
+	 * 
+	 * @param lstModule
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:53:44
+	 */
+	private void cleanDeletedModule(List<ModuleVO> lstModule, List<String> lstNewestKey) {
+		if (lstModule == null || lstNewestKey == null)
+			return;
+		for (int i = 0; i < lstModule.size(); i++) {
+			if (lstNewestKey.contains(lstModule.get(i).key)) {
+				// 递归删除module下不存在的子node
+				cleanDeletedModule(lstModule.get(i), lstNewestKey);
+				continue;
+			}
+			// 删除module
+			lstModule.remove(i);
+			i--;
+		}
+	}
+
+	/**
+	 * 递归删除module下不存在的子node
+	 * 
+	 * @param moduleVO
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:46:27
+	 */
+	private void cleanDeletedModule(ModuleVO moduleVO, List<String> lstNewestKey) {
+		if (moduleVO == null || lstNewestKey == null)
+			return;
+
+		cleanDeletedModule(moduleVO.module, lstNewestKey);
+		cleanDeletedFunction(moduleVO.function, lstNewestKey);
+	}
+
+	/**
+	 * 递归删除function下不存在的子node
+	 * 
+	 * @param lstFunc
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:53:52
+	 */
+	private void cleanDeletedFunction(List<FunctionVO> lstFunc, List<String> lstNewestKey) {
+		if (lstFunc == null || lstNewestKey == null)
+			return;
+		for (int i = 0; i < lstFunc.size(); i++) {
+			if (lstNewestKey.contains(lstFunc.get(i).key)) {
+				cleanDeletedFunction(lstFunc.get(i).function, lstNewestKey);
+				continue;
+			}
+			lstFunc.remove(i);
+			i--;
+		}
+	}
+
+	/**
+	 * 递归查找module的key
+	 * 
+	 * @param lstModule
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:37:41
+	 */
+	private void searchModuleKey(List<ModuleVO> lstModule, List<String> lstNewestKey) {
+		if (lstModule != null) {
+			for (ModuleVO module : lstModule) {
+				lstNewestKey.add(module.key);
+				searchModuleKey(module.module, lstNewestKey);
+				searchFunctionKey(module.function, lstNewestKey);
+			}
+		}
+	}
+
+	/**
+	 * 递归查找function的key
+	 * 
+	 * @param lstFunc
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:37:28
+	 */
+	private void searchFunctionKey(List<FunctionVO> lstFunc, List<String> lstNewestKey) {
+		if (lstFunc == null)
+			return;
+		for (FunctionVO f : lstFunc) {
+			lstNewestKey.add(f.key);
+			if (f.function != null) {
+				searchFunctionKey(f.function, lstNewestKey);
+			}
+		}
 	}
 
 	/**
@@ -312,5 +470,111 @@ public class UserValidateBp implements IUserValidateBp {
 			distinctSystemRootVO(sys1, sys2);
 		}
 		return sys1;
+	}
+
+	@Override
+	public ResultVO funcPermitValidate(Map<String, String> map) {
+		operationBp.addLog(UserValidateBp.class.getName(), StringUtility.toJSONString_NoException(map), null);
+		String apiUrl = map.get("apiUrl");
+		String moduleUrl = map.get("moduleUrl");
+		String operator = map.get(StringConstant.operator);
+		String ticket = map.get(StringConstant.ticket);
+		String ip = map.get(StringConstant.ip);
+		String urcVersion = map.get(StringConstant.urcVersion);
+		String sysKey = map.get(StringConstant.sysKey);
+
+		UserVO u = cacheBp.getUser(operator);
+		// 校验ticket
+		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+			// 100002
+			return VoHelper.getResultVO("100002", "登录超时");
+		}
+
+		if (StringUtility.stringEqualsIgnoreCase("a2af9fccd4e40486", moduleUrl)) {
+			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+		}
+
+		// 校验功能权限版本
+		if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator, sysKey))) {
+			return VoHelper.getResultVO("100007", "功能权限版本错误");
+		}
+
+		// 校验是否有权限
+		if (!hasApiFunc(moduleUrl, apiUrl, operator, sysKey)) {
+			return VoHelper.getResultVO("100003", "没有权限");
+		}
+		return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+	}
+
+	@Autowired
+	private IPermitStatBp permitStatBp;
+
+	/**
+	 * 从db或cache获取funcVersion
+	 * 
+	 * @param userName
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午4:43:27
+	 */
+	public String getFuncVersionFromDbOrCache(String userName, String sysKey) {
+		String funcVersion = cacheBp.getFuncVersion(userName, sysKey);
+		if (funcVersion == null) {
+			UserPermissionCacheDO ca = permitStatBp.updateUserPermitCache(userName, sysKey);
+			if (ca != null)
+				return ca.getPermissionVersion();
+		}
+
+		return funcVersion;
+	}
+
+	/**
+	 * 判断是否有当前api权限
+	 * 
+	 * @param moduleUrl
+	 * @param apiUrl
+	 * @param operator
+	 * @param sysKey
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午3:14:43
+	 */
+	private boolean hasApiFunc(String moduleUrl, String apiUrl, String operator, String sysKey) {
+		// 获取业务系统的功能权限定义 jsonA
+		String strSysFuncJson = cacheBp.getSysContext(sysKey);
+		if (strSysFuncJson == null) {
+			strSysFuncJson = this.getSysContextFromDb(sysKey);
+			cacheBp.insertSysContext(sysKey, strSysFuncJson);
+			if (StringUtility.isNullOrEmpty(strSysFuncJson))
+				return true;
+		}
+
+		if (StringUtility.Empty.equals(strSysFuncJson))
+			return true;
+
+		// apiUrl在A不存在,返回true
+		if (!strSysFuncJson.contains("\"" + apiUrl + "\""))
+			return true;
+
+		// 获取用户当前业务系统的funcJson
+		String strCurUserFuncJson = cacheBp.getFuncJson(operator, sysKey);
+		if (strCurUserFuncJson == null)
+			return false;
+
+		// apiUrl在SubA中存在，返回true
+		if (strCurUserFuncJson.contains("\"" + apiUrl + "\""))
+			return true;
+		return false;
+	}
+
+	@Autowired
+	PermissionMapper permissionMapper;
+
+	private String getSysContextFromDb(String sysKey) {
+		Permission per = permissionMapper.getPermissionBySysKey(sysKey);
+		if (per == null || per.getSysContext() == null)
+			return StringUtility.Empty;
+		return per.getSysContext();
 	}
 }

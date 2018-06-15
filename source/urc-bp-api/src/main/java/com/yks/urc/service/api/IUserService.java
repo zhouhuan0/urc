@@ -4,6 +4,7 @@ import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.vo.*;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IUserService {
 	ResultVO syncUserInfo(UserVO curUser);
@@ -46,6 +47,7 @@ public interface IUserService {
 	 * @return
 	 */
 	ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
+
 	/**
 	 *  获取应用系统及其授权方式
 	 * @param
@@ -54,4 +56,10 @@ public interface IUserService {
 	 * @Date 2018/6/14 17:42
 	 */
 	ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
+
+
+	String getAllFuncPermit(String jsonStr);
+
+	String funcPermitValidate(Map<String, String> map);
+
 }

@@ -26,6 +26,6 @@ public class UrcServiceProviderStarter {
 
         MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);
 
-        LOGGER.info("UrcService Server start...");
+        LOGGER.info("Urc Service Provider start...");
     }
 }

@@ -14,7 +14,11 @@ import java.util.List;
 public class DataRuleTemplVO implements Serializable {
     private static final long serialVersionUID = 824547161363763919L;
     /**
-     *  用户名
+     * 模板ID
+     */
+    private String templId;
+    /**
+     *  创建人
      */
     public String userName;
     /**
@@ -30,6 +34,13 @@ public class DataRuleTemplVO implements Serializable {
      */
     public List<DataRuleSysVO> lstDataRuleSys;
 
+    public String getTemplId() {
+        return templId;
+    }
+
+    public void setTemplId(String templId) {
+        this.templId = templId;
+    }
 
     public String getUserName() {
         return userName;

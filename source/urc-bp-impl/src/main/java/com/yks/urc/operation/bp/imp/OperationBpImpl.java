@@ -6,6 +6,7 @@ import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.yks.urc.entity.OperationLog;
@@ -19,15 +20,17 @@ public class OperationBpImpl implements IOperationBp {
 
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
+	@Autowired
 	IOperationLogMapper operationLogMapper;
 
 	@Override
 	public void addLog(String strLogger, String msg, Exception ex) {
 		OperationLog log = new OperationLog();
 		log.setLogger(strLogger);
-		log.setLog_level("INFO");
+		log.setLogLevel("INFO");
 		log.setMsg(msg);
-		log.setExceptionDetail(ex.getMessage());
+		if (ex != null)
+			log.setExceptionDetail(ex.getMessage());
 		log.setOperatorTime(new Date());
 
 		fixedThreadPool.execute(new Runnable() {

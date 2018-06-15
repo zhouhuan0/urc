@@ -20,17 +20,6 @@ public class DataRuleSysDO {
 
     private String modifiedBy;
 
-
-    private List<UrcSqlDO> urcSqlDOList;
-
-    public List<UrcSqlDO> getUrcSqlDOList() {
-        return urcSqlDOList;
-    }
-
-    public void setUrcSqlDOList(List<UrcSqlDO> urcSqlDOList) {
-        this.urcSqlDOList = urcSqlDOList;
-    }
-
     public Long getId() {
         return id;
     }

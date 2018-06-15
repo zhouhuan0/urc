@@ -15,6 +15,14 @@
     <sql id="Base_Column_List">
     id, templ_id,templ_name, user_name, remark, create_time, create_by, modified_time, modified_by
   </sql>
+
+    <select id="getMyDataRuleTempl" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_data_rule_templ where user_name=#{userName,jdbcType=VARCHAR}
+    </select>
+
+
     <!--根据模板Id获取数据-->
     <select id="selectByTemplId" resultMap="BaseResultMap">
         select
@@ -48,7 +56,7 @@
     </select>
     <!--获取总条目-->
     <select id="getCounts" resultType="java.lang.Long">
-        select count(*) from urc_data_rule_templ
+        select count(1) from urc_data_rule_templ
         <where>
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
@@ -62,12 +70,23 @@
         values (#{templId,jdbcType=BIGINT}, #{templName,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR},
         #{remark,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR})
     </insert>
+    <!--根据templ_id删除记录-->
+    <delete id="deleteByTemplId" parameterType="java.lang.Long">
+        delete from urc_data_rule_templ
+        where templ_id = #{templId,jdbcType=BIGINT}
+    </delete>
+    <!--根据templId删除 权限模板数据、权限数据Sys、行权限、列权限-->
+    <delete id="delTemplDatasById" parameterType="java.lang.Long">
+       delete  ut,us,uc,ue
+      from
+	  urc_data_rule_templ ut
+      left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
+      left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+      left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+      WHERE
+        where ut.templ_id = #{templId,jdbcType=BIGINT}
+    </delete>
 
-
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from urc_data_rule_templ
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
 
     <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
         insert into urc_data_rule_templ

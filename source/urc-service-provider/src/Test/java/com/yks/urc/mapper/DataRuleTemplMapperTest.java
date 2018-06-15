@@ -67,4 +67,12 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
     }
 
 
+    @Test
+    public void deleteByTemplId(){
+        int rtn = dataRuleTemplMapper.deleteByTemplId(1L);
+        System.out.println(rtn);
+
+    }
+
+
 }

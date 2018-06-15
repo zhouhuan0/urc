@@ -27,73 +27,45 @@
     from urc_permission
     where id = #{id,jdbcType=BIGINT}
   </select>
+  
+  
+  <select id="getPermissionBySysKey" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from urc_permission
+    where sys_key = #{sysKey}
+    limit 1
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_permission
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.yks.urc.entity.Permission">
-    insert into urc_permission (id, sys_name, sys_key, 
-      create_by, create_time, modified_by, 
-      modified_time, sys_context)
-    values (#{id,jdbcType=BIGINT}, #{sysName,jdbcType=CHAR}, #{sysKey,jdbcType=CHAR}, 
-      #{createBy,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, 
-      #{modifiedTime,jdbcType=TIMESTAMP}, #{sysContext,jdbcType=LONGVARCHAR})
+  
+  <delete id="deleteSyspermitDefine">
+  	delete from urc_permission
+  	WHERE sys_key IN 
+  	<foreach item="item" index="index" collection="lstPermit" open="(" separator="," close=")">  
+	  #{item.sysKey}  
+	 </foreach>
+  </delete>
+  
+  <insert id="insertSysPermitDefine">
+    insert into urc_permission (id, sys_name, sys_key,create_by, create_time, modified_by, modified_time, sys_context)
+    values 
+    	<foreach collection="lstPermit" item="mem" index="index"
+            separator=",">
+            (
+            #{mem.id,jdbcType=BIGINT}, #{mem.sysName,jdbcType=CHAR}, #{mem.sysKey,jdbcType=CHAR}, 
+	      #{mem.createBy,jdbcType=VARCHAR}, #{mem.createTime,jdbcType=TIMESTAMP}, 
+	      #{mem.modifiedBy,jdbcType=VARCHAR},#{mem.modifiedTime,jdbcType=TIMESTAMP}, 
+	      #{mem.sysContext,jdbcType=LONGVARCHAR}
+            )
+        </foreach>
   </insert>
-  <insert id="insertSelective" parameterType="com.yks.urc.entity.Permission">
-    insert into urc_permission
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
-      <if test="sysName != null">
-        sys_name,
-      </if>
-      <if test="sysKey != null">
-        sys_key,
-      </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
-      <if test="createTime != null">
-        create_time,
-      </if>
-      <if test="modifiedBy != null">
-        modified_by,
-      </if>
-      <if test="modifiedTime != null">
-        modified_time,
-      </if>
-      <if test="sysContext != null">
-        sys_context,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
-      <if test="sysName != null">
-        #{sysName,jdbcType=CHAR},
-      </if>
-      <if test="sysKey != null">
-        #{sysKey,jdbcType=CHAR},
-      </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=VARCHAR},
-      </if>
-      <if test="createTime != null">
-        #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifiedBy != null">
-        #{modifiedBy,jdbcType=VARCHAR},
-      </if>
-      <if test="modifiedTime != null">
-        #{modifiedTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="sysContext != null">
-        #{sysContext,jdbcType=LONGVARCHAR},
-      </if>
-    </trim>
-  </insert>
+<<<<<<< HEAD
   <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.Permission">
     update urc_permission
     <set>
@@ -158,4 +130,6 @@
     SELECT  <include refid="Base_Column_List" /> FROM  urc_permission
     WHERE sys_key  =#{sysKey}
   </select>
+=======
+>>>>>>> 51ea9d495fe5f4ecd3033789e0ba759a2e60a6f0
 </mapper>

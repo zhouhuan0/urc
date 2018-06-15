@@ -65,6 +65,24 @@
         from urc_role_permission
         where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
     </select>
+    
+     <select id="getUserAuthorizablePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT 
+		 	urp.sys_key,
+		 	urp.selected_context  
+		FROM 
+			urc_role ur 
+		LEFT JOIN urc_user_role uur ON ur.role_id = uur.role_id 
+		LEFT JOIN urc_role_permission urp ON urp.role_id=ur.role_id  
+		WHERE
+			ur.is_authorizable='1' AND uur.user_name = #{userName}  
+    </select>
+    
+      <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+				SELECT  sys_key, selected_context  FROM urc_role_permission WHERE role_id=#{roleId}  
+    </select>
+    
+    
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from urc_role_permission
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}

@@ -1,8 +1,10 @@
 package com.yks.urc.userValidate.bp.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.yks.urc.entity.UserPermitStatDO;
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
 
 public interface IUserValidateBp {
@@ -71,4 +73,23 @@ public interface IUserValidateBp {
 	 * @date 2018年6月13日 下午3:59:42
 	 */
 	List<UserPermitStatDO> plainSys(SystemRootVO sys1, String userName);
+
+	/**
+	 * 校验ticket、功能权限版本、是否有权限
+	 * @param map
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午2:07:35
+	 */
+	ResultVO funcPermitValidate(Map<String, String> map);
+
+	 /**
+	 * 功能权限json清理：将old与newest对比，删除old中存在但newest不存在的node删除
+	 * @param strFuncJsonOld
+	 * @param strFuncJsonNewest
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午10:21:38
+	 */
+	String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest);
 }

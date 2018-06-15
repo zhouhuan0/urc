@@ -30,8 +30,8 @@ public class MotanUserServiceTest {
 	public void testSayHello() {
 		try {
 			Map<String, String> map = new HashMap<String, String>();
-			map.put("userName", "panyun");
-			map.put("pwd", "ASDFhjkl1234");
+			map.put("userName", "dcadmin");
+			map.put("pwd", "Ldap_test");
 			map.put("ip", "127.0.0.1");
 			String rslt = urcService.login(map);
 			System.out.println(rslt);

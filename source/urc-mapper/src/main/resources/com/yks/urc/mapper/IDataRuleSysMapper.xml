@@ -27,22 +27,40 @@
                 <result column="entity_code" jdbcType="VARCHAR" property="entityCode"/>
             </collection>
         </collection>
-
-
     </resultMap>
 
     <sql id="Base_Column_List">
     id, data_rule_sys_id, data_rule_id, sys_key, create_time, create_by, modified_time, modified_by
   </sql>
+    <!--新增-->
+    <insert id="insert" parameterType="com.yks.urc.entity.DataRuleSysDO">
+        insert into urc_data_rule_sys ( data_rule_id, sys_key,
+        create_time, create_by, modified_time, modified_by)
+        values ( #{dataRuleId,jdbcType=BIGINT}, #{sysKey,jdbcType=CHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+        #{modifiedTime,jdbcType=TIMESTAMP},#{modifiedBy,jdbcType=VARCHAR})
+    </insert>
+
+    <!--批量新增-->
+    <insert id="insertBatch" parameterType="java.util.List">
+        insert into urc_data_rule_sys ( data_rule_id, sys_key,create_time, create_by, modified_time, modified_by)
+        values
+        <foreach collection="list" index="index" item="item" separator=",">
+            ( #{item.dataRuleId,jdbcType=BIGINT}, #{item.sysKey,jdbcType=CHAR},
+            #{item.createTime,jdbcType=TIMESTAMP}, #{item.createBy,jdbcType=VARCHAR},
+            #{item.modifiedTime,jdbcType=TIMESTAMP},#{item.modifiedBy,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
     <!--根据dataRuleId获取数据权限sys-->
-    <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="queryForListMap">
-        select
-        ud.sys_key,us.sql_id,us.entity_code,us.hidden_fields,ue.field_code,ue.entity_code
-        from urc_data_rule_sys ud
-        LEFT JOIN urc_sql us ON ud.data_rule_sys_id = us.data_rule_sys_id
-        LEFT JOIN urc_expression ue ON us.sql_id = ue.sql_id
-        where ud.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
-    </select>
+     <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="queryForListMap">
+       /*  select
+         ud.sys_key,us.sql_id,us.entity_code,us.hidden_fields,ue.field_code,ue.entity_code
+         from urc_data_rule_sys ud
+         LEFT JOIN urc_sql us ON ud.data_rule_sys_id = us.data_rule_sys_id
+         LEFT JOIN urc_expression ue ON us.sql_id = ue.sql_id
+         where ud.data_rule_id = #{dataRuleId,jdbcType=BIGINT}*/
+     </select>
     <!-- <select id="listByDataRuleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
        select
        <include refid="Base_Column_List" />
@@ -60,14 +78,7 @@
     delete from urc_data_rule_sys
     where id = #{id,jdbcType=BIGINT}
   </delete>
-    <insert id="insert" parameterType="com.yks.urc.entity.DataRuleSysDO">
-    insert into urc_data_rule_sys (id, data_rule_id, sys_key, 
-      create_time, create_by, modified_time, 
-      modified_by)
-    values (#{id,jdbcType=BIGINT}, #{dataRuleId,jdbcType=BIGINT}, #{sysKey,jdbcType=CHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR}, #{modifiedTime,jdbcType=TIMESTAMP}, 
-      #{modifiedBy,jdbcType=VARCHAR})
-  </insert>
+
     <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleSysDO">
         insert into urc_data_rule_sys
         <trim prefix="(" suffix=")" suffixOverrides=",">
