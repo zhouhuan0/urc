@@ -141,4 +141,9 @@ public class UserServiceImpl implements IUserService {
 			ResultVO rslt = userValidateBp.funcPermitValidate(map);
 			return StringUtility.toJSONString_NoException(rslt);
 	}
+
+	@Override
+	public ResultVO getUserByName(String userName) {
+		return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
+	}
 }

@@ -65,10 +65,11 @@ public interface IDataRuleTemplMapper {
 
     /**
      * 获取用户可选择的所有数据授权方案
+     * @param templDO 
      * @param userName
      * @return
      */
-	List<DataRuleTemplDO>  getMyDataRuleTempl(String userName);
+	List<DataRuleTemplDO>  getMyDataRuleTempl(DataRuleTemplDO templDO);
 
 
 }
