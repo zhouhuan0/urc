@@ -118,4 +118,10 @@ public class RoleMapperTest extends BaseMapperTest {
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(map);
         Assert.assertNotNull(roleDOS);
     }
+    @Test
+    public void getRoleName(){
+        String username ="panyun";
+       List<String> roleName=  roleMapper.selectRoleNameByUserName(username);
+        System.out.println(roleName);
+    }
 }

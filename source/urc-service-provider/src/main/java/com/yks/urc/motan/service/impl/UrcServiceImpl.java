@@ -80,10 +80,11 @@ public class UrcServiceImpl implements IUrcService {
 	@Override
 	public String getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
+        String operator =StringUtility.toJSONString(jsonObject.getString("operator"));
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        UserVO userVO = StringUtility.parseObject(jsonObject.get("templ").toString(), UserVO.class);
-		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(userVO, pageNumber, pageData));
+        UserVO userVO = StringUtility.parseObject(jsonObject.get("userVo").toString(), UserVO.class);
+		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData));
 	}
 
 	
@@ -164,5 +165,10 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
+    }
+
+    @Override
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+        return null;
     }
 }

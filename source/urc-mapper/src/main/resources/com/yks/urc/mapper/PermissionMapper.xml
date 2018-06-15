@@ -142,4 +142,20 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--获取systemKey-->
+    <select id="getSystemKey" resultMap="BaseResultMap">
+    SELECT  sys_key,sys_context FROM urc_permission WHERE sys_key =#{sysKey}
+  </select>
+
+  <!--获取systemName-->
+ <!-- <select id="getSysKeyAndName" resultMap="BaseResultMap">
+    SELECT  sys_key,sys_name FROM urc_permission WHERE sys_key  IN
+    <foreach collection="list" index="index" item="sysKey" open="(" separator="," close=")">
+      #{sysKey}
+    </foreach>
+  </select>-->
+  <select id="getPermission" resultType="com.yks.urc.entity.Permission">
+    SELECT  <include refid="Base_Column_List" /> FROM  urc_permission
+    WHERE sys_key  =#{sysKey}
+  </select>
 </mapper>

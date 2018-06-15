@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RolePermissionDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -51,4 +52,13 @@ public interface IRolePermissionMapper {
      * @see
      */
     Integer insertBatch(List<RolePermissionDO> rolePermissionDOS);
+
+    /**
+     *  通过用户名获取角色对应的sys_key
+     * @param  userName
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/14 15:20
+     */
+    List<String> getSysKetByRoleAndUserName(@Param("userName") String userName);
 }

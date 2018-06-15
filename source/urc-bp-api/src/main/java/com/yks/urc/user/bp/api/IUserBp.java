@@ -2,6 +2,7 @@ package com.yks.urc.user.bp.api;
 
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
 public interface IUserBp {
@@ -18,6 +19,13 @@ public interface IUserBp {
 	 * @param pageData
 	 * @return
 	 */
-	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
-
+	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData);
+	/**
+	 * 获取系统key
+	 * @param
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/14 14:47
+	 */
+	ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket);
 }

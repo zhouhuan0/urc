@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.weibo.api.motan.config.springsupport.annotation.MotanService;
-import com.yks.urc.vo.OmsAccountVO;
-import com.yks.urc.vo.OmsPlatformVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 
 public interface IUrcService {
     /**
@@ -142,4 +139,13 @@ public interface IUrcService {
 	 * @author oujie@youkeshu.com
 	 */
 	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+    /**
+     * 获取应用系统及其授权方式
+     * @param  operator
+     * @return  ResultVO<List<SysAuthWayVO>>
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/14 14:31
+     */
+    ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
+
 }

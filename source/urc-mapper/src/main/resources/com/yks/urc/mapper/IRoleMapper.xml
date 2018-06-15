@@ -174,5 +174,12 @@
             </if>
         </where>
     </select>
-
+    <!--根据用户名 获取角色名称-->
+    <select id="selectRoleNameByUserName" resultType="java.lang.String">
+        select  r.role_name as roleName
+        from urc_role r
+        INNER JOIN urc_user_role up on r.role_id = up.role_id
+        INNER JOIN urc_user u on up.user_name =u.user_name
+        WHERE u.user_name =#{userName}
+    </select>
 </mapper>

@@ -33,14 +33,14 @@ public interface IUserMapper {
     UserVO getUserByName(String userName);
 
     /**
-     * 搜索用户
+     * 搜索用户 分页 ,多个用户搜索
      *
      * @param query
      * @return  List<UserDO>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 10:34
      */
-    List<UserDO> getUsersByUserInfo(@Param("query")Query query);
+    List<UserVO> getUsersByUserInfo(@Param("query")Query query);
     /**
      * 获取搜索用户分页的总数
      * @param  query
@@ -108,5 +108,5 @@ public interface IUserMapper {
      */
 	List<UserVO> getUserByRoleId(String roleId);
 
-
+    UserDO test(@Param("userName") String userName);
 }

@@ -2,15 +2,15 @@ package com.yks.urc.service.impl;
 
 import java.util.List;
 
-import com.yks.urc.dataauthorization.bp.impl.DataAuthorization;
+import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
+import com.yks.urc.dataauthorization.bp.impl.DataAuthorizationImpl;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.entity.UserDO;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IUserService;
@@ -30,7 +30,8 @@ public class UserServiceImpl implements IUserService {
     DataAuthorization dataAuthorization;
     @Autowired
     private IUserMapper userMapper;
-
+    @Autowired
+    private AuthWayBp authWayBp;
 
     @Override
     public ResultVO syncUserInfo(UserVO curUser) {
@@ -70,8 +71,8 @@ public class UserServiceImpl implements IUserService {
     }*/
 
     @Override
-    public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
-        return userBp.getUsersByUserInfo(userVO, pageNumber, pageData);
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData) {
+        return userBp.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
     }
 
     @Override
@@ -93,6 +94,20 @@ public class UserServiceImpl implements IUserService {
         ResultVO rslt = null;
         try {
             rslt.data = dataAuthorization.getShopList(operator, platform);
+            rslt.msg = "Success " + operator;
+            rslt = VoHelper.getSuccessResult(rslt.data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return rslt;
+        }
+    }
+
+    @Override
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+        ResultVO rslt = null;
+        try {
+            rslt.data = authWayBp.getMyAuthWay(operator);
             rslt.msg = "Success " + operator;
             rslt = VoHelper.getSuccessResult(rslt.data);
         } catch (Exception e) {

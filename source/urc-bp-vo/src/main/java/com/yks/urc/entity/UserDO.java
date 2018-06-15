@@ -38,7 +38,7 @@ public class UserDO {
      */
     private Person person;
     /**
-     * 用户权限关系集合
+     * 用户权限关系集合  一个用户 对应多个角色的权限
      */
     private List<UserRoleDO> userRoleDOList;
 

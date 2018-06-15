@@ -125,4 +125,8 @@
       modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--通过entity_code  查询entity-->
+    <select id="selectEntityByCode" resultMap="BaseResultMap">
+      SELECT <include refid="Base_Column_List"/> FROM  urc_entity WHERE  entity_code =#{entityCode}
+    </select>
 </mapper>

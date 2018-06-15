@@ -86,4 +86,5 @@ public class UrcServiceTest extends BaseServiceTest {
 		service.syncUserInfo(userVO);
 		System.out.println(111);
 	}
+
 }

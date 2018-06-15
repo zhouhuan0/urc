@@ -10,6 +10,7 @@ package com.yks.urc.dataauthorization.bp.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 
@@ -22,8 +23,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 @Component
-public class DataAuthorization {
-    private static Logger logger = LoggerFactory.getLogger(DataAuthorization.class);
+public class DataAuthorizationImpl implements DataAuthorization {
+    private static Logger logger = LoggerFactory.getLogger(DataAuthorizationImpl.class);
     /**
      * 请求平台url
      */
@@ -43,6 +44,7 @@ public class DataAuthorization {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 20:52
      */
+    @Override
     public List<OmsPlatformVO> getPlatformList(String operator) {
         List<OmsPlatformVO> omsPlatformVoList = null;
         String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
@@ -64,6 +66,7 @@ public class DataAuthorization {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 21:14
      */
+    @Override
     public List<OmsAccountVO> getShopList(String operator, String platform) {
         List<OmsAccountVO> omsAccountVoList = null;
         String url = GET_SHOP_AND_SITE + "&platform=" + platform;
@@ -77,10 +80,10 @@ public class DataAuthorization {
     }
 
     public static void main(String[] args) {
-        DataAuthorization dataAuthorization = new DataAuthorization();
-        dataAuthorization.getPlatformList(null);
+        DataAuthorizationImpl dataAuthorizationImpl = new DataAuthorizationImpl();
+        dataAuthorizationImpl.getPlatformList(null);
         System.out.println("============================");
         String platform = "eBay";
-        dataAuthorization.getShopList(null,platform);
+        dataAuthorizationImpl.getShopList(null,platform);
     }
 }

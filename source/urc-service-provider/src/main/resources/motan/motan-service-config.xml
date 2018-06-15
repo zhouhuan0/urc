@@ -19,7 +19,7 @@
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
     <motan:basicService id="serviceBasicConfig"
-                        registry="zkRegistry" export="motan2:8002" group="urc-service-provider-group"
+                        registry="zkRegistry" export="motan2:8002" group="urc-client-provider-lwx-test"
                         version="1.0" accessLog="true" shareChannel="true" module="urc-service-provider-module"
                         application="urc-service-provider"/>
 
