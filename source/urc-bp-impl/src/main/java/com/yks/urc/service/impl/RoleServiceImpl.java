@@ -440,4 +440,10 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
+
+	@Override
+	public void handleExpiredRole() {
+		// TODO Auto-generated method stub
+		
+	}
 }

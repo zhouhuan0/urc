@@ -43,4 +43,11 @@ public interface IRoleService {
      * @Date 2018/6/12 16:57
      */
     ResultVO checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+
+	/**
+	 * 角色过期处理，由taskScheduler调用
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午11:32:09
+	 */
+	void handleExpiredRole();
 }

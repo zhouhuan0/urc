@@ -12,6 +12,6 @@ public class TaskSchedulerStarter {
 	public static void main(String[] args) {
 		ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
 				new String[]{Constant.TASKSERVICE_STARTER_CONFIG});
-		LOGGER.info("UrcService Server start...");
+		LOGGER.info("Urc Task Scheduler start...");
 	}
 }
