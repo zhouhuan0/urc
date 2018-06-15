@@ -159,9 +159,13 @@ public class UserValidateBp implements IUserValidateBp {
 	public static void main(String[] args) throws IOException {
 		// 读取func1.json文件
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
-		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
-		System.out.println(StringUtility.toJSONString_NoException(sys1));
-		new UserValidateBp().plainSys(sys1, "panyun");
+		String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
+		System.out.println(new UserValidateBp().cleanDeletedNode(strJson1, strJson2));
+		
+		
+//		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
+//		System.out.println(StringUtility.toJSONString_NoException(sys1));
+//		new UserValidateBp().plainSys(sys1, "panyun");
 
 		// 读取func2.json文件
 		// String strJson2 =
@@ -174,6 +178,144 @@ public class UserValidateBp implements IUserValidateBp {
 		// distinctSystemRootVO(sys1, sys2);
 		// System.out.println("合并后的sys1:" +
 		// StringUtility.toJSONString_NoException(sys1));
+	}
+
+	/**
+	 * 功能权限json清理：将old与newest对比，删除old中存在但newest不存在的node删除
+	 * 
+	 * @param strFuncJsonOld
+	 * @param strFuncJsonNewest
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:26:43
+	 */
+	public String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest) {
+		SystemRootVO sysOld = StringUtility.parseObject(strFuncJsonOld, SystemRootVO.class);
+		SystemRootVO sysNewest = StringUtility.parseObject(strFuncJsonNewest, SystemRootVO.class);
+
+		// 将newest中的所有key存入List
+		List<String> lstNewestKey = new ArrayList<>();
+		if (sysNewest.menu != null) {
+			for (MenuVO m : sysNewest.menu) {
+				lstNewestKey.add(m.key);
+				searchModuleKey(m.module, lstNewestKey);
+			}
+		}
+
+		// 若old中的key在List中不存在，则删除
+		// 判断 menu是否存在,不存在则删除
+		if (sysOld.menu != null) {
+			for (int i = 0; i < sysOld.menu.size(); i++) {
+				if (lstNewestKey.contains(sysOld.menu.get(i).key))
+					continue;
+				// 删除menu
+				sysOld.menu.remove(i);
+				i--;
+			}
+		}
+
+		for (MenuVO m : sysOld.menu) {
+			cleanDeletedModule(m.module, lstNewestKey);
+		}
+		
+		return StringUtility.toJSONString_NoException(sysOld);
+	}
+
+	/**
+	 * 递归删除module下不存在的子node
+	 * 
+	 * @param lstModule
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:53:44
+	 */
+	private void cleanDeletedModule(List<ModuleVO> lstModule, List<String> lstNewestKey) {
+		if (lstModule == null || lstNewestKey == null)
+			return;
+		for (int i = 0; i < lstModule.size(); i++) {
+			if (lstNewestKey.contains(lstModule.get(i).key)) {
+				// 递归删除module下不存在的子node
+				cleanDeletedModule(lstModule.get(i), lstNewestKey);
+				continue;
+			}
+			// 删除module
+			lstModule.remove(i);
+			i--;
+		}
+	}
+
+	/**
+	 * 递归删除module下不存在的子node
+	 * 
+	 * @param moduleVO
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:46:27
+	 */
+	private void cleanDeletedModule(ModuleVO moduleVO, List<String> lstNewestKey) {
+		if (moduleVO == null || lstNewestKey == null)
+			return;
+
+		cleanDeletedModule(moduleVO.module, lstNewestKey);
+		cleanDeletedFunction(moduleVO.function, lstNewestKey);
+	}
+
+	/**
+	 * 递归删除function下不存在的子node
+	 * 
+	 * @param lstFunc
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:53:52
+	 */
+	private void cleanDeletedFunction(List<FunctionVO> lstFunc, List<String> lstNewestKey) {
+		if (lstFunc == null || lstNewestKey == null)
+			return;
+		for (int i = 0; i < lstFunc.size(); i++) {
+			if (lstNewestKey.contains(lstFunc.get(i).key)) {
+				cleanDeletedFunction(lstFunc.get(i).function, lstNewestKey);
+				continue;
+			}
+			lstFunc.remove(i);
+			i--;
+		}
+	}
+
+	/**
+	 * 递归查找module的key
+	 * 
+	 * @param lstModule
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:37:41
+	 */
+	private void searchModuleKey(List<ModuleVO> lstModule, List<String> lstNewestKey) {
+		if (lstModule != null) {
+			for (ModuleVO module : lstModule) {
+				lstNewestKey.add(module.key);
+				searchModuleKey(module.module, lstNewestKey);
+				searchFunctionKey(module.function, lstNewestKey);
+			}
+		}
+	}
+
+	/**
+	 * 递归查找function的key
+	 * 
+	 * @param lstFunc
+	 * @param lstNewestKey
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午8:37:28
+	 */
+	private void searchFunctionKey(List<FunctionVO> lstFunc, List<String> lstNewestKey) {
+		if (lstFunc == null)
+			return;
+		for (FunctionVO f : lstFunc) {
+			lstNewestKey.add(f.key);
+			if (f.function != null) {
+				searchFunctionKey(f.function, lstNewestKey);
+			}
+		}
 	}
 
 	/**
@@ -383,7 +525,7 @@ public class UserValidateBp implements IUserValidateBp {
 			if (ca != null)
 				return ca.getPermissionVersion();
 		}
-		
+
 		return funcVersion;
 	}
 
