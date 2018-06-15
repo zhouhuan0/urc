@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.crud.jdbc.Transactional;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.DataRuleSysDO;
 import com.yks.urc.entity.Permission;
