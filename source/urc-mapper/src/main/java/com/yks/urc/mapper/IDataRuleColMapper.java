@@ -5,6 +5,8 @@ import com.yks.urc.entity.DataRuleDO;
 
 import java.util.List;
 
+import org.apache.ibatis.annotations.Param;
+
 public interface IDataRuleColMapper {
     int insert(DataRuleColDO record);
 
@@ -23,5 +25,5 @@ public interface IDataRuleColMapper {
     int updateByPrimaryKey(DataRuleColDO record);
     
     
-	List<DataRuleColDO> listRuleColBySysKey(String syskeyList);
+	List<DataRuleColDO> listRuleColBySysKey(@Param("sysKey") String sysKey,@Param("userName")  String userName);
 }

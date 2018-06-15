@@ -109,9 +109,11 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
     	
-		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
-    	
-    	
+		//List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
+		//List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey("001","admin");
+		List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
+
+    	System.out.println(dataRuleColList.toString());
     	
 /*    	List<String> lstUserName=new ArrayList<String>();
     	lstUserName.add("panyun");
