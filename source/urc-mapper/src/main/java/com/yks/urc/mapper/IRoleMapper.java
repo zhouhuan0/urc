@@ -134,4 +134,19 @@ public interface IRoleMapper {
      * @see
      */
     Long getCounts(@Param("createBy") String createBy);
+
+	/**
+	 * 获取所有过期的角色关联的用户
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午11:43:20
+	 */
+	List<String> getUsersOfAllExpiredRole();
+
+	/**
+	 * 将所有过期的角色 is_active 设置为0
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 上午11:43:39
+	 */
+	List<RoleDO> updateAllExpiredRole();
 }

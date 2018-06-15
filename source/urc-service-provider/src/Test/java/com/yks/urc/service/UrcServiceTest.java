@@ -71,6 +71,10 @@ public class UrcServiceTest extends BaseServiceTest {
 	}
 
 	@Test
+	public void testUpdateExpiredRole() {
+		List<RoleDO> lstRole = roleMapper.updateAllExpiredRole();
+		System.out.println(StringUtility.toJSONString_NoException(lstRole));
+	}
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}

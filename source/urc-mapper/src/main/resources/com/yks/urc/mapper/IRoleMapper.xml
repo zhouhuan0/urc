@@ -174,5 +174,27 @@
             </if>
         </where>
     </select>
-
+    
+    <!-- 获取所有过期的角色关联的用户 -->
+    <select id="getUsersOfAllExpiredRole" resultType="java.lang.String">
+    	select distinct ur.user_name
+		FROM urc_user_role ur inner join urc_role r ON ur.role_id=r.role_id
+		where 1=1
+		AND r.is_active=1
+		AND r.is_forever=0 and (now() BETWEEN r.effective_time and r.expire_time)=0
+    </select>
+        
+    <!-- 将所有过期的角色 is_active 设置为0 -->
+    <select id="updateAllExpiredRole" resultMap="BaseResultMap">
+    	select
+            <include refid="Base_Column_List"/>
+        from urc_role r
+    	where r.is_active=1
+		AND r.is_forever=0 and (now() BETWEEN r.effective_time and r.expire_time)=0;
+		
+    	UPDATE urc_role
+    	SET is_active=0
+		where is_active=1
+		AND is_forever=0 and (now() BETWEEN effective_time and expire_time)=0
+    </select>
 </mapper>
