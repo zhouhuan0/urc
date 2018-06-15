@@ -12,7 +12,12 @@ import java.io.Serializable;
 import java.util.List;
 
 public class LoginRespVO implements Serializable {
-	private static final long serialVersionUID = 8673521455672654547L;
+	/**
+	 * 
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月15日 下午4:44:22
+	 */
+	private static final long serialVersionUID = 1L;
 	/**
 	 *
 	 */
@@ -25,4 +30,6 @@ public class LoginRespVO implements Serializable {
 	 *
 	 */
 	public String userName;
+	
+	public String ip;
 }

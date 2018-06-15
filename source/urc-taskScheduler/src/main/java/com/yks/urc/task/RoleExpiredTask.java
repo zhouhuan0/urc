@@ -28,10 +28,13 @@ public class RoleExpiredTask {
 	@Autowired
 	private IRoleService roleSevice;
 	
-	@Scheduled(cron = "0/10 * * * * ?")
+//	@Scheduled(cron = "0/10 * * * * ?")
+	// 每天凌晨3点
+	@Scheduled(cron = "0 0 3 * * ? *")
 	public void executeFileDownLoadTask() {
-		logger.info("角色过期检查");
+		logger.info("角色过期检查START");
 		roleSevice.handleExpiredRole();
+		logger.info("角色过期检查END");
 //		System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()) + " 角色过期检查");
 	}
 }

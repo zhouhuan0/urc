@@ -155,7 +155,7 @@
     where id = #{id,jdbcType=CHAR}
   </update>
     <select id="getSysKeyByUser" resultType="java.lang.String">
-        select p.sys_key
+        select distinct p.sys_key
         from urc_user_role u
         INNER JOIN urc_role r on u.role_id =r.role_id
         INNER JOIN urc_role_permission p on r.role_id=p.role_id
