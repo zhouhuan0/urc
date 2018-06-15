@@ -432,12 +432,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
 					 expressionVOList.add(expressionVO);
 				}
 				DataRuleSysVO dataRuleSysVO=new DataRuleSysVO();	
-				JSONObject jsonObject=new JSONObject();
-				jsonObject.put("isAnd", "1");
-				jsonObject.put("subWhereClause", StringUtility.toJSONString_NoException(dataRuleColVOList));
+				ExpressionVO expressionVO=new ExpressionVO();
+				expressionVO.setSubWhereClause(expressionVOList);
 				dataRuleSysVO.sysKey=syskeyList.get(i);
 				dataRuleSysVO.col=dataRuleColVOList;
-				//dataRuleSysVO.row=jsonObject;
+				dataRuleSysVO.row=expressionVO;
 				lstDataRuleSys.add(dataRuleSysVO);
 			}
 			DataRuleVO dataRuleVO=new DataRuleVO();
