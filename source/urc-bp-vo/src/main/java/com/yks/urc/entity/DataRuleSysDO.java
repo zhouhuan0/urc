@@ -20,6 +20,10 @@ public class DataRuleSysDO {
 
     private String modifiedBy;
 
+    private List<DataRuleColDO> dataRuleColDOS;
+
+    private ExpressionDO expressionDO;
+
     public Long getId() {
         return id;
     }
@@ -82,5 +86,21 @@ public class DataRuleSysDO {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
+    }
+
+    public List<DataRuleColDO> getDataRuleColDOS() {
+        return dataRuleColDOS;
+    }
+
+    public void setDataRuleColDOS(List<DataRuleColDO> dataRuleColDOS) {
+        this.dataRuleColDOS = dataRuleColDOS;
+    }
+
+    public ExpressionDO getExpressionDO() {
+        return expressionDO;
+    }
+
+    public void setExpressionDO(ExpressionDO expressionDO) {
+        this.expressionDO = expressionDO;
     }
 }

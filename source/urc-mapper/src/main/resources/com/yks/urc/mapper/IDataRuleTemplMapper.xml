@@ -83,102 +83,21 @@
       left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
       left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
       left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-      WHERE
         where ut.templ_id = #{templId,jdbcType=BIGINT}
     </delete>
 
+    <!--根据templId列表删除 权限模板数据、权限数据Sys、行权限、列权限-->
+    <delete id="delTemplDatasByIds" parameterType="java.util.List">
+        delete ut,us,uc,ue
+        from
+        urc_data_rule_templ ut
+        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        where ut.templ_id in
+        <foreach collection="list" item="templId" open="(" separator="," close=")">
+            #{templId}
+        </foreach>
+    </delete>
 
-    <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
-        insert into urc_data_rule_templ
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="templName != null">
-                templ_name,
-            </if>
-            <if test="userName != null">
-                user_name,
-            </if>
-            <if test="remark != null">
-                remark,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="createBy != null">
-                create_by,
-            </if>
-            <if test="modifiedTime != null">
-                modified_time,
-            </if>
-            <if test="modifiedBy != null">
-                modified_by,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
-            <if test="templName != null">
-                #{templName,jdbcType=VARCHAR},
-            </if>
-            <if test="userName != null">
-                #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="remark != null">
-                #{remark,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createBy != null">
-                #{createBy,jdbcType=VARCHAR},
-            </if>
-            <if test="modifiedTime != null">
-                #{modifiedTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modifiedBy != null">
-                #{modifiedBy,jdbcType=VARCHAR},
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleTemplDO">
-        update urc_data_rule_templ
-        <set>
-            <if test="templName != null">
-                templ_name = #{templName,jdbcType=VARCHAR},
-            </if>
-            <if test="userName != null">
-                user_name = #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="remark != null">
-                remark = #{remark,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createBy != null">
-                create_by = #{createBy,jdbcType=VARCHAR},
-            </if>
-            <if test="modifiedTime != null">
-                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modifiedBy != null">
-                modified_by = #{modifiedBy,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleTemplDO">
-    update urc_data_rule_templ
-    set templ_name = #{templName,jdbcType=VARCHAR},
-      user_name = #{userName,jdbcType=VARCHAR},
-      remark = #{remark,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
-      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-      modified_by = #{modifiedBy,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 </mapper>
