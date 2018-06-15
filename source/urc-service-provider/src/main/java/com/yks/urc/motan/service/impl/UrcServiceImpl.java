@@ -224,4 +224,12 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.get("operator").toString();
 		return StringUtility.toJSONString_NoException(permissionService.getUserAuthorizablePermission(operator));
 	}
+
+	@Override
+	public String getRolePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+		List<String> lstRoleId = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
+		return StringUtility.toJSONString_NoException(roleService.getRolePermission(lstRoleId));
+	}
 }

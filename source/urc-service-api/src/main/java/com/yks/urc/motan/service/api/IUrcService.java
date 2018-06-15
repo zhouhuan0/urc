@@ -207,4 +207,12 @@ public interface IUrcService {
 	 * @return
 	 */
 	String getUserAuthorizablePermission(String jsonStr);
+	
+	
+	/**
+	 * 获取多个角色已有的功能权限
+	 * @param jsonStr
+	 * @return
+	 */
+	String getRolePermission(String jsonStr);
 }

@@ -58,4 +58,11 @@ public interface IRolePermissionMapper {
      * @return
      */
 	List<RolePermissionDO> getUserAuthorizablePermission(String userName);
+
+	/**
+	 * 获取多个角色已有的功能权限
+	 * @param roleId
+	 * @return
+	 */
+	List<RolePermissionDO> getRolePermission(String roleId);
 }

@@ -416,9 +416,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 			List<DataRuleSysVO> lstDataRuleSys =new ArrayList<DataRuleSysVO>();
 			for (int j = 0; j < syskeyList.size(); j++) {
 				//通过sysKey得到 行权限
-				List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i));
+				List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i),lstUserName.get(i));
 				//通过sysKey得到列权限
-				List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i));
+				List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i),lstUserName.get(i));
 				List<DataRuleColVO> dataRuleColVOList =new ArrayList<DataRuleColVO>();
 				 for (DataRuleColDO colDO : dataRuleColList) {
 					DataRuleColVO dataRuleColVO=new DataRuleColVO();
