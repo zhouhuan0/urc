@@ -238,4 +238,11 @@ public class UrcServiceImpl implements IUrcService {
     public String getMyAuthWay(String operator) {
         return StringUtility.toJSONString_NoException(userService.getMyAuthWay(operator));
     }
+
+	@Override
+	public String getUserByUserName(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String userName = jsonObject.get("userName").toString();
+		return StringUtility.toJSONString_NoException(userService.getUserByName(userName));
+	}
 }

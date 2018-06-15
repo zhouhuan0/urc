@@ -278,7 +278,7 @@
             AND   u.user_name =#{query.userName}
         </if>
     </select>
-    <select id="test" resultType="com.yks.urc.entity.UserDO">
+    <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
         SELECT <include refid="Base_Column_List"/>
         FROM  urc_user WHERE  user_name =#{userName}
     </select>

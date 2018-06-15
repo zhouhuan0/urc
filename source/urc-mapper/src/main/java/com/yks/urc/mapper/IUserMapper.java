@@ -23,14 +23,7 @@ public interface IUserMapper {
 
     List<UserDO> listUsersByRoleId(String roleId);
 
-    /**
-     *
-     * @param  userName
-     * @return UserVO
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/11 10:44
-     */
-    UserVO getUserByName(String userName);
+  
 
     /**
      * 搜索用户 分页 ,多个用户搜索
@@ -108,5 +101,5 @@ public interface IUserMapper {
      */
 	List<UserVO> getUserByRoleId(String roleId);
 
-    UserDO test(@Param("userName") String userName);
+    UserDO getUserByName(@Param("userName") String userName);
 }
