@@ -26,7 +26,7 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private IPersonService personService;
-    
+
     @Autowired
     private IDataRuleTemplMapper dataRuleTemplMapper;
 
@@ -36,6 +36,9 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private IDataRuleService dataRuleService;
+
+	@Autowired
+	private IPermissionService permissionService;
 
     @Override
     public String syncUserInfo(UserVO curUser) {
@@ -84,10 +87,11 @@ public class UrcServiceImpl implements IUrcService {
 	@Override
 	public String getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
+        String operator =StringUtility.toJSONString(jsonObject.getString("operator"));
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        UserVO userVO = StringUtility.parseObject(jsonObject.get("templ").toString(), UserVO.class);
-		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(userVO, pageNumber, pageData));
+        UserVO userVO = StringUtility.parseObject(jsonObject.get("userVo").toString(), UserVO.class);
+		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData));
 	}
 
 	
@@ -166,8 +170,8 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
-        return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
+    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+        return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
     }
 
 	@Override
@@ -175,7 +179,7 @@ public class UrcServiceImpl implements IUrcService {
 		return userService.getAllFuncPermit(jsonStr);
 	}
 
-	@Override
+    @Override
 	public String funcPermitValidate(Map<String, String> map) {
 		return userService.funcPermitValidate(map);
 	}
@@ -194,25 +198,51 @@ public class UrcServiceImpl implements IUrcService {
 		return StringUtility.toJSONString_NoException(roleService.getRoleUser(roleList));
 	}
 
-	
-	
+
+
 	public String getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(operator));
 	}
 
-	
+
 	public String getDataRuleByUser(String jsonStr) {
 		JSONObject jsonObject = StringUtility.parseString(jsonStr);
 		List<String> lstUserName = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
 		return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleByUser(lstUserName));
 	}
 
-	@Autowired
-	private IPermissionService permissionService;
+
 	@Override
 	public String importSysPermit(String jsonStr) {
 		return permissionService.importSysPermit(jsonStr);
+	}
+
+	@Override
+	public String getUserAuthorizablePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+		return StringUtility.toJSONString_NoException(permissionService.getUserAuthorizablePermission(operator));
+	}
+
+	@Override
+	public String getRolePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+		List<String> lstRoleId = StringUtility.parseObject(jsonObject.get("templ").toString(), List.class);
+		return StringUtility.toJSONString_NoException(roleService.getRolePermission(lstRoleId));
+	}
+
+    @Override
+    public String getMyAuthWay(String operator) {
+        return StringUtility.toJSONString_NoException(userService.getMyAuthWay(operator));
+    }
+
+	@Override
+	public String getUserByUserName(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String userName = jsonObject.get("userName").toString();
+		return StringUtility.toJSONString_NoException(userService.getUserByName(userName));
 	}
 }

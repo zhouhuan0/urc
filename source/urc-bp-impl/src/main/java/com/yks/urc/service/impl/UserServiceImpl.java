@@ -3,8 +3,10 @@ package com.yks.urc.service.impl;
 import java.util.List;
 import java.util.Map;
 
+import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
+import com.yks.urc.dataauthorization.bp.impl.DataAuthorizationImpl;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.dataauthorization.bp.impl.DataAuthorization;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +31,12 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	IUserBp userBp;
-
+    @Autowired
+    DataAuthorization dataAuthorization;
+    @Autowired
+    private AuthWayBp authWayBp;
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
-	@Autowired
-	DataAuthorization dataAuthorization;
-	@Autowired
 	private IUserMapper userMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
@@ -64,17 +66,18 @@ public class UserServiceImpl implements IUserService {
 	 * userList = userMapper.queryUserDataByRuleId(ruleDO); if (userList != null &&
 	 * userList.size() > 0) { return VoHelper.getSuccessResult(userList); } return
 	 * VoHelper.getErrorResult(); }
-	 * 
+	 *
 	 * public ResultVO queryUserNoDataByRuleId(DataRuleDO ruleDO) { List<UserDO>
 	 * userList = userMapper.queryUserNoDataByRuleId(ruleDO); if (userList != null
 	 * && userList.size() > 0) { return VoHelper.getSuccessResult(userList); }
 	 * return VoHelper.getErrorResult(); }
 	 */
 
-	@Override
-	public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
-		return userBp.getUsersByUserInfo(userVO, pageNumber, pageData);
-	}
+
+    @Override
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData) {
+        return userBp.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
+    }
 
 	@Override
 	public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
@@ -90,19 +93,34 @@ public class UserServiceImpl implements IUserService {
 		}
 	}
 
-	@Override
-	public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
-		ResultVO rslt = null;
-		try {
-			rslt.data = dataAuthorization.getShopList(operator, platform);
-			rslt.msg = "Success " + operator;
-			rslt = VoHelper.getSuccessResult(rslt.data);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			return rslt;
-		}
-	}
+
+    @Override
+    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
+        ResultVO rslt = null;
+        try {
+            rslt.data = dataAuthorization.getShopList(operator, platform);
+            rslt.msg = "Success " + operator;
+            rslt = VoHelper.getSuccessResult(rslt.data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return rslt;
+        }
+    }
+
+    @Override
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+        ResultVO rslt = null;
+        try {
+            rslt.data = authWayBp.getMyAuthWay(operator);
+            rslt.msg = "Success " + operator;
+            rslt = VoHelper.getSuccessResult(rslt.data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            return rslt;
+        }
+    }
 
 	@Override
 	public String getAllFuncPermit(String jsonStr) {
@@ -117,10 +135,15 @@ public class UserServiceImpl implements IUserService {
 		}
 	}
 
-	
+
 	@Override
 	public String funcPermitValidate(Map<String, String> map) {
 			ResultVO rslt = userValidateBp.funcPermitValidate(map);
 			return StringUtility.toJSONString_NoException(rslt);
+	}
+
+	@Override
+	public ResultVO getUserByName(String userName) {
+		return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
 	}
 }

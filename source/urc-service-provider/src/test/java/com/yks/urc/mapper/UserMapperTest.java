@@ -95,5 +95,20 @@ public class UserMapperTest extends BaseMapperTest {
             System.out.println(user.getUserName());
         }*/
     }
+    @Test
+    public void getInfo(){
+        UserVO userVO =new UserVO();
+        userVO.userName="panyun";
+
+        Query query =new Query(userVO,0,10);
+
+        List<UserVO> userVOList = userMapper.getUsersByUserInfo(query);
+      //int count=   userMapper.getUsersByUserInfoCount(query);
+        System.out.println("=============================");
+        //System.out.println(count);
+        for (UserVO userVO1 :userVOList){
+            System.out.println(userVO1.personName);
+        }
+    }
 
 }

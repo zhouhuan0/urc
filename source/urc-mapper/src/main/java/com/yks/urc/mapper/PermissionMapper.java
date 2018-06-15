@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface PermissionMapper {
 	int deleteByPrimaryKey(Long id);
 
@@ -34,13 +36,33 @@ public interface PermissionMapper {
 	Permission getPermissionBySysKey(@Param("sysKey") String sysKey);
 
 	void deleteSyspermitDefine(@Param("lstPermit") List<Permission> lstPermit);
-	
+
 	/**
 	 * 先按sysKey删除，再insert
-	 * 
+	 *
 	 * @param lstPermit
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午7:59:31
 	 */
 	void insertSysPermitDefine(@Param("lstPermit") List<Permission> lstPermit);
+    /**
+
+    /**
+     * 获取 systemname
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/14 15:56
+     */
+    //List<Permission> getSysKeyAndName( List<String> sysKey);
+
+    /**
+     * 通过sysKey 获取permission
+     *
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/15 9:44
+     */
+   Permission getPermission(@Param("sysKey") String sysKey);
 }

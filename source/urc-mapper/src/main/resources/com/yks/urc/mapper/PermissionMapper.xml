@@ -65,4 +65,68 @@
             )
         </foreach>
   </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.Permission">
+    update urc_permission
+    <set>
+      <if test="sysName != null">
+        sys_name = #{sysName,jdbcType=CHAR},
+      </if>
+      <if test="sysKey != null">
+        sys_key = #{sysKey,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifiedBy != null">
+        modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sysContext != null">
+        sys_context = #{sysContext,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.Permission">
+    update urc_permission
+    set sys_name = #{sysName,jdbcType=CHAR},
+      sys_key = #{sysKey,jdbcType=CHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      sys_context = #{sysContext,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.Permission">
+    update urc_permission
+    set sys_name = #{sysName,jdbcType=CHAR},
+      sys_key = #{sysKey,jdbcType=CHAR},
+      create_by = #{createBy,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <!--获取systemKey-->
+    <select id="getSystemKey" resultMap="BaseResultMap">
+    SELECT  sys_key,sys_context FROM urc_permission WHERE sys_key =#{sysKey}
+  </select>
+
+  <!--获取systemName-->
+ <!-- <select id="getSysKeyAndName" resultMap="BaseResultMap">
+    SELECT  sys_key,sys_name FROM urc_permission WHERE sys_key  IN
+    <foreach collection="list" index="index" item="sysKey" open="(" separator="," close=")">
+      #{sysKey}
+    </foreach>
+  </select>-->
+  <select id="getPermission" resultType="com.yks.urc.entity.Permission">
+    SELECT  <include refid="Base_Column_List" /> FROM  urc_permission
+    WHERE sys_key  =#{sysKey}
+  </select>
 </mapper>

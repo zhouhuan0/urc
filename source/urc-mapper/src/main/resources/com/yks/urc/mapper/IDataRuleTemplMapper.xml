@@ -16,10 +16,16 @@
     id, templ_id,templ_name, user_name, remark, create_time, create_by, modified_time, modified_by
   </sql>
 
-    <select id="getMyDataRuleTempl" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="getMyDataRuleTempl" parameterType="com.yks.urc.entity.DataRuleTemplDO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from urc_data_rule_templ where user_name=#{userName,jdbcType=VARCHAR}
+        	from urc_data_rule_templ  
+        	<where> 
+        		<if test="createBy !=null and createBy != '' ">
+        			 create_by=#{createBy} 
+        		</if>
+        		
+        	</where>
     </select>
 
 

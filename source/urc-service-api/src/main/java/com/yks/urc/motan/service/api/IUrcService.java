@@ -4,10 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.weibo.api.motan.config.springsupport.annotation.MotanService;
-import com.yks.urc.vo.OmsAccountVO;
-import com.yks.urc.vo.OmsPlatformVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 
 public interface IUrcService {
     /**
@@ -149,7 +146,18 @@ public interface IUrcService {
 	 * @return 返回值为0--表示不重复, 1--表示重复
 	 * @author oujie@youkeshu.com
 	 */
-	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+    ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+
+    /**
+     * 获取应用系统及其授权方式
+     * @param  operator
+     * @return  ResultVO<List<SysAuthWayVO>>
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/14 14:31
+     */
+    String getMyAuthWay(String operator);
+
+
 
 
 	/**
@@ -160,38 +168,38 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午12:45:36
 	 */
 	String getAllFuncPermit(String jsonStr);
-	
-	
+
+
 	/**
 	 * 获取角色关联的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getUserByRoleId(String jsonStr);
-	
+
 	/**
 	 * 获取多个角色已有的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getRoleUser(String jsonStr);
-	
+
 	/**
 	 * 获取用户可选择的所有数据授权方案
 	 * @param jsonStr
 	 * @return
 	 */
 	String getMyDataRuleTempl(String jsonStr);
-	
-	
-	
+
+
+
 	/**
 	 * 获取多个用户的所有数据权限
 	 * @param jsonStr
 	 * @return
 	 */
 	String getDataRuleByUser(String jsonStr);
-	
+
 	/**
 	 * 导入sys功能权限定义
 	 * @param jsonStr
@@ -200,4 +208,25 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午7:17:14
 	 */
 	String importSysPermit(String jsonStr);
+
+	/**
+	 * 获取指定用户可授权给其它角色的功能权限
+	 * @param jsonStr
+	 * @return
+	 */
+	String getUserAuthorizablePermission(String jsonStr);
+
+	/**
+	 * 获取多个角色已有的功能权限
+	 * @param jsonStr
+	 * @return
+	 */
+	String getRolePermission(String jsonStr);
+	
+	/**
+	 * 快速分配数据权限-模糊搜索用户域账号 
+	 * @param jsonStr
+	 * @return
+	 */
+	String getUserByUserName(String jsonStr);
 }

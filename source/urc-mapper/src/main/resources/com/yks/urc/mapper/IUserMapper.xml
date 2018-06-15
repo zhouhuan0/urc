@@ -11,8 +11,14 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+       <!--用户和钉钉关系-->
+        <association property="person" column="ding_user_id" javaType="Person"  columnPrefix="p">
+            <id column="id" jdbcType="BIGINT" property="id" />
+            <result column="ding_user_id" jdbcType="VARCHAR" property="dingUserId" />
+            <result column="person_name" jdbcType="VARCHAR" property="personName" />
+        </association>
         <!--用户-角色关系表-->
-        <collection property="userRoleDOList" ofType="com.yks.urc.entity.UserRoleDO">
+        <collection property="userRoleDOList" ofType="com.yks.urc.entity.UserRoleDO" columnPrefix="r">
             <id column="id" jdbcType="TINYINT" property="id"/>
             <result column="role_id" jdbcType="TINYINT" property="roleId"/>
             <result column="user_name" jdbcType="VARCHAR" property="userName"/>
@@ -255,25 +261,25 @@
     <delete id="deleteUrcUser">
       truncate  urc_user
     </delete>
-
-    <select id="getUsersByUserInfo" resultType="com.yks.urc.entity.UserDO">
-        select u.user_name,p.person_name,u.active_time,u.is_active
+    <!--支持多个精确搜索-->
+    <select id="getUsersByUserInfo" resultType="com.yks.urc.vo.UserVO">
+        select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
-        INNER JOIN urc_person p
-        on u.ding_user_id = p.ding_user_id
+        INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name
         <if test="query.userName != null and query.userName !=''">
-         AND   u.user_name = #{query.userName}
+         AND   u.user_name =#{query.userName}
         </if>
         limit #{query.offset},#{query.limit}
     </select>
     <select id="getUsersByUserInfoCount" resultType="java.lang.Integer">
         SELECT count(*) FROM urc_user u
-        INNER JOIN urc_person p
-        on u.ding_user_id = p.ding_user_id
-        INNER JOIN urc_user_role r on u.user_name=r.user_name
         <if test="query.userName != null and query.userName !=''">
-            AND  u.user_name = #{query.userName}
+            AND   u.user_name =#{query.userName}
         </if>
+    </select>
+    <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
+        SELECT <include refid="Base_Column_List"/>
+        FROM  urc_user WHERE  user_name =#{userName}
     </select>
 </mapper>

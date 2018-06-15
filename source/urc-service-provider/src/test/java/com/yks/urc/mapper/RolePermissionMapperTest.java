@@ -126,5 +126,13 @@ public class RolePermissionMapperTest extends BaseMapperTest {
         int rtn = rolePermissionMapper.insertBatch(rolePermissionDOS);
         System.out.println(rtn);
     }
+    @Test
+    public void testGetKey(){
+        String operator ="panyun";
+        List<String> list =rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+        for (String str:list){
+            System.out.println(str);
+        }
+    }
 
 }

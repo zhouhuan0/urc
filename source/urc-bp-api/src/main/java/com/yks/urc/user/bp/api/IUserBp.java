@@ -21,7 +21,16 @@ public interface IUserBp {
 	 * @param pageData
 	 * @return
 	 */
-	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
+	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData);
+	/**
+	 * 获取系统key
+	 * @param
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/14 14:47
+	 */
+	ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket);
+
 
 	/**
 	 * 获取用户所有系统功能权限及version

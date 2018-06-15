@@ -138,51 +138,42 @@ public class UserBpImpl implements IUserBp {
 
 	}
 
-	/**
-	 * 搜索用户
-	 *
-	 * @param userVO
-	 * @param pageNumber
-	 * @param pageData
-	 * @return ResultVO
-	 * @Author linwanxian@youkeshu.com
-	 * @Date 2018/6/11 10:28
-	 */
-	@Override
-	public ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData) {
-		// 1.首先查询出所有数据,将userDo的数据组装到uservo
-		List<UserVO> userVOList = new ArrayList<>();
-		// 分页
-		Query query = new Query(userVO, pageNumber, pageData);
-		List<UserDO> userDOList = userMapper.getUsersByUserInfo(query);
-
-		for (UserDO userDO : userDOList) {
-			userVO.userName = userDO.getUserName();
-			userVO.personName = userDO.getPerson().getPersonName();
-			userVO.activeTime = userDO.getActiveTime().toString();
-			// 1 为启用
-			userVO.isActive = userDO.getIsActive() == 1 ? true : false;
-		}
-
-		// 2.将拿到的用户名再去获取角色名称
-		RoleVO roleVO = new RoleVO();
-		for (UserDO user : userDOList) {
-			String username = roleMapper.selectRoleName(user.getUserName());
-			roleVO.roleName = username;
-		}
-
-		// 3.将拿到的角色对象组装到uservo里面
-		List<RoleVO> list = new ArrayList();
-		list.add(roleVO);
-		userVO.roles = list;
-
-		// 4.组装userVo
-		userVOList.add(userVO);
+    /**
+     * 搜索用户
+     *
+     * @param userVO
+     * @param pageNumber
+     * @param pageData
+     * @return ResultVO
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/11 10:28
+     */
+    @Override
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData) {
+        // 1.首先查询出所有数据
+        //分页
+        Query query = new Query(userVO, pageNumber, pageData);
+		List<UserVO> userVOList = userMapper.getUsersByUserInfo(query);
+        // 2.将拿到的用户名再去获取角色名称
+		List<RoleVO> roleVOS = new ArrayList();
+        RoleVO roleVO = new RoleVO();
+        for (UserVO userVO1 : userVOList) {
+            List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
+            //组装roleName
+			for (String roleName : roleNameList) {
+				roleVO.roleName = roleName;
+				// 3.将拿到的角色对象组装到uservo里面
+				roleVOS.add(roleVO);
+			}
+			userVO.roles = roleVOS;
+        }
+        // 4.组装userVo
+        userVOList.add(userVO);
 		// 获取总条数
-		int total = userMapper.getUsersByUserInfoCount(query);
-		PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
-		return VoHelper.getSuccessResult(pageResultVO);
-	}
+        int total = userMapper.getUsersByUserInfoCount(query);
+        PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+        return VoHelper.getSuccessResult(pageResultVO);
+    }
 
 	/**
 	 * 获取system
@@ -239,7 +230,7 @@ public class UserBpImpl implements IUserBp {
 		UserBpImpl userBp = new UserBpImpl();
 		userBp.SynUserFromUserInfo("lwx");
 	}
-
+	@Override
 	public ResultVO login(UserVO authUser) {
 		try {
 			LoginRespVO resp = new LoginRespVO();

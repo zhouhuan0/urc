@@ -65,6 +65,24 @@
         from urc_role_permission
         where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
     </select>
+    
+     <select id="getUserAuthorizablePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT 
+		 	urp.sys_key,
+		 	urp.selected_context  
+		FROM 
+			urc_role ur 
+		LEFT JOIN urc_user_role uur ON ur.role_id = uur.role_id 
+		LEFT JOIN urc_role_permission urp ON urp.role_id=ur.role_id  
+		WHERE
+			ur.is_authorizable='1' AND uur.user_name = #{userName}  
+    </select>
+    
+      <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+				SELECT  sys_key, selected_context  FROM urc_role_permission WHERE role_id=#{roleId}  
+    </select>
+    
+    
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from urc_role_permission
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
@@ -180,4 +198,12 @@
       modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </update>
+    <!--通过用户名获取角色对应的sys_key-->
+    <select id="getSysKetByRoleAndUserName" resultType="java.lang.String">
+       select DISTINCT(up.sys_key)
+        FROM urc_user_role ur
+        INNER JOIN urc_role r on ur.role_id =r.role_id
+        inner JOIN urc_role_permission up on ur.role_id =up.role_id
+        where ur.user_name =#{userName}
+    </select>
 </mapper>

@@ -13,7 +13,7 @@ import com.yks.urc.entity.UserPermissionCacheDO;
  */
 public interface IPermitStatBp {
 	/**
-	 * 更新用户功能权限冗余表
+	 * 更新用户功能权限冗余表 and cache
 	 * 
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 下午2:47:34

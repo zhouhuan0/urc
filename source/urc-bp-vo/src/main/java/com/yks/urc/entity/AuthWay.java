@@ -1,11 +1,14 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class AuthWay {
     private Long id;
 
     private String sysKey;
+
+    private String sortIdx;
 
     private Date createTime;
 
@@ -14,6 +17,15 @@ public class AuthWay {
     private Date modifiedTime;
 
     private String modifiedBy;
+    private String entityCode;
+
+    public String getEntityCode() {
+        return entityCode;
+    }
+
+    public void setEntityCode(String entityCode) {
+        this.entityCode = entityCode;
+    }
 
     public Long getId() {
         return id;
@@ -29,6 +41,14 @@ public class AuthWay {
 
     public void setSysKey(String sysKey) {
         this.sysKey = sysKey == null ? null : sysKey.trim();
+    }
+
+    public String getSortIdx() {
+        return sortIdx;
+    }
+
+    public void setSortIdx(String sortIdx) {
+        this.sortIdx = sortIdx;
     }
 
     public Date getCreateTime() {
@@ -62,4 +82,5 @@ public class AuthWay {
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
     }
+
 }

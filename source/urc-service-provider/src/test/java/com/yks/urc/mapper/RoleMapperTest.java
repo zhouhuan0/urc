@@ -7,6 +7,7 @@ import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.DataRuleColVO;
 import com.yks.urc.vo.DataRuleSysVO;
@@ -36,6 +37,10 @@ import java.util.*;
  * @since JDK1.8
  */
 public class RoleMapperTest extends BaseMapperTest {
+	
+	
+	@Autowired
+	IRolePermissionMapper rolePermissionMapper;
 
     @Autowired
     private IRoleMapper roleMapper;
@@ -103,9 +108,16 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-    	List<String> lstUserName=new ArrayList<String>();
+    	
+		//List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
+		//List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey("001","admin");
+		List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
+
+    	System.out.println(dataRuleColList.toString());
+    	
+/*    	List<String> lstUserName=new ArrayList<String>();
     	lstUserName.add("panyun");
-		List<DataRuleVO> dataRuel=new ArrayList<DataRuleVO>();
+    	List<DataRuleVO> dataRuel=new ArrayList<DataRuleVO>();
 		for (int i = 0; i < lstUserName.size(); i++) {
 			//通过用户名得到sys_key
 			List<String> syskeyList=userRoleMapper.getSysKeyByUser(lstUserName.get(i));
@@ -115,7 +127,6 @@ public class RoleMapperTest extends BaseMapperTest {
 				List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i));
 				//通过sysKey得到列权限
 				List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i));
-				
 				List<DataRuleColVO> dataRuleColVOList =new ArrayList<DataRuleColVO>();
 				 for (DataRuleColDO colDO : dataRuleColList) {
 					DataRuleColVO dataRuleColVO=new DataRuleColVO();
@@ -129,12 +140,11 @@ public class RoleMapperTest extends BaseMapperTest {
 					 expressionVOList.add(expressionVO);
 				}
 				DataRuleSysVO dataRuleSysVO=new DataRuleSysVO();	
-				JSONObject jsonObject=new JSONObject();
-				jsonObject.put("isAnd", "1");
-				jsonObject.put("subWhereClause", StringUtility.toJSONString_NoException(dataRuleColVOList));
+				ExpressionVO expressionVO=new ExpressionVO();
+				expressionVO.setSubWhereClause(expressionVOList);
 				dataRuleSysVO.sysKey=syskeyList.get(i);
 				dataRuleSysVO.col=dataRuleColVOList;
-//				dataRuleSysVO.row=jsonObject;
+				dataRuleSysVO.row=expressionVO;
 				lstDataRuleSys.add(dataRuleSysVO);
 			}
 			DataRuleVO dataRuleVO=new DataRuleVO();
@@ -143,7 +153,7 @@ public class RoleMapperTest extends BaseMapperTest {
 			dataRuel.add(dataRuleVO);
 		}
 		
-		
+		System.out.println(StringUtility.toJSONString_NoException(dataRuel));*/
 		
 /*        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
         Assert.assertNull(roleDO);*/
@@ -196,5 +206,11 @@ public class RoleMapperTest extends BaseMapperTest {
 
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(map);
         Assert.assertNotNull(roleDOS);
+    }
+    @Test
+    public void getRoleName(){
+        String username ="panyun";
+       List<String> roleName=  roleMapper.selectRoleNameByUserName(username);
+        System.out.println(roleName);
     }
 }

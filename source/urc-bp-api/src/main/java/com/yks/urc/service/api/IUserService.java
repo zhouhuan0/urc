@@ -33,7 +33,7 @@ public interface IUserService {
 	 * @param pageData
 	 * @return
 	 */
-	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
+	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData);
 	/**
 	 *  获取所有平台
 	 * @param operator
@@ -48,8 +48,20 @@ public interface IUserService {
 	 */
 	ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
 
+	/**
+	 *  获取应用系统及其授权方式
+	 * @param
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/14 17:42
+	 */
+	ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
+
+
 	String getAllFuncPermit(String jsonStr);
 
 	String funcPermitValidate(Map<String, String> map);
+	
+	ResultVO getUserByName(String userName);
 
 }
