@@ -9,6 +9,7 @@ import com.yks.urc.mapper.*;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
+import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
@@ -42,9 +43,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private IDataRuleMapper dataRuleMapper;
     
-
     @Autowired
     private IUserRoleMapper userRoleMapper;
+    
+    @Autowired
+    private IRoleMapper roleMapper;
     
     @Autowired
     private IExpressionMapper expressionMapper;
@@ -402,7 +405,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Override
     public ResultVO getMyDataRuleTempl(String userName) {
-        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(userName);
+    	DataRuleTemplDO templDO=new DataRuleTemplDO();
+    	if(!roleMapper.isAdminAccount(userName)){
+    		templDO.setCreateBy(userName);
+    	}
+        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(templDO);
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         return VoHelper.getSuccessResult(dataRuleTempListVO);
     }
