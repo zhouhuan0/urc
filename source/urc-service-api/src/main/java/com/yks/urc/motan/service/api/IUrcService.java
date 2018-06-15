@@ -146,7 +146,7 @@ public interface IUrcService {
 	 * @return 返回值为0--表示不重复, 1--表示重复
 	 * @author oujie@youkeshu.com
 	 */
-	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+    ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId);
 
     /**
      * 获取应用系统及其授权方式
@@ -168,38 +168,38 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午12:45:36
 	 */
 	String getAllFuncPermit(String jsonStr);
-	
-	
+
+
 	/**
 	 * 获取角色关联的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getUserByRoleId(String jsonStr);
-	
+
 	/**
 	 * 获取多个角色已有的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getRoleUser(String jsonStr);
-	
+
 	/**
 	 * 获取用户可选择的所有数据授权方案
 	 * @param jsonStr
 	 * @return
 	 */
 	String getMyDataRuleTempl(String jsonStr);
-	
-	
-	
+
+
+
 	/**
 	 * 获取多个用户的所有数据权限
 	 * @param jsonStr
 	 * @return
 	 */
 	String getDataRuleByUser(String jsonStr);
-	
+
 	/**
 	 * 导入sys功能权限定义
 	 * @param jsonStr
@@ -208,7 +208,7 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午7:17:14
 	 */
 	String importSysPermit(String jsonStr);
-	
+
 	/**
 	 * 获取指定用户可授权给其它角色的功能权限
 	 * @param jsonStr

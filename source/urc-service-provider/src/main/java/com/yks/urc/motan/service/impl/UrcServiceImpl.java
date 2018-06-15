@@ -170,8 +170,8 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public String checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
-        return StringUtility.toJSONString_NoException(roleService.checkDuplicateRoleName(operator, newRoleName, roleId));
+    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+        return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
     }
 
 	@Override
@@ -179,7 +179,7 @@ public class UrcServiceImpl implements IUrcService {
 		return userService.getAllFuncPermit(jsonStr);
 	}
 
-	@Override
+    @Override
 	public String funcPermitValidate(Map<String, String> map) {
 		return userService.funcPermitValidate(map);
 	}

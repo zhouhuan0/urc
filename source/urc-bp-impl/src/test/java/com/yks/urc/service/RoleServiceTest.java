@@ -73,6 +73,7 @@ public class RoleServiceTest extends AbstractSpringTest {
         String newRoleName = "admin1";
         String roleId = null;
         ResultVO<Integer> resultVO = roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
+        System.out.println("..............");
         //当前角色名重复---新增情况
         Assert.assertEquals(Optional.of(resultVO.data), Optional.of(1));
 //        当前角色名重复---修改情况
@@ -83,5 +84,15 @@ public class RoleServiceTest extends AbstractSpringTest {
         roleId = "7";
         resultVO = roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
         Assert.assertEquals(Optional.of(resultVO.data), Optional.of(0));
+    }
+
+
+
+    @Test
+    public void testIsAdminAccount(){
+        //非管理员用户
+        Assert.assertEquals(roleMapper.isAdminAccount("panyun"), false);
+        //管理员用户
+        Assert.assertEquals(roleMapper.isAdminAccount("oujie"), true);
     }
 }
