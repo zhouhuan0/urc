@@ -78,7 +78,9 @@
 			ur.is_authorizable='1' AND uur.user_name = #{userName}  
     </select>
     
-    
+      <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+				SELECT  sys_key, selected_context  FROM urc_role_permission WHERE role_id=#{roleId}  
+    </select>
     
     
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

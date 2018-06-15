@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.enums.UserCentralStatusEnum;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserInfoDO;
@@ -13,9 +14,10 @@ import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
-
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
@@ -57,6 +59,13 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private ISeqBp seqBp;
+
+    @Autowired
+    private IUserValidateBp  userValidateBp;
+    
+
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     /**
      * Description:
@@ -323,9 +332,27 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public List<RoleDO> getRolePermission(List<String> lstRoleId) {
-        /*需要判断角色是否是当前用户创建的*/
-        return null;
+    public ResultVO getRolePermission(List<String> lstRoleId) {
+    	List<RoleVO> roleVoList=new ArrayList<RoleVO>();
+    	for (int i = 0; i < lstRoleId.size(); i++) {
+    		RoleVO roleVO =new RoleVO();
+    		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getRolePermission(lstRoleId.get(i));
+    		List<PermissionVO> permissionVOs=new ArrayList<PermissionVO>();
+            for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+            	Permission permission=permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+            	String SelectedContext=userValidateBp.cleanDeletedNode(rolePermissionDO.getSysKey(), permission.getSysContext());
+            	PermissionVO permissionVO = new PermissionVO();
+            	permissionVO.setSysKey(rolePermissionDO.getSysKey());
+            	permissionVO.setSysContext(SelectedContext);
+                permissionVOs.add(permissionVO);
+            }
+            RoleDO roleDo= roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+    		roleVO.roleId=Long.parseLong(lstRoleId.get(i));
+    		roleVO.roleName=roleDo.getRoleName();
+    		roleVO.selectedContext=permissionVOs;
+    		roleVoList.add(roleVO);
+		}
+        return VoHelper.getSuccessResult(roleVoList);
     }
 
     /**
@@ -412,7 +439,7 @@ public class RoleServiceImpl implements IRoleService {
         roleDO.setRoleName(newRoleName);
         roleMapper.insert(roleDO);
         /*复制对应的角色权功能限关系*/
-        List<RoleDO> rolePermission = getRolePermission(Arrays.asList(sourceRoleId));
+        ResultVO rolePermission = getRolePermission(Arrays.asList(sourceRoleId));
 //        rolePermission.stream().forEach(role -> {
 //            role.getPermissionDO()
 //        });
