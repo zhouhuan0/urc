@@ -30,7 +30,7 @@ public interface IUserBp {
 	 * @Date 2018/6/14 14:47
 	 */
 	ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket);
-	ResultVO<PageResultVO> getUsersByUserInfo(UserVO userVO, int pageNumber, int pageData);
+
 
 	/**
 	 * 获取用户所有系统功能权限及version
