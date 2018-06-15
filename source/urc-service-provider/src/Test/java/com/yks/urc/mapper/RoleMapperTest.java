@@ -7,6 +7,7 @@ import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.DataRuleColVO;
 import com.yks.urc.vo.DataRuleSysVO;
@@ -36,6 +37,10 @@ import java.util.*;
  * @since JDK1.8
  */
 public class RoleMapperTest extends BaseMapperTest {
+	
+	
+	@Autowired
+	IRolePermissionMapper rolePermissionMapper;
 
     @Autowired
     private IRoleMapper roleMapper;
@@ -103,7 +108,12 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-    	List<String> lstUserName=new ArrayList<String>();
+    	
+		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
+    	
+    	
+    	
+/*    	List<String> lstUserName=new ArrayList<String>();
     	lstUserName.add("panyun");
     	List<DataRuleVO> dataRuel=new ArrayList<DataRuleVO>();
 		for (int i = 0; i < lstUserName.size(); i++) {
@@ -141,7 +151,7 @@ public class RoleMapperTest extends BaseMapperTest {
 			dataRuel.add(dataRuleVO);
 		}
 		
-		System.out.println(StringUtility.toJSONString_NoException(dataRuel));
+		System.out.println(StringUtility.toJSONString_NoException(dataRuel));*/
 		
 /*        RoleDO roleDO = roleMapper.getRoleByRoleId(1L);
         Assert.assertNull(roleDO);*/

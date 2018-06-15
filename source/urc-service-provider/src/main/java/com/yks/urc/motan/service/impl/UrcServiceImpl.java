@@ -36,6 +36,9 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private IDataRuleService dataRuleService;
+    
+	@Autowired
+	private IPermissionService permissionService;
 
     @Override
     public String syncUserInfo(UserVO curUser) {
@@ -209,10 +212,16 @@ public class UrcServiceImpl implements IUrcService {
 		return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleByUser(lstUserName));
 	}
 
-	@Autowired
-	private IPermissionService permissionService;
+
 	@Override
 	public String importSysPermit(String jsonStr) {
 		return permissionService.importSysPermit(jsonStr);
+	}
+
+	@Override
+	public String getUserAuthorizablePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+		return StringUtility.toJSONString_NoException(permissionService.getUserAuthorizablePermission(operator));
 	}
 }
