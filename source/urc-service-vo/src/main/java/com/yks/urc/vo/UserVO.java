@@ -42,6 +42,12 @@ public class UserVO implements Serializable {
      *   电话号码
      */
     public String phoneNum;
+    
+    /**
+     *  创建人
+     */
+    public String createBy;
+    
     /**
      * 钉钉号在当前企业中的userId
      */

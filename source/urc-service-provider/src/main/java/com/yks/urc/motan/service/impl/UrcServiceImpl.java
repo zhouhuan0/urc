@@ -241,4 +241,14 @@ public class UrcServiceImpl implements IUrcService {
 
     }
 
+	@Override
+	public String fuzzySearchUsersByUserName(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        String userName = jsonObject.get("username").toString();
+        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        return   StringUtility.toJSONString_NoException(userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator));
+	}
+
 }

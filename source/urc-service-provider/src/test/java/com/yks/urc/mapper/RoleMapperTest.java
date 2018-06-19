@@ -14,6 +14,7 @@ import com.yks.urc.vo.DataRuleColVO;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.ExpressionVO;
+import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
@@ -111,8 +112,18 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
     	
+		UserVO userVO=new UserVO();
+		userVO.userName="test";
+		
+		Query query=new Query(userVO, 0, 10);
+		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
+		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+		System.out.println(userList);
+		System.out.println(userCount);
+		//PageResultVO pageResultVO=new PageResultVO(userList, userCount, 10);
     	
-        DataRuleTemplDO templDO = new DataRuleTemplDO();
+    	
+/*        DataRuleTemplDO templDO = new DataRuleTemplDO();
        templDO.setCreateBy("admin");
         
         Query query=new Query(templDO, 0, 10);
@@ -123,7 +134,7 @@ public class RoleMapperTest extends BaseMapperTest {
         
         List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
     	System.out.println(dataRuleTempList);
-    	System.out.println(dataRuleTempCount);
+    	System.out.println(dataRuleTempCount);*/
 /*		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong("1528856724627000041"));
 		System.out.println(roleDO.getRoleName());*/
     	

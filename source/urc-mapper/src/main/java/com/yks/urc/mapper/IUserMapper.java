@@ -110,4 +110,19 @@ public interface IUserMapper {
      */
     UserDO getUserByUserName(@Param("userName") String userName);
     UserDO getUserByName(@Param("userName") String userName);
+    
+    
+    /**
+     * 模糊搜索用户域账号
+     * @param query
+     * @return
+     */
+	List<UserVO> fuzzySearchUsersByUserName(Query query);
+
+    /**
+     * 模糊搜索用户域账号总数
+     * @param query
+     * @return
+     */
+	int fuzzySearchUsersByUserNameCount(Query query);
 }

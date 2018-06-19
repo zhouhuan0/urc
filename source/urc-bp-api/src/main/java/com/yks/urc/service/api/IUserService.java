@@ -73,5 +73,13 @@ public interface IUserService {
 	 */
 	ResultVO disUserToRoles(String userName,List<String> roleId);
 	
+	
+	/**
+	 * 模糊搜索用户域账号
+	 * @param userNmae
+	 * @param roleId
+	 * @return
+	 */
+	ResultVO fuzzySearchUsersByUserName(int pageNumber,int pageData,String userName,String operator);
 
 }
