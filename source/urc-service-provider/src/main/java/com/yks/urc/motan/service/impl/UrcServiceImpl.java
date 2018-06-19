@@ -185,7 +185,7 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         List<String> roleList = StringUtility.parseObject(jsonObject.get("lstRoleId").toString(), List.class);
-		return roleService.getRoleUser(roleList);
+		return roleService.getRoleUser(operator,roleList);
 	}
 
 

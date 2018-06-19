@@ -382,7 +382,7 @@ public class RoleServiceImpl implements IRoleService {
 	 * @see
 	 */
 	@Override
-	public ResultVO getRoleUser(List<String> lstRoleId) {
+	public ResultVO getRoleUser(String operator,List<String> lstRoleId) {
 		/* 非管理员只能查看自己创建的角色 */
 		List<RoleVO> roleList = new ArrayList<>();
 		for (int i = 0; i < lstRoleId.size(); i++) {
@@ -390,7 +390,12 @@ public class RoleServiceImpl implements IRoleService {
 			RoleVO roleVO = new RoleVO();
 			roleVO.setRoleName(roleDO.getRoleName());
 			roleVO.setRoleId(roleDO.getRoleId());
-			List<String> lstUserName = userRoleMapper.getUserNameByRoleId(lstRoleId.get(i));
+			UserRoleDO userRoleDO=new UserRoleDO();
+			userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+			if(!roleMapper.isAdminAccount(operator)){
+				userRoleDO.setCreateBy(operator);
+			}
+			List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
 			roleVO.setLstUserName(lstUserName);
 			roleList.add(roleVO);
 		}

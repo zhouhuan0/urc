@@ -28,7 +28,7 @@ public interface IRoleService {
 
     void updateRolePermission(List<String> lstRoleId);
 
-    ResultVO getRoleUser(List<String> lstRoleId);
+    ResultVO getRoleUser(String operator, List<String> lstRoleId);
 
     ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator);
 
