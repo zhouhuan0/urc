@@ -83,14 +83,18 @@ public class UrcServiceImpl implements IUrcService {
         return StringUtility.toJSONString_NoException(organizationService.getAllOrgTree());
     }
 
-    
+    /**
+     *  用户管理搜索用户
+     * @param params
+     * @return
+     */
 	@Override
 	public String getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator =StringUtility.toJSONString(jsonObject.getString("operator"));
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        UserVO userVO = StringUtility.parseObject(jsonObject.get("userVo").toString(), UserVO.class);
+        UserVO userVO = StringUtility.parseObject(jsonObject.get("user").toString(), UserVO.class);
 		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData));
 	}
 
@@ -235,7 +239,17 @@ public class UrcServiceImpl implements IUrcService {
 	}
 
     @Override
+    public String getUserByUserName(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator =jsonObject.get("operator").toString();
+        UserVO userVO =StringUtility.parseObject(jsonObject.get("user").toString(),UserVO.class);
+        return StringUtility.toJSONString_NoException(organizationService.getUserByUserName(operator,userVO));
+    }
+
+    @Override
     public String getMyAuthWay(String operator) {
         return StringUtility.toJSONString_NoException(userService.getMyAuthWay(operator));
+
     }
+
 }

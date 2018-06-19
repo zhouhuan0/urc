@@ -109,4 +109,11 @@ public interface IUserMapper {
 	List<UserVO> getUserByRoleId(String roleId);
 
     UserDO test(@Param("userName") String userName);
+
+    /**
+     *  精确搜索用户
+     * @param userName
+     * @return
+     */
+    UserDO getUserByUserName(@Param("userName") String userName);
 }
