@@ -156,45 +156,6 @@ public class UserServiceImpl implements IUserService {
 
 	
 	
-	@Transactional
-	public ResultVO disUserToRoles(String userName, List<String> roleId) {
-		userRoleMapper.deleteByUserName(userName);
-		List<UserRoleDO> userRoleDOS = new ArrayList<>();
-		if(roleMapper.isAdminAccount(userName)){
-			//管理员的话是拥有所有的角色
-			List<RoleDO> roleList=roleMapper.listAllRoles();
-			for (RoleDO role : roleList) {
-				UserRoleDO userRoleDO = new UserRoleDO();
-				userRoleDO.setUserName(userName);
-				userRoleDO.setRoleId(role.getRoleId());
-				userRoleDO.setCreateBy(userName);
-				userRoleDO.setCreateTime(new Date());
-				userRoleDO.setModifiedBy(userName);
-				userRoleDO.setModifiedTime(new Date());
-				userRoleDOS.add(userRoleDO);
-			}
-		}else{
-			//删除这个用户的role
-			for (String roleid : roleId) {
-				RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(roleid));
-				if(roleDO!=null){
-					UserRoleDO userRoleDO = new UserRoleDO();
-					userRoleDO.setUserName(userName);
-					userRoleDO.setRoleId(Long.parseLong(roleid));
-					userRoleDO.setCreateBy(userName);
-					userRoleDO.setCreateTime(new Date());
-					userRoleDO.setModifiedBy(userName);
-					userRoleDO.setModifiedTime(new Date());
-					userRoleDOS.add(userRoleDO);
-				}
-			}
-		}
-		userRoleMapper.insertBatch(userRoleDOS);
-		return VoHelper.getSuccessResult();
-	}
-
-	
-	
 	public ResultVO fuzzySearchUsersByUserName(int pageNumber, int pageData, String userName, String operator) {
 		UserVO userVO=new UserVO();
 		userVO.userName=userName;

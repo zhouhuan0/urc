@@ -64,16 +64,6 @@ public interface IUserService {
 	
 	ResultVO getUserByName(String userName);
 	
-	
-	/**
-	 * 给用户分配角色
-	 * @param userNmae
-	 * @param roleId
-	 * @return
-	 */
-	ResultVO disUserToRoles(String userName,List<String> roleId);
-	
-	
 	/**
 	 * 模糊搜索用户域账号
 	 * @param userNmae
