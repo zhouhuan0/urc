@@ -60,7 +60,7 @@ public interface IUserService {
 
 	String getAllFuncPermit(String jsonStr);
 
-	String funcPermitValidate(Map<String, String> map);
+	ResultVO funcPermitValidate(Map<String, String> map);
 	
 	ResultVO getUserByName(String userName);
 	

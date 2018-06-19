@@ -145,9 +145,8 @@ public class UserServiceImpl implements IUserService {
 
 
 	@Override
-	public String funcPermitValidate(Map<String, String> map) {
-			ResultVO rslt = userValidateBp.funcPermitValidate(map);
-			return StringUtility.toJSONString_NoException(rslt);
+	public ResultVO funcPermitValidate(Map<String, String> map) {
+		return userValidateBp.funcPermitValidate(map);
 	}
 
 	@Override
