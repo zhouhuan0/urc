@@ -218,4 +218,11 @@ public interface IUrcService {
 	 */
 	ResultVO fuzzySearchUsersByUserName(String jsonStr);
 	
+	/**
+	 *  更新多个角色的用户
+	 * @param jsonStr
+	 * @return
+	 */
+	ResultVO updateUsersOfRole(String jsonStr);
+	
 }
