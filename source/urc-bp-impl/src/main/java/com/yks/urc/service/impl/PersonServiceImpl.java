@@ -61,7 +61,9 @@ public class PersonServiceImpl implements IPersonService {
     private IOperationBp operationBp;
 
 	@Override
-	public ResultVO getUserByDingOrgId(PersonVO person,int pageNumber, int pageData) {
+	public ResultVO getUserByDingOrgId(String dingOrgId,int pageNumber, int pageData) {
+		PersonVO person=new PersonVO();
+		person.setDingOrgId(dingOrgId);
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.getUserByDingOrgId(query);
 		long count= personMapper.getUserByDingOrgIdCount(query);
@@ -202,22 +204,6 @@ public class PersonServiceImpl implements IPersonService {
 				person.setPhoneNum(user.mobile);
 				person.setPosition(user.position);
 				initPerson.add(person);
-				
-				
-				//这里需要查看由UserInfo接口同步过来的数据,如果urc_user有数据不处理，没有数据,需要插入urc_user数据
-				UserDO userInfo= userMapper.getUserInfoByDingUserId(String.valueOf(user.userid));
-				if(userInfo==null){
-					UserDO userDo = new UserDO();
-					userDo.setActiveTime(new Date());
-					userDo.setCreateTime(new Date());
-					userDo.setModifiedTime(new Date());
-					userDo.setCreateBy("system");
-					userDo.setDingUserId(user.userid);
-					userDo.setIsActive(1);
-					userDo.setModifiedBy("system");
-					userDo.setUserName(user.name);
-					userMapper.insert(userDo);
-				}
 				
 				//初始化人员、部门信息
 				PersonOrg personOrg=new PersonOrg();

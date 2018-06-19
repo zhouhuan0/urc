@@ -10,7 +10,7 @@ public interface IPersonService {
 	 * 根据DingOrgId获取人员信息含有分页
 	 * @return
 	 */
-	ResultVO getUserByDingOrgId(PersonVO person,int pageNumber, int pageData);
+	ResultVO getUserByDingOrgId(String dingOrgId,int pageNumber, int pageData);
 	
 	
 	/**
