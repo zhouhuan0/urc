@@ -28,22 +28,23 @@
       expire_time, create_time, create_by,
       modified_time, modified_by)
     values
-     (#{roleId}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
+     (#{roleId,jdbcType=TINYINT}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
       #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
-
-    <insert id="insertOrUpdate" useGeneratedKeys="true" keyProperty="id" parameterType="com.yks.urc.entity.RoleDO">
+    <!--roleName建立唯一约束，不存在就添加，存在就更新-->
+    <insert id="insertOrUpdate"  parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
-     (role_name, is_active,
+     (role_id, role_name, is_active,
       is_authorizable, is_forever, effective_time,
       expire_time, create_time, create_by,
       modified_time, modified_by)
       values
-      ( #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
-      #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
-      #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
+      ( #{roleId,jdbcType=TINYINT}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
+      #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT},
+      #{effectiveTime,jdbcType=TIMESTAMP},#{expireTime,jdbcType=TIMESTAMP},
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
       on DUPLICATE key
       UPDATE
@@ -53,8 +54,6 @@
         is_forever = #{isForever,jdbcType=TINYINT},
         effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
         expire_time = #{expireTime,jdbcType=TIMESTAMP},
-        create_time = #{createTime,jdbcType=TIMESTAMP},
-        create_by = #{createBy,jdbcType=VARCHAR},
         modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
         modified_by = #{modifiedBy,jdbcType=VARCHAR}
     </insert>
@@ -155,10 +154,10 @@
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
             </if>
-            <if test="roleDO.roleName != null and roleDO.roleName != ''">
+            <if test="roleDO!=null and roleDO.roleName != null and roleDO.roleName != ''">
                 and role_name=#{roleDO.roleName,jdbcType=VARCHAR}
             </if>
-            <if test="roleDO.remark != null and roleDO.remark != ''">
+            <if test="roleDO!=null and roleDO.remark != null and roleDO.remark != ''">
                 and remark=#{roleDO.remark,jdbcType=VARCHAR}
             </if>
         </where>

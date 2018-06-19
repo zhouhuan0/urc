@@ -94,5 +94,16 @@ public interface IDataRuleTemplMapper {
      */
     Integer delTemplDatasByIds(List<Long> templId);
 
+    /**
+     * Description: 根据templId和创建人删除 权限模板数据、权限数据Sys、行权限、列权限
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/16 22:08
+     * @see
+     */
+    Integer delTemplDatasByIdsAndCreatBy(List<Long> templId,@Param("creatBy") String creatBy);
+
 
 }

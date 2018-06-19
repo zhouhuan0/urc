@@ -28,6 +28,8 @@ public interface IRolePermissionMapper {
      */
     Integer deleteBatch(List<Integer> ids);
 
+    Integer deleteByRoleId(@Param("roleId") Long roleId);
+
 
     /**
      * Description: 批量操作角色-操作权限关系 以roleId+sysKey作为唯一约束

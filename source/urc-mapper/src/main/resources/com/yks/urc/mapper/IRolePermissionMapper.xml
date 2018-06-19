@@ -20,6 +20,10 @@
     selected_context
   </sql>
 
+    <!--删除-->
+    <delete id="deleteByRoleId">
+        delete from urc_role_permission where role_id = #{roleId,jdbcType=TINYINT}
+    </delete>
 
     <!--批量删除-->
     <delete id="deleteBatch" parameterType="java.util.List">
@@ -28,7 +32,9 @@
             #{ roleId}
         </foreach>
     </delete>
-    <!--批量操作urc_role_permission 存在则更新，不存在则新增-->
+
+
+    <!--批量操作urc_role_permission 存在的更新，不存在的新增-->
     <update id="insertAndUpdateBatch" parameterType="java.util.List">
         insert into
         urc_role_permission(role_id,sys_key,selected_context,create_time,create_by,modified_time,modified_by)
@@ -65,8 +71,8 @@
         from urc_role_permission
         where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
     </select>
-    
-     <select id="getUserAuthorizablePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+    <select id="getUserAuthorizablePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
 		SELECT 
 		 	urp.sys_key,
 		 	urp.selected_context  
@@ -77,12 +83,12 @@
 		WHERE
 			ur.is_authorizable='1' AND uur.user_name = #{userName}  
     </select>
-    
-      <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
+
+    <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
 				SELECT  sys_key, selected_context  FROM urc_role_permission WHERE role_id=#{roleId}  
     </select>
-    
-    
+
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from urc_role_permission
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}

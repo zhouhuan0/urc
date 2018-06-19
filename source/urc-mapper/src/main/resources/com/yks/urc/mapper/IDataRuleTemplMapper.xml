@@ -106,4 +106,19 @@
         </foreach>
     </delete>
 
+    <!--根据templId列表删除 权限模板数据、权限数据Sys、行权限、列权限-->
+    <delete id="delTemplDatasByIdsAndCreatBy" parameterType="java.util.List">
+        delete ut,us,uc,ue
+        from
+        urc_data_rule_templ ut
+        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        where ut.templ_id in
+        <foreach collection="list" item="templId" open="(" separator="," close=")">
+            #{templId}
+        </foreach>
+        and ut.create_by = #{createBy,jdbcType=VARCHAR}
+    </delete>
+
 </mapper>

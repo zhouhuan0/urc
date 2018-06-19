@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class ExpressionDO {
     private Long id;
@@ -28,6 +29,16 @@ public class ExpressionDO {
     private String modifiedBy;
 
     private String operValues;
+
+    private List<ExpressionDO> expressionDOList;
+
+    public List<ExpressionDO> getExpressionDOList() {
+        return expressionDOList;
+    }
+
+    public void setExpressionDOList(List<ExpressionDO> expressionDOList) {
+        this.expressionDOList = expressionDOList;
+    }
 
     public Long getId() {
         return id;
