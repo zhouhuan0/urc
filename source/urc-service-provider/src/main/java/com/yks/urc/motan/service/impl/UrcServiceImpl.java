@@ -143,20 +143,6 @@ public class UrcServiceImpl implements IUrcService {
 		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
 	}
 
-/*	@Override
-	public String showDataRuleTempl2User(String jsonStr) {
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
-		return StringUtility.toJSONString_NoException(userService.queryUserDataByRuleId(ruleDO));
-	}
-
-	@Override
-	public String showNoDataRuleTempl2User(String jsonStr) {
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        DataRuleDO ruleDO = StringUtility.parseObject(jsonObject.get("templ").toString(), DataRuleDO.class);
-		return StringUtility.toJSONString_NoException(userService.queryUserNoDataByRuleId(ruleDO));
-	}*/
-
     @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
         return userService.getPlatformList(operator);
