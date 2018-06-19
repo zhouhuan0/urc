@@ -131,15 +131,14 @@ public class UserServiceImpl implements IUserService {
     }
 
 	@Override
-	public String getAllFuncPermit(String jsonStr) {
+	public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
 		try {
 			JSONObject jsonObject = StringUtility.parseString(jsonStr);
 			String operator = jsonObject.getString(StringConstant.operator);
-			ResultVO<List<UserSysVO>> rslt = userBp.getAllFuncPermit(operator);
-			return StringUtility.toJSONString_NoException(rslt);
+			return userBp.getAllFuncPermit(operator);
 		} catch (Exception ex) {
 			logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
-			return StringUtility.toJSONString_NoException(VoHelper.getErrorResult());
+			return VoHelper.getErrorResult();
 		}
 	}
 
