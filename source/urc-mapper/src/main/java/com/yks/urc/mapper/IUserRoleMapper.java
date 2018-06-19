@@ -61,5 +61,21 @@ public interface IUserRoleMapper {
      */
     Integer deleteByRoleId(Long roleId);
 
-	List<String> getUserNameByRoleId(String roleId);
+	List<String> getUserNameByRoleId(UserRoleDO userRoleDO);
+	
+	/**
+	 * 根据userName删除用与角色的关联表
+	 * @param userNmae
+	 * @return
+	 */
+	Integer deleteByUserName(String userNmae);
+
+	
+	
+	/**
+	 * 删除userRole关联表
+	 * @param userRoleDO
+	 * @return
+	 */
+	Integer deleteUserRole(UserRoleDO userRoleDO);
 }

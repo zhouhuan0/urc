@@ -20,19 +20,19 @@ public interface IRoleService {
 
     ResultVO<RoleVO> getRoleByRoleId(String jsonStr);
 
-    ResultVO getUserByRoleId(String roleId);
+    ResultVO getUserByRoleId(String operator,String roleId);
 
     void deleteRoles(List<Integer> lstRoleId);
 
     List<SystemRootVO> getUserAuthorizablePermission(String userName);
 
-    ResultVO getRolePermission(List<String> lstRoleId);
+    ResultVO getRolePermission(String operator, List<String> lstRoleId);
 
     void updateRolePermission(List<String> lstRoleId);
 
-    ResultVO getRoleUser(List<String> lstRoleId);
+    ResultVO getRoleUser(String operator, List<String> lstRoleId);
 
-    void updateUsersOfRole(List<RoleDO> lstRole);
+    ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator);
 
     void copyRole(String strUserName,String newRoleName,String sourceRoleId);
 

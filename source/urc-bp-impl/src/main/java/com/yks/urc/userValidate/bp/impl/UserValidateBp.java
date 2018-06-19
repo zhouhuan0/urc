@@ -490,7 +490,7 @@ public class UserValidateBp implements IUserValidateBp {
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
 
-		if (StringUtility.stringEqualsIgnoreCase("/urc/motan/service/api/IUrcService/getAllFuncPermit", moduleUrl)) {
+		if (StringUtility.stringEqualsIgnoreCase("/urc/motan/service/api/IUrcService/getAllFuncPermit", apiUrl)) {
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 		}
 

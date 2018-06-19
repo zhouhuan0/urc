@@ -84,8 +84,16 @@
 			ur.is_authorizable='1' AND uur.user_name = #{userName}  
     </select>
 
-    <select id="getRolePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
-				SELECT  sys_key, selected_context  FROM urc_role_permission WHERE role_id=#{roleId}  
+    <select id="getRolePermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
+        SELECT sys_key, selected_context FROM urc_role_permission
+        <where>
+            <if test="roleId != null ">
+                role_id=#{roleId}
+            </if>
+            <if test=" createBy != null and createBy != '' ">
+                and create_by=#{createBy}
+            </if>
+        </where>
     </select>
 
 

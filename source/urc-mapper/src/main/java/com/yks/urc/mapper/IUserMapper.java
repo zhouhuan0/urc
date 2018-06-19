@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.Param;
@@ -23,7 +24,7 @@ public interface IUserMapper {
 
     List<UserDO> listUsersByRoleId(String roleId);
 
-  
+
 
     /**
      * 搜索用户 分页 ,多个用户搜索
@@ -99,7 +100,30 @@ public interface IUserMapper {
      * @param roleId
      * @return
      */
-	List<UserVO> getUserByRoleId(String roleId);
+	List<UserVO> getUserByRoleId(UserRoleDO userRole);
 
+    UserDO test(@Param("userName") String userName);
+
+    /**
+     *  精确搜索用户
+     * @param userName
+     * @return
+     */
+    UserDO getUserByUserName(@Param("userName") String userName);
     UserDO getUserByName(@Param("userName") String userName);
+    
+    
+    /**
+     * 模糊搜索用户域账号
+     * @param query
+     * @return
+     */
+	List<UserVO> fuzzySearchUsersByUserName(Query query);
+
+    /**
+     * 模糊搜索用户域账号总数
+     * @param query
+     * @return
+     */
+	int fuzzySearchUsersByUserNameCount(Query query);
 }

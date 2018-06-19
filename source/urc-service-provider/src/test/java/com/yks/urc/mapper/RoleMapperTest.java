@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.tools.internal.xjc.model.SymbolSpace;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleTemplDO;
@@ -13,7 +14,9 @@ import com.yks.urc.vo.DataRuleColVO;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.ExpressionVO;
+import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
 import org.drools.compiler.lang.DRL5Expressions.literal_return;
@@ -109,11 +112,39 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
     	
+		UserVO userVO=new UserVO();
+		userVO.userName="test";
+		
+		Query query=new Query(userVO, 0, 10);
+		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
+		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+		System.out.println(userList);
+		System.out.println(userCount);
+		//PageResultVO pageResultVO=new PageResultVO(userList, userCount, 10);
+    	
+    	
+/*        DataRuleTemplDO templDO = new DataRuleTemplDO();
+       templDO.setCreateBy("admin");
+        
+        Query query=new Query(templDO, 0, 10);
+        
+        
+        int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
+
+        
+        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
+    	System.out.println(dataRuleTempList);
+    	System.out.println(dataRuleTempCount);*/
+/*		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong("1528856724627000041"));
+		System.out.println(roleDO.getRoleName());*/
+    	
+/*		List<RoleDO> roleList=roleMapper.listAllRoles();
+    	System.out.println(roleList.size());*/
 		//List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
 		//List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey("001","admin");
-		List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
+		//List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
 
-    	System.out.println(dataRuleColList.toString());
+    	//System.out.println(dataRuleColList.toString());
     	
 /*    	List<String> lstUserName=new ArrayList<String>();
     	lstUserName.add("panyun");

@@ -144,6 +144,17 @@
         from urc_role
         where role_name = #{roleName,jdbcType=VARCHAR}
     </select>
+    
+    
+        <!--分页条件查询-->
+    <select id="listAllRoles"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_role 
+
+    </select>
+    
+    
 
     <!--分页条件查询-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">

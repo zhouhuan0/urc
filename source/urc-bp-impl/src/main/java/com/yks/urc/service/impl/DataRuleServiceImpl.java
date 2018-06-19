@@ -12,6 +12,7 @@ import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -595,14 +596,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getMyDataRuleTempl(String userName) {
+    public ResultVO getMyDataRuleTempl(int pageNumber,int pageData,String operator) {
         DataRuleTemplDO templDO = new DataRuleTemplDO();
-        if (!roleMapper.isAdminAccount(userName)) {
-            templDO.setCreateBy(userName);
+        if (!roleMapper.isAdminAccount(operator)) {
+            templDO.setCreateBy(operator);
         }
-        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(templDO.getUserName());
+        
+        Query query=new Query(templDO, pageNumber, pageData);
+        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
-        return VoHelper.getSuccessResult(dataRuleTempListVO);
+        int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
+        
+        PageResultVO pageResultVO=new PageResultVO(dataRuleTempListVO, dataRuleTempCount, pageData);
+        return VoHelper.getSuccessResult(pageResultVO);
     }
 
     /**

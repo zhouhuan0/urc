@@ -11,22 +11,6 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-       <!--用户和钉钉关系-->
-        <association property="person" column="ding_user_id" javaType="Person"  columnPrefix="p">
-            <id column="id" jdbcType="BIGINT" property="id" />
-            <result column="ding_user_id" jdbcType="VARCHAR" property="dingUserId" />
-            <result column="person_name" jdbcType="VARCHAR" property="personName" />
-        </association>
-        <!--用户-角色关系表-->
-        <collection property="userRoleDOList" ofType="com.yks.urc.entity.UserRoleDO" columnPrefix="r">
-            <id column="id" jdbcType="TINYINT" property="id"/>
-            <result column="role_id" jdbcType="TINYINT" property="roleId"/>
-            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
-            <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
-            <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
-            <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
-            <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        </collection>
     </resultMap>
     
     
@@ -57,6 +41,39 @@
     </select>
     
     
+    
+    <select id="fuzzySearchUsersByUserName"  resultMap="BaseUserResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_user
+        <where>
+        	<if test=" userName !=null and userName != '' ">
+        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+        	</if>
+        	<if test=" createBy !=null and createBy != '' ">
+        		  and  create_by = #{createBy}
+        	</if>
+        		 and is_active=1  
+        </where>
+        
+         limit #{offset},#{limit}
+    </select>
+    
+        
+    <select id="fuzzySearchUsersByUserNameCount"  resultType="java.lang.Integer">
+        select count(1)  from urc_user 
+        <where>
+        	<if test=" userName !=null and userName != '' ">
+        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+        	</if>
+        	<if test=" createBy !=null and createBy != '' ">
+        		  and  create_by = #{createBy}
+        	</if>
+        		  and is_active=1 
+        </where>
+    </select>
+    
+    
     <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -65,10 +82,18 @@
     </select>
     
     
-     <select id="getUserByRoleId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
+     <select id="getUserByRoleId" parameterType="com.yks.urc.entity.UserRoleDO" resultMap="BaseUserResultMap">
 			SELECT uu.* from urc_user uu 
 			 INNER JOIN urc_user_role uur ON uu.user_name=uur.user_name
-			  WHERE uur.role_id=#{roleId,jdbcType=VARCHAR} 
+			 <where>
+			 		<if test="roleId != null ">
+			 			uur.role_id=#{roleId,jdbcType=VARCHAR} 
+			 		</if>
+			 		
+			 		<if test="createBy != null and createBy != '' ">
+			 			and uur.create_by=#{createBy,jdbcType=VARCHAR} 
+			 		</if>
+			 </where>
     </select>
     
 <!--    <select id="queryUserDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
@@ -261,7 +286,7 @@
     <delete id="deleteUrcUser">
       truncate  urc_user
     </delete>
-    <!--支持多个精确搜索-->
+
     <select id="getUsersByUserInfo" resultType="com.yks.urc.vo.UserVO">
         select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
@@ -281,5 +306,9 @@
     <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
         SELECT <include refid="Base_Column_List"/>
         FROM  urc_user WHERE  user_name =#{userName}
+    </select>
+    <select id="getUserByUserName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM urc_user WHERE user_name =#{userName}
     </select>
 </mapper>

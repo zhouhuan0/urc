@@ -132,9 +132,9 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional
     @Override
     public ResultVO addOrUpdateRoleInfo(String jsonStr) {
-		/* 1、将json字符串转为Json对象 */
+        /* 1、将json字符串转为Json对象 */
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-		/* 2、获取参数并校验 */
+        /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
@@ -302,8 +302,13 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public ResultVO getUserByRoleId(String roleId) {
-        List<UserVO> userList = userMapper.getUserByRoleId(roleId);
+    public ResultVO getUserByRoleId(String operator, String roleId) {
+        UserRoleDO userRole = new UserRoleDO();
+        userRole.setRoleId(Long.parseLong(roleId));
+        if (!roleMapper.isAdminAccount(operator)) {
+            userRole.setCreateBy(operator);
+        }
+        List<UserVO> userList = userMapper.getUserByRoleId(userRole);
         return VoHelper.getSuccessResult(userList);
     }
 
@@ -371,11 +376,16 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public ResultVO getRolePermission(List<String> lstRoleId) {
+    public ResultVO getRolePermission(String operator, List<String> lstRoleId) {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
         for (int i = 0; i < lstRoleId.size(); i++) {
             RoleVO roleVO = new RoleVO();
-            List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(lstRoleId.get(i));
+            RolePermissionDO permissionDO = new RolePermissionDO();
+            permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+            if (!roleMapper.isAdminAccount(operator)) {
+                permissionDO.setCreateBy(operator);
+            }
+            List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
             List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
             for (RolePermissionDO rolePermissionDO : rolePermissionList) {
                 Permission permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
@@ -404,7 +414,7 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public ResultVO getRoleUser(List<String> lstRoleId) {
+    public ResultVO getRoleUser(String operator, List<String> lstRoleId) {
 		/* 非管理员只能查看自己创建的角色 */
         List<RoleVO> roleList = new ArrayList<>();
         for (int i = 0; i < lstRoleId.size(); i++) {
@@ -412,7 +422,12 @@ public class RoleServiceImpl implements IRoleService {
             RoleVO roleVO = new RoleVO();
             roleVO.setRoleName(roleDO.getRoleName());
             roleVO.setRoleId(roleDO.getRoleId());
-            List<String> lstUserName = userRoleMapper.getUserNameByRoleId(lstRoleId.get(i));
+            UserRoleDO userRoleDO = new UserRoleDO();
+            userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+            if (!roleMapper.isAdminAccount(operator)) {
+                userRoleDO.setCreateBy(operator);
+            }
+            List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
             roleVO.setLstUserName(lstUserName);
             roleList.add(roleVO);
         }
@@ -421,7 +436,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     /**
-     * Description: 1、分配权限--同时更新多个角色的用户 2、…
+     * Description: 1、分配权限--同时更新多个角色的用户
      *
      * @param :
      * @return:
@@ -430,10 +445,43 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public void updateUsersOfRole(List<RoleDO> lstRole) {
-		/* 非管理员只能查看自己创建的角色 */
-		/* 根据角色删除用户角色关系表 */
-		/* 新增用户角色关系表 */
+    public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
+        for (int i = 0; i < lstRole.size(); i++) {
+            RoleVO roleVO = lstRole.get(i);
+            UserRoleDO userRole = new UserRoleDO();
+            List<UserRoleDO> userRoleDOS = new ArrayList<>();
+            List<String> userNameList = roleVO.getLstUserName();
+            userRole.setRoleId(roleVO.getRoleId());
+            if (roleMapper.isAdminAccount(operator)) {
+                userRoleMapper.deleteUserRole(userRole);
+                for (int j = 0; j < userNameList.size(); j++) {
+                    UserRoleDO userRoleDO = new UserRoleDO();
+                    userRoleDO.setUserName(userNameList.get(i));
+                    userRoleDO.setRoleId(roleVO.getRoleId());
+                    userRoleDO.setCreateBy(operator);
+                    userRoleDO.setCreateTime(new Date());
+                    userRoleDO.setModifiedBy(operator);
+                    userRoleDO.setModifiedTime(new Date());
+                }
+            } else {
+                userRole.setCreateBy(operator);
+                userRoleMapper.deleteUserRole(userRole);
+                for (int j = 0; j < userNameList.size(); j++) {
+                    UserDO usreDO = userMapper.getUserByUserName(userNameList.get(i));
+                    if (usreDO.getCreateBy().equals(operator)) {
+                        UserRoleDO userRoleDO = new UserRoleDO();
+                        userRoleDO.setUserName(userNameList.get(i));
+                        userRoleDO.setRoleId(roleVO.getRoleId());
+                        userRoleDO.setCreateBy(operator);
+                        userRoleDO.setCreateTime(new Date());
+                        userRoleDO.setModifiedBy(operator);
+                        userRoleDO.setModifiedTime(new Date());
+                    }
+                }
+            }
+            userRoleMapper.insertBatch(userRoleDOS);
+        }
+        return VoHelper.getSuccessResult();
     }
 
     /**

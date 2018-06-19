@@ -1,5 +1,7 @@
 package com.yks.urc.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,17 +14,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yks.urc.entity.DataRuleDO;
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.userValidate.bp.impl.UserValidateBp;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
 @Component
@@ -40,6 +47,8 @@ public class UserServiceImpl implements IUserService {
 	private IUserMapper userMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
+	@Autowired
+	private IRoleMapper roleMapper;
 
 	@Override
 	public ResultVO syncUserInfo(UserVO curUser) {
@@ -123,27 +132,40 @@ public class UserServiceImpl implements IUserService {
     }
 
 	@Override
-	public String getAllFuncPermit(String jsonStr) {
+	public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
 		try {
 			JSONObject jsonObject = StringUtility.parseString(jsonStr);
 			String operator = jsonObject.getString(StringConstant.operator);
-			ResultVO<List<UserSysVO>> rslt = userBp.getAllFuncPermit(operator);
-			return StringUtility.toJSONString_NoException(rslt);
+			return userBp.getAllFuncPermit(operator);
 		} catch (Exception ex) {
 			logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
-			return StringUtility.toJSONString_NoException(VoHelper.getErrorResult());
+			return VoHelper.getErrorResult();
 		}
 	}
 
 
 	@Override
-	public String funcPermitValidate(Map<String, String> map) {
-			ResultVO rslt = userValidateBp.funcPermitValidate(map);
-			return StringUtility.toJSONString_NoException(rslt);
+	public ResultVO funcPermitValidate(Map<String, String> map) {
+		return userValidateBp.funcPermitValidate(map);
 	}
 
 	@Override
 	public ResultVO getUserByName(String userName) {
 		return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
+	}
+
+	
+	
+	public ResultVO fuzzySearchUsersByUserName(int pageNumber, int pageData, String userName, String operator) {
+		UserVO userVO=new UserVO();
+		userVO.userName=userName;
+		if(!roleMapper.isAdminAccount(operator)){
+			userVO.createBy=operator;
+		}
+		Query query=new Query(userVO, pageNumber, pageData);
+		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
+		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+		PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
 	}
 }

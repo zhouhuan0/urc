@@ -150,5 +150,11 @@ public interface IRoleMapper {
 	 */
 	List<RoleDO> updateAllExpiredRole();
 
+	/**
+	 * 查询所有的角色
+	 * @return
+	 */
+	List<RoleDO> listAllRoles();
+
 
 }

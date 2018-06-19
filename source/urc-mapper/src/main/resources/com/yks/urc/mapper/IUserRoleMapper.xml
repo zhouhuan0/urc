@@ -50,6 +50,28 @@
     <delete id="deleteByRoleId" parameterType="java.lang.Long">
       delete from urc_user_role where role_id = #{roleId,jdbcType=TINYINT}
     </delete>
+    
+    
+    <delete id="deleteUserRole" parameterType="com.yks.urc.entity.UserRoleDO">
+      delete from urc_user_role 
+			<where>
+				<if test="roleId != null ">
+					role_id =#{roleId} 
+				</if>
+				<if test="createBy != null and createBy != '' ">
+					and create_by =#{createBy} 
+				</if>
+			</where>
+
+    </delete>
+    
+    
+    
+    <!--根据userName删除-->
+    <delete id="deleteByUserName" parameterType="java.lang.String">
+      delete from urc_user_role where user_name = #{userName,jdbcType=VARCHAR}
+    </delete>
+    
     <!--批量新增-->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into urc_user_role
@@ -165,8 +187,16 @@
     </select>
     
     
-     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="java.lang.String" >
-			SELECT  user_name from urc_user_role WHERE role_id=#{roleId}
+     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="com.yks.urc.entity.UserRoleDO" >
+			SELECT  user_name from urc_user_role 
+				<where>
+					<if test="roleId != null ">
+					 	role_id=#{roleId} 
+					</if>
+					<if test="createBy != null and createBy != '' ">
+					 	and create_by=#{createBy} 
+					</if>
+				</where>
     </select>
     
     

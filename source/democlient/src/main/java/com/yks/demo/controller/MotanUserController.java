@@ -33,7 +33,7 @@ public class MotanUserController {
 		UserVO curUser = new UserVO();
 		curUser.userName = "py";
 		curUser.userName = "py_" + UUID.randomUUID().toString();
-		return StringUtility.parseObject(urcService.syncUserInfo(curUser), ResultVO.class);// .sayHello(msg);
+		return urcService.syncUserInfo(curUser);// .sayHello(msg);
 	}
 
 	/*
@@ -52,7 +52,7 @@ public class MotanUserController {
 		map.put("userName", userName);
 		map.put("pwd", pwd);
 		map.put("ip", "127.0.0.1");
-		return StringUtility.parseObject(urcService.login(map), ResultVO.class);
+		return urcService.login(map);
 	}
 
 	private ExecutorService service = Executors.newCachedThreadPool(); // 创建一个线程池

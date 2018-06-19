@@ -51,7 +51,7 @@ public class PermissionServiceImpl implements IPermissionService {
 
 	@Transactional
 	@Override
-	public String importSysPermit(String jsonStr) {
+	public ResultVO importSysPermit(String jsonStr) {
 		ResultVO rslt = new ResultVO();
 		try {
 			String plainTxt = StringUtility.Empty;
@@ -92,7 +92,7 @@ public class PermissionServiceImpl implements IPermissionService {
 			rslt.state = CommonMessageCodeEnum.FAIL.getCode();
 			rslt.msg = ex.getMessage();
 		}
-		return StringUtility.toJSONString_NoException(rslt);
+		return rslt;
 	}
 
 

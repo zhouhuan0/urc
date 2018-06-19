@@ -1,6 +1,8 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleTemplDO;
+import com.yks.urc.vo.helper.Query;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -77,10 +79,17 @@ public interface IDataRuleTemplMapper {
     /**
      * 获取用户可选择的所有数据授权方案
      *
-     * @param userName
+     * @param query
      * @return
      */
-    List<DataRuleTemplDO> getMyDataRuleTempl(String userName);
+    List<DataRuleTemplDO> getMyDataRuleTempl(Query query);
+    
+    /**
+     *  获取用户可选择的所有数据授权方案总数
+     * @param query
+     * @return
+     */
+	int getMyDataRuleTemplCount(Query query);
 
 
     /**
