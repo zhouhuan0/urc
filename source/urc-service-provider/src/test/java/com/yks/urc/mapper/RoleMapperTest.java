@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.tools.internal.xjc.model.SymbolSpace;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleTemplDO;
@@ -109,11 +110,16 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
     	
+		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong("1528856724627000041"));
+		System.out.println(roleDO.getRoleName());
+    	
+/*		List<RoleDO> roleList=roleMapper.listAllRoles();
+    	System.out.println(roleList.size());*/
 		//List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission("panyun");
 		//List<ExpressionDO> expressionList= expressionMapper.listExpressionDOsBySysKey("001","admin");
-		List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
+		//List<DataRuleColDO> dataRuleColList =dataRuleColMapper.listRuleColBySysKey("001","admin");
 
-    	System.out.println(dataRuleColList.toString());
+    	//System.out.println(dataRuleColList.toString());
     	
 /*    	List<String> lstUserName=new ArrayList<String>();
     	lstUserName.add("panyun");

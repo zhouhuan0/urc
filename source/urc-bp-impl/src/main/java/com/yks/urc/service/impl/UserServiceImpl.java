@@ -1,5 +1,7 @@
 package com.yks.urc.service.impl;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,11 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yks.urc.entity.DataRuleDO;
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IUserService;
@@ -40,6 +46,8 @@ public class UserServiceImpl implements IUserService {
 	private IUserMapper userMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
+	@Autowired
+	private IRoleMapper roleMapper;
 
 	@Override
 	public ResultVO syncUserInfo(UserVO curUser) {
@@ -145,5 +153,44 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public ResultVO getUserByName(String userName) {
 		return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
+	}
+
+	
+	
+	@Transactional
+	public ResultVO disUserToRoles(String userName, List<String> roleId) {
+		userRoleMapper.deleteByUserName(userName);
+		List<UserRoleDO> userRoleDOS = new ArrayList<>();
+		if(roleMapper.isAdminAccount(userName)){
+			//管理员的话是拥有所有的角色
+			List<RoleDO> roleList=roleMapper.listAllRoles();
+			for (RoleDO role : roleList) {
+				UserRoleDO userRoleDO = new UserRoleDO();
+				userRoleDO.setUserName(userName);
+				userRoleDO.setRoleId(role.getRoleId());
+				userRoleDO.setCreateBy(userName);
+				userRoleDO.setCreateTime(new Date());
+				userRoleDO.setModifiedBy(userName);
+				userRoleDO.setModifiedTime(new Date());
+				userRoleDOS.add(userRoleDO);
+			}
+		}else{
+			//删除这个用户的role
+			for (String roleid : roleId) {
+				RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong(roleid));
+				if(roleDO!=null){
+					UserRoleDO userRoleDO = new UserRoleDO();
+					userRoleDO.setUserName(userName);
+					userRoleDO.setRoleId(Long.parseLong(roleid));
+					userRoleDO.setCreateBy(userName);
+					userRoleDO.setCreateTime(new Date());
+					userRoleDO.setModifiedBy(userName);
+					userRoleDO.setModifiedTime(new Date());
+					userRoleDOS.add(userRoleDO);
+				}
+			}
+		}
+		userRoleMapper.insertBatch(userRoleDOS);
+		return VoHelper.getSuccessResult();
 	}
 }

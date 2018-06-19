@@ -63,5 +63,15 @@ public interface IUserService {
 	String funcPermitValidate(Map<String, String> map);
 	
 	ResultVO getUserByName(String userName);
+	
+	
+	/**
+	 * 给用户分配角色
+	 * @param userNmae
+	 * @param roleId
+	 * @return
+	 */
+	ResultVO disUserToRoles(String userName,List<String> roleId);
+	
 
 }

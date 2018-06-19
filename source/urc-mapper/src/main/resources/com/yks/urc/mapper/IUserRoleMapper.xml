@@ -50,6 +50,13 @@
     <delete id="deleteByRoleId" parameterType="java.lang.Long">
       delete from urc_user_role where role_id = #{roleId,jdbcType=TINYINT}
     </delete>
+    
+    
+    <!--根据userName删除-->
+    <delete id="deleteByUserName" parameterType="java.lang.String">
+      delete from urc_user_role where user_name = #{userName,jdbcType=VARCHAR}
+    </delete>
+    
     <!--批量新增-->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into urc_user_role
