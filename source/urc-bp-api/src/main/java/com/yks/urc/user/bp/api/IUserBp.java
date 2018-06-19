@@ -41,4 +41,6 @@ public interface IUserBp {
 	 */
 	ResultVO<List<UserSysVO>> getAllFuncPermit(String operator);
 
+	ResultVO loginOut(String jsonStr);
+
 }
