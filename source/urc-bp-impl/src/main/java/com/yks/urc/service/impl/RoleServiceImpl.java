@@ -274,8 +274,13 @@ public class RoleServiceImpl implements IRoleService {
 	 * @see
 	 */
 	@Override
-	public ResultVO getUserByRoleId(String roleId) {
-		List<UserVO> userList = userMapper.getUserByRoleId(roleId);
+	public ResultVO getUserByRoleId(String operator,String roleId) {
+		UserRoleDO userRole=new UserRoleDO();
+		userRole.setRoleId(Long.parseLong(roleId));
+		if(!roleMapper.isAdminAccount(operator)){
+			userRole.setCreateBy(operator);
+		}
+		List<UserVO> userList = userMapper.getUserByRoleId(userRole);
 		return VoHelper.getSuccessResult(userList);
 	}
 

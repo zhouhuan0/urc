@@ -18,7 +18,7 @@ public interface IRoleService {
 
     ResultVO<RoleVO> getRoleByRoleId(String jsonStr);
 
-    ResultVO getUserByRoleId(String roleId);
+    ResultVO getUserByRoleId(String operator,String roleId);
 
     void deleteRoles(List<Integer> lstRoleId);
 

@@ -82,10 +82,18 @@
     </select>
     
     
-     <select id="getUserByRoleId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
+     <select id="getUserByRoleId" parameterType="com.yks.urc.entity.UserRoleDO" resultMap="BaseUserResultMap">
 			SELECT uu.* from urc_user uu 
 			 INNER JOIN urc_user_role uur ON uu.user_name=uur.user_name
-			  WHERE uur.role_id=#{roleId,jdbcType=VARCHAR} 
+			 <where>
+			 		<if test="roleId != null ">
+			 			uur.role_id=#{roleId,jdbcType=VARCHAR} 
+			 		</if>
+			 		
+			 		<if test="createBy != null and createBy != '' ">
+			 			and uur.create_by=#{createBy,jdbcType=VARCHAR} 
+			 		</if>
+			 </where>
     </select>
     
 <!--    <select id="queryUserDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">

@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.Param;
@@ -99,7 +100,7 @@ public interface IUserMapper {
      * @param roleId
      * @return
      */
-	List<UserVO> getUserByRoleId(String roleId);
+	List<UserVO> getUserByRoleId(UserRoleDO userRole);
 
     UserDO test(@Param("userName") String userName);
 
