@@ -17,7 +17,7 @@
 
     <!-- 1.配置properties属性文件：${url}获取值 -->
     <context:property-placeholder
-            location="classpath:constant-local.properties,jdbc.properties"/>
+            location="classpath:constant.properties,jdbc.properties"/>
 
     <!-- log aop 配置 -->
     <bean id="logAspect" class="com.yks.urc.log.LogAspect"/>
