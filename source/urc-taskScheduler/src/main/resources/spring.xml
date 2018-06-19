@@ -20,5 +20,5 @@
 
     <!-- 1.配置properties属性文件：${url}获取值 -->
     <context:property-placeholder
-            location="classpath:constant-local.properties,jdbc.properties"/>
+            location="classpath:constant.properties,jdbc.properties"/>
 </beans>
