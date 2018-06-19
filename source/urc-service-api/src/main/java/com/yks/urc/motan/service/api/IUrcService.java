@@ -3,7 +3,6 @@ package com.yks.urc.motan.service.api;
 import java.util.List;
 import java.util.Map;
 
-import com.weibo.api.motan.config.springsupport.annotation.MotanService;
 import com.yks.urc.vo.*;
 
 public interface IUrcService {
@@ -13,7 +12,7 @@ public interface IUrcService {
      * @param curUser
      * @return
      */
-    String syncUserInfo(UserVO curUser);
+    ResultVO syncUserInfo(UserVO curUser);
 
     /**
      * 登陆校验：用户名密码检验
@@ -41,19 +40,19 @@ public interface IUrcService {
      * @param str
      * @return
      */
-    String syncDingOrgAndUser();
+    ResultVO syncDingOrgAndUser();
     
     /**
      * 同步userInfo数据
      * @return
      */
-    String syncUserInfo();
+    ResultVO syncUserInfo();
 
     /**
      * 用户管理搜索用户
      * @return
      */
-    String getUsersByUserInfo(String params);
+    ResultVO<PageResultVO> getUsersByUserInfo(String params);
     
     
     /**
@@ -62,7 +61,7 @@ public interface IUrcService {
      * @param str
      * @return
      */
-    String getUserByDingOrgId(String params);
+    ResultVO getUserByDingOrgId(String params);
 
 
     /**
@@ -71,7 +70,7 @@ public interface IUrcService {
      * @param params
      * @return
      */
-    String getUserByUserInfo(String params);
+    ResultVO getUserByUserInfo(String params);
 
     /**
      * 组织结构树
@@ -79,7 +78,7 @@ public interface IUrcService {
      * @param params
      * @return
      */
-    String getAllOrgTree();
+    ResultVO getAllOrgTree();
 
     /**
      * 快速分配数据权限模板给用户
@@ -87,7 +86,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    String assignDataRuleTempl2User(String jsonStr);
+    ResultVO assignDataRuleTempl2User(String jsonStr);
 
     /**
      * 根据templId获取数据权限模板
@@ -95,7 +94,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    String getDataRuleTemplByTemplId(String jsonStr);
+    ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr);
 
     /**
      * 获取数据权限模板
@@ -103,7 +102,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    String getDataRuleTempl(String jsonStr);
+    ResultVO<PageResultVO> getDataRuleTempl(String jsonStr);
 
 
     /**
@@ -137,7 +136,7 @@ public interface IUrcService {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 14:31
      */
-    String getMyAuthWay(String operator);
+    ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
 
 
 
@@ -157,21 +156,21 @@ public interface IUrcService {
 	 * @param jsonStr
 	 * @return
 	 */
-	String getUserByRoleId(String jsonStr);
+	ResultVO getUserByRoleId(String jsonStr);
 
 	/**
 	 * 获取多个角色已有的用户
 	 * @param jsonStr
 	 * @return
 	 */
-	String getRoleUser(String jsonStr);
+	ResultVO getRoleUser(String jsonStr);
 
 	/**
 	 * 获取用户可选择的所有数据授权方案
 	 * @param jsonStr
 	 * @return
 	 */
-	String getMyDataRuleTempl(String jsonStr);
+	ResultVO getMyDataRuleTempl(String jsonStr);
 
 
 
@@ -180,7 +179,7 @@ public interface IUrcService {
 	 * @param jsonStr
 	 * @return
 	 */
-	String getDataRuleByUser(String jsonStr);
+	List<DataRuleVO> getDataRuleByUser(String jsonStr);
 
 	/**
 	 * 导入sys功能权限定义
@@ -196,27 +195,27 @@ public interface IUrcService {
 	 * @param jsonStr
 	 * @return
 	 */
-	String getUserAuthorizablePermission(String jsonStr);
+	ResultVO getUserAuthorizablePermission(String jsonStr);
 
 	/**
 	 * 获取多个角色已有的功能权限
 	 * @param jsonStr
 	 * @return
 	 */
-	String getRolePermission(String jsonStr);
+	ResultVO getRolePermission(String jsonStr);
 
 	/**
 	 *  精确搜索用户
 	 * @param jsonStr
 	 * @return
 	 */
-	String getUserByUserName(String jsonStr);
+	ResultVO getUserByUserName(String jsonStr);
 	
 	/**
 	 *  模糊搜索用户域账号
 	 * @param jsonStr
 	 * @return
 	 */
-	String fuzzySearchUsersByUserName(String jsonStr);
+	ResultVO fuzzySearchUsersByUserName(String jsonStr);
 	
 }

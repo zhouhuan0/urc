@@ -1,8 +1,6 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.entity.Person;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -39,8 +37,8 @@ public class UrcServiceImpl implements IUrcService {
 	private IPermissionService permissionService;
 
     @Override
-    public String syncUserInfo(UserVO curUser) {
-        return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
+    public ResultVO syncUserInfo(UserVO curUser) {
+        return userService.syncUserInfo(curUser);
     }
 
     @Override
@@ -54,31 +52,31 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public String syncDingOrgAndUser() {
-        return StringUtility.toJSONString_NoException(personService.SynPersonOrgFromDing("hand"));
+    public ResultVO syncDingOrgAndUser() {
+        return personService.SynPersonOrgFromDing("hand");
     }
 
     @Override
-    public String getUserByDingOrgId(String params) {
+    public ResultVO getUserByDingOrgId(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         String  dingOrgId = jsonObject.get("dingOrgId").toString();
-        return StringUtility.toJSONString_NoException(personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData));
+        return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
     @Override
-    public String getUserByUserInfo(String params) {
+    public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         PersonVO personVo = StringUtility.parseObject(jsonObject.get("user").toString(), PersonVO.class);
-        return StringUtility.toJSONString_NoException(personService.getUserByUserInfo(personVo, pageNumber, pageData));
+        return personService.getUserByUserInfo(personVo, pageNumber, pageData);
     }
 
     @Override
-    public String getAllOrgTree() {
-        return StringUtility.toJSONString_NoException(organizationService.getAllOrgTree());
+    public ResultVO getAllOrgTree() {
+        return organizationService.getAllOrgTree();
     }
 
     /**
@@ -87,13 +85,13 @@ public class UrcServiceImpl implements IUrcService {
      * @return
      */
 	@Override
-	public String getUsersByUserInfo(String params) {
+	public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator =StringUtility.toJSONString(jsonObject.getString("operator"));
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         UserVO userVO = StringUtility.parseObject(jsonObject.get("user").toString(), UserVO.class);
-		return  StringUtility.toJSONString_NoException(userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData));
+		return userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
 	}
 
 	
@@ -108,8 +106,8 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
-    public String assignDataRuleTempl2User(String jsonStr) {
-        return StringUtility.toJSONString_NoException(dataRuleService.assignDataRuleTempl2User(jsonStr));
+    public ResultVO assignDataRuleTempl2User(String jsonStr) {
+        return dataRuleService.assignDataRuleTempl2User(jsonStr);
     }
 
     /**
@@ -122,8 +120,8 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
-    public String getDataRuleTemplByTemplId(String jsonStr) {
-        return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleTemplByTemplId(jsonStr));
+    public ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr) {
+        return dataRuleService.getDataRuleTemplByTemplId(jsonStr);
     }
 
     /**
@@ -136,15 +134,15 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
-    public String getDataRuleTempl(String jsonStr) {
-        return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleTempl(jsonStr));
+    public ResultVO<PageResultVO> getDataRuleTempl(String jsonStr) {
+        return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
 	@Override
-	public String syncUserInfo() {
+	public ResultVO syncUserInfo() {
 		UserVO curUser=new UserVO();
 		curUser.userName="hand";
-		return StringUtility.toJSONString_NoException(userService.syncUserInfo(curUser));
+		return userService.syncUserInfo(curUser);
 	}
 
     @Override
@@ -173,37 +171,37 @@ public class UrcServiceImpl implements IUrcService {
 	}
 
 	@Override
-	public String getUserByRoleId(String jsonStr) {
+	public ResultVO getUserByRoleId(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         String roleId= jsonObject.get("roleId").toString();
-		return StringUtility.toJSONString_NoException(roleService.getUserByRoleId(roleId));
+		return roleService.getUserByRoleId(roleId);
 	}
 
 	@Override
-	public String getRoleUser(String jsonStr) {
+	public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         List<String> roleList = StringUtility.parseObject(jsonObject.get("lstRoleId").toString(), List.class);
-		return StringUtility.toJSONString_NoException(roleService.getRoleUser(roleList));
+		return roleService.getRoleUser(roleList);
 	}
 
 
 
-	public String getMyDataRuleTempl(String jsonStr) {
+	public ResultVO getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(pageNumber,pageData,operator));
+        return dataRuleService.getMyDataRuleTempl(pageNumber,pageData,operator);
 	}
 
 
-	public String getDataRuleByUser(String jsonStr) {
+	public List<DataRuleVO> getDataRuleByUser(String jsonStr) {
 		JSONObject jsonObject = StringUtility.parseString(jsonStr);
 	    String operator = jsonObject.get("operator").toString();
 		List<String> lstUserName = StringUtility.parseObject(jsonObject.get("lstUserName").toString(), List.class);
-		return StringUtility.toJSONString_NoException(dataRuleService.getDataRuleByUser(lstUserName));
+		return dataRuleService.getDataRuleByUser(lstUserName);
 	}
 
 
@@ -213,42 +211,42 @@ public class UrcServiceImpl implements IUrcService {
 	}
 
 	@Override
-	public String getUserAuthorizablePermission(String jsonStr) {
+	public ResultVO getUserAuthorizablePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-		return StringUtility.toJSONString_NoException(permissionService.getUserAuthorizablePermission(operator));
+		return permissionService.getUserAuthorizablePermission(operator);
 	}
 
 	@Override
-	public String getRolePermission(String jsonStr) {
+	public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
 		List<String> lstRoleId = StringUtility.parseObject(jsonObject.get("lstRoleId").toString(), List.class);
-		return StringUtility.toJSONString_NoException(roleService.getRolePermission(lstRoleId));
+		return roleService.getRolePermission(lstRoleId);
 	}
 
     @Override
-    public String getUserByUserName(String jsonStr) {
+    public ResultVO getUserByUserName(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator =jsonObject.get("operator").toString();
         UserVO userVO =StringUtility.parseObject(jsonObject.get("user").toString(),UserVO.class);
-        return StringUtility.toJSONString_NoException(organizationService.getUserByUserName(operator,userVO));
+        return organizationService.getUserByUserName(operator,userVO);
     }
 
     @Override
-    public String getMyAuthWay(String operator) {
-        return StringUtility.toJSONString_NoException(userService.getMyAuthWay(operator));
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+        return userService.getMyAuthWay(operator);
 
     }
 
 	@Override
-	public String fuzzySearchUsersByUserName(String jsonStr) {
+	public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         String userName = jsonObject.get("username").toString();
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        return   StringUtility.toJSONString_NoException(userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator));
+        return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
 	}
 
 }
