@@ -62,10 +62,10 @@ public interface IRolePermissionMapper {
 
 	/**
 	 * 获取多个角色已有的功能权限
-	 * @param roleId
+	 * @param permissionDO
 	 * @return
 	 */
-	List<RolePermissionDO> getRolePermission(String roleId);
+	List<RolePermissionDO> getRolePermission(RolePermissionDO permissionDO);
 
     /**
      *  通过用户名获取角色对应的sys_key

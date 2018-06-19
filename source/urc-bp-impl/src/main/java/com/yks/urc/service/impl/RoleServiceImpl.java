@@ -349,11 +349,16 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public ResultVO getRolePermission(List<String> lstRoleId) {
+    public ResultVO getRolePermission(String operator,List<String> lstRoleId) {
     	List<RoleVO> roleVoList=new ArrayList<RoleVO>();
     	for (int i = 0; i < lstRoleId.size(); i++) {
     		RoleVO roleVO =new RoleVO();
-    		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getRolePermission(lstRoleId.get(i));
+    		RolePermissionDO permissionDO=new RolePermissionDO();
+    		permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+    		if(!roleMapper.isAdminAccount(operator)){
+    			permissionDO.setCreateBy(operator);
+    		}
+    		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getRolePermission(permissionDO);
     		List<PermissionVO> permissionVOs=new ArrayList<PermissionVO>();
             for (RolePermissionDO rolePermissionDO : rolePermissionList) {
             	Permission permission=permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());

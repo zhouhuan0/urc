@@ -224,7 +224,7 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
 		List<String> lstRoleId = StringUtility.parseObject(jsonObject.get("lstRoleId").toString(), List.class);
-		return roleService.getRolePermission(lstRoleId);
+		return roleService.getRolePermission(operator,lstRoleId);
 	}
 
     @Override

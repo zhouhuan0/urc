@@ -24,7 +24,7 @@ public interface IRoleService {
 
     List<SystemRootVO> getUserAuthorizablePermission(String userName);
 
-    ResultVO getRolePermission(List<String> lstRoleId);
+    ResultVO getRolePermission(String operator, List<String> lstRoleId);
 
     void updateRolePermission(List<String> lstRoleId);
 
