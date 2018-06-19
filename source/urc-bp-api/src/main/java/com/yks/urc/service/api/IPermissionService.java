@@ -5,7 +5,7 @@ import com.yks.urc.vo.ResultVO;
 
 public interface IPermissionService {
 
-	String importSysPermit(String jsonStr);
+	ResultVO importSysPermit(String jsonStr);
 	
 	
 	/**
