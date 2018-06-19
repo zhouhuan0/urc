@@ -24,7 +24,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月6日 下午12:22:35
      */
-    String login(Map<String, String> map);
+    ResultVO login(Map<String, String> map);
 
     /**
      * 校验ticket及功能权限版本
@@ -33,7 +33,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月14日 下午1:11:56
      */
-    String funcPermitValidate(Map<String,String> map);
+    ResultVO funcPermitValidate(Map<String,String> map);
 
     /**
      * 手动触发“同步钉钉部门及人员”信息
@@ -105,24 +105,6 @@ public interface IUrcService {
      */
     String getDataRuleTempl(String jsonStr);
     
-    
-    
-/*    *//**
-     * 根据dataRuleId获取数据权限的用户
-     *
-     * @param jsonStr
-     * @return
-     *//*
-    String showDataRuleTempl2User(String jsonStr);
-    
-    
-    *//**
-     * 根据dataRuleId获取没有数据权限的用户
-     *
-     * @param jsonStr
-     * @return
-     *//*
-    String showNoDataRuleTempl2User(String jsonStr);*/
 
     /**
      *  获取所有平台
@@ -167,7 +149,7 @@ public interface IUrcService {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午12:45:36
 	 */
-	String getAllFuncPermit(String jsonStr);
+    ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
 
 
 	/**

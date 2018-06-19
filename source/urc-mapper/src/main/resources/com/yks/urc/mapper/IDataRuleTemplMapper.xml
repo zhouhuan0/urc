@@ -24,9 +24,21 @@
         		<if test="createBy !=null and createBy != '' ">
         			 create_by=#{createBy} 
         		</if>
-        		
+        	</where>
+        	
+        order by create_time desc
+        limit #{offset},#{limit}
+    </select>
+    
+    <select id="getMyDataRuleTemplCount" parameterType="com.yks.urc.entity.DataRuleTemplDO" resultType="java.lang.Integer"   >
+        select count(1) from urc_data_rule_templ 
+        	<where> 
+        		<if test="createBy !=null and createBy != '' ">
+        			 create_by=#{createBy} 
+        		</if>
         	</where>
     </select>
+    
 
 
     <!--根据模板Id获取数据-->
