@@ -2,6 +2,7 @@ package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.log.Log;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
@@ -156,6 +157,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("角色名校重")
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
         return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
     }
