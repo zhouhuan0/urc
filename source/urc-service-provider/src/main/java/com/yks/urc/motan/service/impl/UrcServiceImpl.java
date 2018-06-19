@@ -261,4 +261,9 @@ public class UrcServiceImpl implements IUrcService {
 		return roleService.updateUsersOfRole(lstRole, operator);
 	}
 
+	
+	@Override
+	public ResultVO logout(String jsonStr) {
+		return userService.logout(jsonStr);
+	}
 }

@@ -322,10 +322,10 @@ public class UserBpImpl implements IUserBp {
 	}
 	
 	@Override
-	public ResultVO loginOut(String jsonStr) {
+	public ResultVO logout(String jsonStr) {
 		JSONObject jo= StringUtility.parseString(jsonStr);
 		String strOperator = jo.getString(StringConstant.operator);
 		cacheBp.removeUser(strOperator);
-		return null;
+		return VoHelper.getSuccessResult("logout success");
 	}
 }

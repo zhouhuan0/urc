@@ -10,7 +10,7 @@ public interface IUserService {
 	ResultVO syncUserInfo(UserVO curUser);
 
 	ResultVO login(UserVO authUser);
-	ResultVO loginOut(String jsonStr);
+	ResultVO logout(String jsonStr);
 
 /*	*//**
 	 * 根据数据dataRuleId获取用户名

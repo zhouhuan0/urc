@@ -71,8 +71,8 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public ResultVO loginOut(String jsonStr) {		
-		return userBp.loginOut(jsonStr);
+	public ResultVO logout(String jsonStr) {		
+		return userBp.logout(jsonStr);
 	}
 
 	/*
