@@ -42,7 +42,14 @@ public class OrganizationServiceImpl implements IOrganizationService {
         try {
             List<Organization> orgList = organizationMapper.queryAllDept();
             List<OrgVO> orgListVO = new ArrayList<OrgVO>();
-            BeanUtils.copyProperties(orgListVO, orgList);
+            for (Organization org:orgList) {
+            	OrgVO orgVO=new OrgVO();
+            	orgVO.dingOrgId=org.getDingOrgId();
+            	orgVO.orgName=org.getOrgName();
+            	orgVO.parentDingOrgId=org.getParentDingOrgId();
+            	orgListVO.add(orgVO);
+			}
+            
             deptJosn = treeDingDeptList(orgListVO, 0);
         } catch (Exception e) {
             VoHelper.getErrorResult();
