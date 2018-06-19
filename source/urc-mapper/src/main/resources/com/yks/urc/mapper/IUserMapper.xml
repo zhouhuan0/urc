@@ -41,6 +41,39 @@
     </select>
     
     
+    
+    <select id="fuzzySearchUsersByUserName"  resultMap="BaseUserResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_user
+        <where>
+        	<if test=" userName !=null and userName != '' ">
+        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+        	</if>
+        	<if test=" createBy !=null and createBy != '' ">
+        		  and  create_by = #{createBy}
+        	</if>
+        		 and is_active=1  
+        </where>
+        
+         limit #{offset},#{limit}
+    </select>
+    
+        
+    <select id="fuzzySearchUsersByUserNameCount"  resultType="java.lang.Integer">
+        select count(1)  from urc_user 
+        <where>
+        	<if test=" userName !=null and userName != '' ">
+        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+        	</if>
+        	<if test=" createBy !=null and createBy != '' ">
+        		  and  create_by = #{createBy}
+        	</if>
+        		  and is_active=1 
+        </where>
+    </select>
+    
+    
     <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>

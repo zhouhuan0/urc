@@ -29,6 +29,7 @@ import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.userValidate.bp.impl.UserValidateBp;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
 @Component
@@ -190,5 +191,20 @@ public class UserServiceImpl implements IUserService {
 		}
 		userRoleMapper.insertBatch(userRoleDOS);
 		return VoHelper.getSuccessResult();
+	}
+
+	
+	
+	public ResultVO fuzzySearchUsersByUserName(int pageNumber, int pageData, String userName, String operator) {
+		UserVO userVO=new UserVO();
+		userVO.userName=userName;
+		if(!roleMapper.isAdminAccount(operator)){
+			userVO.createBy=operator;
+		}
+		Query query=new Query(userVO, pageNumber, pageData);
+		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
+		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+		PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
+		return VoHelper.getSuccessResult(pageResultVO);
 	}
 }

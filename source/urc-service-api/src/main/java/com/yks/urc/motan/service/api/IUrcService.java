@@ -211,4 +211,12 @@ public interface IUrcService {
 	 * @return
 	 */
 	String getUserByUserName(String jsonStr);
+	
+	/**
+	 *  模糊搜索用户域账号
+	 * @param jsonStr
+	 * @return
+	 */
+	String fuzzySearchUsersByUserName(String jsonStr);
+	
 }
