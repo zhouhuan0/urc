@@ -435,54 +435,55 @@ public class RoleServiceImpl implements IRoleService {
         return VoHelper.getSuccessResult(roleList);
     }
 
-    /**
-     * Description: 1、分配权限--同时更新多个角色的用户
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 15:02
-     * @see
-     */
-    @Override
-    public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
-        for (int i = 0; i < lstRole.size(); i++) {
-            RoleVO roleVO = lstRole.get(i);
-            UserRoleDO userRole = new UserRoleDO();
-            List<UserRoleDO> userRoleDOS = new ArrayList<>();
-            List<String> userNameList = roleVO.getLstUserName();
-            userRole.setRoleId(roleVO.getRoleId());
-            if (roleMapper.isAdminAccount(operator)) {
-                userRoleMapper.deleteUserRole(userRole);
-                for (int j = 0; j < userNameList.size(); j++) {
-                    UserRoleDO userRoleDO = new UserRoleDO();
-                    userRoleDO.setUserName(userNameList.get(i));
-                    userRoleDO.setRoleId(roleVO.getRoleId());
-                    userRoleDO.setCreateBy(operator);
-                    userRoleDO.setCreateTime(new Date());
-                    userRoleDO.setModifiedBy(operator);
-                    userRoleDO.setModifiedTime(new Date());
-                }
-            } else {
-                userRole.setCreateBy(operator);
-                userRoleMapper.deleteUserRole(userRole);
-                for (int j = 0; j < userNameList.size(); j++) {
-                    UserDO usreDO = userMapper.getUserByUserName(userNameList.get(i));
-                    if (usreDO.getCreateBy().equals(operator)) {
-                        UserRoleDO userRoleDO = new UserRoleDO();
-                        userRoleDO.setUserName(userNameList.get(i));
-                        userRoleDO.setRoleId(roleVO.getRoleId());
-                        userRoleDO.setCreateBy(operator);
-                        userRoleDO.setCreateTime(new Date());
-                        userRoleDO.setModifiedBy(operator);
-                        userRoleDO.setModifiedTime(new Date());
-                    }
-                }
-            }
-            userRoleMapper.insertBatch(userRoleDOS);
-        }
-        return VoHelper.getSuccessResult();
-    }
+	/**
+	 * Description: 1、分配权限--同时更新多个角色的用户 
+	 *
+	 * @param :
+	 * @return:
+	 * @auther: lvcr
+	 * @date: 2018/6/6 15:02
+	 * @see
+	 */
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator) {
+		for (int i = 0; i < lstRole.size(); i++) {
+			RoleVO roleVO=lstRole.get(i);
+			UserRoleDO userRole = new UserRoleDO();
+			List<UserRoleDO> userRoleDOS = new ArrayList<>();
+			List<String> userNameList=roleVO.getLstUserName();
+			userRole.setRoleId(roleVO.getRoleId());
+			if(roleMapper.isAdminAccount(operator)){
+				userRoleMapper.deleteUserRole(userRole);
+				for (int j = 0; j < userNameList.size(); j++) {
+					UserRoleDO userRoleDO = new UserRoleDO();
+					userRoleDO.setUserName(userNameList.get(i));
+					userRoleDO.setRoleId(roleVO.getRoleId());
+					userRoleDO.setCreateBy(operator);
+					userRoleDO.setCreateTime(new Date());
+					userRoleDO.setModifiedBy(operator);
+					userRoleDO.setModifiedTime(new Date());
+				}
+			}else{
+				userRole.setCreateBy(operator);
+				userRoleMapper.deleteUserRole(userRole);
+				for (int j = 0; j < userNameList.size(); j++) {
+					UserDO usreDO=userMapper.getUserByUserName(userNameList.get(i));
+					if(usreDO.getCreateBy().equals(operator)){
+						UserRoleDO userRoleDO = new UserRoleDO();
+						userRoleDO.setUserName(userNameList.get(i));
+						userRoleDO.setRoleId(roleVO.getRoleId());
+						userRoleDO.setCreateBy(operator);
+						userRoleDO.setCreateTime(new Date());
+						userRoleDO.setModifiedBy(operator);
+						userRoleDO.setModifiedTime(new Date());
+					}
+				}
+			}
+			userRoleMapper.insertBatch(userRoleDOS);
+		}
+		return VoHelper.getSuccessResult();
+	}
 
     /**
      * Description: 1、复制角色 复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
