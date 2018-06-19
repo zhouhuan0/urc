@@ -206,7 +206,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
 	@Override
-	public String importSysPermit(String jsonStr) {
+	public ResultVO importSysPermit(String jsonStr) {
 		return permissionService.importSysPermit(jsonStr);
 	}
 

@@ -57,24 +57,28 @@ public class MotanUserServiceTest {
 
 	}
 
+	@Test
+	public void getAllOrgTree_Test() {
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException((urcService.getAllOrgTree())));
+	}
+
 	public void testGetAllFuncPermit() {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("operator", "dcadmin");
 		String jsonStr = StringUtility.toJSONString_NoException(map);
-		System.out.println((urcService.getAllFuncPermit(jsonStr)));
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.getAllFuncPermit(jsonStr)));
 	}
 
-	@Test
 	public void test_funcPermitValidate() {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
 		map.put("moduleUrl", "/");
 		map.put(StringConstant.operator, "dcadmin");
-		map.put(StringConstant.ticket, "f8db25c6dc20394aa8b42d8100cc1e88");
+		map.put(StringConstant.ticket, "f57be85c55187292236b0d95ba719a43");
 		map.put(StringConstant.ip, "192.168.201.62");
 		map.put(StringConstant.urcVersion, "007d787e2b15e66fd9451f5adef0d2f5");
 		map.put(StringConstant.sysKey, "004");
-		System.out.println("----------------------" + urcService.funcPermitValidate(map));
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.funcPermitValidate(map)));
 	}
 
 	// @Test
