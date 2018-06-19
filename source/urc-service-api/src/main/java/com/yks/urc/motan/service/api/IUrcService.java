@@ -24,7 +24,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月6日 下午12:22:35
      */
-    ResultVO login(Map<String, String> map);
+    ResultVO<LoginRespVO> login(Map<String, String> map);
 
     /**
      * 校验ticket及功能权限版本

@@ -44,7 +44,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO login(Map<String, String> map) {
+    public ResultVO<LoginRespVO> login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
         authUser.pwd = map.get("pwd");
