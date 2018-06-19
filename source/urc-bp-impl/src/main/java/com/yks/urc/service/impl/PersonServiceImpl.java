@@ -5,10 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
@@ -31,11 +30,11 @@ import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
-import com.yks.urc.operation.bp.imp.OperationBpImpl;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.TaskVO;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
@@ -89,41 +88,46 @@ public class PersonServiceImpl implements IPersonService {
 			//得到钉钉所有的部门
 			try {
 			  //先准备初始化参数	
-		      Future<Map<String,List> >  future= fixedThreadPool.submit(new Callable<Map<String,List>>() {
-		            @Override
-		            public Map<String,List> call() throws Exception {
-		            	List<DingDeptVO> dingAllDept=dingApiProxy.getDingAllDept();
-		    			Map<String,List> initInfo=initInfoValues(dingAllDept,userName);
-						return initInfo;
+					fixedThreadPool.submit(new Runnable() {
+					@Transactional(rollbackFor = Exception.class)
+		            public void run() {
+		            	List<DingDeptVO> dingAllDept;
+						try {
+							dingAllDept = dingApiProxy.getDingAllDept();
+							Map<String,List> initInfo=initInfoValues(dingAllDept,userName);
+			    			
+							//删除部门表org，删除人员表person,删除，关系表
+							organizationMapper.deleteAllOrg();
+							personMapper.deleteAllPerson();
+							personOrgMapper.deleteAllPersonOrg();
+							
+							//初始化人员表person,org,personOrg
+							List<Organization> orgList=initInfo.get("org");
+							List<Person> personList=initInfo.get("person");
+							List<PersonOrg> personOrgList=initInfo.get("personOrg");
+							
+							//插入部门表
+							organizationMapper.insertBatchOrg(orgList);
+							//插入人员表
+							personMapper.insertBatchPerson(personList);
+							//插入部门人员表
+							personOrgMapper.insertBatchPersonOrg(personOrgList);
+							operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
+						} catch (Exception e) {
+							logger.error("同步钉钉数据出错，message={}",e.getMessage());
+							operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
+						}
 		            }
 		        });
-				
-				//删除部门表org，删除人员表person,删除，关系表
-				organizationMapper.deleteAllOrg();
-				personMapper.deleteAllPerson();
-				personOrgMapper.deleteAllPersonOrg();
-				
-				//如果初始化参数全部正常并且已经完成,必须等待初始化参数，异步堵塞...
-		      	Map<String,List> initInfo= future.get();
-				
-				//初始化人员表person,org,personOrg
-				List<Organization> orgList=initInfo.get("org");
-				List<Person> personList=initInfo.get("person");
-				List<PersonOrg> personOrgList=initInfo.get("personOrg");
-				
-				//插入部门表
-				organizationMapper.insertBatchOrg(orgList);
-				//插入人员表
-				personMapper.insertBatchPerson(personList);
-				//插入部门人员表
-				personOrgMapper.insertBatchPersonOrg(personOrgList);
-				operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
-				return VoHelper.getSuccessResult();
+					
+				TaskVO taskVO=new TaskVO();	
+				taskVO.taskId="1";
+				return VoHelper.getResultVO(taskVO, "1", CommonMessageCodeEnum.SUCCESS.getDesc());
 				
 			} catch (Exception e) {
 				logger.error("同步钉钉数据出错，message={}",e.getMessage());
 				operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
-				return VoHelper.getErrorResult();
+				return VoHelper.getResultVO("0", "同步钉钉数据出错");
 			}finally{
 				lock.unlock();
 				logger.info("同步钉钉数据完成");
@@ -136,8 +140,9 @@ public class PersonServiceImpl implements IPersonService {
 				//定时任务触发正在执行..记录日志
 				operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
 			}
-	        logger.info("同步钉钉数据正在执行...,");
-	        return VoHelper.getSuccessResult("正在同步");
+			TaskVO taskVO=new TaskVO();	
+			taskVO.taskId="1";
+			return VoHelper.getResultVO(taskVO, "1", CommonMessageCodeEnum.SUCCESS.getDesc());
 		}
 		
 	}
