@@ -58,8 +58,20 @@ public interface IUserService {
 	ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
 
 
-	String getAllFuncPermit(String jsonStr);
+	ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
 
-	String funcPermitValidate(Map<String, String> map);
+	ResultVO funcPermitValidate(Map<String, String> map);
+	
+	ResultVO getUserByName(String userName);
+	
+	
+	/**
+	 * 给用户分配角色
+	 * @param userNmae
+	 * @param roleId
+	 * @return
+	 */
+	ResultVO disUserToRoles(String userName,List<String> roleId);
+	
 
 }

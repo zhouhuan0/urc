@@ -74,7 +74,7 @@ public class UserLoginRunnable implements Runnable {
 		map.put("userName", userName);
 		map.put("pwd", pwd);
 		map.put("ip", "127.0.0.1");
-		return StringUtility.parseObject(_urcService.login(map), ResultVO.class);
+		return _urcService.login(map);
 	}
 
 	@Override

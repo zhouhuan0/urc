@@ -16,7 +16,7 @@ public class ExpressionVO implements Serializable {
     /**
      *
      */
-    private String expressionId;
+    private Long expressionId;
     /**
      * 子级where条件
      */
@@ -45,15 +45,8 @@ public class ExpressionVO implements Serializable {
     /**
      * 父级ID
      */
-    private String parentExpressionId;
+    private Long parentExpressionId;
 
-    public String getExpressionId() {
-        return expressionId;
-    }
-
-    public void setExpressionId(String expressionId) {
-        this.expressionId = expressionId;
-    }
 
     public List<ExpressionVO> getSubWhereClause() {
         return subWhereClause;
@@ -103,11 +96,19 @@ public class ExpressionVO implements Serializable {
         this.operValues = operValues;
     }
 
-    public String getParentExpressionId() {
+    public Long getExpressionId() {
+        return expressionId;
+    }
+
+    public void setExpressionId(Long expressionId) {
+        this.expressionId = expressionId;
+    }
+
+    public Long getParentExpressionId() {
         return parentExpressionId;
     }
 
-    public void setParentExpressionId(String parentExpressionId) {
+    public void setParentExpressionId(Long parentExpressionId) {
         this.parentExpressionId = parentExpressionId;
     }
 }

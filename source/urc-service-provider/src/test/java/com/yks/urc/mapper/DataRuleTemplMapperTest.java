@@ -74,5 +74,13 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
 
     }
 
+    @Test
+    public void delTemplDatasByIds(){
+        List<Long> ids = new ArrayList<>();
+        ids.add(1529031119283L);
+        int rtn = dataRuleTemplMapper.delTemplDatasByIds(ids);
+        System.out.println(rtn);
+    }
+
 
 }

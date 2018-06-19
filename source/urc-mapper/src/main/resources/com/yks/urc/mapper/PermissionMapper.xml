@@ -65,7 +65,6 @@
             )
         </foreach>
   </insert>
-<<<<<<< HEAD
   <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.Permission">
     update urc_permission
     <set>
@@ -130,6 +129,4 @@
     SELECT  <include refid="Base_Column_List" /> FROM  urc_permission
     WHERE sys_key  =#{sysKey}
   </select>
-=======
->>>>>>> 51ea9d495fe5f4ecd3033789e0ba759a2e60a6f0
 </mapper>

@@ -6,10 +6,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleVO;
+import com.yks.urc.vo.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +25,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
     public void getDataRuleTemplByTemplId() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator","admin");
-        jsonObject.put("templId",1);
+        jsonObject.put("templId",1529058943584L);
         ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
         System.out.println(resultVO);
     }
@@ -77,74 +74,101 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
     @Test
     public void addOrUpdateDataRuleTempl(){
-        JSONObject colObject = new JSONObject();
-
-        JSONArray jsonArray = new JSONArray();
         /*列权限1*/
-        JSONObject calJsonObj1 = new JSONObject();
-        calJsonObj1.put("entityCode","entityProduct");
+        List<DataRuleColVO> dataRuleColVOS = new ArrayList<>();
+        DataRuleColVO calJsonObj1 = new DataRuleColVO();
+        calJsonObj1.setEntityCode("entityProduct");
+        JSONArray colArray1 = new JSONArray();
            JSONObject colJson1 = new JSONObject();
            colJson1.put("fieldCode","name");
            colJson1.put("showType",0);
-        calJsonObj1.put("colJson",colJson1);
+        colArray1.add(colJson1);
             JSONObject colJson2 = new JSONObject();
             colJson2.put("fieldCode","price");
             colJson2.put("showType",0);
-        calJsonObj1.put("colJson",colJson2);
-        jsonArray.add(calJsonObj1);
+        colArray1.add(colJson2);
+        calJsonObj1.setColJson(colArray1.toString());
+        dataRuleColVOS.add(calJsonObj1);
 
         /*列权限2*/
-        JSONObject calJsonObj2 = new JSONObject();
-        calJsonObj2.put("entityCode","entitySupplier");
+        DataRuleColVO calJsonObj2 = new DataRuleColVO();
+        calJsonObj2.setEntityCode("entitySupplier");
+        JSONArray colArray2 = new JSONArray();
         JSONObject colJson21 = new JSONObject();
             colJson21.put("fieldCode","addr");
             colJson21.put("showType",0);
-        calJsonObj2.put("colJson",colJson21);
+        colArray2.add(colJson21);
         JSONObject colJson22 = new JSONObject();
             colJson22.put("fieldCode","city");
-            colJson2.put("showType",0);
-        calJsonObj2.put("colJson",colJson22);
-        jsonArray.add(calJsonObj2);
-        colObject.put("col",jsonArray);
+            colJson22.put("showType",0);
+        colArray2.add(colJson22);
+        calJsonObj2.setColJson(colArray2.toJSONString());
+        dataRuleColVOS.add(calJsonObj2);
 
         /*行权限*/
-        JSONObject rowObject = new JSONObject();
-        rowObject.put("isAnd",1);
-        JSONArray subWhereClause = new JSONArray();
-         JSONObject subWhereClause1 = new JSONObject();
-         subWhereClause1.put("fieldCode","fieldPlatform");
-         subWhereClause1.put("entityCode","platform");
-         subWhereClause1.put("oper","in");
-         subWhereClause1.put("operValues","[\"eBay\"，\"WISH\"]");
-         subWhereClause.add(subWhereClause1);
+        ExpressionVO expressionVO = new ExpressionVO();
+        expressionVO.setIsAnd(1);
+        List<ExpressionVO> subWhereClause = new ArrayList<>();
+        ExpressionVO  subWhereClause1= new ExpressionVO();
+        subWhereClause1.setFiledCode("fieldPlatform");
+        subWhereClause1.setEntityCode("platform");
+        subWhereClause1.setOper("in");
+        subWhereClause1.setOperValues("[\"eBay\"，\"WISH\"]");
+        subWhereClause.add(subWhereClause1);
 
-        JSONObject subWhereClause2 = new JSONObject();
-        subWhereClause2.put("fieldCode","fieldSite");
-        subWhereClause2.put("oper","in");
-        subWhereClause2.put("operValues","[\"美国\"，\"英国\"]");
+        ExpressionVO  subWhereClause2= new ExpressionVO();
+        subWhereClause2.setFiledCode("fieldSite");
+        subWhereClause2.setOper("in");
+        subWhereClause2.setOperValues("[\"美国\"，\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
-        JSONObject subWhereClause3 = new JSONObject();
-        subWhereClause3.put("fieldCode","fieldProductSku");
-        subWhereClause3.put("oper","in");
-        subWhereClause3.put("operValues","[\"SKU001\"]");
+        ExpressionVO  subWhereClause3= new ExpressionVO();
+        subWhereClause3.setFiledCode("fieldProductSku");
+        subWhereClause3.setOper("in");
+        subWhereClause3.setOperValues("[\"SKU001\"]");
         subWhereClause.add(subWhereClause3);
+        expressionVO.setSubWhereClause(subWhereClause);
 
-        rowObject.put("subWhereClause",subWhereClause);
+       List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
+        DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+        dataRuleSysVO.setSysKey("001");
+        dataRuleSysVO.setRow(expressionVO);
+        dataRuleSysVO.setCol(dataRuleColVOS);
+        List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList<>();
+        dataRuleSysVOS1.add(dataRuleSysVO);
 
 
-        JSONObject listDataRuleSys = new JSONObject();
-        listDataRuleSys.put("sysKey","001");
-        listDataRuleSys.put("row",rowObject);
-        listDataRuleSys.put("col",colObject);
+        DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
+        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
+        dataRuleTemplVO.setRemark("给xxxx的方案");
+        dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
+//        dataRuleTemplVO.setTemplId("1529030029337");
 
-        JSONObject dataRuleTemplVO = new JSONObject();
-        dataRuleTemplVO.put("templName","采购一部3C产品组方案1");
-        dataRuleTemplVO.put("remark","给xxxx的方案");
-        dataRuleTemplVO.put("lstDataRuleSys",listDataRuleSys);
-        ResultVO resultVO = dataRuleService.addOrUpdateDataRuleTempl(dataRuleTemplVO.toString());
+        JSONObject json = new JSONObject();
+
+        json.put("operator","admin");
+        json.put("templ",dataRuleTemplVO);
+
+        ResultVO resultVO = dataRuleService.addOrUpdateDataRuleTempl(json.toString());
         System.out.println(resultVO);
     }
 
 
+    /*@Test
+    public void assignDataRuleTempl2User(){
+        JSONObject jsonObject = new JSONObject();
+        dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
+    }*/
+
+
+    @Test
+    public void deleteDataRuleTempl(){
+        List<Long> ids = new ArrayList<>();
+        ids.add(1529031119283L);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator","admin");
+        jsonObject.put("lstTemplId",ids);
+
+        dataRuleService.deleteDataRuleTempl(jsonObject.toString());
+    }
 }

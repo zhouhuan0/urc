@@ -24,6 +24,20 @@
         </foreach>
     </insert>
 
+    <!--根据userName列表批量删除  包括用户-数据权限数据   数据权限Sys数据  行权限数据  列权限数据-->
+    <delete id="delBatchByUserNames" parameterType="java.util.List">
+        delete ut,us,uc,ue
+        from
+        urc_data_rule ut
+        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        where user_name in
+        <foreach collection="list" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>
+    </delete>
+
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select

@@ -145,6 +145,17 @@
         from urc_role
         where role_name = #{roleName,jdbcType=VARCHAR}
     </select>
+    
+    
+        <!--分页条件查询-->
+    <select id="listAllRoles"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_role 
+
+    </select>
+    
+    
 
     <!--分页条件查询-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -174,7 +185,6 @@
             </if>
         </where>
     </select>
-<<<<<<< HEAD
     <!--根据用户名 获取角色名称-->
     <select id="selectRoleNameByUserName" resultType="java.lang.String">
         select  r.role_name as roleName
@@ -182,8 +192,7 @@
         INNER JOIN urc_user_role up on r.role_id = up.role_id
         INNER JOIN urc_user u on up.user_name =u.user_name
         WHERE u.user_name =#{userName}
-=======
-    
+    </select>
     <!-- 获取所有过期的角色关联的用户 -->
     <select id="getUsersOfAllExpiredRole" resultType="java.lang.String">
     	select distinct ur.user_name
@@ -205,6 +214,5 @@
     	SET is_active=0
 		where is_active=1
 		AND is_forever=0 and (now() BETWEEN effective_time and expire_time)=0
->>>>>>> 51ea9d495fe5f4ecd3033789e0ba759a2e60a6f0
     </select>
 </mapper>

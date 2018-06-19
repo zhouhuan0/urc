@@ -78,4 +78,13 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
     }
 
 
+    @Test
+    public void getDataRuleSysDatas(){
+        List<Long> ids = new ArrayList<>();
+        ids.add(1529058943584L);
+        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysDatas(1529058943584L);
+        System.out.println(dataRuleSysDOS);
+    }
+
+
 }

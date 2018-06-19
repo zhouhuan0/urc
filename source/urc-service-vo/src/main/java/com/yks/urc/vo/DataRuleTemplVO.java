@@ -12,6 +12,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class DataRuleTemplVO implements Serializable {
+
+
+
     private static final long serialVersionUID = 824547161363763919L;
     /**
      * 模板ID
@@ -73,4 +76,5 @@ public class DataRuleTemplVO implements Serializable {
     public void setLstDataRuleSys(List<DataRuleSysVO> lstDataRuleSys) {
         this.lstDataRuleSys = lstDataRuleSys;
     }
+
 }

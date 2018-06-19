@@ -24,7 +24,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月6日 下午12:22:35
      */
-    String login(Map<String, String> map);
+    ResultVO<LoginRespVO> login(Map<String, String> map);
 
     /**
      * 校验ticket及功能权限版本
@@ -33,7 +33,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月14日 下午1:11:56
      */
-    String funcPermitValidate(Map<String,String> map);
+    ResultVO funcPermitValidate(Map<String,String> map);
 
     /**
      * 手动触发“同步钉钉部门及人员”信息
@@ -104,25 +104,7 @@ public interface IUrcService {
      * @return
      */
     String getDataRuleTempl(String jsonStr);
-    
-    
-    
-/*    *//**
-     * 根据dataRuleId获取数据权限的用户
-     *
-     * @param jsonStr
-     * @return
-     *//*
-    String showDataRuleTempl2User(String jsonStr);
-    
-    
-    *//**
-     * 根据dataRuleId获取没有数据权限的用户
-     *
-     * @param jsonStr
-     * @return
-     *//*
-    String showNoDataRuleTempl2User(String jsonStr);*/
+
 
     /**
      *  获取所有平台
@@ -146,7 +128,7 @@ public interface IUrcService {
 	 * @return 返回值为0--表示不重复, 1--表示重复
 	 * @author oujie@youkeshu.com
 	 */
-	String checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+    ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId);
 
     /**
      * 获取应用系统及其授权方式
@@ -167,39 +149,39 @@ public interface IUrcService {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午12:45:36
 	 */
-	String getAllFuncPermit(String jsonStr);
-	
-	
+    ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
+
+
 	/**
 	 * 获取角色关联的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getUserByRoleId(String jsonStr);
-	
+
 	/**
 	 * 获取多个角色已有的用户
 	 * @param jsonStr
 	 * @return
 	 */
 	String getRoleUser(String jsonStr);
-	
+
 	/**
 	 * 获取用户可选择的所有数据授权方案
 	 * @param jsonStr
 	 * @return
 	 */
 	String getMyDataRuleTempl(String jsonStr);
-	
-	
-	
+
+
+
 	/**
 	 * 获取多个用户的所有数据权限
 	 * @param jsonStr
 	 * @return
 	 */
 	String getDataRuleByUser(String jsonStr);
-	
+
 	/**
 	 * 导入sys功能权限定义
 	 * @param jsonStr
@@ -208,7 +190,7 @@ public interface IUrcService {
 	 * @date 2018年6月14日 下午7:17:14
 	 */
 	String importSysPermit(String jsonStr);
-	
+
 	/**
 	 * 获取指定用户可授权给其它角色的功能权限
 	 * @param jsonStr

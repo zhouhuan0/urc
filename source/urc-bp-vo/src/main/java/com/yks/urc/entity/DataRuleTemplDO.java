@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class DataRuleTemplDO {
     private Long id;
@@ -31,6 +32,10 @@ public class DataRuleTemplDO {
      * 更新人
      */
     private String modifiedBy;
+    /**
+     * 数据权限Sys
+     */
+    List<DataRuleSysDO> dataRuleSysDOList;
 
 
     public Long getId() {

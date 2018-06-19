@@ -36,9 +36,8 @@ public class MotanRoleController {
     @RequestMapping("checkDupName/{newRoleName}")
     @ResponseBody
     public ResultVO checkDuplicateRoleName(@PathVariable("newRoleName") String roleName, @RequestParam(value = "roleId", required = false) String roleId){
-        return parseResultVO(urcService.checkDuplicateRoleName(mockOperator().userName, roleName, roleId));
+        return urcService.checkDuplicateRoleName(mockOperator().userName, roleName, roleId);
     }
-
     private UserVO mockOperator(){
         UserVO curUser = new UserVO();
         curUser.userName = "py";

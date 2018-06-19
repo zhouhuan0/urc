@@ -73,8 +73,8 @@ public class OrganizationServiceImpl implements IOrganizationService {
             long pid = jsonMenu.getLong("parentDingOrgId");
             if (parentId == pid) {
                 JSONArray c_node = treeDingDeptList(deptList, id);
-                jsonMenu.put("childNode", c_node);
-                childMenu.add(jsonMenu);
+            	jsonMenu.put("subOrg", c_node);
+            	childMenu.add(jsonMenu);
             }
         }
         return childMenu;
