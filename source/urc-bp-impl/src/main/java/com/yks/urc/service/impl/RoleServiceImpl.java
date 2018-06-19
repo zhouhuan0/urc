@@ -418,6 +418,7 @@ public class RoleServiceImpl implements IRoleService {
 	 * @see
 	 */
 	@Override
+	@Transactional(rollbackFor = Exception.class)
 	public ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator) {
 		for (int i = 0; i < lstRole.size(); i++) {
 			RoleVO roleVO=lstRole.get(i);

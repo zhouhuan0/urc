@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -62,6 +63,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
 	 * @return
 	 * @throws Exception
 	 */
+    @Transactional(rollbackFor=Exception.class)
     public  String getDingAccessToken() throws Exception {
     	   long curTime = System.currentTimeMillis();
     	   SystemParameter systemParameter= systemParameterMapper.querySystemValuebyParameterName(accessTokeTime);
