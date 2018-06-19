@@ -8,8 +8,6 @@ import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
-import com.yks.urc.vo.PersonVO;
-import com.yks.urc.vo.UserVO;
 
 import java.util.List;
 import java.util.Map;
@@ -46,13 +44,13 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public String login(Map<String, String> map) {
+    public ResultVO login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
         authUser.pwd = map.get("pwd");
         authUser.ip = map.get("ip");
         // UserVO curUser, UserVO authUser
-        return StringUtility.toJSONString_NoException(userService.login(authUser));
+        return userService.login(authUser);
     }
 
     @Override
@@ -175,12 +173,12 @@ public class UrcServiceImpl implements IUrcService {
     }
 
 	@Override
-	public String getAllFuncPermit(String jsonStr) {
+	public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
 		return userService.getAllFuncPermit(jsonStr);
 	}
 
     @Override
-	public String funcPermitValidate(Map<String, String> map) {
+	public ResultVO funcPermitValidate(Map<String, String> map) {
 		return userService.funcPermitValidate(map);
 	}
 
