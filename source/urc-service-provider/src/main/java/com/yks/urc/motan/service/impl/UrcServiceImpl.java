@@ -205,7 +205,9 @@ public class UrcServiceImpl implements IUrcService {
 	public String getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(operator));
+        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
+        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        return StringUtility.toJSONString_NoException(dataRuleService.getMyDataRuleTempl(pageNumber,pageData,operator));
 	}
 
 

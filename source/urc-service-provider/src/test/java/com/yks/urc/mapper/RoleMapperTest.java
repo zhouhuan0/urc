@@ -15,6 +15,7 @@ import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.ExpressionVO;
 import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
 import org.drools.compiler.lang.DRL5Expressions.literal_return;
@@ -110,8 +111,21 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void getRoleByRoleId() {
     	
-		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong("1528856724627000041"));
-		System.out.println(roleDO.getRoleName());
+    	
+        DataRuleTemplDO templDO = new DataRuleTemplDO();
+       templDO.setCreateBy("admin");
+        
+        Query query=new Query(templDO, 0, 10);
+        
+        
+        int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
+
+        
+        List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
+    	System.out.println(dataRuleTempList);
+    	System.out.println(dataRuleTempCount);
+/*		RoleDO roleDO=roleMapper.getRoleByRoleId(Long.parseLong("1528856724627000041"));
+		System.out.println(roleDO.getRoleName());*/
     	
 /*		List<RoleDO> roleList=roleMapper.listAllRoles();
     	System.out.println(roleList.size());*/
