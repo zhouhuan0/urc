@@ -30,7 +30,7 @@ public interface IRoleService {
 
     ResultVO getRoleUser(List<String> lstRoleId);
 
-    void updateUsersOfRole(List<RoleDO> lstRole);
+    ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator);
 
     void copyRole(String strUserName,String newRoleName,String sourceRoleId);
 

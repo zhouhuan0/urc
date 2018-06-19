@@ -251,4 +251,14 @@ public class UrcServiceImpl implements IUrcService {
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
 	}
 
+	
+	
+	@Override
+	public ResultVO updateUsersOfRole(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        List<RoleVO> lstRole =StringUtility.parseObject(jsonObject.get("lstRole").toString(),List.class);
+		return roleService.updateUsersOfRole(lstRole, operator);
+	}
+
 }

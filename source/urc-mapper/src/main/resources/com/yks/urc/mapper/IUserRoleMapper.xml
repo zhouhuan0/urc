@@ -52,6 +52,21 @@
     </delete>
     
     
+    <delete id="deleteUserRole" parameterType="com.yks.urc.entity.UserRoleDO">
+      delete from urc_user_role 
+			<where>
+				<if test="roleId != null ">
+					role_id =#{roleId} 
+				</if>
+				<if test="createBy != null and createBy != '' ">
+					and create_by =#{createBy} 
+				</if>
+			</where>
+
+    </delete>
+    
+    
+    
     <!--根据userName删除-->
     <delete id="deleteByUserName" parameterType="java.lang.String">
       delete from urc_user_role where user_name = #{userName,jdbcType=VARCHAR}

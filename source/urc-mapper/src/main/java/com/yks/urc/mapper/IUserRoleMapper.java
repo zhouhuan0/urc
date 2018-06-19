@@ -69,4 +69,13 @@ public interface IUserRoleMapper {
 	 * @return
 	 */
 	Integer deleteByUserName(String userNmae);
+
+	
+	
+	/**
+	 * 删除userRole关联表
+	 * @param userRoleDO
+	 * @return
+	 */
+	Integer deleteUserRole(UserRoleDO userRoleDO);
 }

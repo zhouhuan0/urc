@@ -7,6 +7,7 @@ import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
@@ -393,7 +394,7 @@ public class RoleServiceImpl implements IRoleService {
 	}
 
 	/**
-	 * Description: 1、分配权限--同时更新多个角色的用户 2、…
+	 * Description: 1、分配权限--同时更新多个角色的用户 
 	 *
 	 * @param :
 	 * @return:
@@ -402,10 +403,43 @@ public class RoleServiceImpl implements IRoleService {
 	 * @see
 	 */
 	@Override
-	public void updateUsersOfRole(List<RoleDO> lstRole) {
-		/* 非管理员只能查看自己创建的角色 */
-		/* 根据角色删除用户角色关系表 */
-		/* 新增用户角色关系表 */
+	public ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator) {
+		for (int i = 0; i < lstRole.size(); i++) {
+			RoleVO roleVO=lstRole.get(i);
+			UserRoleDO userRole = new UserRoleDO();
+			List<UserRoleDO> userRoleDOS = new ArrayList<>();
+			List<String> userNameList=roleVO.getLstUserName();
+			userRole.setRoleId(roleVO.getRoleId());
+			if(roleMapper.isAdminAccount(operator)){
+				userRoleMapper.deleteUserRole(userRole);
+				for (int j = 0; j < userNameList.size(); j++) {
+					UserRoleDO userRoleDO = new UserRoleDO();
+					userRoleDO.setUserName(userNameList.get(i));
+					userRoleDO.setRoleId(roleVO.getRoleId());
+					userRoleDO.setCreateBy(operator);
+					userRoleDO.setCreateTime(new Date());
+					userRoleDO.setModifiedBy(operator);
+					userRoleDO.setModifiedTime(new Date());
+				}
+			}else{
+				userRole.setCreateBy(operator);
+				userRoleMapper.deleteUserRole(userRole);
+				for (int j = 0; j < userNameList.size(); j++) {
+					UserDO usreDO=userMapper.getUserByUserName(userNameList.get(i));
+					if(usreDO.getCreateBy().equals(operator)){
+						UserRoleDO userRoleDO = new UserRoleDO();
+						userRoleDO.setUserName(userNameList.get(i));
+						userRoleDO.setRoleId(roleVO.getRoleId());
+						userRoleDO.setCreateBy(operator);
+						userRoleDO.setCreateTime(new Date());
+						userRoleDO.setModifiedBy(operator);
+						userRoleDO.setModifiedTime(new Date());
+					}
+				}
+			}
+			userRoleMapper.insertBatch(userRoleDOS);
+		}
+		return VoHelper.getSuccessResult();
 	}
 
 	/**
