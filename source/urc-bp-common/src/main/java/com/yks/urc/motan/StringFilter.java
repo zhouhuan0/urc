@@ -55,7 +55,7 @@ public class StringFilter implements Filter {
         try {
             Class<?> clz = Class.forName(request.getInterfaceName());
             String[] paramDescs = StringUtils.split(request.getParamtersDesc(), ",");
-            boolean isParamEmpty = ArrayUtils.isEmpty(paramDescs);
+            boolean isParamEmpty = ArrayUtils.isEmpty(paramDescs)||"void".equals(paramDescs[0]);
             Class<?>[] argTypes = new Class<?>[isParamEmpty ? 0 : paramDescs.length];
             if (!isParamEmpty){
                 for (int i = 0; i < paramDescs.length; i++) {
