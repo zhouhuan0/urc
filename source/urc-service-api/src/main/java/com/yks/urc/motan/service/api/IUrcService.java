@@ -222,4 +222,11 @@ public interface IUrcService {
 	 * @return
 	 */
 	String getRolePermission(String jsonStr);
+
+	/**
+	 *  精确搜索用户
+	 * @param jsonStr
+	 * @return
+	 */
+	String getUserByUserName(String jsonStr);
 }
