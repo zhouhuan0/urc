@@ -276,4 +276,10 @@ public class UrcServiceImpl implements IUrcService {
 	public ResultVO getMavenPackageTime() {
 		return operationBp.getMavenPackageTime();
 	}
+
+	@Override
+	public ResultVO updateRolePermission(String jsonStr) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

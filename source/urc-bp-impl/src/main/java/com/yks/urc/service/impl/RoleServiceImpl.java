@@ -317,7 +317,7 @@ public class RoleServiceImpl implements IRoleService {
         if (!roleMapper.isAdminAccount(operator)) {
             userRole.setCreateBy(operator);
         }
-        List<UserVO> userList = userMapper.getUserByRoleId(userRole);
+        List<UserDO> userList = userMapper.getUserByRoleId(userRole);
         return VoHelper.getSuccessResult(userList);
     }
 
@@ -395,7 +395,9 @@ public class RoleServiceImpl implements IRoleService {
         //1.首先拿到当前角色的所有的用户
         try {
             for (RoleVO roleVO : lstRole) {
-                List<UserDO> userDOList = userMapper.getUserByRoleId(String.valueOf(roleVO.roleId));
+            	UserRoleDO userRole=new UserRoleDO();
+            	userRole.setRoleId(roleVO.roleId);
+                List<UserDO> userDOList = userMapper.getUserByRoleId(userRole);
                 //更新缓存
                 for (int i = 0; i < userDOList.size(); i++) {
                     String userName = userDOList.get(i).getUserName();
@@ -564,5 +566,11 @@ public class RoleServiceImpl implements IRoleService {
             operationBp.addLog(logger.getName(), "处理过期角色ERROR", ex);
         }
     }
+
+	@Override
+	public List<SystemRootVO> getUserAuthorizablePermission(String userName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }
