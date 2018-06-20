@@ -5,6 +5,7 @@ import com.yks.urc.vo.UserVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉
@@ -62,7 +63,7 @@ public interface IUserRoleMapper {
     Integer deleteByRoleId(Long roleId);
 
 	List<String> getUserNameByRoleId(UserRoleDO userRoleDO);
-	
+
 	/**
 	 * 根据userName删除用与角色的关联表
 	 * @param userNmae
@@ -70,12 +71,23 @@ public interface IUserRoleMapper {
 	 */
 	Integer deleteByUserName(String userNmae);
 
-	
-	
+
+
 	/**
 	 * 删除userRole关联表
 	 * @param userRoleDO
 	 * @return
 	 */
 	Integer deleteUserRole(UserRoleDO userRoleDO);
+
+    /**
+     * Description: 根据roleId列表和创建人查找用户-角色对应的用户名
+     *
+     * @param : queryMap
+     * @return: List<String>
+     * @auther: lvcr
+     * @date: 2018/6/20 11:53
+     * @see
+     */
+    List<String> listUserNamesByRoleIds(Map queryMap);
 }

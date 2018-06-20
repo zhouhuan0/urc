@@ -53,7 +53,7 @@ public interface IRoleMapper {
      * @date: 2018/6/7 18:39
      * @see
      */
-    Integer deleteBatch(List<Integer> ids);
+    Integer deleteBatch(List<Long> ids);
 
     /**
      * Description: 根据多个条件搜索角色，并分页显示
@@ -78,6 +78,17 @@ public interface IRoleMapper {
      * @see
      */
     RoleDO getRoleByRoleId(@Param("roleId") Long roleId);
+
+    /**
+     * Description: 根据roleId获取角色详情信息 包括角色-权限  用户-角色关系
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 11:52
+     * @see
+     */
+    RoleDO getRoleDatasByRoleId(@Param("roleId") Long roleId);
 
 
     /**
@@ -135,26 +146,40 @@ public interface IRoleMapper {
      */
     Long getCounts(@Param("createBy") String createBy);
 
-	/**
-	 * 获取所有过期的角色关联的用户
-	 * @return
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月15日 上午11:43:20
-	 */
-	List<String> getUsersOfAllExpiredRole();
+    /**
+     * 获取所有过期的角色关联的用户
+     *
+     * @return
+     * @author panyun@youkeshu.com
+     * @date 2018年6月15日 上午11:43:20
+     */
+    List<String> getUsersOfAllExpiredRole();
 
-	/**
-	 * 将所有过期的角色 is_active 设置为0
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月15日 上午11:43:39
-	 */
-	List<RoleDO> updateAllExpiredRole();
+    /**
+     * 将所有过期的角色 is_active 设置为0
+     *
+     * @author panyun@youkeshu.com
+     * @date 2018年6月15日 上午11:43:39
+     */
+    List<RoleDO> updateAllExpiredRole();
 
-	/**
-	 * 查询所有的角色
-	 * @return
-	 */
-	List<RoleDO> listAllRoles();
+    /**
+     * 查询所有的角色
+     *
+     * @return
+     */
+    List<RoleDO> listAllRoles();
+
+    /**
+     * Description: 批量删除roleIds对应的角色、用户-角色关系、角色-权限关系数据
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 13:07
+     * @see
+     */
+    Integer deleteBatchRoleDatas(Map<String,Object> dataMap);
 
 
 }

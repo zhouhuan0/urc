@@ -26,7 +26,7 @@ public interface IRolePermissionMapper {
      * @date: 2018/6/8 15:08
      * @see
      */
-    Integer deleteBatch(List<Integer> ids);
+    Integer deleteBatch(List<Long> ids);
 
     Integer deleteByRoleId(@Param("roleId") Long roleId);
 

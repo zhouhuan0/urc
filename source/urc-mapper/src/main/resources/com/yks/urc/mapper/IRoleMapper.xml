@@ -16,6 +16,37 @@
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
     </resultMap>
+
+
+    <resultMap id="FullBaseResultMap" type="com.yks.urc.entity.RoleDO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
+        <result column="is_active" jdbcType="TINYINT" property="isActive"/>
+        <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
+        <result column="is_forever" jdbcType="TINYINT" property="isForever"/>
+        <result column="effective_time" jdbcType="TIMESTAMP" property="effectiveTime"/>
+        <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
+        <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <collection property="permissionDOList" ofType="com.yks.urc.entity.RolePermissionDO">
+            <id column="pid" jdbcType="BIGINT" property="id"/>
+            <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+            <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
+            <result column="sys_name" jdbcType="VARCHAR" property="sysName"/>
+            <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext"/>
+        </collection>
+        <collection property="userRoleDOS" ofType="com.yks.urc.entity.UserRoleDO">
+            <id column="uid" jdbcType="BIGINT" property="id"/>
+            <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+            <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        </collection>
+    </resultMap>
+
+
     <sql id="Base_Column_List">
      id,role_id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
      create_time, create_by, modified_time, modified_by,remark
@@ -34,7 +65,7 @@
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
     <!--roleName建立唯一约束，不存在就添加，存在就更新-->
-    <insert id="insertOrUpdate"  parameterType="com.yks.urc.entity.RoleDO">
+    <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role
      (role_id, role_name, is_active,
       is_authorizable, is_forever, effective_time,
@@ -65,6 +96,25 @@
             #{ roleId}
         </foreach>
     </delete>
+
+    <!--批量删除roleIds对应的角色、用户-角色关系、角色-权限关系数据-->
+    <delete id="deleteBatchRoleDatas" parameterType="java.util.HashMap">
+        delete ur,uur,urp
+        from
+        urc_role ur
+        left join urc_user_role uur on ur.role_id = uur.role_id
+        left join urc_role_permission urp on ur.role_id = urp.role_id
+        <where>
+            ur.role_id in
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="createBy != null and createBy != ''">
+                and ur.create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </delete>
+
     <!--根据角色Id获取角色信息-->
     <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select
@@ -72,42 +122,37 @@
         from urc_role
         where role_id = #{roleId,jdbcType=BIGINT}
     </select>
-    <update id="update" parameterType="com.yks.urc.entity.RoleDO">
-        update urc_role
-        <set>
-            <if test="roleName != null">
-                role_name = #{roleName,jdbcType=VARCHAR},
-            </if>
-            <if test="isActive != null">
-                is_active = #{isActive,jdbcType=TINYINT},
-            </if>
-            <if test="isAuthorizable != null">
-                is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
-            </if>
-            <if test="isForever != null">
-                is_forever = #{isForever,jdbcType=TINYINT},
-            </if>
-            <if test="effectiveTime != null">
-                effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="expireTime != null">
-                expire_time = #{expireTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createBy != null">
-                create_by = #{createBy,jdbcType=VARCHAR},
-            </if>
-            <if test="modifiedTime != null">
-                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modifiedBy != null">
-                modified_by = #{modifiedBy,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where role_id = #{roleId,jdbcType=CHAR}
-    </update>
+    <!--根据角色Id获取角色信息 包括功能权限、关联用户-->
+    <select id="getRoleDatasByRoleId" parameterType="java.lang.Long" resultMap="FullBaseResultMap">
+       select
+        ur.id,
+        ur.role_id,
+        ur.role_name,
+        ur.is_active,
+        ur.is_authorizable,
+        ur.is_forever,
+        ur.remark,
+        ur.effective_time,
+        ur.expire_time,
+        ur.create_time,
+        ur.create_by,
+        ur.modified_by,
+        ur.modified_time,
+        uur.id as uid,
+        uur.role_id,
+        uur.user_name,
+        urp.id as pid,
+        urp.role_id,
+        urp.sys_key,
+        urp.selected_context,
+        up.sys_name
+      from
+	    urc_role ur
+        left join urc_user_role uur on ur.role_id = uur.role_id
+        left join urc_role_permission urp on ur.role_id = urp.role_id
+        inner join urc_permission up on urp.sys_key = up.sys_key
+        where ur.role_id = #{roleId,jdbcType=BIGINT}
+    </select>
     <!--根据username/syskey获取角色功能权限-->
     <select id="getFuncJsonByUserAndSysKey" resultType="java.lang.String">
         select rp.selected_context
@@ -144,17 +189,16 @@
         from urc_role
         where role_name = #{roleName,jdbcType=VARCHAR}
     </select>
-    
-    
-        <!--分页条件查询-->
-    <select id="listAllRoles"  resultMap="BaseResultMap">
+
+
+    <!--分页条件查询-->
+    <select id="listAllRoles" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from urc_role 
+        from urc_role
 
     </select>
-    
-    
+
 
     <!--分页条件查询-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
@@ -200,18 +244,18 @@
 		AND r.is_active=1
 		AND r.is_forever=0 and (now() BETWEEN r.effective_time and r.expire_time)=0
     </select>
-        
+
     <!-- 将所有过期的角色 is_active 设置为0 -->
     <select id="updateAllExpiredRole" resultMap="BaseResultMap">
-    	select
-            <include refid="Base_Column_List"/>
+        select
+        <include refid="Base_Column_List"/>
         from urc_role r
-    	where r.is_active=1
-		AND r.is_forever=0 and (now() BETWEEN r.effective_time and r.expire_time)=0;
-		
-    	UPDATE urc_role
-    	SET is_active=0
-		where is_active=1
-		AND is_forever=0 and (now() BETWEEN effective_time and expire_time)=0
+        where r.is_active=1
+        AND r.is_forever=0 and (now() BETWEEN r.effective_time and r.expire_time)=0;
+
+        UPDATE urc_role
+        SET is_active=0
+        where is_active=1
+        AND is_forever=0 and (now() BETWEEN effective_time and expire_time)=0
     </select>
 </mapper>

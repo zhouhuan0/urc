@@ -36,11 +36,11 @@ public class UrcServiceImpl implements IUrcService {
     @Autowired
     private IDataRuleService dataRuleService;
 
-	@Autowired
-	private IPermissionService permissionService;
-	
-	@Autowired
-	private IOperationBp operationBp;
+    @Autowired
+    private IPermissionService permissionService;
+
+    @Autowired
+    private IOperationBp operationBp;
 
     @Override
     public ResultVO syncUserInfo(UserVO curUser) {
@@ -68,7 +68,7 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(params);
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        String  dingOrgId = jsonObject.get("dingOrgId").toString();
+        String dingOrgId = jsonObject.get("dingOrgId").toString();
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
@@ -87,22 +87,22 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     /**
-     *  用户管理搜索用户
+     * 用户管理搜索用户
+     *
      * @param params
      * @return
      */
-	@Override
-	public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
+    @Override
+    public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        String operator =StringUtility.toJSONString(jsonObject.getString("operator"));
+        String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
-		return userService.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
-	}
+        return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
+    }
 
-	
-	
+
     /**
      * Description: 快速分配数据权限模板给用户
      *
@@ -145,12 +145,12 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
-	@Override
-	public ResultVO syncUserInfo() {
-		UserVO curUser=new UserVO();
-		curUser.userName="hand";
-		return userService.syncUserInfo(curUser);
-	}
+    @Override
+    public ResultVO syncUserInfo() {
+        UserVO curUser = new UserVO();
+        curUser.userName = "hand";
+        return userService.syncUserInfo(curUser);
+    }
 
     @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
@@ -168,77 +168,76 @@ public class UrcServiceImpl implements IUrcService {
         return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
     }
 
-	@Override
-	public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
-		return userService.getAllFuncPermit(jsonStr);
-	}
+    @Override
+    public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
+        return userService.getAllFuncPermit(jsonStr);
+    }
 
     @Override
-	public ResultVO funcPermitValidate(Map<String, String> map) {
-		return userService.funcPermitValidate(map);
-	}
+    public ResultVO funcPermitValidate(Map<String, String> map) {
+        return userService.funcPermitValidate(map);
+    }
 
-	@Override
-	public ResultVO getUserByRoleId(String jsonStr) {
+    @Override
+    public ResultVO getUserByRoleId(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        String roleId= jsonObject.get("roleId").toString();
-		return roleService.getUserByRoleId(operator,roleId);
-	}
+        String roleId = jsonObject.get("roleId").toString();
+        return roleService.getUserByRoleId(operator, roleId);
+    }
 
-	@Override
-	public ResultVO getRoleUser(String jsonStr) {
+    @Override
+    public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         List<String> roleList = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-		return roleService.getRoleUser(operator,roleList);
-	}
+        return roleService.getRoleUser(operator, roleList);
+    }
 
-
-
-	public ResultVO getMyDataRuleTempl(String jsonStr) {
+    @Override
+    public ResultVO getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
-        return dataRuleService.getMyDataRuleTempl(pageNumber,pageData,operator);
-	}
+        return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
+    }
 
-
-	public List<DataRuleVO> getDataRuleByUser(String jsonStr) {
-		JSONObject jsonObject = StringUtility.parseString(jsonStr);
-	    String operator = jsonObject.get("operator").toString();
-		List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
-		return dataRuleService.getDataRuleByUser(lstUserName);
-	}
-
-
-	@Override
-	public ResultVO importSysPermit(String jsonStr) {
-		return permissionService.importSysPermit(jsonStr);
-	}
-
-	@Override
-	public ResultVO getUserAuthorizablePermission(String jsonStr) {
+    @Override
+    public List<DataRuleVO> getDataRuleByUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-		return permissionService.getUserAuthorizablePermission(operator);
-	}
+        List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
+        return dataRuleService.getDataRuleByUser(lstUserName);
+    }
 
-	@Override
-	public ResultVO getRolePermission(String jsonStr) {
+
+    @Override
+    public ResultVO importSysPermit(String jsonStr) {
+        return permissionService.importSysPermit(jsonStr);
+    }
+
+    @Override
+    public ResultVO getUserAuthorizablePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-		List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-		return roleService.getRolePermission(operator,lstRoleId);
-	}
+        return permissionService.getUserAuthorizablePermission(operator);
+    }
+
+    @Override
+    public ResultVO getRolePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
+        return roleService.getRolePermission(operator, lstRoleId);
+    }
 
     @Override
     public ResultVO getUserByUserName(String jsonStr) {
-        JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator =jsonObject.get("operator").toString();
-        UserVO userVO =StringUtility.parseObject(jsonObject.getJSONObject("user").toString(),UserVO.class);
-        return organizationService.getUserByUserName(operator,userVO);
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
+        return organizationService.getUserByUserName(operator, userVO);
     }
 
     @Override
@@ -247,32 +246,31 @@ public class UrcServiceImpl implements IUrcService {
 
     }
 
-	@Override
-	public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
+    @Override
+    public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         String userName = jsonObject.get("username").toString();
         int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
         int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
-	}
+    }
 
-	
-	
-	@Override
-	public ResultVO updateUsersOfRole(String jsonStr) {
+
+    @Override
+    public ResultVO updateUsersOfRole(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        List<RoleVO> lstRole =StringUtility.jsonToList(jsonObject.getString("lstRole"),RoleVO.class);
-		return roleService.updateUsersOfRole(lstRole, operator);
-	}
+        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
+        return roleService.updateUsersOfRole(lstRole, operator);
+    }
 
     @Override
     public ResultVO updateRolePermission(String jsonStr) {
-        JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator =jsonObject.get("operator").toString();
-        List<RoleVO> lstRole =StringUtility.parseObject(jsonObject.get("lstRole").toString(),List.class);
-        return roleService.updateRolePermission(operator,lstRole);
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        List<RoleVO> lstRole = StringUtility.parseObject(jsonObject.get("lstRole").toString(), List.class);
+        return roleService.updateRolePermission(operator, lstRole);
     }
     @Override
     public ResultVO logout(String jsonStr) {

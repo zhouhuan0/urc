@@ -22,7 +22,7 @@ public interface IRoleService {
 
     ResultVO getUserByRoleId(String operator,String roleId);
 
-    void deleteRoles(List<Integer> lstRoleId);
+    ResultVO deleteRoles(String jsonStr);
 
     List<SystemRootVO> getUserAuthorizablePermission(String userName);
 

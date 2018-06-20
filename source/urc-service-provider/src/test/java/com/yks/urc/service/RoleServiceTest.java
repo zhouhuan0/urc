@@ -23,16 +23,22 @@ public class RoleServiceTest extends BaseServiceTest {
 
     @Test
     public void testDeleteRoles() {
-        List<Integer> ids = new ArrayList();
-        ids.add(1);
-        ids.add(2);
-        ids.add(3);
-        roleService.deleteRoles(ids);
+        List<Long> ids = new ArrayList();
+        ids.add(1L);
+        ids.add(2L);
+        ids.add(3L);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("lstRoleId",ids);
+        jsonObject.put("operator","admin");
+        roleService.deleteRoles(jsonObject.toString());
     }
 
     @Test
     public void getRoleByRoleId() {
-        ResultVO<RoleVO>  resultVO= roleService.getRoleByRoleId("");
+        JSONObject  jsonObject = new JSONObject();
+        jsonObject.put("operator","admin");
+        jsonObject.put("roleId",1);
+        ResultVO<RoleVO>  resultVO= roleService.getRoleByRoleId(jsonObject.toString());
         Assert.assertNull(resultVO);
     }
 
