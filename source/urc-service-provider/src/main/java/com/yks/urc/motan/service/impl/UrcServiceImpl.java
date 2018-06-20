@@ -3,6 +3,7 @@ package com.yks.urc.motan.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
+import com.yks.urc.log.LogLevel;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
@@ -47,6 +48,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+	@Log(value = "login", level = LogLevel.ERROR)
     public ResultVO<LoginRespVO> login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
