@@ -14,6 +14,8 @@ import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.log.Log;
+import com.yks.urc.log.LogLevel;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.UserVO;
@@ -54,6 +56,7 @@ public class CacheBpImpl implements ICacheBp {
 	 */
 	private Cache<String, List<UserPermissionCacheDO>> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion");// , 2, TimeUnit.HOURS);
 
+	@Log(value = "insertUser", level = LogLevel.ERROR)
 	public void insertUser(UserVO u) {
 		try {
 			userInfoCache.put(u.userName, u);
