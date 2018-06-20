@@ -5,6 +5,7 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.service.api.IUrcService;
+import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
 
@@ -36,6 +37,9 @@ public class UrcServiceImpl implements IUrcService {
 
 	@Autowired
 	private IPermissionService permissionService;
+	
+	@Autowired
+	private IOperationBp operationBp;
 
     @Override
     public ResultVO syncUserInfo(UserVO curUser) {
@@ -223,15 +227,15 @@ public class UrcServiceImpl implements IUrcService {
 	public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-		List<String> lstRoleId = StringUtility.parseObject(jsonObject.get("lstRoleId").toString(), List.class);
-		return roleService.getRolePermission(lstRoleId);
+		List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
+		return roleService.getRolePermission(operator,lstRoleId);
 	}
 
     @Override
     public ResultVO getUserByUserName(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator =jsonObject.get("operator").toString();
-        UserVO userVO =StringUtility.parseObject(jsonObject.get("user").toString(),UserVO.class);
+        UserVO userVO =StringUtility.parseObject(jsonObject.getJSONObject("user").toString(),UserVO.class);
         return organizationService.getUserByUserName(operator,userVO);
     }
 
@@ -257,16 +261,19 @@ public class UrcServiceImpl implements IUrcService {
 	public ResultVO updateUsersOfRole(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        List<RoleVO> lstRole =StringUtility.parseObject(jsonObject.get("lstRole").toString(),List.class);
+        List<RoleVO> lstRole =StringUtility.jsonToList(jsonObject.getString("lstRole"),RoleVO.class);
 		return roleService.updateUsersOfRole(lstRole, operator);
 	}
 
-    @Override
-    public ResultVO updateRolePermission(String jsonStr) {
-        JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator =jsonObject.get("operator").toString();
-        List<RoleVO> lstRole =StringUtility.parseObject(jsonObject.get("lstRole").toString(),List.class);
-        return roleService.updateRolePermission(operator,lstRole);
-    }
+	
+	@Override
+	public ResultVO logout(String jsonStr) {
+		return userService.logout(jsonStr);
+	}
 
+
+	@Override
+	public ResultVO getMavenPackageTime() {
+		return operationBp.getMavenPackageTime();
+	}
 }

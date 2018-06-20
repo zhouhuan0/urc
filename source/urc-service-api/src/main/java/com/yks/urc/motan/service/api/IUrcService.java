@@ -227,4 +227,7 @@ public interface IUrcService {
 	ResultVO updateUsersOfRole(String jsonStr);
 
 	ResultVO updateRolePermission(String jsonStr);
+	
+	
+	ResultVO getMavenPackageTime();
 }

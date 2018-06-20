@@ -7,15 +7,23 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.yks.urc.entity.OperationLog;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IOperationLogMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class OperationBpImpl implements IOperationBp {
+	
+
+    @Value("${maven.package.time}")
+    private String mavenPackageTime;
+	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
@@ -46,6 +54,15 @@ public class OperationBpImpl implements IOperationBp {
 				}
 			}
 		});
+	}
+
+	
+	
+	public ResultVO getMavenPackageTime() {
+		if(StringUtility.isNullOrEmpty(mavenPackageTime)){
+			return VoHelper.getErrorResult();
+		}
+		return VoHelper.getSuccessResult(mavenPackageTime);
 	}
 
 }
