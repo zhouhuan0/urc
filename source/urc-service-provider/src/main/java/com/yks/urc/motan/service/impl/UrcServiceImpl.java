@@ -265,21 +265,12 @@ public class UrcServiceImpl implements IUrcService {
 		return roleService.updateUsersOfRole(lstRole, operator);
 	}
 
-	
-	@Override
-	public ResultVO logout(String jsonStr) {
-		return userService.logout(jsonStr);
-	}
+    @Override
+    public ResultVO updateRolePermission(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator =jsonObject.get("operator").toString();
+        List<RoleVO> lstRole =StringUtility.parseObject(jsonObject.get("lstRole").toString(),List.class);
+        return roleService.updateRolePermission(operator,lstRole);
+    }
 
-
-	@Override
-	public ResultVO getMavenPackageTime() {
-		return operationBp.getMavenPackageTime();
-	}
-
-	@Override
-	public ResultVO updateRolePermission(String jsonStr) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
