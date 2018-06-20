@@ -181,7 +181,7 @@ public class RoleServiceImpl implements IRoleService {
      * @date: 2018/6/13 20:44
      * @see
      */
-    private ResultVO insertOrUpdateRole(String operator, RoleVO roleVO) {
+    private void insertOrUpdateRole(String operator, RoleVO roleVO) {
 		/* 1、添加或更新角色表 */
         RoleDO roleDO = new RoleDO();
         BeanUtils.copyProperties(roleVO, roleDO);
