@@ -27,10 +27,10 @@ public class RolePermissionMapperTest extends BaseMapperTest {
 
     @Test
     public void deleteBatch() {
-        List<Integer> ids = new ArrayList<>();
-        ids.add(1);
-        ids.add(3);
-        ids.add(4);
+        List<Long> ids = new ArrayList<>();
+        ids.add(1L);
+        ids.add(3L);
+        ids.add(4L);
         int rtn = rolePermissionMapper.deleteBatch(ids);
         System.out.println(rtn);
 

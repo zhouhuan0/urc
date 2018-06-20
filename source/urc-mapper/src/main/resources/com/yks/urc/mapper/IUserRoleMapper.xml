@@ -50,28 +50,27 @@
     <delete id="deleteByRoleId" parameterType="java.lang.Long">
       delete from urc_user_role where role_id = #{roleId,jdbcType=TINYINT}
     </delete>
-    
-    
+
+
     <delete id="deleteUserRole" parameterType="com.yks.urc.entity.UserRoleDO">
-      delete from urc_user_role 
-			<where>
-				<if test="roleId != null ">
-					role_id =#{roleId} 
-				</if>
-				<if test="createBy != null and createBy != '' ">
-					and create_by =#{createBy} 
-				</if>
-			</where>
+        delete from urc_user_role
+        <where>
+            <if test="roleId != null ">
+                role_id =#{roleId}
+            </if>
+            <if test="createBy != null and createBy != '' ">
+                and create_by =#{createBy}
+            </if>
+        </where>
 
     </delete>
-    
-    
-    
+
+
     <!--根据userName删除-->
     <delete id="deleteByUserName" parameterType="java.lang.String">
       delete from urc_user_role where user_name = #{userName,jdbcType=VARCHAR}
     </delete>
-    
+
     <!--批量新增-->
     <insert id="insertBatch" parameterType="java.util.List">
         insert into urc_user_role
@@ -185,19 +184,32 @@
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
-    
-    
-     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="com.yks.urc.entity.UserRoleDO" >
-			SELECT  user_name from urc_user_role 
-				<where>
-					<if test="roleId != null ">
-					 	role_id=#{roleId} 
-					</if>
-					<if test="createBy != null and createBy != '' ">
-					 	and create_by=#{createBy} 
-					</if>
-				</where>
+
+
+    <select id="getUserNameByRoleId" resultType="java.lang.String" parameterType="com.yks.urc.entity.UserRoleDO">
+        SELECT user_name from urc_user_role
+        <where>
+            <if test="roleId != null ">
+                role_id=#{roleId}
+            </if>
+            <if test="createBy != null and createBy != '' ">
+                and create_by=#{createBy}
+            </if>
+        </where>
     </select>
-    
-    
+    <!--根据roleId列表和创建人查找用户-角色对应的用户名-->
+    <select id="listUserNamesByRoleIds" resultType="java.lang.String" parameterType="java.util.HashMap">
+        select user_name from urc_user_role
+        <where>
+            role_id in
+            <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            <if test="createBy != null and createBy != '' ">
+                and create_by=#{createBy}
+            </if>
+        </where>
+    </select>
+
+
 </mapper>

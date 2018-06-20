@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class RoleDO {
 
@@ -59,6 +60,10 @@ public class RoleDO {
      *   角色-功能权限关系表
      */
     private RolePermissionDO permissionDO;
+
+    private List<RolePermissionDO> permissionDOList;
+
+    private List<UserRoleDO> userRoleDOS;
 
     public Long getId() {
         return id;
@@ -170,5 +175,21 @@ public class RoleDO {
 
     public void setPermissionDO(RolePermissionDO permissionDO) {
         this.permissionDO = permissionDO;
+    }
+
+    public List<RolePermissionDO> getPermissionDOList() {
+        return permissionDOList;
+    }
+
+    public void setPermissionDOList(List<RolePermissionDO> permissionDOList) {
+        this.permissionDOList = permissionDOList;
+    }
+
+    public List<UserRoleDO> getUserRoleDOS() {
+        return userRoleDOS;
+    }
+
+    public void setUserRoleDOS(List<UserRoleDO> userRoleDOS) {
+        this.userRoleDOS = userRoleDOS;
     }
 }

@@ -17,6 +17,8 @@ public class PermissionVO implements Serializable {
 
     private String sysKey;
 
+    private String sysName;
+
     private String sysContext;
 
      public String getSysKey() {
@@ -33,5 +35,13 @@ public class PermissionVO implements Serializable {
 
      public void setSysContext(String sysContext) {
          this.sysContext = sysContext;
+     }
+
+     public String getSysName() {
+         return sysName;
+     }
+
+     public void setSysName(String sysName) {
+         this.sysName = sysName;
      }
  }

@@ -35,7 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-@Component
+//@Component
 public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	private UrcServiceImpl service;

@@ -101,9 +101,9 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void deleteBatch() {
-        List<Integer> ids = new ArrayList();
-        ids.add(9);
-        ids.add(15);
+        List<Long> ids = new ArrayList();
+        ids.add(9L);
+        ids.add(15L);
         int rtn = roleMapper.deleteBatch(ids);
         System.out.println(rtn);
 
@@ -243,5 +243,24 @@ public class RoleMapperTest extends BaseMapperTest {
         String username ="panyun";
        List<String> roleName=  roleMapper.selectRoleNameByUserName(username);
         System.out.println(roleName);
+    }
+
+
+    @Test
+    public void getRoleDatasByRoleId(){
+        RoleDO role =  roleMapper.getRoleDatasByRoleId(1L);
+        System.out.println(role);
+    }
+
+    @Test
+    public void deleteBatchRoleDatas(){
+        Map<String,Object> dataMap = new HashMap<>();
+        dataMap.put("createBy", "admin");
+        List<Long> lstRoleId = new ArrayList<>();
+        lstRoleId.add(1L);
+        lstRoleId.add(2L);
+        dataMap.put("roleIds", lstRoleId);
+        int rtn = roleMapper.deleteBatchRoleDatas(dataMap);
+        System.out.println(rtn);
     }
 }
