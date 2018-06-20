@@ -18,17 +18,6 @@
     
    <profiles>
         <profile>  
-        	<id>dev</id>
-            <properties>  
-                <maven.package.time>20180620192228</maven.package.time>  
-            </properties>  
-            <activation>  
-                <activeByDefault>true</activeByDefault>  
-            </activation>  
-        </profile>  
-        
-        <profile>  
-        	<id>test</id>
             <properties>  
                 <maven.package.time>${maven.build.timestamp}</maven.package.time>  
             </properties>  
@@ -36,17 +25,6 @@
                 <activeByDefault>true</activeByDefault>  
             </activation>  
         </profile> 
-        
-        <profile>  
-        	<id>pro</id>
-            <properties>  
-                <maven.package.time>${maven.build.timestamp}</maven.package.time>  
-            </properties>  
-            <activation>  
-                <activeByDefault>true</activeByDefault>  
-            </activation>  
-        </profile> 
-        
  	 </profiles>
 
     <dependencies>
