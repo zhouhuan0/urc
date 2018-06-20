@@ -4,10 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.enums.UserCentralStatusEnum;
 import com.yks.common.util.StringUtil;
-import com.yks.urc.entity.*;
+import com.yks.urc.entity.Permission;
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserInfoDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.*;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
@@ -21,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.Role;
 import java.util.*;
 
 /**
@@ -150,7 +160,7 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             /* 4、非管理员，查询需要操作的角色 */
             RoleDO opRoleDO = roleMapper.getByRoleName(roleVO.getRoleName());
-			/* 4.1 非管理员———该角色存在但是创建人不是当前用户 */
+            /* 4.1 非管理员———该角色存在但是创建人不是当前用户 */
             if (opRoleDO != null && !opRoleDO.getCreateBy().equals(operator)) {
                 return VoHelper.getErrorResult(UserCentralStatusEnum.No_PERMISSION.getCode(), UserCentralStatusEnum.No_PERMISSION.getDesc());
             } else {
@@ -175,8 +185,7 @@ public class RoleServiceImpl implements IRoleService {
 		/* 1、添加或更新角色表 */
         RoleDO roleDO = new RoleDO();
         BeanUtils.copyProperties(roleVO, roleDO);
-        Long roleId = roleVO.getRoleId();
-        roleId = (roleId == null || roleId == 0) ? seqBp.getNextRoleId() : roleId;
+        Long roleId = seqBp.getNextRoleId();
         roleDO.setRoleId(roleId);
         roleDO.setCreateBy(operator);
         roleDO.setCreateTime(new Date());
@@ -333,7 +342,7 @@ public class RoleServiceImpl implements IRoleService {
         if (!roleMapper.isAdminAccount(operator)) {
             userRole.setCreateBy(operator);
         }
-        List<UserVO> userList = userMapper.getUserByRoleId(userRole);
+        List<UserDO> userList = userMapper.getUserByRoleId(userRole);
         return VoHelper.getSuccessResult(userList);
     }
 
@@ -378,34 +387,6 @@ public class RoleServiceImpl implements IRoleService {
         return VoHelper.getSuccessResult();
     }
 
-    /**
-     * Description: 1、分配权限--获取指定(当前)用户可授权给其它角色的功能权限 2、…
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 14:51
-     * @see
-     */
-    @Override
-    public List<SystemRootVO> getUserAuthorizablePermission(String userName) {
-		/* 获取当前用户可授权给其它角色的功能权限 */
-        return null;
-    }
-
-    /**
-     * Description: 1、分配权限--同时更新多个角色的功能权限 2、…
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 14:57
-     * @see
-     */
-    @Override
-    public void updateRolePermission(List<String> lstRoleId) {
-		/* 非管理员只能修改自己关联的角色 */
-    }
 
     /**
      * Description:
@@ -445,6 +426,39 @@ public class RoleServiceImpl implements IRoleService {
             roleVoList.add(roleVO);
         }
         return VoHelper.getSuccessResult(roleVoList);
+    }
+
+    @Override
+    public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
+        RolePermissionDO rolePermissionDO = new RolePermissionDO();
+        List<String> userNameList = new ArrayList<>();
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult();
+        }
+        //1.首先拿到当前角色的所有的用户
+        try {
+            for (RoleVO roleVO : lstRole) {
+                UserRoleDO userRole = new UserRoleDO();
+                userRole.setRoleId(roleVO.roleId);
+                List<UserDO> userDOList = userMapper.getUserByRoleId(userRole);
+                //更新缓存
+                for (int i = 0; i < userDOList.size(); i++) {
+                    String userName = userDOList.get(i).getUserName();
+                    userNameList.add(userName);
+                }
+                permitStatBp.updateUserPermitCache(userNameList);
+                //2. 更新角色的功能权限
+                List<PermissionVO> permissionVOS = roleVO.selectedContext;
+                for (PermissionVO permissionVO : permissionVOS) {
+                    //将功能版本放入do中
+                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                    rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
+                }
+            }
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            return VoHelper.getErrorResult();
+        }
     }
 
     /**
@@ -556,6 +570,7 @@ public class RoleServiceImpl implements IRoleService {
     /**
      * 判断当前操作者权限,再获取被复制角色信息 1.管理员用户可以复制所有角色信息 2.普通用户只能复制自己创建的角色信息
      */
+
     private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId) {
         if (roleMapper.checkDuplicateRoleName(newRoleName, null)) {
             throw new RuntimeException("角色名已存在");
@@ -593,6 +608,12 @@ public class RoleServiceImpl implements IRoleService {
         } catch (Exception ex) {
             operationBp.addLog(logger.getName(), "处理过期角色ERROR", ex);
         }
+    }
+
+    @Override
+    public List<SystemRootVO> getUserAuthorizablePermission(String userName) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

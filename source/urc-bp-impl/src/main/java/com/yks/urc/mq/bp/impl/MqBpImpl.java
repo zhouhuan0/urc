@@ -37,7 +37,7 @@ public class MqBpImpl implements IMqBp {
 
                 }
             };
-            KafkaProducerSingleton.getInstance().send(arg0, arg1);
+            KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
         }
     }
 
@@ -62,7 +62,7 @@ public class MqBpImpl implements IMqBp {
 
                     }
                 };
-                KafkaProducerSingleton.getInstance().send(arg0, arg1);
+                KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
             }
         }
     }

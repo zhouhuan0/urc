@@ -15,6 +15,17 @@
         <artifactId>urc-parent</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
+    
+   <profiles>
+        <profile>  
+            <properties>  
+                <maven.package.time>${maven.build.timestamp}</maven.package.time>  
+            </properties>  
+            <activation>  
+                <activeByDefault>true</activeByDefault>  
+            </activation>  
+        </profile>  
+ 	 </profiles>
 
     <dependencies>
        <dependency>
@@ -37,7 +48,16 @@
 
 
     <build>
-        <finalName>urc-service-provider</finalName>
+      	  <finalName>urc-service-provider</finalName>
+	      <resources>
+	      	<resource>  
+	           <directory>src/main/resources/</directory>  
+	           <filtering>true</filtering>  
+	           <includes>  
+	               <include>**/*.properties</include>  
+	           </includes>  
+	       </resource> 
+	    </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
