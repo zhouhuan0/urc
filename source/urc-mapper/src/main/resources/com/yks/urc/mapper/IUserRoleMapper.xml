@@ -187,16 +187,8 @@
     </select>
     
     
-     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="com.yks.urc.entity.UserRoleDO" >
-			SELECT  user_name from urc_user_role 
-				<where>
-					<if test="roleId != null ">
-					 	role_id=#{roleId} 
-					</if>
-					<if test="createBy != null and createBy != '' ">
-					 	and create_by=#{createBy} 
-					</if>
-				</where>
+     <select id="getUserNameByRoleId" resultType="java.lang.String"  parameterType="java.lang.String" >
+			SELECT  user_name from urc_user_role WHERE role_id=#{roleId}
     </select>
     
     

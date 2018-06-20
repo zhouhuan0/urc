@@ -100,7 +100,7 @@ public interface IUserMapper {
      * @param roleId
      * @return
      */
-	List<UserVO> getUserByRoleId(UserRoleDO userRole);
+	List<UserDO> getUserByRoleId(@Param("roleId") String roleId);
 
     UserDO test(@Param("userName") String userName);
 

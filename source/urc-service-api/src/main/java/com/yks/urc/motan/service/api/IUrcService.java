@@ -225,5 +225,6 @@ public interface IUrcService {
 	 * @return
 	 */
 	ResultVO updateUsersOfRole(String jsonStr);
-	
+
+	ResultVO updateRolePermission(String jsonStr);
 }

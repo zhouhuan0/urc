@@ -77,4 +77,12 @@ public interface IRolePermissionMapper {
      * @Date 2018/6/14 15:20
      */
     List<String> getSysKetByRoleAndUserName(@Param("userName") String userName);
+    /**
+     * 根据roleId 更新角色的功能权限
+     * @param  rolePermissionDO
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/20 9:45
+     */
+    int updateUserRoleByRoleId(@Param("rolePermissionDO") RolePermissionDO rolePermissionDO);
 }

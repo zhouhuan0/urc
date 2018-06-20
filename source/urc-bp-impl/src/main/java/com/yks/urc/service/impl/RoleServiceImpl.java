@@ -4,10 +4,19 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.enums.UserCentralStatusEnum;
 import com.yks.common.util.StringUtil;
-import com.yks.urc.entity.*;
+import com.yks.urc.entity.Permission;
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserInfoDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.*;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
@@ -21,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.management.relation.Role;
 import java.util.*;
 
 /**
@@ -171,12 +181,11 @@ public class RoleServiceImpl implements IRoleService {
      * @date: 2018/6/13 20:44
      * @see
      */
-    private void insertOrUpdateRole(String operator, RoleVO roleVO) {
+    private ResultVO insertOrUpdateRole(String operator, RoleVO roleVO) {
 		/* 1、添加或更新角色表 */
         RoleDO roleDO = new RoleDO();
         BeanUtils.copyProperties(roleVO, roleDO);
-        Long roleId = roleVO.getRoleId();
-        roleId = (roleId == null || roleId == 0) ? seqBp.getNextRoleId() : roleId;
+        Long roleId = seqBp.getNextRoleId();
         roleDO.setRoleId(roleId);
         roleDO.setCreateBy(operator);
         roleDO.setCreateTime(new Date());
@@ -350,19 +359,7 @@ public class RoleServiceImpl implements IRoleService {
         return null;
     }
 
-    /**
-     * Description: 1、分配权限--同时更新多个角色的功能权限 2、…
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 14:57
-     * @see
-     */
-    @Override
-    public void updateRolePermission(List<String> lstRoleId) {
-		/* 非管理员只能修改自己关联的角色 */
-    }
+
 
     /**
      * Description:
@@ -402,6 +399,38 @@ public class RoleServiceImpl implements IRoleService {
             roleVoList.add(roleVO);
         }
         return VoHelper.getSuccessResult(roleVoList);
+    }
+
+    @Override
+    public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
+        RolePermissionDO rolePermissionDO = new RolePermissionDO();
+        List<String> userNameList = new ArrayList<>();
+        if (StringUtility.isNullOrEmpty(operator)){
+            return VoHelper.getErrorResult();
+        }
+        try {
+            //1.首先拿到当前角色的所有的用户
+            for (RoleVO roleVO : lstRole) {
+                List<UserDO> userDOList = userMapper.getUserByRoleId(String.valueOf(roleVO.roleId));
+                //更新缓存
+                for (int i = 0; i < userDOList.size(); i++) {
+                    String userName =userDOList.get(i).getUserName();
+                    userNameList.add(userName);
+                }
+                permitStatBp.updateUserPermitCache(userNameList);
+                //2. 更新角色的功能权限
+                List<PermissionVO> permissionVOS = roleVO.selectedContext;
+                for (PermissionVO permissionVO : permissionVOS) {
+                    //将功能版本放入do中
+                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                    rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
+
+                }
+            }
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            return VoHelper.getErrorResult();
+        }
     }
 
     /**

@@ -220,4 +220,29 @@
         inner JOIN urc_role_permission up on ur.role_id =up.role_id
         where ur.user_name =#{userName}
     </select>
+    <!--更新角色的功能权限-->
+    <update id="updateUserRoleByRoleId">
+        update urc_user_role
+        <set>
+            <if test="roleId != null">
+                role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER},
+            </if>
+            <if test="userName != null">
+                user_name = #{rolePermissionDO.userName,jdbcType=VARCHAR},
+            </if>
+            <if test="rolePermissionDO.createBy != null">
+                create_by = #{rolePermissionDO.createBy,jdbcType=VARCHAR},
+            </if>
+            <if test="rolePermissionDO.createTime != null">
+                create_time = #{rolePermissionDO.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="rolePermissionDO.modifiedBy != null">
+                modified_by = #{rolePermissionDO.modifiedBy,jdbcType=VARCHAR},
+            </if>
+            <if test="rolePermissionDO.modifiedTime != null">
+                modified_time = #{rolePermissionDO.modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER}
+    </update>
 </mapper>
