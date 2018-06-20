@@ -8,6 +8,8 @@
  */
 package com.yks.urc.service;
 
+import com.yks.mq.client.MQConsumerClient;
+import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.EncryptHelper;
@@ -15,12 +17,15 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
+import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
+import com.yks.urc.vo.DataRuleSysVO;
+import com.yks.urc.vo.DataRuleVO;
 import com.yks.urc.vo.UserVO;
 
 import java.io.IOException;
@@ -29,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -60,21 +66,46 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
 	IPermissionService permissionService;
 
+	@Autowired
+	IMqBp mqBp;
+
 	@Value("${importSysPermit.aesPwd}")
 	private String aesPwd;
 
-	
 	public void testIPermissionService() throws Exception {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
 		String strEncrypt = EncryptHelper.encryptAes_Base64(strJson1, aesPwd);
 		System.out.println(permissionService.importSysPermit(strEncrypt));
 	}
 
+	public static void main(String[] args) {
+		String topic = String.format("URC_USER_DATARULE_%s", "001");
+		MessageCallBack callBack = new MessageCallBack() {
+
+			@Override
+			public void call(String arg0, String arg1) {
+				System.out.println(String.format("-----------------MessageCallBack:%s %s", arg0, arg1));
+			}
+		};
+		new MQConsumerClient().subscribe(topic, callBack);
+	}
+
 	@Test
+	public void mq_Test() {
+		DataRuleVO dr = new DataRuleVO();
+		dr.userName = "py";
+		dr.lstDataRuleSys = new ArrayList<>();
+		DataRuleSysVO e = new DataRuleSysVO();
+		e.sysKey = "001";
+		dr.lstDataRuleSys.add(e);
+		mqBp.send2Mq(dr);
+	}
+
 	public void testUpdateExpiredRole() {
 		List<RoleDO> lstRole = roleMapper.updateAllExpiredRole();
 		System.out.println(StringUtility.toJSONString_NoException(lstRole));
 	}
+
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}

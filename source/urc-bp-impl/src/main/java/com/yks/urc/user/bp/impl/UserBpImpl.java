@@ -1,6 +1,7 @@
 package com.yks.urc.user.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
@@ -10,7 +11,6 @@ import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
-import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserLoginLogMapper;
 import com.yks.urc.mapper.IUserMapper;
