@@ -16,16 +16,38 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     
-<!--    <profiles>
+   <profiles>
         <profile>  
+        	<id>dev</id>
+            <properties>  
+                <maven.package.time>20180620192228</maven.package.time>  
+            </properties>  
+            <activation>  
+                <activeByDefault>true</activeByDefault>  
+            </activation>  
+        </profile>  
+        
+        <profile>  
+        	<id>test</id>
             <properties>  
                 <maven.package.time>${maven.build.timestamp}</maven.package.time>  
             </properties>  
             <activation>  
                 <activeByDefault>true</activeByDefault>  
             </activation>  
-        </profile>  
- 	 </profiles> -->
+        </profile> 
+        
+        <profile>  
+        	<id>pro</id>
+            <properties>  
+                <maven.package.time>${maven.build.timestamp}</maven.package.time>  
+            </properties>  
+            <activation>  
+                <activeByDefault>true</activeByDefault>  
+            </activation>  
+        </profile> 
+        
+ 	 </profiles>
 
     <dependencies>
        <dependency>
@@ -49,16 +71,16 @@
 
     <build>
       	  <finalName>urc-service-provider</finalName>
-<!-- 	      <resources>
+	      <resources>
 	      	<resource>  
 	           <directory>src/main/resources/</directory>  
 	           <filtering>true</filtering>  
 	           <includes>  
-	               <include>**/*.properties</include>
-                   <include>**/*.xml</include>
-               </includes>
-	       </resource>
-	    </resources> -->
+	               <include>**/*.properties</include>  
+	               <include>**/*.xml</include>  
+	           </includes>  
+	       </resource> 
+	    </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

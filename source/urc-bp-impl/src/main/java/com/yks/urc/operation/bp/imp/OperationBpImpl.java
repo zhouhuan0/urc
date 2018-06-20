@@ -21,8 +21,8 @@ import com.yks.urc.vo.helper.VoHelper;
 public class OperationBpImpl implements IOperationBp {
 	
 
-    //@Value("${maven.package.time}")
-    //private String mavenPackageTime;
+    @Value("${maven.package.time}")
+    private String mavenPackageTime;
 	
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -59,11 +59,10 @@ public class OperationBpImpl implements IOperationBp {
 	
 	
 	public ResultVO getMavenPackageTime() {
-		//if(StringUtility.isNullOrEmpty(mavenPackageTime)){
-		//	return VoHelper.getErrorResult();
-		//}
-		//return VoHelper.getSuccessResult(mavenPackageTime);
-		return VoHelper.getSuccessResult();
+		if(StringUtility.isNullOrEmpty(mavenPackageTime)){
+			return VoHelper.getErrorResult();
+		}
+		return VoHelper.getSuccessResult(mavenPackageTime);
 	}
 
 }
