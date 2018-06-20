@@ -43,11 +43,11 @@ done
 RUN_CMD="$JAVA_HOME/bin/java"
 RUN_CMD="$RUN_CMD -classpath $TEMP_CLASSPATH"
 RUN_CMD="$RUN_CMD $JAVA_OPTS"
-RUN_CMD="$RUN_CMD com.yks.urc.main.UrcServiceProviderStarter >>/dev/null 2>&1 &"
+RUN_CMD="$RUN_CMD com.yks.urc.TaskSchedulerStarter >>/dev/null 2>&1 &"
 
 echo $RUN_CMD
 
 eval $RUN_CMD
 
-echo "urc-service-provider start !"
+echo "urc-taskScheduler start !"
 #==============================================================================

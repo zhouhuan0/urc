@@ -12,7 +12,7 @@ JAVA_OPTS="-Xss256k"
 #==============================================================================
 
 #stop Server
-$(ps -ef | grep urc-service-provider | awk '{print $2}' | xargs kill -9 )
+$(ps -ef | grep UrcServiceProviderStarter | awk '{print $2}' | xargs kill -9 )
 
 echo "Shutdown urc-service-provider is done....."
 #==============================================================================
