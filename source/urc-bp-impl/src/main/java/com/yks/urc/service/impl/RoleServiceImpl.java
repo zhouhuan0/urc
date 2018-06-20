@@ -153,12 +153,12 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
-		/* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
+        /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isAdminAccount(operator);
         if (isAdmin) {
             insertOrUpdateRole(operator, roleVO);
         } else {
-			/* 4、非管理员，查询需要操作的角色 */
+            /* 4、非管理员，查询需要操作的角色 */
             RoleDO opRoleDO = roleMapper.getByRoleName(roleVO.getRoleName());
 			/* 4.1 非管理员———该角色存在但是创建人不是当前用户 */
             if (opRoleDO != null && !opRoleDO.getCreateBy().equals(operator)) {
@@ -344,22 +344,6 @@ public class RoleServiceImpl implements IRoleService {
 
     }
 
-    /**
-     * Description: 1、分配权限--获取指定(当前)用户可授权给其它角色的功能权限 2、…
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 14:51
-     * @see
-     */
-    @Override
-    public List<SystemRootVO> getUserAuthorizablePermission(String userName) {
-		/* 获取当前用户可授权给其它角色的功能权限 */
-        return null;
-    }
-
-
 
     /**
      * Description:
@@ -405,16 +389,16 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
         List<String> userNameList = new ArrayList<>();
-        if (StringUtility.isNullOrEmpty(operator)){
+        if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult();
         }
+        //1.首先拿到当前角色的所有的用户
         try {
-            //1.首先拿到当前角色的所有的用户
             for (RoleVO roleVO : lstRole) {
                 List<UserDO> userDOList = userMapper.getUserByRoleId(String.valueOf(roleVO.roleId));
                 //更新缓存
                 for (int i = 0; i < userDOList.size(); i++) {
-                    String userName =userDOList.get(i).getUserName();
+                    String userName = userDOList.get(i).getUserName();
                     userNameList.add(userName);
                 }
                 permitStatBp.updateUserPermitCache(userNameList);
@@ -424,7 +408,6 @@ public class RoleServiceImpl implements IRoleService {
                     //将功能版本放入do中
                     rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
                     rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
-
                 }
             }
             return VoHelper.getSuccessResult();
@@ -433,115 +416,116 @@ public class RoleServiceImpl implements IRoleService {
         }
     }
 
-    /**
-     * Description: 1、分配权限--获取多个角色已有的用户 2、…
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 15:01
-     * @see
-     */
-    @Override
-    public ResultVO getRoleUser(String operator, List<String> lstRoleId) {
+        /**
+         * Description: 1、分配权限--获取多个角色已有的用户 2、…
+         *
+         * @param :
+         * @return:
+         * @auther: lvcr
+         * @date: 2018/6/6 15:01
+         * @see
+         */
+        @Override
+        public ResultVO getRoleUser (String operator, List < String > lstRoleId){
 		/* 非管理员只能查看自己创建的角色 */
-        List<RoleVO> roleList = new ArrayList<>();
-        for (int i = 0; i < lstRoleId.size(); i++) {
-            RoleDO roleDO = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
-            RoleVO roleVO = new RoleVO();
-            roleVO.setRoleName(roleDO.getRoleName());
-            roleVO.setRoleId(roleDO.getRoleId());
-            UserRoleDO userRoleDO = new UserRoleDO();
-            userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-            if (!roleMapper.isAdminAccount(operator)) {
-                userRoleDO.setCreateBy(operator);
+            List<RoleVO> roleList = new ArrayList<>();
+            for (int i = 0; i < lstRoleId.size(); i++) {
+                RoleDO roleDO = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+                RoleVO roleVO = new RoleVO();
+                roleVO.setRoleName(roleDO.getRoleName());
+                roleVO.setRoleId(roleDO.getRoleId());
+                UserRoleDO userRoleDO = new UserRoleDO();
+                userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+                if (!roleMapper.isAdminAccount(operator)) {
+                    userRoleDO.setCreateBy(operator);
+                }
+                List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+                roleVO.setLstUserName(lstUserName);
+                roleList.add(roleVO);
             }
-            List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
-            roleVO.setLstUserName(lstUserName);
-            roleList.add(roleVO);
-        }
 		/* 查询用户角色关系表 */
-        return VoHelper.getSuccessResult(roleList);
-    }
+            return VoHelper.getSuccessResult(roleList);
+        }
 
-	/**
-	 * Description: 1、分配权限--同时更新多个角色的用户 
-	 *
-	 * @param :
-	 * @return:
-	 * @auther: lvcr
-	 * @date: 2018/6/6 15:02
-	 * @see
-	 */
-	@Override
-	@Transactional(rollbackFor = Exception.class)
-	public ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator) {
-		for (int i = 0; i < lstRole.size(); i++) {
-			RoleVO roleVO=lstRole.get(i);
-			UserRoleDO userRole = new UserRoleDO();
-			List<UserRoleDO> userRoleDOS = new ArrayList<>();
-			List<String> userNameList=roleVO.getLstUserName();
-			userRole.setRoleId(roleVO.getRoleId());
-			if(roleMapper.isAdminAccount(operator)){
-				userRoleMapper.deleteUserRole(userRole);
-				for (int j = 0; j < userNameList.size(); j++) {
-					UserRoleDO userRoleDO = new UserRoleDO();
-					userRoleDO.setUserName(userNameList.get(i));
-					userRoleDO.setRoleId(roleVO.getRoleId());
-					userRoleDO.setCreateBy(operator);
-					userRoleDO.setCreateTime(new Date());
-					userRoleDO.setModifiedBy(operator);
-					userRoleDO.setModifiedTime(new Date());
-				}
-			}else{
-				userRole.setCreateBy(operator);
-				userRoleMapper.deleteUserRole(userRole);
-				for (int j = 0; j < userNameList.size(); j++) {
-					UserDO usreDO=userMapper.getUserByUserName(userNameList.get(i));
-					if(usreDO.getCreateBy().equals(operator)){
-						UserRoleDO userRoleDO = new UserRoleDO();
-						userRoleDO.setUserName(userNameList.get(i));
-						userRoleDO.setRoleId(roleVO.getRoleId());
-						userRoleDO.setCreateBy(operator);
-						userRoleDO.setCreateTime(new Date());
-						userRoleDO.setModifiedBy(operator);
-						userRoleDO.setModifiedTime(new Date());
-					}
-				}
-			}
-			userRoleMapper.insertBatch(userRoleDOS);
-		}
-		return VoHelper.getSuccessResult();
-	}
+        /**
+         * Description: 1、分配权限--同时更新多个角色的用户
+         *
+         * @param :
+         * @return:
+         * @auther: lvcr
+         * @date: 2018/6/6 15:02
+         * @see
+         */
+        @Override
+        @Transactional(rollbackFor = Exception.class)
+        public ResultVO updateUsersOfRole (List < RoleVO > lstRole, String operator){
+            for (int i = 0; i < lstRole.size(); i++) {
+                RoleVO roleVO = lstRole.get(i);
+                UserRoleDO userRole = new UserRoleDO();
+                List<UserRoleDO> userRoleDOS = new ArrayList<>();
+                List<String> userNameList = roleVO.getLstUserName();
+                userRole.setRoleId(roleVO.getRoleId());
+                if (roleMapper.isAdminAccount(operator)) {
+                    userRoleMapper.deleteUserRole(userRole);
+                    for (int j = 0; j < userNameList.size(); j++) {
+                        UserRoleDO userRoleDO = new UserRoleDO();
+                        userRoleDO.setUserName(userNameList.get(i));
+                        userRoleDO.setRoleId(roleVO.getRoleId());
+                        userRoleDO.setCreateBy(operator);
+                        userRoleDO.setCreateTime(new Date());
+                        userRoleDO.setModifiedBy(operator);
+                        userRoleDO.setModifiedTime(new Date());
+                    }
+                } else {
+                    userRole.setCreateBy(operator);
+                    userRoleMapper.deleteUserRole(userRole);
+                    for (int j = 0; j < userNameList.size(); j++) {
+                        UserDO usreDO = userMapper.getUserByUserName(userNameList.get(i));
+                        if (usreDO.getCreateBy().equals(operator)) {
+                            UserRoleDO userRoleDO = new UserRoleDO();
+                            userRoleDO.setUserName(userNameList.get(i));
+                            userRoleDO.setRoleId(roleVO.getRoleId());
+                            userRoleDO.setCreateBy(operator);
+                            userRoleDO.setCreateTime(new Date());
+                            userRoleDO.setModifiedBy(operator);
+                            userRoleDO.setModifiedTime(new Date());
+                        }
+                    }
+                }
+                userRoleMapper.insertBatch(userRoleDOS);
+            }
+            return VoHelper.getSuccessResult();
+        }
 
-    /**
-     * Description: 1、复制角色 复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/6 15:04
-     * @see
-     */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void copyRole(String operator, String newRoleName, String sourceRoleId) {
+        /**
+         * Description: 1、复制角色 复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
+         *
+         * @param :
+         * @return:
+         * @auther: lvcr
+         * @date: 2018/6/6 15:04
+         * @see
+         */
+        @Override
+        @Transactional(rollbackFor = Exception.class)
+        public void copyRole (String operator, String newRoleName, String sourceRoleId){
 		/* 非admin用户只能管理自己创建的角色 */
-        RoleDO roleDO = getRoleInfo(operator, newRoleName, Long.parseLong(sourceRoleId));
-        // 复制角色信息
-        roleDO.setRoleId(seqBp.getNextRoleId());
-        roleDO.setRoleName(newRoleName);
-        roleMapper.insert(roleDO);
+            RoleDO roleDO = getRoleInfo(operator, newRoleName, Long.parseLong(sourceRoleId));
+            // 复制角色信息
+            roleDO.setRoleId(seqBp.getNextRoleId());
+            roleDO.setRoleName(newRoleName);
+            roleMapper.insert(roleDO);
 		/* 复制对应的角色权功能限关系 */
 //		List<RoleDO> rolePermission = getRolePermission(Arrays.asList(sourceRoleId));
-        // rolePermission.stream().forEach(role -> {
-        // role.getPermissionDO()
-        // });
-    }
+            // rolePermission.stream().forEach(role -> {
+            // role.getPermissionDO()
+            // });
+        }
 
-    /**
-     * 判断当前操作者权限,再获取被复制角色信息 1.管理员用户可以复制所有角色信息 2.普通用户只能复制自己创建的角色信息
-     */
+        /**
+         * 判断当前操作者权限,再获取被复制角色信息 1.管理员用户可以复制所有角色信息 2.普通用户只能复制自己创建的角色信息
+         */
+
     private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId) {
         if (roleMapper.checkDuplicateRoleName(newRoleName, null)) {
             throw new RuntimeException("角色名已存在");
