@@ -16,7 +16,7 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
     
-   <profiles>
+<!--    <profiles>
         <profile>  
             <properties>  
                 <maven.package.time>${maven.build.timestamp}</maven.package.time>  
@@ -25,7 +25,7 @@
                 <activeByDefault>true</activeByDefault>  
             </activation>  
         </profile>  
- 	 </profiles>
+ 	 </profiles> -->
 
     <dependencies>
        <dependency>
@@ -49,7 +49,7 @@
 
     <build>
       	  <finalName>urc-service-provider</finalName>
-	      <resources>
+<!-- 	      <resources>
 	      	<resource>  
 	           <directory>src/main/resources/</directory>  
 	           <filtering>true</filtering>  
@@ -58,7 +58,7 @@
                    <include>**/*.xml</include>
                </includes>
 	       </resource>
-	    </resources>
+	    </resources> -->
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
