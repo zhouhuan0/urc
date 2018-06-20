@@ -8,6 +8,7 @@ import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
 import com.yks.urc.lock.DistributedReentrantLock;
 import com.yks.urc.mapper.IRoleMapper;
@@ -249,15 +250,15 @@ public class UserBpImpl implements IUserBp {
 			resp.userName = authUser.userName;
 			if (blnOk) {
 				// 先从缓存取
-				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
-				if (lstSysKey == null) {
-					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
-					if (resp.sysKey == null)
-						resp.sysKey = new ArrayList<>();
-					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
-				} else {
-					resp.sysKey = lstSysKey;
-				}
+//				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
+//				if (lstSysKey == null) {
+//					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
+//					if (resp.sysKey == null)
+//						resp.sysKey = new ArrayList<>();
+//					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
+//				} else {
+//					resp.sysKey = lstSysKey;
+//				}
 				resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
 				// 缓存用户信息
 				UserVO u = new UserVO();
@@ -318,5 +319,13 @@ public class UserBpImpl implements IUserBp {
 			return VoHelper.getSuccessResult(lstRslt);
 		}
 		return VoHelper.getSuccessResult(null);
+	}
+	
+	@Override
+	public ResultVO logout(String jsonStr) {
+		JSONObject jo= StringUtility.parseString(jsonStr);
+		String strOperator = jo.getString(StringConstant.operator);
+		cacheBp.removeUser(strOperator);
+		return VoHelper.getSuccessResult("logout success");
 	}
 }

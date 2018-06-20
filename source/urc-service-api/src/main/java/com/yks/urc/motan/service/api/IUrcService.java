@@ -24,6 +24,7 @@ public interface IUrcService {
      * @date 2018年6月6日 下午12:22:35
      */
     ResultVO<LoginRespVO> login(Map<String, String> map);
+    ResultVO logout(String jsonStr);
 
     /**
      * 校验ticket及功能权限版本

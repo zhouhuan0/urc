@@ -8,7 +8,9 @@ import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemRootVO;
 import com.yks.urc.vo.UserVO;
 
+import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.List;
+import java.util.Map;
 
 public interface IRoleService {
 
@@ -50,4 +52,5 @@ public interface IRoleService {
 	 * @date 2018年6月15日 上午11:32:09
 	 */
 	void handleExpiredRole();
+
 }

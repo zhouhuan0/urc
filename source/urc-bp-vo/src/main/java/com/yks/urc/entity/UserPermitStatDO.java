@@ -11,6 +11,24 @@ public class UserPermitStatDO {
 
 	private String moduleName;
 
+	private Permission permission;
+
+	public Permission getPermission() {
+		return permission;
+	}
+
+	public void setPermission(Permission permission) {
+		this.permission = permission;
+	}
+
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+
 	public Long getId() {
 		return id;
 	}

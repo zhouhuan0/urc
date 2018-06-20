@@ -15,4 +15,6 @@ public interface IPermissionService {
 	 */
 	ResultVO getUserAuthorizablePermission(String operator);
 
+	ResultVO getUserPermissionList(String jsonStr);
+
 }

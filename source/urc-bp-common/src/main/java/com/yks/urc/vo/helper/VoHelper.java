@@ -18,6 +18,10 @@ public class VoHelper {
 		return getResultVO(null, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
 	}
 
+	public static <T> ResultVO getSuccessResult(String msg) {
+		return getResultVO(null, CommonMessageCodeEnum.SUCCESS.getCode(), msg);
+	}
+
 	public static ResultVO getResultVO(String state, String strMsg) {
 		return getResultVO(null, state, strMsg);
 	}

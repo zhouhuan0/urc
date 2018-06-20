@@ -29,10 +29,10 @@
         delete ut,us,uc,ue
         from
         urc_data_rule ut
-        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
+        left join urc_data_rule_sys us on ut.data_rule_id = us.data_rule_id
         left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
         left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-        where user_name in
+        where ut.user_name in
         <foreach collection="list" item="userName" open="(" separator="," close=")">
             #{userName}
         </foreach>

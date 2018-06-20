@@ -36,7 +36,7 @@ public class CacheBpImpl implements ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月5日 上午10:06:51
 	 */
-	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys");//, 1, TimeUnit.DAYS);
+	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys");// , 1, TimeUnit.DAYS);
 
 	/**
 	 * 系统功能权限定义
@@ -52,7 +52,7 @@ public class CacheBpImpl implements ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月5日 上午10:06:36
 	 */
-	private Cache<String, List<UserPermissionCacheDO>> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion");//, 2, TimeUnit.HOURS);
+	private Cache<String, List<UserPermissionCacheDO>> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion");// , 2, TimeUnit.HOURS);
 
 	public void insertUser(UserVO u) {
 		try {
@@ -175,5 +175,16 @@ public class CacheBpImpl implements ICacheBp {
 	public void insertSysContext(String sysKey, String sysContext) {
 		sysFuncJsonCache.put(sysKey, sysContext);
 
+	}
+
+	@Override
+	public void removeUser(String userName) {
+		try {
+			if (StringUtility.isNullOrEmpty(userName))
+				return;
+			userInfoCache.remove(userName);
+		} catch (Exception ex) {
+			logger.error(String.format("removeUser:%s", userName), ex);
+		}
 	}
 }

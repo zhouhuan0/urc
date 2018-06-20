@@ -25,7 +25,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
     public void getDataRuleTemplByTemplId() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator","admin");
-        jsonObject.put("templId",1529058943584L);
+        jsonObject.put("templId",1529375579688L);
         ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
         System.out.println(resultVO);
     }
@@ -34,12 +34,12 @@ public class DataRuleServiceTest extends BaseServiceTest {
     public void assignDataRuleTempl2User(){
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator","admin");
-        jsonObject.put("templId",1);
+        jsonObject.put("templId",1529404283335L);
         List<String>  lstUserName = new ArrayList<>();
         lstUserName.add("admin21");
         lstUserName.add("admin22");
-        lstUserName.add("admin23");
-        lstUserName.add("admin24");
+       /*   lstUserName.add("admin23");
+        lstUserName.add("admin24");*/
         jsonObject.put("lstUserName",lstUserName);
         ResultVO resultVO = dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
         System.out.println(resultVO);
@@ -129,7 +129,6 @@ public class DataRuleServiceTest extends BaseServiceTest {
         subWhereClause.add(subWhereClause3);
         expressionVO.setSubWhereClause(subWhereClause);
 
-       List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
         dataRuleSysVO.setSysKey("001");
         dataRuleSysVO.setRow(expressionVO);
@@ -164,11 +163,13 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void deleteDataRuleTempl(){
         List<Long> ids = new ArrayList<>();
-        ids.add(1529031119283L);
+        ids.add(1529375579688L);
+        ids.add(1529375579689L);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator","admin");
         jsonObject.put("lstTemplId",ids);
 
-        dataRuleService.deleteDataRuleTempl(jsonObject.toString());
+        ResultVO resultVO = dataRuleService.deleteDataRuleTempl(jsonObject.toString());
+        System.out.println(resultVO);
     }
 }

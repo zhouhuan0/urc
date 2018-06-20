@@ -12,6 +12,8 @@ public class DataRuleSysDO {
 
     private String sysKey;
 
+    private String sysName;
+
     private Date createTime;
 
     private String createBy;
@@ -22,7 +24,17 @@ public class DataRuleSysDO {
 
     private List<DataRuleColDO> dataRuleColDOS;
 
-    private ExpressionDO expressionDO;
+    private List<ExpressionDO> expressionDOS;
+
+    private ExpressionDO parentExpressionDO;
+
+    public ExpressionDO getParentExpressionDO() {
+        return parentExpressionDO;
+    }
+
+    public void setParentExpressionDO(ExpressionDO parentExpressionDO) {
+        this.parentExpressionDO = parentExpressionDO;
+    }
 
     public Long getId() {
         return id;
@@ -55,7 +67,13 @@ public class DataRuleSysDO {
     public void setSysKey(String sysKey) {
         this.sysKey = sysKey == null ? null : sysKey.trim();
     }
+    public String getSysName() {
+        return sysName;
+    }
 
+    public void setSysName(String sysName) {
+        this.sysName = sysName;
+    }
     public Date getCreateTime() {
         return createTime;
     }
@@ -96,11 +114,11 @@ public class DataRuleSysDO {
         this.dataRuleColDOS = dataRuleColDOS;
     }
 
-    public ExpressionDO getExpressionDO() {
-        return expressionDO;
+    public List<ExpressionDO> getExpressionDOS() {
+        return expressionDOS;
     }
 
-    public void setExpressionDO(ExpressionDO expressionDO) {
-        this.expressionDO = expressionDO;
+    public void setExpressionDOS(List<ExpressionDO> expressionDOS) {
+        this.expressionDOS = expressionDOS;
     }
 }

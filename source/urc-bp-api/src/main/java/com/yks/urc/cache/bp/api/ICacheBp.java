@@ -13,6 +13,7 @@ public interface ICacheBp {
 	List<String> getUserSysKey(String userName);
 
 	void insertUser(UserVO u);
+	void removeUser(String userName);
 
 	void insertUserFunc(String userName, List<UserPermissionCacheDO> lstPermitCache);
 

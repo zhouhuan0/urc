@@ -29,7 +29,7 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
 
     @Test
     public void listByDataRuleId() {
-        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.listByDataRuleId(1L);
+        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.getDataRuleSysDatas(1L);
         Assert.assertNotNull(dataRuleSysDOs);
     }
 
@@ -79,12 +79,23 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
 
 
     @Test
-    public void getDataRuleSysDatas(){
-        List<Long> ids = new ArrayList<>();
-        ids.add(1529058943584L);
-        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysDatas(1529058943584L);
+    public void getDataRuleSysColDatas(){
+        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysColDatas(1529375579688L);
         System.out.println(dataRuleSysDOS);
     }
 
+
+
+    @Test
+    public void getDataRuleSysRowDatas(){
+        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysRowDatas(1529375579688L);
+        System.out.println(dataRuleSysDOS);
+    }
+
+    @Test
+    public void getDataRuleSysDatas(){
+        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysDatas(1529375579688L);
+        System.out.println(dataRuleSysDOS);
+    }
 
 }

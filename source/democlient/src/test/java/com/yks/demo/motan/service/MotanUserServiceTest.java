@@ -58,6 +58,14 @@ public class MotanUserServiceTest {
 	}
 
 	@Test
+	public void logout_Test() {
+		Map<String, String> map = new HashMap<>();
+		map.put(StringConstant.operator, "test2");
+		String jsonStr = StringUtility.toJSONString_NoException(map);
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.loginOut(jsonStr)));
+	}
+
+	// @Test
 	public void getAllOrgTree_Test() {
 		System.out.println("----------------------" + StringUtility.toJSONString_NoException((urcService.getAllOrgTree())));
 	}

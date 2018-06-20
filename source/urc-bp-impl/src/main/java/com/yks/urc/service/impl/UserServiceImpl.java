@@ -70,6 +70,11 @@ public class UserServiceImpl implements IUserService {
 		return userBp.login(authUser);
 	}
 
+	@Override
+	public ResultVO logout(String jsonStr) {		
+		return userBp.logout(jsonStr);
+	}
+
 	/*
 	 * public ResultVO queryUserDataByRuleId(DataRuleDO ruleDO) { List<UserDO>
 	 * userList = userMapper.queryUserDataByRuleId(ruleDO); if (userList != null &&
