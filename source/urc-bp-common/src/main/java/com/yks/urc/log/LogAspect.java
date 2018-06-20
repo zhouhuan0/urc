@@ -9,6 +9,9 @@
  */
 package com.yks.urc.log;
 
+import com.yks.urc.exception.AbstractURCException;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.StringUtility;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -64,8 +67,10 @@ public class LogAspect implements InitializingBean, DisposableBean {
             result = jp.proceed();
             endDate = new Date();
             return result;
+        }catch (AbstractURCException e){
+            throw e;
         }catch (Throwable e){
-            throw new RuntimeException(e);
+            throw new URCServiceException(ErrorCode.E_000007, e);
         }finally {
             executorService.submit(new LogTask(getLogId(),jp,result,startDate,endDate, log));
         }
