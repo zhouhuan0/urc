@@ -429,7 +429,8 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
+    public ResultVO
+    updateRolePermission(String operator, List<RoleVO> lstRole) {
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
         List<String> userNameList = new ArrayList<>();
         if (StringUtility.isNullOrEmpty(operator)) {

@@ -1,8 +1,10 @@
 package com.yks.urc.motan.service.api;
 
+import java.awt.geom.RectangularShape;
 import java.util.List;
 import java.util.Map;
 
+import com.sun.org.apache.regexp.internal.RE;
 import com.yks.urc.vo.*;
 
 public interface IUrcService {
@@ -24,16 +26,18 @@ public interface IUrcService {
      * @date 2018年6月6日 下午12:22:35
      */
     ResultVO<LoginRespVO> login(Map<String, String> map);
+
     ResultVO logout(String jsonStr);
 
     /**
      * 校验ticket及功能权限版本
+     *
      * @param map
      * @return
      * @author panyun@youkeshu.com
      * @date 2018年6月14日 下午1:11:56
      */
-    ResultVO funcPermitValidate(Map<String,String> map);
+    ResultVO funcPermitValidate(Map<String, String> map);
 
     /**
      * 手动触发“同步钉钉部门及人员”信息
@@ -42,20 +46,22 @@ public interface IUrcService {
      * @return
      */
     ResultVO syncDingOrgAndUser();
-    
+
     /**
      * 同步userInfo数据
+     *
      * @return
      */
     ResultVO syncUserInfo();
 
     /**
      * 用户管理搜索用户
+     *
      * @return
      */
     ResultVO<PageResultVO> getUsersByUserInfo(String params);
-    
-    
+
+
     /**
      * 根据DingOrgId获取人员信息含有分页
      *
@@ -107,127 +113,229 @@ public interface IUrcService {
 
 
     /**
-     *  获取所有平台
+     * 获取所有平台
+     *
      * @param operator
      * @return
      */
     ResultVO<List<OmsPlatformVO>> getPlatformList(String operator);
 
     /**
-     *  获取指定平台下的店铺名称和站点
+     * 获取指定平台下的店铺名称和站点
+     *
      * @param operator
      * @param platform
      * @return
      */
     ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
-	/**
-	 * 角色名判重
-	 * @param operator
-	 * @param newRoleName
-	 * @param roleId 可为空，若为修改情况下，会排除自身进行校重
-	 * @return 返回值为0--表示不重复, 1--表示重复
-	 * @author oujie@youkeshu.com
-	 */
+
+    /**
+     * 角色名判重
+     *
+     * @param operator
+     * @param newRoleName
+     * @param roleId      可为空，若为修改情况下，会排除自身进行校重
+     * @return 返回值为0--表示不重复, 1--表示重复
+     * @author oujie@youkeshu.com
+     */
     ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId);
 
     /**
      * 获取应用系统及其授权方式
-     * @param  operator
-     * @return  ResultVO<List<SysAuthWayVO>>
+     *
+     * @param operator
+     * @return ResultVO<List<SysAuthWayVO>>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 14:31
      */
     ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
 
 
-
-
-	/**
-	 * 获取功能权限及版本号
-	 * @param jsonStr
-	 * @return
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月14日 下午12:45:36
-	 */
+    /**
+     * 获取功能权限及版本号
+     *
+     * @param jsonStr
+     * @return
+     * @author panyun@youkeshu.com
+     * @date 2018年6月14日 下午12:45:36
+     */
     ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
 
 
-	/**
-	 * 获取角色关联的用户
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getUserByRoleId(String jsonStr);
+    /**
+     * 获取角色关联的用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserByRoleId(String jsonStr);
 
-	/**
-	 * 获取多个角色已有的用户
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getRoleUser(String jsonStr);
+    /**
+     * 获取多个角色已有的用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getRoleUser(String jsonStr);
 
-	/**
-	 * 获取用户可选择的所有数据授权方案
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getMyDataRuleTempl(String jsonStr);
+    /**
+     * 获取用户可选择的所有数据授权方案
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getMyDataRuleTempl(String jsonStr);
 
 
+    /**
+     * 获取多个用户的所有数据权限
+     *
+     * @param jsonStr
+     * @return
+     */
+    List<DataRuleVO> getDataRuleByUser(String jsonStr);
 
-	/**
-	 * 获取多个用户的所有数据权限
-	 * @param jsonStr
-	 * @return
-	 */
-	List<DataRuleVO> getDataRuleByUser(String jsonStr);
+    /**
+     * 导入sys功能权限定义
+     *
+     * @param jsonStr
+     * @return
+     * @author panyun@youkeshu.com
+     * @date 2018年6月14日 下午7:17:14
+     */
+    ResultVO importSysPermit(String jsonStr);
 
-	/**
-	 * 导入sys功能权限定义
-	 * @param jsonStr
-	 * @return
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月14日 下午7:17:14
-	 */
-	ResultVO importSysPermit(String jsonStr);
+    /**
+     * 获取指定用户可授权给其它角色的功能权限
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserAuthorizablePermission(String jsonStr);
 
-	/**
-	 * 获取指定用户可授权给其它角色的功能权限
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getUserAuthorizablePermission(String jsonStr);
+    /**
+     * 获取多个角色已有的功能权限
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getRolePermission(String jsonStr);
 
-	/**
-	 * 获取多个角色已有的功能权限
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getRolePermission(String jsonStr);
+    /**
+     * 精确搜索用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserByUserName(String jsonStr);
 
-	/**
-	 *  精确搜索用户
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO getUserByUserName(String jsonStr);
-	
-	/**
-	 *  模糊搜索用户域账号
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO fuzzySearchUsersByUserName(String jsonStr);
-	
-	/**
-	 *  更新多个角色的用户
-	 * @param jsonStr
-	 * @return
-	 */
-	ResultVO updateUsersOfRole(String jsonStr);
+    /**
+     * 模糊搜索用户域账号
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO fuzzySearchUsersByUserName(String jsonStr);
 
-	ResultVO updateRolePermission(String jsonStr);
-	
-	
-	ResultVO getMavenPackageTime();
+    /**
+     * 更新多个角色的用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO updateUsersOfRole(String jsonStr);
+
+    ResultVO updateRolePermission(String jsonStr);
+
+
+    ResultVO getMavenPackageTime();
+
+    /**
+     * Description: 新增或编辑一个方案
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:31
+     * @see
+     */
+    ResultVO addOrUpdateDataRuleTempl(String jsonStr);
+
+    /**
+     * Description: 删除一个或多个方案
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:34
+     * @see
+     */
+    ResultVO deleteDataRuleTempl(String jsonStr);
+
+    /**
+     * Description: 查看用户的功能权限列表
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:35
+     * @see
+     */
+    ResultVO getUserPermissionList(String jsonStr);
+
+    /**
+     * Description: 创建或更新多个用户的数据权限
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:39
+     * @see
+     */
+    ResultVO addOrUpdateDataRule(String jsonStr);
+
+    /**
+     * Description: 多条件搜索角色
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:41
+     * @see
+     */
+    ResultVO getRolesByInfo(String jsonStr);
+
+    /**
+     * Description: 新增或更新角色、功能权限、用户
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:42
+     * @see
+     */
+    ResultVO addOrUpdateRoleInfo(String jsonStr);
+
+    /**
+     * Description: 根据角色id获取角色信息
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:44
+     * @see
+     */
+    ResultVO getRoleByRoleId(String jsonStr);
+
+    /**
+     * Description: 删除多个角色
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:46
+     * @see
+     */
+    ResultVO deleteRoles(String jsonStr);
+
 }

@@ -282,5 +282,110 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getMavenPackageTime() {
         return operationBp.getMavenPackageTime();
     }
-    
+
+    /**
+     * Description: 新增或编辑一个方案
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:31
+     * @see
+     */
+    @Override
+    public ResultVO addOrUpdateDataRuleTempl(String jsonStr) {
+        return dataRuleService.addOrUpdateDataRuleTempl(jsonStr);
+    }
+
+    /**
+     * Description: 删除一个或多个方案
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:34
+     * @see
+     */
+    @Override
+    public ResultVO deleteDataRuleTempl(String jsonStr) {
+        return dataRuleService.deleteDataRuleTempl(jsonStr);
+    }
+
+    /**
+     * Description: 查看用户的功能权限列表
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:35
+     * @see
+     */
+    @Override
+    public ResultVO getUserPermissionList(String jsonStr) {
+        return permissionService.getUserPermissionList(jsonStr);
+    }
+
+    /**
+     * Description: 创建或更新多个用户的数据权限
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:39
+     * @see
+     */
+    @Override
+    public ResultVO addOrUpdateDataRule(String jsonStr) {
+        return null;
+    }
+
+    /**
+     * Description: 多条件搜索角色
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:41
+     * @see
+     */
+    @Override
+    public ResultVO getRolesByInfo(String jsonStr) {
+        return roleService.getRolesByInfo(jsonStr);
+    }
+
+    /**
+     * Description: 新增或更新角色、功能权限、用户
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:42
+     * @see
+     */
+    @Override
+    public ResultVO addOrUpdateRoleInfo(String jsonStr) {
+        return roleService.addOrUpdateRoleInfo(jsonStr);
+    }
+
+    /**
+     * Description: 根据角色id获取角色信息
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:44
+     * @see
+     */
+    @Override
+    public ResultVO getRoleByRoleId(String jsonStr) {
+        return roleService.getRoleByRoleId(jsonStr);
+    }
+
+    /**
+     * Description: 删除多个角色
+     *
+     * @param jsonStr@return:
+     * @auther: lvcr
+     * @date: 2018/6/20 15:46
+     * @see
+     */
+    @Override
+    public ResultVO deleteRoles(String jsonStr) {
+        return roleService.deleteRoles(jsonStr);
+    }
+
 }

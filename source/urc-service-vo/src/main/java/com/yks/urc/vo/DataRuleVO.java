@@ -22,4 +22,19 @@ public class DataRuleVO implements Serializable {
      */
     public List<DataRuleSysVO> lstDataRuleSys;
 
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public List<DataRuleSysVO> getLstDataRuleSys() {
+        return lstDataRuleSys;
+    }
+
+    public void setLstDataRuleSys(List<DataRuleSysVO> lstDataRuleSys) {
+        this.lstDataRuleSys = lstDataRuleSys;
+    }
 }

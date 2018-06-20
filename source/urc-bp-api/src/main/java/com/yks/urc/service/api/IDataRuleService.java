@@ -23,7 +23,7 @@ public interface IDataRuleService {
      * @param userName
      * @return
      */
-    ResultVO getMyDataRuleTempl(int pageNumber,int pageData ,String userName);
+    ResultVO getMyDataRuleTempl(int pageNumber, int pageData, String userName);
 
     /**
      * 获取多个用户的所有数据权限
@@ -44,4 +44,15 @@ public interface IDataRuleService {
      * @see
      */
     ResultVO deleteDataRuleTempl(String jsonStr);
+
+    /**
+     * Description: 创建或更新多个用户的数据权限
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/20 16:10
+     * @see
+     */
+    ResultVO addOrUpdateDataRule(String jsonStr);
 }
