@@ -27,6 +27,7 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
 import java.io.IOException;
@@ -173,5 +174,13 @@ public class UrcServiceTest extends BaseServiceTest {
 //		service.syncUserInfo(userVO);
 		System.out.println(111);
 	}
+	@Test
+	public void getPlatformTest(){
+		String json="{\n" +
+				"\t\"operator\":\"test3\"\n" +
+				"}";
+		ResultVO resultVO=service.getPlatformList(json);
+        System.out.println(resultVO);
+    }
 
 }
