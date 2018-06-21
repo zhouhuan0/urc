@@ -16,6 +16,7 @@ import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
@@ -44,7 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 //@Component
 public class UrcServiceTest extends BaseServiceTest {
 	@Autowired
-	private UrcServiceImpl service;
+	private IUrcService service;
 	@Autowired
 	private IUserValidateBp userValidateBp;
 	@Autowired
@@ -90,7 +91,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		new MQConsumerClient().subscribe(topic, callBack);
 	}
 
-	@Test
+//	@Test
 	public void mq_Test() {
 		DataRuleVO dr = new DataRuleVO();
 		dr.userName = "py";
@@ -130,6 +131,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
 	}
 
+	@Test
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
 		lstUserName.add("dcadmin");
