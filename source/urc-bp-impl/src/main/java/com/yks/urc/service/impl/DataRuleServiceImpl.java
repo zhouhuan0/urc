@@ -186,7 +186,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (!rtn) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
-        /*3、查询数据群贤模板列表信息*/
+        /*3、查询数据权限模板列表信息*/
         List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
         /*4、List<DO> 转 List<VO>*/
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
@@ -231,14 +231,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
             queryMap.put("createBy", null);
         }
         /*获取复数模板名称*/
-        JSONObject templJson = jsonObject.getJSONObject("templ");
-        if (templJson == null) {
-            logger.error("分页参数 templ 有误");
-            return Boolean.FALSE;
+        String templStr = jsonObject.getString("templ");
+        if (StringUtil.isNotEmpty(templStr)) {
+            DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(templStr, DataRuleTemplVO.class);
+            String[] templNames = dataRuleTemplVO.templName.split(System.getProperty("line.separator"));
+            queryMap.put("templNames", templNames);
         }
-        DataRuleTemplVO dataRuleTemplVO = StringUtility.parseObject(templJson.toString(), DataRuleTemplVO.class);
-        String[] templNames = dataRuleTemplVO.templName.split(System.getProperty("line.separator"));
-        queryMap.put("templNames", templNames);
+
         return Boolean.TRUE;
 
 
