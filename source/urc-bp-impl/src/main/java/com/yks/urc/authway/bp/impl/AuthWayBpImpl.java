@@ -36,9 +36,8 @@ public class AuthWayBpImpl implements AuthWayBp {
      * @return
      */
     @Override
-    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+    public List<SysAuthWayVO> getMyAuthWay(String operator) {
         boolean isAdmin = roleMapper.isAdminAccount(operator);
-        ResultVO<List<SysAuthWayVO>> resultVO = new ResultVO<>();
         List<SysAuthWayVO> lstAuthWayVOS = new ArrayList<>();
         //1.首先通过用户判断是否是管理员
         if (isAdmin == true) {
@@ -47,12 +46,10 @@ public class AuthWayBpImpl implements AuthWayBp {
             //组装sysAuthWayVO
             SysAuthWayVO sysAuthWayVO = this.AssembleSysAuthWay(getSysKey);
             lstAuthWayVOS.add(sysAuthWayVO);
-            //返回结果
-            resultVO.data = lstAuthWayVOS;
         } else {
-            resultVO.data = null;
+            lstAuthWayVOS = null;
         }
-        return resultVO;
+        return lstAuthWayVOS;
     }
 
     /**

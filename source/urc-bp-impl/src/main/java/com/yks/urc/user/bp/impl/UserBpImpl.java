@@ -53,16 +53,16 @@ public class UserBpImpl implements IUserBp {
 	 * token 请求地址
 	 */
 	@Value("${userInfo.token}")
-	private static String GET_TOKEN;
+	private  String GET_TOKEN;
 	/**
 	 * 获取UserInfo信息地址
 	 */
 	@Value("${userInfo.address}")
-	private static String USER_INFO_ADDRESS;
+	private  String USER_INFO_ADDRESS;
 	@Value("${userInfo.username}")
-	private static String username;
+	private  String username;
 	@Value("${userInfo.password}")
-	private static String password;
+	private  String password;
 
 	@Autowired
 	private IUserMapper userMapper;
@@ -87,7 +87,7 @@ public class UserBpImpl implements IUserBp {
 	 * @Date: 2018/6/8 15:29
 	 */
 	DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
-
+	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public void SynUserFromUserInfo(String username) {
 		if (lock.tryLock()) {

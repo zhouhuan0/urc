@@ -16,10 +16,10 @@ import java.util.List;
 public interface AuthWayBp {
     /**
      * 获取应用系统及其授权方式
-     * @param
+     * @param operator
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 14:57
      */
-    ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
+   List<SysAuthWayVO> getMyAuthWay(String operator);
 }

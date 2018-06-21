@@ -29,12 +29,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
      * 请求平台url
      */
     @Value("${dataAuthorization.getPlatformList}")
-    private static  String GET_PLATFORM ;
+    private String GET_PLATFORM ;
     /**
      * 请求店铺账号和站点信息
      */
     @Value("${dataAuthorization.getShopList}")
-    private static  String GET_SHOP_AND_SITE;
+    private  String GET_SHOP_AND_SITE;
 
     /**
      * 获取平台信息

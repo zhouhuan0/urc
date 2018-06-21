@@ -166,13 +166,17 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.print(userValidateBp.getFuncJsonByUserAndSysKey(userName, sysKey));
 		// testSync();
 	}
-
+	@Test
+	public void getUserInfo(){
+		testSync();
+	}
 	@Transactional
 	public void testSync() {
-		UserVO userVO = new UserVO();
-		userVO.userName = "lwx";
-//		service.syncUserInfo(userVO);
-		System.out.println(111);
+		String json="{\n" +
+				"\t\"operator\":\"test3\"\n" +
+				"}";ResultVO resultVO=service.syncUserInfo(json);
+		System.out.println("=====================");
+		System.out.println(resultVO.msg);
 	}
 	@Test
 	public void getPlatformTest(){
@@ -180,7 +184,32 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\"operator\":\"test3\"\n" +
 				"}";
 		ResultVO resultVO=service.getPlatformList(json);
-        System.out.println(resultVO);
+		System.out.println("=====================");
+		System.out.println(resultVO.data + "," +resultVO.msg);
     }
+	@Test
+	public void searchUser(){
+		String json ="{\n" +
+				"\t\"operator\":\"test3\",\n" +
+				"\t\"pageNumber\":0,\n" +
+				"\t\"pageData\":10,\n" +
+				"\t\"user\":{\n" +
+				"\t\t\"userName\":\"linwanxian\"\n" +
+				"\t}\n" +
+				"}";
+		ResultVO resultVO=service.getUsersByUserInfo(json);
+		System.out.println("=================");
+		System.out.println(resultVO.msg);
+	}
+	@Test
+	public void getShopList(){
+		String json ="{\n" +
+				"\t\"operator\":\"test3\",\n" +
+				"\t\"platform\":\"eBay\"\n" +
+				"}";
+		ResultVO resultVO =service.getShopList(json);
+		System.out.println("==================");
+		System.out.println(resultVO.data);
+	}
 
 }

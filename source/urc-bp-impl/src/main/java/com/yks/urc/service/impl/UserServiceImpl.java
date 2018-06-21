@@ -95,14 +95,13 @@ public class UserServiceImpl implements IUserService {
 
 	@Override
 	public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
-		ResultVO rslt = null;
+		ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
 		try {
 			if (StringUtility.isNullOrEmpty(operator)) {
 				return rslt;
 			}
 			rslt.data = dataAuthorization.getPlatformList(operator);
 			rslt.msg = "Success " + operator;
-			rslt = VoHelper.getSuccessResult(rslt.data);
 		} catch (Exception e) {
 			rslt = VoHelper.getErrorResult();
 		}finally {
@@ -113,14 +112,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
-        ResultVO rslt = null;
+		ResultVO<List<OmsAccountVO>> rslt = new ResultVO();
         try {
 			if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
 				return rslt;
 			}
             rslt.data = dataAuthorization.getShopList(operator, platform);
             rslt.msg = "Success " + operator;
-            rslt = VoHelper.getSuccessResult(rslt.data);
         } catch (Exception e) {
 			rslt = VoHelper.getErrorResult();
         } finally {
@@ -130,14 +128,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
-        ResultVO rslt = null;
+		ResultVO<List<SysAuthWayVO>>  rslt = new ResultVO();
         try {
 			if (StringUtility.isNullOrEmpty(operator)) {
 				return rslt;
 			}
             rslt.data = authWayBp.getMyAuthWay(operator);
             rslt.msg = "Success " + operator;
-            rslt = VoHelper.getSuccessResult(rslt.data);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
