@@ -13,6 +13,7 @@ import com.yks.urc.vo.*;
 import java.util.List;
 import java.util.Map;
 
+import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class UrcServiceImpl implements IUrcService {
@@ -167,8 +168,22 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     @Log("角色名校重")
-    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+    public ResultVO<Integer> checkDuplicateRoleName(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        String newRoleName = jsonObject.getString("newRoleName");
+        String roleId = jsonObject.getString("roleId");
         return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
+    }
+
+    @Override
+    public ResultVO copyRole(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        String newRoleName = jsonObject.getString("newRoleName");
+        String sourceRoleId = jsonObject.getString("sourceRoleId");
+        roleService.copyRole(operator,newRoleName,sourceRoleId);
+        return VoHelper.getSuccessResult();
     }
 
     @Override

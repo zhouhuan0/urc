@@ -9,6 +9,7 @@
  */
 package com.yks.demo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -36,7 +37,11 @@ public class MotanRoleController {
     @RequestMapping("checkDupName/{newRoleName}")
     @ResponseBody
     public ResultVO checkDuplicateRoleName(@PathVariable("newRoleName") String roleName, @RequestParam(value = "roleId", required = false) String roleId){
-        return urcService.checkDuplicateRoleName(mockOperator().userName, roleName, roleId);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator", mockOperator().userName);
+        jsonObject.put("newRoleName",roleName);
+        jsonObject.put("roleId",roleId);
+        return urcService.checkDuplicateRoleName(jsonObject.toJSONString());
     }
     private UserVO mockOperator(){
         UserVO curUser = new UserVO();

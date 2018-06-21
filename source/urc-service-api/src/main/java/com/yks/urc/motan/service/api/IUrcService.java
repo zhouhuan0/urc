@@ -131,7 +131,15 @@ public interface IUrcService {
      * @return 返回值为0--表示不重复, 1--表示重复
      * @author oujie@youkeshu.com
      */
-    ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId);
+    ResultVO<Integer> checkDuplicateRoleName(String jsonStr);
+
+    /**
+     * 复制角色
+     * 包含复制角色对应权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO copyRole(String jsonStr);
 
     /**
      * 获取应用系统及其授权方式

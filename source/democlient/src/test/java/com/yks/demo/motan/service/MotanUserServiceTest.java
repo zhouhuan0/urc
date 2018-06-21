@@ -29,12 +29,15 @@ public class MotanUserServiceTest {
 
 	@MotanReferer
 	private IUrcService urcService;
-
+	@Test
 	public void testFilter() {
-		String operator = "py";
-		String newRoleName = "role1";
-		String roleId = "roleId";
-		ResultVO<Integer> rslt = urcService.checkDuplicateRoleName(operator, newRoleName, roleId);
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("operator", "py");
+		jsonObject.put("newRoleName","admin2");
+		jsonObject.put("roleId","");
+
+		ResultVO<Integer> rslt = urcService.checkDuplicateRoleName(jsonObject.toJSONString());
+		System.out.println(">>>>>>>>>>>>>>>>>>"+StringUtility.toJSONString_NoException(rslt));
 	}
 
 	// @Test
