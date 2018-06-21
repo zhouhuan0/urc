@@ -31,10 +31,16 @@ public class RoleExpiredTask {
 //	@Scheduled(cron = "0/10 * * * * ?")
 	// 每天凌晨3点
 	@Scheduled(cron = "0 0 12 * * ? *")
-	public void executeFileDownLoadTask() {
+	public void executeRoleExpiredTask() {
 		logger.info("角色过期检查START");
 		roleSevice.handleExpiredRole();
 		logger.info("角色过期检查END");
 //		System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()) + " 角色过期检查");
+	}
+	
+
+	@Scheduled(cron = "0/20 * * * * ? *")
+	public void testTask() {
+		logger.info("testTask");
 	}
 }
