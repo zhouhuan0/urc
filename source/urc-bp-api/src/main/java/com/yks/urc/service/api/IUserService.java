@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface IUserService {
-	ResultVO syncUserInfo(UserVO curUser);
+	ResultVO syncUserInfo(String curUser);
 
 	ResultVO login(UserVO authUser);
 	ResultVO logout(String jsonStr);

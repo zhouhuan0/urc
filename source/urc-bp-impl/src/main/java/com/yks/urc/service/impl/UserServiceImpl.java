@@ -51,15 +51,15 @@ public class UserServiceImpl implements IUserService {
 	private IRoleMapper roleMapper;
 
 	@Override
-	public ResultVO syncUserInfo(UserVO curUser) {
+	public ResultVO syncUserInfo(String operator) {
 		ResultVO rslt = null;
 		try {
-			userBp.SynUserFromUserInfo(curUser.userName);
+			userBp.SynUserFromUserInfo(operator);
 			rslt = VoHelper.getSuccessResult();
-			rslt.msg = "Success " + curUser.userName;
+			rslt.msg = "Success " + operator;
 		} catch (Exception e) {
 			rslt = VoHelper.getErrorResult();
-			rslt.msg = "Error" + curUser.userName;
+			rslt.msg = "Error" + operator;
 		} finally {
 			return rslt;
 		}

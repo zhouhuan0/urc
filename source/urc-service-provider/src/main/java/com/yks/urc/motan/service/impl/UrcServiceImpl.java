@@ -43,8 +43,10 @@ public class UrcServiceImpl implements IUrcService {
     private IOperationBp operationBp;
 
     @Override
-    public ResultVO syncUserInfo(UserVO curUser) {
-        return userService.syncUserInfo(curUser);
+    public ResultVO syncUserInfo(String json) {
+        JSONObject jsonObject =JSONObject.parseObject(json);
+        String operator =jsonObject.get("operator").toString();
+        return userService.syncUserInfo(operator);
     }
 
     @Override
@@ -145,20 +147,19 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
-    @Override
-    public ResultVO syncUserInfo() {
-        UserVO curUser = new UserVO();
-        curUser.userName = "hand";
-        return userService.syncUserInfo(curUser);
-    }
 
     @Override
-    public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
         return userService.getPlatformList(operator);
     }
 
     @Override
-    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
+    public ResultVO<List<OmsAccountVO>> getShopList(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        String platform = jsonObject.get("platform").toString();
         return userService.getShopList(operator, platform);
     }
 
@@ -241,9 +242,10 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
         return userService.getMyAuthWay(operator);
-
     }
 
     @Override
