@@ -163,9 +163,9 @@ public class PersonServiceImpl implements IPersonService {
 			org.setCreateBy(userName);
 			org.setCreateTime(new Date());
 			org.setDingOrgId(String.valueOf(dept.id));
-			org.setFullIdPath(array.toJSONString().replace(",","/"));
+			org.setFullIdPath(array.toJSONString().replace(",","/").replace("[", "").replace("]", "").replace("\"", ""));
 			JSONArray fullNamePath=getfullNamePath(dingAllDept,array);
-			org.setFullNamePath(fullNamePath.toJSONString().replace(",", "/"));
+			org.setFullNamePath(fullNamePath.toJSONString().replace(",", "/").replace("[", "").replace("]", "").replace("\"", ""));
 			org.setModifiedBy(userName);
 			org.setModifiedTime(new Date());
 			org.setOrgLevel(array.size());

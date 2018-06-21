@@ -43,8 +43,11 @@ public class UrcServiceImpl implements IUrcService {
     private IOperationBp operationBp;
 
     @Override
-    public ResultVO syncUserInfo(UserVO curUser) {
-        return userService.syncUserInfo(curUser);
+    @Log(value = "同步数据",level = LogLevel.INFO)
+    public ResultVO syncUserInfo(String json) {
+        JSONObject jsonObject = StringUtility.parseString(json);
+        String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
+        return userService.syncUserInfo(operator);
     }
 
     @Override
@@ -93,6 +96,7 @@ public class UrcServiceImpl implements IUrcService {
      * @return
      */
     @Override
+    @Log(value = "搜索用户",level = LogLevel.INFO)
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
@@ -145,20 +149,19 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
-    @Override
-    public ResultVO syncUserInfo() {
-        UserVO curUser = new UserVO();
-        curUser.userName = "hand";
-        return userService.syncUserInfo(curUser);
-    }
 
     @Override
-    public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
         return userService.getPlatformList(operator);
     }
 
     @Override
-    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
+    public ResultVO<List<OmsAccountVO>> getShopList(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
+        String platform = jsonObject.get("platform").toString();
         return userService.getShopList(operator, platform);
     }
 
@@ -245,9 +248,11 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
+    @Log(value = "获取用户可选择的所有数据授权方案",level = LogLevel.INFO)
+    public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.get("operator").toString();
         return userService.getMyAuthWay(operator);
-
     }
 
     @Override
@@ -270,6 +275,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log(value = "更新多个角色的功能权限",level = LogLevel.INFO)
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();

@@ -11,10 +11,10 @@ public interface IUrcService {
     /**
      * 同步数据
      *
-     * @param curUser
+     * @param operator
      * @return
      */
-    ResultVO syncUserInfo(UserVO curUser);
+    ResultVO syncUserInfo(String operator);
 
     /**
      * 登陆校验：用户名密码检验
@@ -47,12 +47,6 @@ public interface IUrcService {
      */
     ResultVO syncDingOrgAndUser();
 
-    /**
-     * 同步userInfo数据
-     *
-     * @return
-     */
-    ResultVO syncUserInfo();
 
     /**
      * 用户管理搜索用户
@@ -115,19 +109,18 @@ public interface IUrcService {
     /**
      * 获取所有平台
      *
-     * @param operator
+     * @param jsonStr
      * @return
      */
-    ResultVO<List<OmsPlatformVO>> getPlatformList(String operator);
+    ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr);
 
     /**
      * 获取指定平台下的店铺名称和站点
      *
-     * @param operator
-     * @param platform
+     * @param jsonStr
      * @return
      */
-    ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
+    ResultVO<List<OmsAccountVO>> getShopList(String jsonStr);
 
     /**
      * 角色名判重
@@ -143,12 +136,12 @@ public interface IUrcService {
     /**
      * 获取应用系统及其授权方式
      *
-     * @param operator
+     * @param jsonStr
      * @return ResultVO<List<SysAuthWayVO>>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 14:31
      */
-    ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
+    ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr);
 
 
     /**
