@@ -10,6 +10,8 @@ import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
@@ -23,12 +25,14 @@ import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import javax.management.relation.Role;
 import java.util.*;
@@ -554,18 +558,53 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void copyRole(String operator, String newRoleName, String sourceRoleId) {
+    public void copyRole(final String operator, String newRoleName, String sourceRoleId) {
+        if (StringUtils.isBlank(newRoleName)){
+            throw new URCBizException(ErrorCode.E_000002);
+        }
+        if (StringUtils.isBlank(sourceRoleId)){
+            throw new URCBizException(ErrorCode.E_000002);
+        }
 		/* 非admin用户只能管理自己创建的角色 */
-        RoleDO roleDO = getRoleInfo(operator, newRoleName, Long.parseLong(sourceRoleId));
+        long roleId = 0;
+        try {
+            roleId = Long.parseLong(sourceRoleId);
+        } catch (NumberFormatException e) {
+            throw new URCBizException(ErrorCode.E_000003);
+        }
+        Date currentDate = new Date();
+        RoleDO roleDO = getRoleInfo(operator, newRoleName, roleId);
         // 复制角色信息
         roleDO.setRoleId(seqBp.getNextRoleId());
         roleDO.setRoleName(newRoleName);
+        roleDO.setCreateTime(currentDate);
+        roleDO.setCreateBy(operator);
+        roleDO.setModifiedBy(operator);
+        roleDO.setModifiedTime(currentDate);
         roleMapper.insert(roleDO);
-		/* 复制对应的角色权功能限关系 */
-//		List<RoleDO> rolePermission = getRolePermission(Arrays.asList(sourceRoleId));
-        // rolePermission.stream().forEach(role -> {
-        // role.getPermissionDO()
-        // });
+
+		/* 复制对应的角色功能权限关系 */
+        RolePermissionDO rolePermissionDO = new RolePermissionDO();
+        rolePermissionDO.setRoleId(roleId);
+        List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
+        //如果权限列表为空，则不新增权限列表
+        if (CollectionUtils.isEmpty(rolePermissions)){
+            return;
+        }
+        //保存角色的功能权限
+        List<RolePermissionDO> records = new ArrayList<>();
+        rolePermissions.stream().forEach(rpDO -> {
+            RolePermissionDO record = new RolePermissionDO();
+            record.setRoleId(roleDO.getRoleId());
+            record.setSysKey(rpDO.getSysKey());
+            record.setSelectedContext(rpDO.getSelectedContext());
+            record.setCreateTime(currentDate);
+            record.setCreateBy(operator);
+            record.setModifiedBy(operator);
+            record.setModifiedTime(currentDate);
+            records.add(record);
+        });
+        rolePermissionMapper.insertBatch(records);
     }
 
     /**
@@ -574,7 +613,7 @@ public class RoleServiceImpl implements IRoleService {
 
     private RoleDO getRoleInfo(String operator, String newRoleName, long sourceRoleId) {
         if (roleMapper.checkDuplicateRoleName(newRoleName, null)) {
-            throw new RuntimeException("角色名已存在");
+            throw new URCBizException(ErrorCode.E_101001);
         }
         // 判断当前被复制角色是否为当前用户创建的角色
         RoleDO roleDO = roleMapper.getRoleByRoleId(sourceRoleId);
@@ -582,7 +621,7 @@ public class RoleServiceImpl implements IRoleService {
         if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())) {
             return roleDO;
         }
-        throw new RuntimeException("普通用户只能复制自己创建的角色信息");
+        throw new URCBizException(ErrorCode.E_101002);
     }
 
     @Override

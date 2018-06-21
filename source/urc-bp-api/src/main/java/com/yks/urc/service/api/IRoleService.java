@@ -42,7 +42,7 @@ public interface IRoleService {
 
     ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator);
 
-    void copyRole(String strUserName,String newRoleName,String sourceRoleId);
+    void copyRole(String operator,String newRoleName,String sourceRoleId);
 
     /**
      * 检查角色名是否重复

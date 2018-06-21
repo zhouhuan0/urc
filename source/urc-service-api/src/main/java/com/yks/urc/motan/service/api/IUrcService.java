@@ -134,6 +134,14 @@ public interface IUrcService {
     ResultVO<Integer> checkDuplicateRoleName(String jsonStr);
 
     /**
+     * 复制角色
+     * 包含复制角色对应权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO copyRole(String jsonStr);
+
+    /**
      * 获取应用系统及其授权方式
      *
      * @param jsonStr
