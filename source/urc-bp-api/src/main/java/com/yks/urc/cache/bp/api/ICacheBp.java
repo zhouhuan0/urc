@@ -23,9 +23,15 @@ public interface ICacheBp {
 	void insertUser(UserVO u);
 	void removeUser(String userName);
 
+	/**
+	 * 缓存用户所有系统功能权限
+	 * @param userName
+	 * @param permitCache
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月21日 下午8:01:38
+	 */
 	void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache);
 
-	void removeUserFunc(String userName);
 
 //	void insertUserSysKey(String userName, List<String> lst);
 
@@ -60,7 +66,7 @@ public interface ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午2:46:21
 	 */
-	String getFuncJson(String operator, String sysKey);
+	String getFuncJson(String userName, String sysKey);
 
 	void insertSysContext(String sysKey, String sysContext);
 }
