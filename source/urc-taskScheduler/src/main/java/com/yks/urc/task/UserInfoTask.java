@@ -24,7 +24,7 @@ public class UserInfoTask {
     private UserBpImpl userBp;
 
     public static final String SYSTEM = "system";
-	@Scheduled(cron = "0 0 12 * * ? *")
+	@Scheduled(cron = "0 0 12 * * ?")
 //    @Scheduled(cron = "0 0 */12 * * ?")
     public void executeGetUserInfo() {
         logger.info("开始同步数据");
