@@ -54,17 +54,21 @@ public class PermissionServiceImpl implements IPermissionService {
 	public ResultVO importSysPermit(String jsonStr) {
 		ResultVO rslt = new ResultVO();
 		try {
-			String plainTxt = StringUtility.Empty;
-			try {
-				plainTxt = EncryptHelper.decryptAes_Base64(jsonStr, aesPwd);
-			} catch (UnsupportedEncodingException e) {
-				rslt.state = CommonMessageCodeEnum.FAIL.getCode();
-				rslt.msg = "解密失败";
+			JSONObject jsonObject = StringUtility.parseString(jsonStr);
+			//获取操作人
+			String operator =jsonObject.get("operator").toString();
+			//获取密码
+			String pwd =jsonObject.get("pwd").toString();
+			//获取数据
+			String data = jsonObject.get("data").toString();
+			if (StringUtility.isNullOrEmpty(operator)){
+				return VoHelper.getErrorResult();
 			}
-			// ResultVO<ArrayList<SystemRootVO>> request = new ResultVO<>();
-			// request = StringUtility.parseObject(plainTxt, request.getClass());
-
-			SystemRootVO[] arr = StringUtility.parseObject(plainTxt, new SystemRootVO[0].getClass());
+			//判断密码是否相等
+			if (!aesPwd.equals(pwd)) {
+				return VoHelper.getErrorResult();
+			}
+			SystemRootVO[] arr = StringUtility.parseObject(data, new SystemRootVO[0].getClass());
 			if (arr != null && arr.length > 0) {
 				List<Permission> lstPermit = new ArrayList<>(arr.length);
 				for (SystemRootVO root : arr) {
@@ -77,7 +81,7 @@ public class PermissionServiceImpl implements IPermissionService {
 				}
 				permissionMapper.deleteSyspermitDefine(lstPermit);
 				permissionMapper.insertSysPermitDefine(lstPermit);
-				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", plainTxt), null);
+				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
 
 				// 更新缓存
 				for (Permission p : lstPermit) {
