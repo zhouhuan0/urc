@@ -103,7 +103,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				userPermit.sysKey = sysKey;
 				userPermit.context = cacheDo.getUserContext();
 				permitCache.lstUserSysVO.add(userPermit);
-				
+				calcFuncVersion(permitCache);
 				List<UserPermitStatDO> lstStatCur = userValidateBp.plainSys(rootVO, userName);
 				if (lstStatCur != null && lstStatCur.size() > 0) {
 					lstStatToAdd.addAll(lstStatCur);
@@ -129,5 +129,21 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			logger.error(String.format("updateUserPermitCache:%s", userName), ex);
 		}
 		return permitCache;
+	}
+	
+	/**
+	 * 所有系统的功能权限json做字符串相加，再计算md5
+	 * @param permitCache
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月21日 下午4:21:32
+	 */
+	private void calcFuncVersion(GetAllFuncPermitRespVO permitCache) {
+		if (permitCache == null || permitCache.lstUserSysVO == null || permitCache.lstUserSysVO.size() == 0)
+			return;
+		StringBuilder sb = new StringBuilder();
+		for (UserSysVO u : permitCache.lstUserSysVO) {
+			sb.append(u.context);
+		}
+		permitCache.funcVersion = userValidateBp.calcFuncVersion(sb.toString());
 	}
 }
