@@ -48,13 +48,4 @@ public class PageResultVO implements Serializable {
 		this.total = total;
 	}
 
-	public List<?> getRows() {
-		return lst;
-	}
-
-	public void setRows(List<?> rows) {
-		this.lst = rows;
-	}
-    
-    
 }
