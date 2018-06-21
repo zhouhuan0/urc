@@ -164,7 +164,11 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     @Log("角色名校重")
-    public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+    public ResultVO<Integer> checkDuplicateRoleName(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        String newRoleName = jsonObject.getString("newRoleName");
+        String roleId = jsonObject.getString("roleId");
         return roleService.checkDuplicateRoleName(operator, newRoleName, roleId);
     }
 
