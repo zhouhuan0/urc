@@ -105,4 +105,9 @@ public class RoleServiceTest extends BaseServiceTest {
         ResultVO resultVO = roleService.getRolesByInfo(jsonObject.toString());
         System.out.println(resultVO);
     }
+
+    @Test
+    public void copyRole(){
+        roleService.copyRole("dcadmin","复制角色","1529550145551000001");
+    }
 }
