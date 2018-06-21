@@ -104,9 +104,9 @@ public class UserServiceImpl implements IUserService {
 			rslt.msg = "Success " + operator;
 			rslt = VoHelper.getSuccessResult(rslt.data);
 		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			return rslt;
+			rslt = VoHelper.getErrorResult();
+		}finally {
+		 	return rslt;
 		}
 	}
 
@@ -122,7 +122,7 @@ public class UserServiceImpl implements IUserService {
             rslt.msg = "Success " + operator;
             rslt = VoHelper.getSuccessResult(rslt.data);
         } catch (Exception e) {
-            e.printStackTrace();
+			rslt = VoHelper.getErrorResult();
         } finally {
             return rslt;
         }
