@@ -97,6 +97,9 @@ public class UserServiceImpl implements IUserService {
 	public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
 		ResultVO rslt = null;
 		try {
+			if (StringUtility.isNullOrEmpty(operator)) {
+				return rslt;
+			}
 			rslt.data = dataAuthorization.getPlatformList(operator);
 			rslt.msg = "Success " + operator;
 			rslt = VoHelper.getSuccessResult(rslt.data);
@@ -112,6 +115,9 @@ public class UserServiceImpl implements IUserService {
     public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
         ResultVO rslt = null;
         try {
+			if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
+				return rslt;
+			}
             rslt.data = dataAuthorization.getShopList(operator, platform);
             rslt.msg = "Success " + operator;
             rslt = VoHelper.getSuccessResult(rslt.data);
@@ -126,6 +132,9 @@ public class UserServiceImpl implements IUserService {
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
         ResultVO rslt = null;
         try {
+			if (StringUtility.isNullOrEmpty(operator)) {
+				return rslt;
+			}
             rslt.data = authWayBp.getMyAuthWay(operator);
             rslt.msg = "Success " + operator;
             rslt = VoHelper.getSuccessResult(rslt.data);
