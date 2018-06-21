@@ -170,7 +170,7 @@
         <where>
             r.role_name = #{newRoleName}
             <if test="roleId != null">
-                and r.id != #{roleId}
+                and r.role_id != #{roleId}
             </if>
         </where>
     </select>
