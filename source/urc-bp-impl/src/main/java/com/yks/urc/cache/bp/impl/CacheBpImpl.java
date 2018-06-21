@@ -22,7 +22,7 @@ import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
-@Component
+
 public class CacheBpImpl implements ICacheBp {
 	private static Logger logger = LoggerFactory.getLogger(UserBpImpl.class);
 
@@ -119,24 +119,6 @@ public class CacheBpImpl implements ICacheBp {
 
 		// System.out.println("-----------------------" +
 		// cacheTest1.get("player").getAge());
-	}
-
-//	@Override
-//	public void removeUserSysKey(String userName) {
-//		try {
-//			userSysKeyCache.remove(userName);
-//		} catch (Exception ex) {
-//			logger.error(String.format("removeUserSysKey:%s", userName), ex);
-//		}
-//	}
-
-	@Override
-	public void removeUserFunc(String userName) {
-		try {
-			userFuncCache.remove(userName);
-		} catch (Exception ex) {
-			logger.error(String.format("removeUserFunc:%s", userName), ex);
-		}
 	}
 
 	@Override
