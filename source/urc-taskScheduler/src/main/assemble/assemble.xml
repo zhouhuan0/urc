@@ -16,7 +16,11 @@
 			<outputDirectory>lib</outputDirectory>
 		</fileSet>
 		<fileSet>
-			<directory>src/main/resources/</directory>
+			<directory>${project.build.directory}/classes</directory>
+			<excludes>  
+                <exclude>com/</exclude>  
+				<exclude>META-INF/</exclude>  
+			</excludes>
 			<outputDirectory>conf</outputDirectory>
 		</fileSet>
 		<fileSet>
