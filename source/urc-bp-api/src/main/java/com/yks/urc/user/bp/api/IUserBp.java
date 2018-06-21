@@ -2,6 +2,7 @@ package com.yks.urc.user.bp.api;
 
 import java.util.List;
 
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserSysVO;
@@ -39,7 +40,7 @@ public interface IUserBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午12:58:45
 	 */
-	ResultVO<List<UserSysVO>> getAllFuncPermit(String operator);
+	ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator);
 
 	ResultVO logout(String jsonStr);
 

@@ -24,6 +24,7 @@ import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.FunctionVO;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.ModuleVO;
 import com.yks.urc.vo.ResultVO;
@@ -519,13 +520,12 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @date 2018年6月14日 下午4:43:27
 	 */
 	public String getFuncVersionFromDbOrCache(String userName, String sysKey) {
-		String funcVersion = cacheBp.getFuncVersion(userName, sysKey);
+		String funcVersion = cacheBp.getFuncVersion(userName);
 		if (funcVersion == null) {
-			UserPermissionCacheDO ca = permitStatBp.updateUserPermitCache(userName, sysKey);
+			GetAllFuncPermitRespVO ca = permitStatBp.updateUserPermitCache(userName);
 			if (ca != null)
-				return ca.getPermissionVersion();
+				return ca.funcVersion;
 		}
-
 		return funcVersion;
 	}
 

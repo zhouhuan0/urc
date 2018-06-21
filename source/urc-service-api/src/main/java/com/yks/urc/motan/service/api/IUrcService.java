@@ -160,7 +160,7 @@ public interface IUrcService {
      * @author panyun@youkeshu.com
      * @date 2018年6月14日 下午12:45:36
      */
-    ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
+    ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr);
 
 
     /**

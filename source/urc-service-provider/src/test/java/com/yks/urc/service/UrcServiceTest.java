@@ -141,8 +141,8 @@ public class UrcServiceTest extends BaseServiceTest {
 		List<String> lstFromDb = new ArrayList<>();
 		lstFromDb.add("110");
 		// cacheBp.insertUserSysKey("py", lstFromDb);
-		List<String> lst = cacheBp.getUserSysKey("py");
-		System.out.println("----------------SysKey:" + StringUtility.toJSONString_NoException(lst));
+//		List<String> lst = cacheBp.getUserSysKey("py");
+//		System.out.println("----------------SysKey:" + StringUtility.toJSONString_NoException(lst));
 	}
 
 	// @Test
@@ -168,7 +168,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void testSync() {
 		UserVO userVO = new UserVO();
 		userVO.userName = "lwx";
-		service.syncUserInfo(userVO);
+//		service.syncUserInfo(userVO);
 		System.out.println(111);
 	}
 

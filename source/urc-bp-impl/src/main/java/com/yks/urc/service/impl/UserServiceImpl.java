@@ -146,7 +146,7 @@ public class UserServiceImpl implements IUserService {
     }
 
 	@Override
-	public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
+	public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
 		try {
 			JSONObject jsonObject = StringUtility.parseString(jsonStr);
 			String operator = jsonObject.getString(StringConstant.operator);

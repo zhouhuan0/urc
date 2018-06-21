@@ -7,6 +7,7 @@ import com.yks.demo.bean.UserInfo;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.LoginRespVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserSysVO;
@@ -65,7 +66,7 @@ public class MotanUserServiceTest {
 		Map<String, String> map = new HashMap<>();
 		map.put(StringConstant.operator, "test2");
 		String jsonStr = StringUtility.toJSONString_NoException(map);
-		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.loginOut(jsonStr)));
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.logout(jsonStr)));
 	}
 
 	// @Test
@@ -108,24 +109,17 @@ public class MotanUserServiceTest {
 		// JSONObject loginResp = StringUtility.parseString(strResp);
 		map.put("operator", "dcadmin");
 		String jsonStr = StringUtility.toJSONString_NoException(map);
-		ResultVO<List<UserSysVO>> allFuncResp = urcService.getAllFuncPermit(jsonStr);
+		ResultVO<GetAllFuncPermitRespVO> allFuncResp = urcService.getAllFuncPermit(jsonStr);
 		System.out.println("------getAllFuncPermit-----------------" + StringUtility.toJSONString_NoException(allFuncResp));
 
-		List<UserSysVO> arrUserSysVO = allFuncResp.data;
 		String strSysKey = "004";
-		UserSysVO uSys = null;
-		for (UserSysVO u : arrUserSysVO) {
-			if (StringUtility.stringEqualsIgnoreCase(strSysKey, u.sysKey)) {
-				uSys = u;
-				break;
-			}
-		}
+
 		map.put("apiUrl", "/api/grab/smt/batchMarking");
 		map.put("moduleUrl", "/");
 		map.put(StringConstant.operator, "dcadmin");
 		map.put(StringConstant.ticket, loginResp.data.ticket);
 		map.put(StringConstant.ip, ip);
-		map.put(StringConstant.urcVersion, uSys.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
+		map.put(StringConstant.urcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
 		map.put(StringConstant.sysKey, strSysKey);
 		System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
 	}

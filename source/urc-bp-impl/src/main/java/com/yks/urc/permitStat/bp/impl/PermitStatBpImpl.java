@@ -20,7 +20,9 @@ import com.yks.urc.mapper.IUserPermissionCacheMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.UserSysVO;
 
 @Component
 public class PermitStatBpImpl implements IPermitStatBp {
@@ -56,7 +58,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private ICacheBp cacheBp;
 
-	public List<UserPermissionCacheDO> updateUserPermitCache(String userName) {
+	public GetAllFuncPermitRespVO updateUserPermitCache(String userName) {
+		GetAllFuncPermitRespVO permitCache = new GetAllFuncPermitRespVO();
+
 		try {
 			// 获取用户所有的sysKey
 			List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
@@ -64,18 +68,18 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				lstSysKey = new ArrayList<>();
 
 			List<UserPermissionCacheDO> lstCacheToAdd = new ArrayList<>(lstSysKey.size());
-
+			permitCache.lstUserSysVO=new ArrayList<>();
 			// 先删除冗余表数据
 			permissionCacheMapper.deletePermitCacheByUser(userName);
 			permissionCacheMapper.deletePermitStatByUser(userName);
 
 			if (lstSysKey == null || lstSysKey.size() == 0) {
 				// 清除缓存
-				cacheBp.removeUserSysKey(userName);
+//				cacheBp.removeUserSysKey(userName);
 				// 更新缓存
-				cacheBp.insertUserSysKey(userName, lstSysKey);
-				cacheBp.insertUserFunc(userName, lstCacheToAdd);
-				return new ArrayList<>();
+//				cacheBp.insertUserSysKey(userName, lstSysKey);
+				cacheBp.insertUserFunc(userName, permitCache);
+				return permitCache;
 			}
 
 			List<UserPermitStatDO> lstStatToAdd = new ArrayList<>();
@@ -90,10 +94,16 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				// 合并json树
 				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
 				cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
-				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
+//				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
 				cacheDo.setCreateTime(new Date());
 				cacheDo.setModifiedTime(cacheDo.getCreateTime());
 				lstCacheToAdd.add(cacheDo);
+
+				UserSysVO userPermit = new UserSysVO();
+				userPermit.sysKey = sysKey;
+				userPermit.context = cacheDo.getUserContext();
+				permitCache.lstUserSysVO.add(userPermit);
+				
 				List<UserPermitStatDO> lstStatCur = userValidateBp.plainSys(rootVO, userName);
 				if (lstStatCur != null && lstStatCur.size() > 0) {
 					lstStatToAdd.addAll(lstStatCur);
@@ -111,26 +121,13 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			}
 
 			// 更新缓存
-			cacheBp.insertUserSysKey(userName, lstSysKey);
-			cacheBp.insertUserFunc(userName, lstCacheToAdd);
-			return lstCacheToAdd;
+//			cacheBp.insertUserSysKey(userName, lstSysKey);
+			
+			cacheBp.insertUserFunc(userName, permitCache);
+			return permitCache;
 		} catch (Exception ex) {
 			logger.error(String.format("updateUserPermitCache:%s", userName), ex);
 		}
-		return new ArrayList<>();
-	}
-	
-
-	@Override
-	public UserPermissionCacheDO updateUserPermitCache(String userName, String sysKey) {
-		List<UserPermissionCacheDO> lstCache = updateUserPermitCache(userName);
-		if (lstCache != null) {
-			for (UserPermissionCacheDO mem : lstCache) {
-				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
-					return mem;
-				}
-			}
-		}
-		return null;
+		return permitCache;
 	}
 }

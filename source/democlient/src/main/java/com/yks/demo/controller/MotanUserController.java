@@ -33,7 +33,7 @@ public class MotanUserController {
 		UserVO curUser = new UserVO();
 		curUser.userName = "py";
 		curUser.userName = "py_" + UUID.randomUUID().toString();
-		return urcService.syncUserInfo(curUser);// .sayHello(msg);
+		return null;//urcService.syncUserInfo(curUser);// .sayHello(msg);
 	}
 
 	/*

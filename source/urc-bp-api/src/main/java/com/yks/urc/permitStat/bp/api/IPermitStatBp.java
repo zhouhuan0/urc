@@ -3,6 +3,8 @@ package com.yks.urc.permitStat.bp.api;
 import java.util.List;
 
 import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
+import com.yks.urc.vo.UserSysVO;
 
 /**
  * 更新冗余表：urc_user_permission_cache/urc_user_permit_stat
@@ -28,16 +30,5 @@ public interface IPermitStatBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午1:06:15
 	 */
-	List<UserPermissionCacheDO> updateUserPermitCache(String userName);
-
-	/**
-	 * 更新用户功能权限冗余表,并返回sys对应的func
-	 * 
-	 * @param userName
-	 * @param sysKey
-	 * @return
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月14日 下午4:40:59
-	 */
-	UserPermissionCacheDO updateUserPermitCache(String userName, String sysKey);
+	GetAllFuncPermitRespVO updateUserPermitCache(String userName);
 }

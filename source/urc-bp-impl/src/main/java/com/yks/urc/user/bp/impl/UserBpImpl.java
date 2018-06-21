@@ -299,24 +299,20 @@ public class UserBpImpl implements IUserBp {
 	}
 
 	@Override
-	public ResultVO<List<UserSysVO>> getAllFuncPermit(String operator) {
+	public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator) {
 		// 先从缓存取
-		List<UserPermissionCacheDO> lstFromCache = cacheBp.getUserFunc(operator);
-		if (lstFromCache == null) {
+		GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator);
+		if (permitCache == null) {
 			// 从DB取,并更新缓存
-			lstFromCache = permitStatBp.updateUserPermitCache(operator);
+			permitCache = permitStatBp.updateUserPermitCache(operator);
 		}
-		if (lstFromCache != null) {
-			List<UserSysVO> lstRslt = new ArrayList<>(lstFromCache.size());
-
-			for (UserPermissionCacheDO mem : lstFromCache) {
-				UserSysVO us = new UserSysVO();
-				us.context = mem.getUserContext();
-				us.funcVersion = mem.getPermissionVersion();
-				us.sysKey = mem.getSysKey();
-				lstRslt.add(us);
+		if (permitCache != null) {
+			permitCache.lstSysRoot=new ArrayList<>();
+			for (UserSysVO mem : permitCache.lstUserSysVO) {
+				permitCache.lstSysRoot.add(mem.context);
 			}
-			return VoHelper.getSuccessResult(lstRslt);
+			permitCache.lstUserSysVO = null;
+			return VoHelper.getSuccessResult(permitCache);
 		}
 		return VoHelper.getSuccessResult(null);
 	}

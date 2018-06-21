@@ -59,7 +59,7 @@ public interface IUserService {
 	ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator);
 
 
-	ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr);
+	ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr);
 
 	ResultVO funcPermitValidate(Map<String, String> map);
 	

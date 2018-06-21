@@ -187,7 +187,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO<List<UserSysVO>> getAllFuncPermit(String jsonStr) {
+    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
         return userService.getAllFuncPermit(jsonStr);
     }
 

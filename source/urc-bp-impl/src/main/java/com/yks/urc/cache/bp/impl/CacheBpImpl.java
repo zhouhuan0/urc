@@ -18,6 +18,8 @@ import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.BizSysVO;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
+import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
 @Component
@@ -38,7 +40,7 @@ public class CacheBpImpl implements ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月5日 上午10:06:51
 	 */
-	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys");// , 1, TimeUnit.DAYS);
+//	private Cache<String, List<String>> userSysKeyCache = new DistributedCache<>("URC-User-SysKeys");// , 1, TimeUnit.DAYS);
 
 	/**
 	 * 系统功能权限定义
@@ -54,7 +56,7 @@ public class CacheBpImpl implements ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月5日 上午10:06:36
 	 */
-	private Cache<String, List<UserPermissionCacheDO>> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion");// , 2, TimeUnit.HOURS);
+	private Cache<String, GetAllFuncPermitRespVO> userFuncCache = new DistributedCache<>("URC-User-Sys-FuncVersion");// , 2, TimeUnit.HOURS);
 
 	@Log(value = "insertUser", level = LogLevel.ERROR)
 	public void insertUser(UserVO u) {
@@ -74,32 +76,32 @@ public class CacheBpImpl implements ICacheBp {
 		}
 	}
 
-	public void insertUserSysKey(String userName, List<String> lst) {
+//	public void insertUserSysKey(String userName, List<String> lst) {
+//		try {
+//			userSysKeyCache.put(userName, lst);
+//		} catch (Exception ex) {
+//			logger.error(String.format("insertUserSysKey:%s %s", userName, StringUtility.toJSONString(lst)), ex);
+//		}
+//	}
+
+//	public List<String> getUserSysKey(String userName) {
+//		try {
+//			return userSysKeyCache.get(userName);
+//		} catch (Exception ex) {
+//			logger.error(String.format("getUserSysKey:%s", userName), ex);
+//			return null;
+//		}
+//	}
+
+	public void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache) {
 		try {
-			userSysKeyCache.put(userName, lst);
+			userFuncCache.put(userName, permitCache);
 		} catch (Exception ex) {
-			logger.error(String.format("insertUserSysKey:%s %s", userName, StringUtility.toJSONString(lst)), ex);
+			logger.error(String.format("insertUserFunc:%s %s", userName, StringUtility.toJSONString_NoException(permitCache)), ex);
 		}
 	}
 
-	public List<String> getUserSysKey(String userName) {
-		try {
-			return userSysKeyCache.get(userName);
-		} catch (Exception ex) {
-			logger.error(String.format("getUserSysKey:%s", userName), ex);
-			return null;
-		}
-	}
-
-	public void insertUserFunc(String userName, List<UserPermissionCacheDO> lstPermitCache) {
-		try {
-			userFuncCache.put(userName, lstPermitCache);
-		} catch (Exception ex) {
-			logger.error(String.format("insertUserFunc:%s %s", userName, StringUtility.toJSONString_NoException(lstPermitCache)), ex);
-		}
-	}
-
-	public List<UserPermissionCacheDO> getUserFunc(String userName) {
+	public GetAllFuncPermitRespVO getUserFunc(String userName) {
 		try {
 			return userFuncCache.get(userName);
 		} catch (Exception ex) {
@@ -119,14 +121,14 @@ public class CacheBpImpl implements ICacheBp {
 		// cacheTest1.get("player").getAge());
 	}
 
-	@Override
-	public void removeUserSysKey(String userName) {
-		try {
-			userSysKeyCache.remove(userName);
-		} catch (Exception ex) {
-			logger.error(String.format("removeUserSysKey:%s", userName), ex);
-		}
-	}
+//	@Override
+//	public void removeUserSysKey(String userName) {
+//		try {
+//			userSysKeyCache.remove(userName);
+//		} catch (Exception ex) {
+//			logger.error(String.format("removeUserSysKey:%s", userName), ex);
+//		}
+//	}
 
 	@Override
 	public void removeUserFunc(String userName) {
@@ -138,15 +140,10 @@ public class CacheBpImpl implements ICacheBp {
 	}
 
 	@Override
-	public String getFuncVersion(String userName, String sysKey) {
-		List<UserPermissionCacheDO> lstCache = this.getUserFunc(userName);
+	public String getFuncVersion(String userName) {
+		GetAllFuncPermitRespVO lstCache = this.getUserFunc(userName);
 		if (lstCache != null) {
-			for (UserPermissionCacheDO mem : lstCache) {
-				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
-					return mem.getPermissionVersion();
-				}
-			}
-			return StringUtility.Empty;
+			return lstCache.funcVersion == null ? StringUtility.Empty : lstCache.funcVersion;
 		}
 		return null;
 	}
@@ -163,13 +160,15 @@ public class CacheBpImpl implements ICacheBp {
 
 	@Override
 	public String getFuncJson(String operator, String sysKey) {
-		List<UserPermissionCacheDO> lstCache = this.getUserFunc(operator);
+		GetAllFuncPermitRespVO lstCache = this.getUserFunc(operator);
 		if (lstCache != null) {
-			for (UserPermissionCacheDO mem : lstCache) {
-				if (StringUtility.stringEqualsIgnoreCase(mem.getSysKey(), sysKey)) {
-					return mem.getUserContext();
+			if (lstCache.lstUserSysVO != null) {
+				for (UserSysVO mem : lstCache.lstUserSysVO) {
+					if (StringUtility.stringEqualsIgnoreCase(mem.sysKey, sysKey)) {
+						return mem.context;
+					}
 				}
-			}
+			}		
 		}
 		return StringUtility.Empty;
 	}
