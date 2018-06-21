@@ -30,7 +30,7 @@ public class RoleExpiredTask {
 	
 //	@Scheduled(cron = "0/10 * * * * ?")
 	// 每天凌晨3点
-	@Scheduled(cron = "0 0 12 * * ? *")
+	@Scheduled(cron = "0 0 12 * * ?")
 	public void executeRoleExpiredTask() {
 		logger.info("角色过期检查START");
 		roleSevice.handleExpiredRole();
@@ -39,7 +39,7 @@ public class RoleExpiredTask {
 	}
 	
 
-	@Scheduled(cron = "0/20 * * * * ? *")
+	@Scheduled(cron = "0/20 * * * * ?")
 	public void testTask() {
 		logger.info("testTask");
 	}
