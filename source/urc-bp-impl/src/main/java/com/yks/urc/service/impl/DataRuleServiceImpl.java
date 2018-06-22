@@ -721,7 +721,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public List<DataRuleVO> getDataRuleByUser(List<String> lstUserName) {
+    public ResultVO getDataRuleByUser(List<String> lstUserName) {
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         for (int i = 0; i < lstUserName.size(); i++) {
             //通过用户名得到sys_key
@@ -757,7 +757,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVO.lstDataRuleSys = lstDataRuleSys;
             dataRuel.add(dataRuleVO);
         }
-        return dataRuel;
+        return VoHelper.getSuccessResult(dataRuel);
     }
 
 

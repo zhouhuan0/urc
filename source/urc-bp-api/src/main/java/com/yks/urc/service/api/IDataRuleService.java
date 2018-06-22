@@ -31,7 +31,7 @@ public interface IDataRuleService {
      * @param lstUserName
      * @return
      */
-    public List<DataRuleVO> getDataRuleByUser(List<String> lstUserName);
+    public ResultVO getDataRuleByUser(List<String> lstUserName);
 
 
     /**

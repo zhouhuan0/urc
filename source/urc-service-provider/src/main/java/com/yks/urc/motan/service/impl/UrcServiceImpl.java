@@ -73,12 +73,12 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getUserByDingOrgId(String params) {
     	
         JSONObject jsonObject = StringUtility.parseString(params);
-        String dingOrgId = jsonObject.get("dingOrgId").toString();
+        String dingOrgId = jsonObject.getString("dingOrgId");
         if (StringUtil.isEmpty(dingOrgId)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
         }
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         int pageData = Integer.valueOf(jsonObject.getString("pageData"));
         int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
@@ -88,12 +88,12 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        PersonVO personVo = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), PersonVO.class);
+        PersonVO personVo = StringUtility.parseObject(jsonObject.getString("user"), PersonVO.class);
         if (personVo==null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         int pageData = Integer.valueOf(jsonObject.getString("pageData"));
         int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
@@ -116,16 +116,16 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
-        UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
+        UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
         
         if (userVO==null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         int pageData = Integer.valueOf(jsonObject.getString("pageData"));
         int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
@@ -225,14 +225,14 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getUserByRoleId(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
-        String roleId = jsonObject.get("roleId").toString();
+        String operator = jsonObject.getString("operator");
+        String roleId = jsonObject.getString("roleId");
         
         if (StringUtility.isNullOrEmpty(roleId)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "roleId为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
         return roleService.getUserByRoleId(operator, roleId);
@@ -241,7 +241,16 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
+        
+        
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        }
+        if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRoleId为空");
+        }
+        
         List<String> roleList = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
         return roleService.getRoleUser(operator, roleList);
     }
@@ -249,13 +258,13 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         int pageData = Integer.valueOf(jsonObject.getString("pageData"));
         int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
@@ -264,10 +273,18 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public List<DataRuleVO> getDataRuleByUser(String jsonStr) {
+    public ResultVO getDataRuleByUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
+        
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        }
+        if (StringUtility.isNullOrEmpty(jsonObject.getString("lstUserName"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstUserName为空");
+        }
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
+        
         return dataRuleService.getDataRuleByUser(lstUserName);
     }
 
@@ -287,29 +304,39 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
+      
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        }
+        
+        if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRoleId为空");
+        }
+        
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
+        
         return roleService.getRolePermission(operator, lstRoleId);
     }
 
     @Override
     public ResultVO getUserByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
-        UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
+        String operator = jsonObject.getString("operator");
+        UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"), UserVO.class);
         
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         if (userVO==null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
         
         return organizationService.getUserByUserName(operator, userVO);
     }
 
     @Override
-    @Log(value = "获取用户可选择的所有数据授权方案",level = LogLevel.INFO)
+    @Log(value = "获取应用系统及其授权方式",level = LogLevel.INFO)
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
@@ -319,19 +346,15 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
-        String userName = jsonObject.get("username").toString();
+        String operator = jsonObject.getString("operator");
+        String userName = jsonObject.getString("username");
         
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
-        }
-        
-        if (StringUtility.isNullOrEmpty(userName)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         int pageData = Integer.valueOf(jsonObject.getString("pageData"));
         int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
