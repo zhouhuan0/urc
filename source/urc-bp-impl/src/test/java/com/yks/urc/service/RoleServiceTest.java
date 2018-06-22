@@ -9,45 +9,14 @@
  */
 package com.yks.urc.service;
 
-import com.alibaba.fastjson.JSON;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.yks.urc.AbstractSpringTest;
-import com.yks.urc.entity.RoleDO;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.helper.VoHelper;
-import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mybatis.spring.SqlSessionFactoryBean;
-import org.mybatis.spring.mapper.MapperScannerConfigurer;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.test.annotation.Rollback;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
-import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -91,8 +60,8 @@ public class RoleServiceTest extends AbstractSpringTest {
     @Test
     public void testIsAdminAccount(){
         //非管理员用户
-        Assert.assertEquals(roleMapper.isAdminAccount("panyun"), false);
+        Assert.assertEquals(roleMapper.isSuperAdminAccount("panyun"), false);
         //管理员用户
-        Assert.assertEquals(roleMapper.isAdminAccount("oujie"), true);
+        Assert.assertEquals(roleMapper.isSuperAdminAccount("oujie"), true);
     }
 }

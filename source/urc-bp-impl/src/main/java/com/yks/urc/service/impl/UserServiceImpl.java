@@ -1,25 +1,17 @@
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
-import com.yks.urc.dataauthorization.bp.impl.DataAuthorizationImpl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
@@ -28,7 +20,6 @@ import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.userValidate.bp.impl.UserValidateBp;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
@@ -174,7 +165,7 @@ public class UserServiceImpl implements IUserService {
 	public ResultVO fuzzySearchUsersByUserName(int pageNumber, int pageData, String userName, String operator) {
 		UserVO userVO=new UserVO();
 		userVO.userName=userName;
-		if(!roleMapper.isAdminAccount(operator)){
+		if(!roleMapper.isSuperAdminAccount(operator)){
 			userVO.createBy=operator;
 		}
 		Query query=new Query(userVO, pageNumber, pageData);

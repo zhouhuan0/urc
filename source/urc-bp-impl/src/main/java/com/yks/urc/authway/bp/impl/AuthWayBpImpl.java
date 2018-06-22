@@ -11,7 +11,6 @@ package com.yks.urc.authway.bp.impl;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.mapper.*;
 import com.yks.urc.vo.AuthWayVO;
-import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SysAuthWayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -37,7 +36,7 @@ public class AuthWayBpImpl implements AuthWayBp {
      */
     @Override
     public List<SysAuthWayVO> getMyAuthWay(String operator) {
-        boolean isAdmin = roleMapper.isAdminAccount(operator);
+        boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         List<SysAuthWayVO> lstAuthWayVOS = new ArrayList<>();
         //1.首先通过用户判断是否是管理员
         if (isAdmin == true) {
