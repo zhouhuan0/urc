@@ -8,7 +8,6 @@ import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -34,7 +33,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import javax.management.relation.Role;
 import java.util.*;
 
 /**
@@ -101,7 +99,7 @@ public class RoleServiceImpl implements IRoleService {
             queryMap.put("roleDO", roleDO);
         }
         /*管理员角色不需要createBy条件，可以查看所有的角色*/
-        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (isAdmin) {
             queryMap.put("createBy", "");
         }
@@ -158,7 +156,7 @@ public class RoleServiceImpl implements IRoleService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
         /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
-        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (isAdmin) {
             insertOrUpdateRole(operator, roleVO);
         } else {
@@ -296,7 +294,7 @@ public class RoleServiceImpl implements IRoleService {
         if (roleDO == null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
-        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
         }
@@ -343,7 +341,7 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO getUserByRoleId(String operator, String roleId) {
         UserRoleDO userRole = new UserRoleDO();
         userRole.setRoleId(Long.parseLong(roleId));
-        if (!roleMapper.isAdminAccount(operator)) {
+        if (!roleMapper.isSuperAdminAccount(operator)) {
             userRole.setCreateBy(operator);
         }
         List<UserDO> userList = userMapper.getUserByRoleId(userRole);
@@ -375,7 +373,7 @@ public class RoleServiceImpl implements IRoleService {
         List<Long> lstRoleId = StringUtility.jsonToList(lstRoleIdStr, Long.class);
 		/* 非管理员用户只能管理自己创建的角色 */
         Map dataMap = new HashMap();
-        if (roleMapper.isAdminAccount(operator)) {
+        if (roleMapper.isSuperAdminAccount(operator)) {
             dataMap.put("createBy", "");
         } else {
             dataMap.put("createBy", operator);
@@ -410,7 +408,7 @@ public class RoleServiceImpl implements IRoleService {
             RoleVO roleVO = new RoleVO();
             RolePermissionDO permissionDO = new RolePermissionDO();
             permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-            if (!roleMapper.isAdminAccount(operator)) {
+            if (!roleMapper.isSuperAdminAccount(operator)) {
                 permissionDO.setCreateBy(operator);
             }
             List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
@@ -491,7 +489,7 @@ public class RoleServiceImpl implements IRoleService {
             roleVO.setRoleId(roleDO.getRoleId());
             UserRoleDO userRoleDO = new UserRoleDO();
             userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-            if (!roleMapper.isAdminAccount(operator)) {
+            if (!roleMapper.isSuperAdminAccount(operator)) {
                 userRoleDO.setCreateBy(operator);
             }
             List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
@@ -520,7 +518,7 @@ public class RoleServiceImpl implements IRoleService {
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             List<String> userNameList = roleVO.getLstUserName();
             userRole.setRoleId(roleVO.getRoleId());
-            if (roleMapper.isAdminAccount(operator)) {
+            if (roleMapper.isSuperAdminAccount(operator)) {
                 userRoleMapper.deleteUserRole(userRole);
                 for (int j = 0; j < userNameList.size(); j++) {
                     UserRoleDO userRoleDO = new UserRoleDO();
@@ -623,7 +621,7 @@ public class RoleServiceImpl implements IRoleService {
         // 判断当前被复制角色是否为当前用户创建的角色
         RoleDO roleDO = roleMapper.getRoleByRoleId(sourceRoleId);
         // 判断当前用户是否为管理员用户
-        if (roleMapper.isAdminAccount(operator) || operator.equals(roleDO.getCreateBy())) {
+        if (roleMapper.isSuperAdminAccount(operator) || operator.equals(roleDO.getCreateBy())) {
             return roleDO;
         }
         throw new URCBizException(ErrorCode.E_101002);

@@ -1,32 +1,14 @@
 package com.yks.urc.mapper;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.sun.tools.internal.xjc.model.SymbolSpace;
-import com.yks.common.util.StringUtil;
-import com.yks.urc.entity.DataRuleColDO;
-import com.yks.urc.entity.DataRuleTemplDO;
-import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.vo.DataRuleColVO;
-import com.yks.urc.vo.DataRuleSysVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.ExpressionVO;
-import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.UserVO;
-import com.yks.urc.vo.helper.Query;
-import com.yks.urc.vo.helper.VoHelper;
 
-import org.drools.compiler.lang.DRL5Expressions.literal_return;
 import org.junit.Assert;
 import org.junit.Test;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -220,9 +202,9 @@ public class RoleMapperTest extends BaseMapperTest {
     @Test
     public void testIsAdminAccount(){
         //非管理员用户
-        Assert.assertEquals(roleMapper.isAdminAccount("panyun"), false);
+        Assert.assertEquals(roleMapper.isSuperAdminAccount("panyun"), false);
         //管理员用户
-        Assert.assertEquals(roleMapper.isAdminAccount("oujie"), true);
+        Assert.assertEquals(roleMapper.isSuperAdminAccount("oujie"), true);
     }
     @Test
     public void testGetByRoleName(){
