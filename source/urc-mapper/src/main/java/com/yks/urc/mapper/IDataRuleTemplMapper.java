@@ -112,7 +112,7 @@ public interface IDataRuleTemplMapper {
      * @date: 2018/6/16 22:08
      * @see
      */
-    Integer delTemplDatasByIdsAndCreatBy(List<Long> templId,@Param("creatBy") String creatBy);
+    Integer delTemplDatasByIdsAndCreatBy(@Param("templIds") List<Long> templIds,@Param("createBy") String createBy);
 
 
 }
