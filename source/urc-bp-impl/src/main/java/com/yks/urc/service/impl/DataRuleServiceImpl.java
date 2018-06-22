@@ -445,7 +445,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         /*5、新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）*/
         insertDataRuleTemlDatas(templVO, operator);
-        return VoHelper.getSuccessResult();
+        return VoHelper.getSuccessResult(templVO);
     }
 
     /**
