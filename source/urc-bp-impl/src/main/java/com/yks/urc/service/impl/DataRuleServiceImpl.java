@@ -729,7 +729,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
                 List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
                 for (ExpressionDO expressionDO : expressionList) {
-                    ExpressionVO expressionVO = new ExpressionVO();
+                	ExpressionVO expressionVO = new ExpressionVO();
+                	if(!StringUtility.isNullOrEmpty(expressionDO.getOperValues())){
+                		String operValues=expressionDO.getOperValues();
+                		List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+                		expressionVO.setOperValuesArr(operValuesArr);
+                	}
                     BeanUtils.copyProperties(expressionDO, expressionVO);
                     expressionVOList.add(expressionVO);
                 }

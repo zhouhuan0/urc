@@ -1,9 +1,11 @@
 package com.yks.urc.service.impl;
 
+import java.sql.RowIdLifetime;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.vo.UserVO;
 import org.slf4j.Logger;
@@ -30,6 +32,9 @@ public class OrganizationServiceImpl implements IOrganizationService {
     @Autowired
     private DingApiProxy dingApiProxy;
 
+    @Autowired
+    private IRoleMapper roleMapper;
+    
     @Autowired
     private OrganizationMapper organizationMapper;
 
@@ -62,9 +67,10 @@ public class OrganizationServiceImpl implements IOrganizationService {
     public ResultVO getUserByUserName(String operator, UserVO userVo) {
         try {
             //只需要查找用户的域账号
-            UserDO userDO = userMapper.getUserByUserName(userVo.userName);
-            userVo.userName = userDO.getUserName();
-            userVo.isActive = userDO.getIsActive() == 1 ? true : false;
+        	if(!roleMapper.isAdminAccount(operator)){
+        		userVo.createBy=operator;
+        	}
+            List<UserDO> userDO = userMapper.getUserByUserName(userVo);
             return VoHelper.getSuccessResult(userVo);
         } catch (Exception e) {
             return VoHelper.getErrorResult();
