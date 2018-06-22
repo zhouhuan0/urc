@@ -307,10 +307,10 @@ public class UserBpImpl implements IUserBp {
 			permitCache = permitStatBp.updateUserPermitCache(operator);
 		}
 		if (permitCache != null) {
-			permitCache.lstSysRoot=new ArrayList<>();
-			for (UserSysVO mem : permitCache.lstUserSysVO) {
-				permitCache.lstSysRoot.add(mem.context);
-			}
+//			permitCache.lstSysRoot=new ArrayList<>();
+//			for (UserSysVO mem : permitCache.lstUserSysVO) {
+//				permitCache.lstSysRoot.add(mem.context);
+//			}
 			permitCache.lstUserSysVO = null;
 			return VoHelper.getSuccessResult(permitCache);
 		}
