@@ -160,9 +160,17 @@ public class UserBpImpl implements IUserBp {
      */
     @Override
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, int pageNumber, int pageData) {
-        // 1.首先查询出所有数据
-        //分页
-        Query query = new Query(userVO, pageNumber, pageData);
+        //先切割UserVo 的username
+        String allUserName =userVO.userName;
+        //根据 , 切割用户名,用数组装,转成list
+        List<String> strings =new ArrayList<>();
+
+        if (allUserName.contains(",")){
+            String [] str =allUserName.split(",");
+            strings=Arrays.asList(str);
+        }
+        // 1.首先查询出所有数据  分页
+        Query query = new Query(strings, pageNumber, pageData);
         List<UserVO> userVOList = userMapper.getUsersByUserInfo(query);
         // 2.将拿到的用户名再去获取角色名称
         List<RoleVO> roleVOS = new ArrayList();

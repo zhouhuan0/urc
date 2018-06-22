@@ -194,7 +194,7 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\"pageNumber\":0,\n" +
 				"\t\"pageData\":10,\n" +
 				"\t\"user\":{\n" +
-				"\t\t\"userName\":\"linwanxian\"\n" +
+				"\t\t\"userName\":\"linwanxian,panyun\"\n" +
 				"\t}\n" +
 				"}";
 		ResultVO resultVO=service.getUsersByUserInfo(json);
@@ -214,6 +214,11 @@ public class UrcServiceTest extends BaseServiceTest {
 
 	@Test
 	public void getMyWay(){
-
-	}
+        String json="{\n" +
+                "\t\"operator\":\"panyun\"\n" +
+                "}";
+		ResultVO resultVO=service.getMyAuthWay(json);
+        System.out.println("==================");
+        System.out.println(resultVO.msg);
+    }
 }

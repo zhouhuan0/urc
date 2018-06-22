@@ -134,7 +134,11 @@ public class UserServiceImpl implements IUserService {
 				return rslt;
 			}
             rslt.data = authWayBp.getMyAuthWay(operator);
-            rslt.msg = "Success " + operator;
+			if (rslt.data == null){
+				rslt.msg ="Success ," +operator + "您不是管理员,没有授权权限哦";
+				return rslt;
+			}
+            rslt.msg = "Success, " + operator;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -291,16 +291,22 @@
         select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
-        INNER JOIN urc_user_role r on u.user_name=r.user_name
+        INNER JOIN urc_user_role r on u.user_name=r.user_name WHERE  1=1
         <if test="query.userName != null and query.userName !=''">
-         AND   u.user_name =#{query.userName}
+         AND   u.user_name  IN
+            <foreach collection="list" index="index" item="query" open="(" separator="," close=")">
+                      #{query.userName}
+             </foreach>
         </if>
         limit #{query.offset},#{query.limit}
     </select>
     <select id="getUsersByUserInfoCount" resultType="java.lang.Integer">
-        SELECT count(*) FROM urc_user u
+        SELECT count(*) FROM urc_user  WHERE 1=1
         <if test="query.userName != null and query.userName !=''">
-            AND   u.user_name =#{query.userName}
+            AND   u.user_name  IN
+            <foreach collection="list" index="index" item="query" open="(" separator="," close=")">
+                #{query.userName}
+            </foreach>
         </if>
     </select>
     <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
