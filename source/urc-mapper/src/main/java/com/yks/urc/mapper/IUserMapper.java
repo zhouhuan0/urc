@@ -109,7 +109,7 @@ public interface IUserMapper {
      * @param userName
      * @return
      */
-    UserDO getUserByUserName(@Param("userName") String userName);
+    List<UserDO> getUserByUserName(UserVO userVO);
     UserDO getUserByName(@Param("userName") String userName);
     
     
