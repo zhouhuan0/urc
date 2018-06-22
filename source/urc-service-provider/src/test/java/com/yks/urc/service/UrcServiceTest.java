@@ -212,4 +212,8 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println(resultVO.data);
 	}
 
+	@Test
+	public void getMyWay(){
+
+	}
 }
