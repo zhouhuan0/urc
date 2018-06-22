@@ -7,6 +7,7 @@ import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserVO;
 
 public interface ICacheBp {
+	long getNextSeq(String strKey);
 	UserVO getUser(String userName);
 
 	/**

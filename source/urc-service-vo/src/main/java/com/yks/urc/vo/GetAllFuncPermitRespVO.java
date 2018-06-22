@@ -33,7 +33,7 @@ public class GetAllFuncPermitRespVO implements Serializable {
 	 */
 	public List<String> lstSysRoot;
 	/**
-	 * 缓存中使用
+	 * 插入缓存时使用
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月21日 下午3:45:47
 	 */

@@ -171,4 +171,10 @@ public class CacheBpImpl implements ICacheBp {
 			logger.error(String.format("removeUser:%s", userName), ex);
 		}
 	}
+
+	@Override
+	public long getNextSeq(String strKey) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

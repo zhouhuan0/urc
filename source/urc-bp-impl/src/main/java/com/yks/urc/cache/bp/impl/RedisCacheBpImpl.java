@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.ignite.binary.Binarylizable;
@@ -72,7 +73,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 	@Log(value = "insertUser", level = LogLevel.ERROR)
 	public void insertUser(UserVO u) {
 		try {
-			setKey(getCacheKey_UserInfo(u.userName), StringUtility.toJSONString_NoException(u), 7200);
+			setKey(getCacheKey_UserLogin(u.userName), StringUtility.toJSONString_NoException(u), 7200);
 			// userInfoCache.put(u.userName, u);
 		} catch (Exception ex) {
 			logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
@@ -111,6 +112,21 @@ public class RedisCacheBpImpl implements ICacheBp {
 				shardJedis.close();
 		}
 	}
+	
+	public long getNextSeq(String strKey) {
+		ShardedJedis shardJedis = null;
+		try {
+			shardJedis = shardedJedisPool.getResource();
+			return shardJedis.incr(strKey);
+		} catch (Exception ex) {
+			logger.error(String.format("getNextSeq:%s", strKey), ex);
+		} finally {
+			// 回收ShardedJedis实例
+			if (shardJedis != null)
+				shardJedis.close();
+		}
+		return (long) (Math.random()*100000);
+	}
 
 	private String getKey(String strKey) {
 		ShardedJedis shardJedis = null;
@@ -128,13 +144,13 @@ public class RedisCacheBpImpl implements ICacheBp {
 		return null;
 	}
 
-	private String getCacheKey_UserInfo(String userName) {
-		return String.format("uesr_info_%s", userName);
+	private String getCacheKey_UserLogin(String userName) {
+		return String.format("user_login_%s", userName);
 	}
 
 	public UserVO getUser(String userName) {
 		try {
-			String strUser = getKey(getCacheKey_UserInfo(userName));
+			String strUser = getKey(getCacheKey_UserLogin(userName));
 			return StringUtility.parseObject(strUser, UserVO.class);
 			// return userInfoCache.get(userName);
 		} catch (Exception ex) {
