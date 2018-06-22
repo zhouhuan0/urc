@@ -72,7 +72,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 	@Log(value = "insertUser", level = LogLevel.ERROR)
 	public void insertUser(UserVO u) {
 		try {
-			setKey(u.userName, StringUtility.toJSONString_NoException(u), 7200);
+			setKey(getCacheKey_UserInfo(u.userName), StringUtility.toJSONString_NoException(u), 7200);
 			// userInfoCache.put(u.userName, u);
 		} catch (Exception ex) {
 			logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
@@ -167,11 +167,21 @@ public class RedisCacheBpImpl implements ICacheBp {
 			for (UserSysVO u : permitCache.lstUserSysVO) {
 				map.put(u.sysKey, u.context);
 			}
+			if (map.size() == 0) {
+				map.put("NA", "NA");
+			}
+			if (StringUtility.isNullOrEmpty(permitCache.funcVersion))
+				permitCache.funcVersion = "NA";
 			hmset(getCacheKey_UserSysFunc(userName), map);
+			setKey(getCacheKey_UserFuncVersion(userName), permitCache.funcVersion, 0);
 			// userFuncCache.put(userName, permitCache);
 		} catch (Exception ex) {
 			logger.error(String.format("insertUserFunc:%s %s", userName, StringUtility.toJSONString_NoException(permitCache)), ex);
 		}
+	}
+
+	private String getCacheKey_UserFuncVersion(String userName) {
+		return String.format("user_func_version_%s", userName);
 	}
 
 	private void hmset(String strKey, Map<String, String> map) {
@@ -192,6 +202,8 @@ public class RedisCacheBpImpl implements ICacheBp {
 		ShardedJedis shardJedis = null;
 		try {
 			shardJedis = shardedJedisPool.getResource();
+			if (!shardJedis.exists(strKey))
+				return null;
 			Map<String, String> map = shardJedis.hgetAll(strKey);
 			return map;
 		} catch (Exception ex) {
@@ -238,18 +250,12 @@ public class RedisCacheBpImpl implements ICacheBp {
 			rslt.lstSysRoot = new ArrayList<>();
 			Iterator<String> it = map.keySet().iterator();
 			while (it.hasNext()) {
-				rslt.lstSysRoot.add(map.get(it.next()));
+				String key = it.next();
+				if (StringUtility.stringEqualsIgnoreCase("NA", key))
+					continue;
+				rslt.lstSysRoot.add(map.get(key));
 			}
 			return rslt;
-		}
-		return null;
-	}
-
-	private List<String> getUserAllSysKey(String userName) {
-		String strAllSysKey = getKey(String.format("all_sys_key_%s", userName));
-		if (!StringUtility.isNullOrEmpty(strAllSysKey)) {
-			List<String> lst = StringUtility.parseObject(strAllSysKey, new ArrayList<String>().getClass());
-			return lst;
 		}
 		return null;
 	}
@@ -267,11 +273,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 
 	@Override
 	public String getFuncVersion(String userName) {
-		UserVO u = this.getUser(userName);
-		if (u != null) {
-			return u.funcVersion == null ? StringUtility.Empty : u.funcVersion;
-		}
-		return null;
+		return getKey(getCacheKey_UserFuncVersion(userName));
 	}
 
 	private String getCacheKey_SysContext(String sysKey) {
