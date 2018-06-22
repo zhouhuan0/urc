@@ -43,10 +43,14 @@ public class StringFilter implements Filter {
     @Override
     public Response filter(Caller<?> caller, Request request) {
         Response response = caller.call(request);
+        long startTime = System.currentTimeMillis();
         //返回值类型不是字符串对象
-        if (!isStringResult(request)){
+        boolean isStringResult = isStringResult(request);
+        log.error("String序列化Filter方法isStringResult耗时："+(System.currentTimeMillis()-startTime)+" ms");
+        if (!isStringResult){
             doDecorateResponse(caller,response);
         }
+        log.error("String序列化Filter耗时："+(System.currentTimeMillis()-startTime)+" ms");
         return response;
     }
 
