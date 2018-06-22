@@ -112,7 +112,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 				shardJedis.close();
 		}
 	}
-	
+
 	public long getNextSeq(String strKey) {
 		ShardedJedis shardJedis = null;
 		try {
@@ -125,7 +125,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 			if (shardJedis != null)
 				shardJedis.close();
 		}
-		return (long) (Math.random()*100000);
+		return (long) (Math.random() * 100000);
 	}
 
 	private String getKey(String strKey) {
@@ -176,6 +176,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 	// return null;
 	// }
 	// }
+	private static final String NA = "NA";
 
 	public void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache) {
 		try {
@@ -184,10 +185,10 @@ public class RedisCacheBpImpl implements ICacheBp {
 				map.put(u.sysKey, u.context);
 			}
 			if (map.size() == 0) {
-				map.put("NA", "NA");
+				map.put(NA, NA);
 			}
 			if (StringUtility.isNullOrEmpty(permitCache.funcVersion))
-				permitCache.funcVersion = "NA";
+				permitCache.funcVersion = NA;
 			hmset(getCacheKey_UserSysFunc(userName), map);
 			setKey(getCacheKey_UserFuncVersion(userName), permitCache.funcVersion, 0);
 			// userFuncCache.put(userName, permitCache);
@@ -289,7 +290,10 @@ public class RedisCacheBpImpl implements ICacheBp {
 
 	@Override
 	public String getFuncVersion(String userName) {
-		return getKey(getCacheKey_UserFuncVersion(userName));
+		String strRslt = getKey(getCacheKey_UserFuncVersion(userName));
+		if (StringUtility.stringEqualsIgnoreCase(NA, strRslt))
+			return StringUtility.Empty;
+		return strRslt;
 	}
 
 	private String getCacheKey_SysContext(String sysKey) {

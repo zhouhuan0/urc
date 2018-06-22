@@ -122,6 +122,16 @@ public interface IRoleMapper {
      * @Author oujie
      * @Date 2018/6/13 17:27
      */
+    boolean isSuperAdminAccount(@Param("userName") String userName);
+
+    /**
+     * 判断当前用户是否为业务管理员用户
+     *
+     * @param userName
+     * @return true-是 false-否
+     * @Author oujie
+     * @Date 2018/6/13 17:27
+     */
     boolean isAdminAccount(@Param("userName") String userName);
 
     /**

@@ -590,7 +590,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     public ResultVO getMyDataRuleTempl(int pageNumber, int pageData, String operator) {
         DataRuleTemplDO templDO = new DataRuleTemplDO();
-        if (!roleMapper.isAdminAccount(operator)) {
+        if (!roleMapper.isSuperAdminAccount(operator)) {
             templDO.setCreateBy(operator);
         }
 
@@ -628,7 +628,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
 
         /*3、判断当前用户是否为管理员，普通用户只能删除自己管理的方案*/
-        Boolean isAdmin = roleMapper.isAdminAccount(operator);
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (isAdmin) {
              /*4.1、根据templId列表批量删除数据权限方案模板*/
             dataRuleTemplMapper.delTemplDatasByIds(lstTemplId);
