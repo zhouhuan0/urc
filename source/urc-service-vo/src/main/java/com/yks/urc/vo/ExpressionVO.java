@@ -42,13 +42,29 @@ public class ExpressionVO implements Serializable {
      * 操作值 [“v1”,”v2”]
      */
     private String operValues;
+    
+    /**
+     * 由operValues转换而来
+     */
+    private List<String> operValuesArr;
+    
     /**
      * 父级ID
      */
     private Long parentExpressionId;
+    
+    
 
 
-    public List<ExpressionVO> getSubWhereClause() {
+    public List<String> getOperValuesArr() {
+		return operValuesArr;
+	}
+
+	public void setOperValuesArr(List<String> operValuesArr) {
+		this.operValuesArr = operValuesArr;
+	}
+
+	public List<ExpressionVO> getSubWhereClause() {
         return subWhereClause;
     }
 

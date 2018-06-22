@@ -44,8 +44,8 @@
     
     <!--获取条件表达式 list列表-->
     <select id="listExpressionDOsBySysKey" resultMap="ResultMapWithBLOBs">
-        SELECT
-			<include refid="Base_SYS_Column_List"/>
+        SELECT 
+			<include refid="Base_SYS_Column_List"/> , <include refid="Blob_Column_List"/>   
 		FROM
 			urc_expression ue
 		LEFT JOIN urc_data_rule_sys udrs ON ue.data_rule_sys_id = udrs.data_rule_sys_id  
