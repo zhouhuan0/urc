@@ -317,6 +317,8 @@ public class RedisCacheBpImpl implements ICacheBp {
 
 	@Override
 	public void insertSysContext(String sysKey, String sysContext) {
+		if (StringUtility.isNullOrEmpty(sysKey))
+			return;
 		setKey(getCacheKey_SysContext(sysKey), sysContext, 0);
 		// sysFuncJsonCache.put(sysKey, sysContext);
 	}
