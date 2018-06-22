@@ -160,14 +160,23 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		// System.out.println(seqBp.getNextSeq("roleId"));
 	}
 
+	
+	public void getAllFuc_Test() {
+		Map<String, Object> map = new HashMap<>();
+		map.put(StringConstant.operator, "panyun");
+		String jsonStr = StringUtility.toJSONString_NoException(map);
+
+		service.getAllFuncPermit(jsonStr);
+	}
 	@Test
 	public void createRole_Test() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(StringConstant.operator, "panyun");
 		RoleVO role = new RoleVO();
-		role.roleName = "panyunTest";
+		role.roleName = "panyunTest2";
 		map.put("role", role);
 		String jsonStr = StringUtility.toJSONString_NoException(map);
 		service.addOrUpdateRoleInfo(jsonStr);
 	}
+
 }
