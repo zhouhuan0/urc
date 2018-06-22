@@ -1,6 +1,8 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.StringUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
@@ -69,19 +71,32 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO getUserByDingOrgId(String params) {
+    	
         JSONObject jsonObject = StringUtility.parseString(params);
-        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         String dingOrgId = jsonObject.get("dingOrgId").toString();
+        if (StringUtil.isEmpty(dingOrgId)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
+        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
     @Override
     public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         PersonVO personVo = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), PersonVO.class);
+        if (personVo==null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
+        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
     }
 
@@ -101,9 +116,20 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
-        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
         UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
+        
+        if (userVO==null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
+        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        
         return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 
@@ -201,6 +227,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         String roleId = jsonObject.get("roleId").toString();
+        
+        if (StringUtility.isNullOrEmpty(roleId)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+        }
+        
         return roleService.getUserByRoleId(operator, roleId);
     }
 
@@ -216,8 +250,16 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getMyDataRuleTempl(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
+        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
     }
 
@@ -255,6 +297,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         UserVO userVO = StringUtility.parseObject(jsonObject.getJSONObject("user").toString(), UserVO.class);
+        
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        if (userVO==null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        
         return organizationService.getUserByUserName(operator, userVO);
     }
 
@@ -271,8 +321,21 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
         String userName = jsonObject.get("username").toString();
-        int pageNumber = Integer.valueOf(jsonObject.get("pageNumber").toString());
-        int pageData = Integer.valueOf(jsonObject.get("pageData").toString());
+        
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        
+        if (StringUtility.isNullOrEmpty(userName)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
+        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }
 
