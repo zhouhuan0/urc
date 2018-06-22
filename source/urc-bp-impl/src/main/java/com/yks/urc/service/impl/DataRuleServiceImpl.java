@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.*;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -78,7 +80,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            logger.error("当前用户不能为空");
+            throw new URCBizException(ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
         if (StringUtil.isEmpty(templIdStr)) {
@@ -182,10 +185,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、请求参数的基本校验并转换为内部使用的Map*/
         Map<String, Object> queryMap = new HashMap<>();
-        Boolean rtn = checkAndConvertParam(queryMap, jsonObject);
-        if (!rtn) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
-        }
+        checkAndConvertParam(queryMap, jsonObject);
         /*3、查询数据权限模板列表信息*/
         List<DataRuleTemplDO> dataRuleTemplDOS = dataRuleTemplMapper.listDataRuleTemplDOsByPage(queryMap);
         /*4、List<DO> 转 List<VO>*/
@@ -205,19 +205,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/13 11:54
      * @see
      */
-    private Boolean checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
+    private void checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
          /*获取当前用户*/
         String createBy = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(createBy)) {
-            logger.error("当期用户为空");
-            return Boolean.FALSE;
+            logger.error("当期用户不能为空");
+            throw new URCBizException(ErrorCode.E_000002);
         }
         queryMap.put("createBy", createBy);
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
             logger.error("分页参数有误");
-            return Boolean.FALSE;
+            throw new URCBizException(ErrorCode.E_000003);
         }
         int currPage = Integer.valueOf(pageNumber);
         int pageSize = Integer.valueOf(pageData);
@@ -237,10 +237,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
             String[] templNames = dataRuleTemplVO.templName.split(System.getProperty("line.separator"));
             queryMap.put("templNames", templNames);
         }
-
-        return Boolean.TRUE;
-
-
     }
 
 
@@ -264,23 +260,23 @@ public class DataRuleServiceImpl implements IDataRuleService {
         String createBy = jsonObject.getString("operator");
         if (StringUtil.isEmpty(createBy)) {
             logger.error("当前用户为空");
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException(ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
-        if (!StringUtil.isNum(templIdStr)) {
-            logger.error("参数有误");
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+        if (StringUtil.isEmpty(templIdStr)) {
+            logger.error("templId为空");
+            throw new URCBizException(ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
         String lstUserNameStr = jsonObject.getString("lstUserName");
         if (StringUtil.isEmpty(lstUserNameStr)) {
-            logger.error("参数有误");
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            logger.error("lstUserName为空");
+            throw new URCBizException(ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(lstUserNameStr, String.class);
         if (lstUserName == null || lstUserName.isEmpty()) {
-            logger.error("参数有误");
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            logger.error("lstUserName转成List后为空");
+            throw new URCBizException(ErrorCode.E_000003);
         }
         /*3、获取该模板对应的数据权限对应系统数据*/
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
