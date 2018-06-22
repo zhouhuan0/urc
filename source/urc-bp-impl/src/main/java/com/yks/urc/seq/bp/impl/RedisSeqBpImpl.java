@@ -35,37 +35,37 @@ public class RedisSeqBpImpl implements ISeqBp {
 	}
 
 	public long getNextRoleId() {
-		return getNextSeq("roleId");
+		return getNextSeq("seq_roleId");
 	}
 
 	@Override
 	public long getNextDataRuleId() {
-		return getNextSeq("dataRuleId");
+		return getNextSeq("seq_dataRuleId");
 	}
 
 	@Override
 	public long getNextDataRuleTemplId() {
-		return getNextSeq("dataRuleTemplId");
+		return getNextSeq("seq_dataRuleTemplId");
 	}
 
 	@Override
 	public long getNextDataRuleSysId() {
-		return getNextSeq("dataRuleSysId");
+		return getNextSeq("seq_dataRuleSysId");
 	}
 
 	@Override
 	public long getExpressionId() {
-		return getNextSeq("expressionId");
+		return getNextSeq("seq_expressionId");
 	}
 
 	@Override
 	public long getNextAuthWayId() {
-		return getNextSeq("authWayId");
+		return getNextSeq("seq_authWayId");
 
 	}
 
 	@Override
 	public long getNextDataRuleObjId() {
-		return getNextSeq("dataRuleObjId");
+		return getNextSeq("seq_dataRuleObjId");
 	}
 }
