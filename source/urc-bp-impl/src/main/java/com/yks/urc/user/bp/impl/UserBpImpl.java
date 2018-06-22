@@ -177,6 +177,9 @@ public class UserBpImpl implements IUserBp {
         RoleVO roleVO = new RoleVO();
         for (UserVO userVO1 : userVOList) {
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
+            if (roleNameList == null){
+                return VoHelper.getErrorResult("000008","查询结果为空");
+            }
             //组装roleName
             for (String roleName : roleNameList) {
                 roleVO.roleName = roleName;

@@ -25,10 +25,7 @@ import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.DataRuleSysVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -219,6 +216,22 @@ public class UrcServiceTest extends BaseServiceTest {
                 "}";
 		ResultVO resultVO=service.getMyAuthWay(json);
         System.out.println("==================");
+        System.out.println(resultVO.msg);
+    }
+    @Test
+    public void  updateManyFunc(){
+	    Map map =new HashMap();
+	    map.put("operator","linwanxian");
+        RoleVO roleVO =new RoleVO();
+        List<RoleVO> lstRole =new ArrayList<>();
+        roleVO.roleId= Long.parseLong("1529550145551000001");
+        lstRole.add(roleVO);
+
+        map.put("lstRole",lstRole);
+        String json=StringUtility.toJSONString(map);
+        String strJson ="{\"lstRole\":[{\"active\":false,\"authorizable\":false,\"forever\":false,\"isActive\":false,\"isAuthorizable\":false,\"isForever\":false,\"roleId\":1529550145551000001}],\"operator\":\"linwanxian\"}";
+        System.out.println(json);
+        ResultVO resultVO =service.updateRolePermission(json);
         System.out.println(resultVO.msg);
     }
 }
