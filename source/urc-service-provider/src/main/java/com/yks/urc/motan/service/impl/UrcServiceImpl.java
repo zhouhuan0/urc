@@ -74,7 +74,7 @@ public class UrcServiceImpl implements IUrcService {
     	
         JSONObject jsonObject = StringUtility.parseString(params);
         String dingOrgId = jsonObject.getString("dingOrgId");
-        if (StringUtil.isEmpty(dingOrgId)) {
+        if (!StringUtility.isNum(dingOrgId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
         }
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))||StringUtility.isNum(jsonObject.getString("pageData"))) {
@@ -228,7 +228,7 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.getString("operator");
         String roleId = jsonObject.getString("roleId");
         
-        if (StringUtility.isNullOrEmpty(roleId)) {
+        if (StringUtility.isNum(roleId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "roleId为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
