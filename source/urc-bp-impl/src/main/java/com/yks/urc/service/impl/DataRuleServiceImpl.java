@@ -80,12 +80,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            logger.error("当前用户不能为空");
-            throw new URCBizException(ErrorCode.E_000002);
+           // logger.error("当前用户不能为空");
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
         if (StringUtil.isEmpty(templIdStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter templId is null",ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
@@ -94,7 +94,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
         DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, operator);
         if (dataRuleTemplDO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException(String.format("urc_data_rule_templ is null where templId is: %s and operator is: %s",templId,operator),ErrorCode.E_000002);
         }
         BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
         dataRuleTemplVO.setTemplId(String.valueOf(dataRuleTemplDO.getTemplId()));
@@ -209,15 +209,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
          /*获取当前用户*/
         String createBy = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(createBy)) {
-            logger.error("当期用户不能为空");
-            throw new URCBizException(ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         queryMap.put("createBy", createBy);
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-            logger.error("分页参数有误");
-            throw new URCBizException(ErrorCode.E_000003);
+            throw new URCBizException(String.format("parameter pageNumber or pageData is not num pageNumber:%s , pageData:%s",pageNumber,pageData),ErrorCode.E_000002);
         }
         int currPage = Integer.valueOf(pageNumber);
         int pageSize = Integer.valueOf(pageData);
@@ -259,24 +257,20 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数并校验*/
         String createBy = jsonObject.getString("operator");
         if (StringUtil.isEmpty(createBy)) {
-            logger.error("当前用户为空");
-            throw new URCBizException(ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
         if (StringUtil.isEmpty(templIdStr)) {
-            logger.error("templId为空");
-            throw new URCBizException(ErrorCode.E_000002);
+            throw new URCBizException("parameter templId is null",ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
         String lstUserNameStr = jsonObject.getString("lstUserName");
         if (StringUtil.isEmpty(lstUserNameStr)) {
-            logger.error("lstUserName为空");
-            throw new URCBizException(ErrorCode.E_000002);
+            throw new URCBizException("parameter lstUserName is null",ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(lstUserNameStr, String.class);
         if (lstUserName == null || lstUserName.isEmpty()) {
-            logger.error("lstUserName转成List后为空");
-            throw new URCBizException(ErrorCode.E_000003);
+            throw new URCBizException("parameter lstUserName is null",ErrorCode.E_000002);
         }
         /*3、获取该模板对应的数据权限对应系统数据*/
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
@@ -430,11 +424,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         DataRuleTemplVO templVO = StringUtility.parseObject(jsonObject.getString("templ"), DataRuleTemplVO.class);
         if (templVO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter templ is null",ErrorCode.E_000002);
         }
         /** 3、判断该方案是否属于当前用户（非管理员角色）
          *  1)、当temp方案存在 2)、当前用户非管理员  3)、temp方案不属于当前用户
@@ -444,8 +438,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             Long currentTemplId = Long.valueOf(tempIdStr);
             DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
             if (dataRuleTemplDO == null) {
-                logger.error("该方案不属于该用户，不能操作");
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s",currentTemplId,operator),ErrorCode.E_000002);
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             dataRuleTemplMapper.delTemplDatasById(currentTemplId);
@@ -619,11 +612,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String lstTemplIdStr = jsonObject.getString("lstTemplId");
         if (StringUtil.isEmpty(lstTemplIdStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter lstTemplIdStr is null",ErrorCode.E_000002);
         }
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
 
@@ -654,16 +647,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String lstDataRuleStr = jsonObject.getString("lstDataRule");
         if (StringUtil.isEmpty(lstDataRuleStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter lstDataRule is null",ErrorCode.E_000002);
         }
         List<JSONObject> sourceDataRuleVOS = StringUtility.parseObject(lstDataRuleStr, List.class);
         List<DataRuleVO> dataRuleVOS = convertList(sourceDataRuleVOS);
         if (dataRuleVOS == null || dataRuleVOS.isEmpty()) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter lstDataRule is null",ErrorCode.E_000002);
         }
         List<String> lstUserName = new ArrayList<>();
         for (DataRuleVO dataRuleVO : dataRuleVOS) {

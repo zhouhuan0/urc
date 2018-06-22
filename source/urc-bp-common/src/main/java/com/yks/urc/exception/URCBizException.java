@@ -22,6 +22,10 @@ public class URCBizException extends AbstractURCException{
         super(errorCode);
     }
 
+    public URCBizException(String message,ErrorCode errorCode) {
+        super(message,errorCode);
+    }
+
     public URCBizException(String state, String message) {
         super(state, message);
     }

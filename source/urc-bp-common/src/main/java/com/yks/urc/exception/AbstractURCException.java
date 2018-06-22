@@ -45,6 +45,11 @@ public abstract class AbstractURCException extends RuntimeException{
         init(errorCode);
     }
 
+    public AbstractURCException(String message,ErrorCode errorCode){
+        super(message);
+        init(errorCode);
+    }
+
     public AbstractURCException(String state, String message) {
         super(message);
         init(state, message);
