@@ -111,15 +111,24 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleByRoleId() {
-    	
-		UserVO userVO=new UserVO();
+    	String params="{\"user\":{\"userId\":\"123\"} }";
+    	JSONObject jsonObject = StringUtility.parseString(params);
+    	String sss=jsonObject.getString("user");
+        UserVO userVO = StringUtility.parseObject(sss, UserVO.class);
+        
+    	if(userVO==null){
+    		System.out.println("sdssd");
+    	}else{
+    		System.out.println("sdfsdfdsfd");
+    	}
+/*		UserVO userVO=new UserVO();
 		userVO.userName="test";
 		
 		Query query=new Query(userVO, 0, 10);
 		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
 		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
 		System.out.println(userList);
-		System.out.println(userCount);
+		System.out.println(userCount);*/
 		//PageResultVO pageResultVO=new PageResultVO(userList, userCount, 10);
     	
     	

@@ -194,7 +194,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    List<DataRuleVO> getDataRuleByUser(String jsonStr);
+    ResultVO getDataRuleByUser(String jsonStr);
 
     /**
      * 导入sys功能权限定义
