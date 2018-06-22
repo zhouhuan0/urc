@@ -376,7 +376,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
-        List<RoleVO> lstRole = StringUtility.parseObject(jsonObject.get("lstRole").toString(), List.class);
+        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
         return roleService.updateRolePermission(operator, lstRole);
     }
     @Override
