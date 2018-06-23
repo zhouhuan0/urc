@@ -191,7 +191,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*4、List<DO> 转 List<VO>*/
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
         /*5、获取总条数*/
-        Long total = dataRuleTemplMapper.getCounts(queryMap.get("createBy").toString());
+        Long total = dataRuleTemplMapper.getCounts(queryMap);
         PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
         return VoHelper.getSuccessResult(pageResultVO);
     }

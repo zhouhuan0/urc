@@ -31,8 +31,11 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
 
     @Test
     public void getCounts() {
-        String creatBy = "";
-        Long counts = dataRuleTemplMapper.getCounts(creatBy);
+        Map<String, Object> map = new HashMap<>();
+        String[] templNames = {"数据权限模板1", "数据权限模板2", "数据权限模板8", "数据权限模板9", "数据权限模板5", "数据权限模板6", "数据权限模板7"};
+        map.put("createBy", "lvchangrong");
+        map.put("templNames", templNames);
+        Long counts = dataRuleTemplMapper.getCounts(map);
         System.out.println(counts);
     }
 

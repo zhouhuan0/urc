@@ -171,6 +171,14 @@ public class RoleServiceImpl implements IRoleService {
             }
 
         }
+
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(roleVO.getRoleId());
+        userRoleDO.setCreateBy(operator);
+        /*5、获取roleIds角色对应的用户名*/
+        List<String> userNames = userRoleMapper.getUserNameByRoleId(userRoleDO);
+        /*6、更新用户操作权限冗余表和缓存*/
+        permitStatBp.updateUserPermitCache(userNames);
         return VoHelper.getSuccessResult();
     }
 
