@@ -47,23 +47,7 @@ public class MqBpImpl implements IMqBp {
             return;
         }
         for (DataRuleVO dataRuleVO : dataRuleVOList) {
-            List<DataRuleSysVO> dataRuleSysVOS = dataRuleVO.lstDataRuleSys;
-            for (DataRuleSysVO drSys : dataRuleSysVOS) {
-                if (StringUtility.isNullOrEmpty(drSys.sysKey)) {
-                    continue;
-                }
-                String sysKey = drSys.sysKey;
-                String topic = getDataRuleTopic(sysKey);
-                String value = StringUtility.toJSONString_NoException(drSys);
-                ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
-                Callback arg1 = new Callback() {
-                    @Override
-                    public void onCompletion(RecordMetadata arg0, Exception arg1) {
-
-                    }
-                };
-                KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
-            }
+        	send2Mq(dataRuleVO);
         }
     }
 }
