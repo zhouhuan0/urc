@@ -170,7 +170,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Transactional
 	public void testSync() {
 		String json="{\n" +
-				"\t\"operator\":\"test3\"\n" +
+				"\t\"operator\":\"linwanxian\"\n" +
 				"}";ResultVO resultVO=service.syncUserInfo(json);
 		System.out.println("=====================");
 		System.out.println(resultVO.msg);
@@ -182,16 +182,16 @@ public class UrcServiceTest extends BaseServiceTest {
 				"}";
 		ResultVO resultVO=service.getPlatformList(json);
 		System.out.println("=====================");
-		System.out.println(resultVO.data + "," +resultVO.msg);
+		System.out.println(resultVO.msg);
     }
 	@Test
 	public void searchUser(){
 		String json ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
 				"\t\"pageNumber\":0,\n" +
-				"\t\"pageData\":10,\n" +
+				"\t\"pageData\":30,\n" +
 				"\t\"user\":{\n" +
-				"\t\t\"userName\":\"linwanxian,panyun\"\n" +
+				"\t\t\"userName\":\"panyun\"\n" +
 				"\t}\n" +
 				"}";
 		ResultVO resultVO=service.getUsersByUserInfo(json);
@@ -206,7 +206,7 @@ public class UrcServiceTest extends BaseServiceTest {
 				"}";
 		ResultVO resultVO =service.getShopList(json);
 		System.out.println("==================");
-		System.out.println(resultVO.data);
+		System.out.println(resultVO.msg);
 	}
 
 	@Test

@@ -21,7 +21,7 @@ public class Query extends LinkedHashMap<String, Object> {
 			this.putAll(params);
 		}
 		// 分页参数
-		this.limit = (pageData==0 ? 10 : pageData);
+		this.limit = (pageData==0 ? 20 : pageData);
 		this.offset = (pageNumber==0 ? 0 :  ((pageNumber - 1)*this.limit));
 		this.put("offset", offset);
 		this.put("page", offset / limit + 1);

@@ -117,7 +117,8 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
-        
+        int pageNumber;
+        int pageData;
         if (userVO==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
@@ -125,11 +126,14 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
+             pageNumber = 0;
+             pageData =20;
+        }else if (Integer.parseInt(jsonObject.get("pageData").toString()) > 3000 || Integer.parseInt(jsonObject.get("pageData").toString()) <=0 ){
+          return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"超出每页的合法值,合法值为[1,3000]");
+        }else {
+            pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+            pageData = Integer.valueOf(jsonObject.getString("pageData"));
         }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
-        
         return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 

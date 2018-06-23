@@ -1,12 +1,15 @@
 package com.yks.urc.user.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
@@ -25,6 +28,7 @@ import com.yks.urc.vo.helper.VoHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -93,6 +97,9 @@ public class UserBpImpl implements IUserBp {
     public void SynUserFromUserInfo(String username) {
         if (lock.tryLock()) {
             List<UserInfo> userInfoList = this.getUserInfo();
+            if (userInfoList == null || userInfoList.size() ==0){
+                throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
+            }
             List<UserDO> userDoList = new ArrayList<>();
             try {
                 // 先清理数据表
@@ -149,7 +156,7 @@ public class UserBpImpl implements IUserBp {
     }
 
     /**
-     * 搜索用户
+     * 搜索用户 , 首先拿到和用户 相关的所有信息, 再根据用户名去查询
      *
      * @param userVO
      * @param pageNumber
@@ -171,25 +178,30 @@ public class UserBpImpl implements IUserBp {
         }
         // 1.首先查询出所有数据  分页
         Query query = new Query(strings, pageNumber, pageData);
-        List<UserVO> userVOList = userMapper.getUsersByUserInfo(query);
+        List<UserVO> userVOS = userMapper.getUsersByUserInfo(query);
+        List<UserVO> userVOList =new ArrayList<>();
+        if (userVOS.size() == 0){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
+        }
         // 2.将拿到的用户名再去获取角色名称
+       // List<String> userNames =new ArrayList<>();
         List<RoleVO> roleVOS = new ArrayList();
-        RoleVO roleVO = new RoleVO();
-        for (UserVO userVO1 : userVOList) {
+        for (UserVO userVO1 : userVOS) {
+            // 查询角色
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
-            if (roleNameList == null){
-                return VoHelper.getErrorResult("000008","查询结果为空");
+            if (roleNameList.size() == 0){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
             }
-            //组装roleName
+            //组装角色
             for (String roleName : roleNameList) {
+                RoleVO roleVO = new RoleVO();
                 roleVO.roleName = roleName;
-                // 3.将拿到的角色对象组装到uservo里面
                 roleVOS.add(roleVO);
             }
-            userVO.roles = roleVOS;
+            userVO1.roles =roleVOS;
+            // 4.组装userVo
+            userVOList.add(userVO1);
         }
-        // 4.组装userVo
-        userVOList.add(userVO);
         // 获取总条数
         int total = userMapper.getUsersByUserInfoCount(query);
         PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
@@ -232,12 +244,18 @@ public class UserBpImpl implements IUserBp {
         object.put("password", password);
         try {
             String accessToken = HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
+            if (StringUtility.isNullOrEmpty(accessToken)){
+                return null;
+            }
             logger.info("获取token");
             // 将拿到的string 转为json
             JSONObject jsonToken = StringUtility.parseString(accessToken);
             String token = jsonToken.getString("token");
             // 2.只调用UserInfo接口，同步UserInfo数据
             String userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
+            if (StringUtility.isNullOrEmpty(userInfo)){
+                return null;
+            }
             // 解析json数组
             logger.info("获取userInfo");
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
