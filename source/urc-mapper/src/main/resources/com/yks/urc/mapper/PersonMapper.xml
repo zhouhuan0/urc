@@ -65,7 +65,7 @@
   
   
   
-    <select id="getUserByDingOrgId"   resultMap="BaseResultMap">
+    <select id="getUserByDingOrgId"   resultMap="BasePersonVOResultMap">
 	    select 
 	    <include refid="Base_User_Column_List" /> 
 	     from urc_person up left join  urc_person_org upo on upo.ding_user_id=up.ding_user_id 
