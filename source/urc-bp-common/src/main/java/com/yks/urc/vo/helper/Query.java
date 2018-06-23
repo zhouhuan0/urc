@@ -23,7 +23,7 @@ public class Query extends LinkedHashMap<String, Object> {
 			Map<String, Object> params= StringUtility.ConvertObjToMap(obj);
 			this.putAll(params);
 		}
-        if (!(StringUtility.isNum(pageNumber))&&StringUtility.isNum(pageData)) {
+        if (!StringUtility.isNum(pageNumber)||!StringUtility.isNum(pageData)) {
         	pageIndex=1;
         	pageSize=20;
         }else if (Integer.parseInt(pageData)>3000){
