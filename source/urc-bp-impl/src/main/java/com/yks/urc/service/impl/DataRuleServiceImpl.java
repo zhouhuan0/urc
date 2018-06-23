@@ -581,18 +581,18 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getMyDataRuleTempl(int pageNumber, int pageData, String operator) {
+    public ResultVO getMyDataRuleTempl(String pageNumber, String pageData, String operator) {
         DataRuleTemplDO templDO = new DataRuleTemplDO();
         if (!roleMapper.isSuperAdminAccount(operator)) {
             templDO.setCreateBy(operator);
         }
 
-        Query query = new Query(templDO, pageNumber, pageData);
+        Query query = new Query(templDO, pageNumber,pageData);
         List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
 
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, pageData);
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, Integer.parseInt(pageData));
         return VoHelper.getSuccessResult(pageResultVO);
     }
 

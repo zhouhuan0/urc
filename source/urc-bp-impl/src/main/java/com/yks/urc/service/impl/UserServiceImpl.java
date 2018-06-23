@@ -164,7 +164,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 
-
+	@Override
 	public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
 		UserVO userVO=new UserVO();
 		userVO.userName=userName;
@@ -173,8 +173,8 @@ public class UserServiceImpl implements IUserService {
 		}
 		Query query=new Query(userVO, pageNumber, pageData);
 		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
-		int userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
-		PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
+		long userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+		PageResultVO pageResultVO=new PageResultVO(userList, userCount, Integer.parseInt(pageData));
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 }

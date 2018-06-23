@@ -61,29 +61,30 @@ public class PersonServiceImpl implements IPersonService {
     private IOperationBp operationBp;
 
 	@Override
-	public ResultVO getUserByDingOrgId(String dingOrgId,int pageNumber, int pageData) {
+	public ResultVO getUserByDingOrgId(String dingOrgId,String pageNumber, String pageData) {
 		PersonVO person=new PersonVO();
 		person.setDingOrgId(dingOrgId);
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.getUserByDingOrgId(query);
 		long count= personMapper.getUserByDingOrgIdCount(query);
-		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
+		PageResultVO pageResultVO = new PageResultVO(personList,count,Integer.parseInt(pageData));
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 
 
 	@Override
-	public ResultVO getUserByUserInfo(PersonVO person,int pageNumber, int pageData) {
+	public ResultVO getUserByUserInfo(PersonVO person,String pageNumber, String pageData) {
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.list(query);
 		long count= personMapper.count(query);
-		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
+		PageResultVO pageResultVO = new PageResultVO(personList,count,Integer.parseInt(pageData));
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 	
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
 	DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
 	@Transactional(rollbackFor = Exception.class)
+	@Override
 	public ResultVO SynPersonOrgFromDing(String userName) {
 		if(lock.tryLock()){
 			logger.info("开始同步钉钉数据");
@@ -92,6 +93,7 @@ public class PersonServiceImpl implements IPersonService {
 			  //先准备初始化参数	
 					fixedThreadPool.submit(new Runnable() {
 					@Transactional(rollbackFor = Exception.class)
+					@Override
 		            public void run() {
 		            	List<DingDeptVO> dingAllDept;
 						try {

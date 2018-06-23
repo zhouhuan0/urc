@@ -444,7 +444,7 @@ public class RoleServiceImpl implements IRoleService {
                 userRole.setRoleId(roleVO.roleId);
                 List<UserDO> userDOList = userMapper.getUserByRoleId(userRole);
                 if (userDOList == null){
-                    return VoHelper.getErrorResult("000008","查询结果为空");
+                    return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
                 }
                 //更新缓存
                 for (int i = 0; i < userDOList.size(); i++) {
@@ -455,7 +455,7 @@ public class RoleServiceImpl implements IRoleService {
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
                 if (permissionVOS == null){
-                    return VoHelper.getErrorResult("000009","获取的功能权限为空");
+                    return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"获取的功能权限为空");
                 }
                 for (PermissionVO permissionVO : permissionVOS) {
                     //将功能版本放入do中
