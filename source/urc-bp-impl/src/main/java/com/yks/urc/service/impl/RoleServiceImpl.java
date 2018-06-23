@@ -404,28 +404,30 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public ResultVO getRolePermission(String operator, List<String> lstRoleId) {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
-        for (int i = 0; i < lstRoleId.size(); i++) {
-            RoleVO roleVO = new RoleVO();
-            RolePermissionDO permissionDO = new RolePermissionDO();
-            permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-            if (!roleMapper.isSuperAdminAccount(operator)) {
-                permissionDO.setCreateBy(operator);
-            }
-            List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
-            List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
-            for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-                Permission permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSysKey(), permission.getSysContext());
-                PermissionVO permissionVO = new PermissionVO();
-                permissionVO.setSysKey(rolePermissionDO.getSysKey());
-                permissionVO.setSysContext(SelectedContext);
-                permissionVOs.add(permissionVO);
-            }
-            RoleDO roleDo = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
-            roleVO.roleId = Long.parseLong(lstRoleId.get(i));
-            roleVO.roleName = roleDo.getRoleName();
-            roleVO.selectedContext = permissionVOs;
-            roleVoList.add(roleVO);
+        if(lstRoleId!=null&&lstRoleId.size()>0){
+	        for (int i = 0; i < lstRoleId.size(); i++) {
+	            RoleVO roleVO = new RoleVO();
+	            RolePermissionDO permissionDO = new RolePermissionDO();
+	            permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+	            if (!roleMapper.isSuperAdminAccount(operator)) {
+	                permissionDO.setCreateBy(operator);
+	            }
+	            List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
+	            List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
+	            for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+	                Permission permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+	                String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+	                PermissionVO permissionVO = new PermissionVO();
+	                permissionVO.setSysKey(rolePermissionDO.getSysKey());
+	                permissionVO.setSysContext(SelectedContext);
+	                permissionVOs.add(permissionVO);
+	            }
+	            RoleDO roleDo = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+	            roleVO.roleId = Long.parseLong(lstRoleId.get(i));
+	            roleVO.roleName = roleDo.getRoleName();
+	            roleVO.selectedContext = permissionVOs;
+	            roleVoList.add(roleVO);
+	        }
         }
         return VoHelper.getSuccessResult(roleVoList);
     }
@@ -444,7 +446,7 @@ public class RoleServiceImpl implements IRoleService {
                 userRole.setRoleId(roleVO.roleId);
                 List<UserDO> userDOList = userMapper.getUserByRoleId(userRole);
                 if (userDOList == null){
-                    return VoHelper.getErrorResult("000008","查询结果为空");
+                    return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
                 }
                 //更新缓存
                 for (int i = 0; i < userDOList.size(); i++) {
@@ -455,7 +457,7 @@ public class RoleServiceImpl implements IRoleService {
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
                 if (permissionVOS == null){
-                    return VoHelper.getErrorResult("000009","获取的功能权限为空");
+                    return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"获取的功能权限为空");
                 }
                 for (PermissionVO permissionVO : permissionVOS) {
                     //将功能版本放入do中
@@ -632,9 +634,6 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
-        if (StringUtils.isBlank(newRoleName)){
-            throw new URCBizException(ErrorCode.E_000002);
-        }
         return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
 

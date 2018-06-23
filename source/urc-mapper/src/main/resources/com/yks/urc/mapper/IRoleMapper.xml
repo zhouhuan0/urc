@@ -248,6 +248,9 @@
         INNER JOIN urc_user_role up on r.role_id = up.role_id
         INNER JOIN urc_user u on up.user_name =u.user_name
         WHERE u.user_name =#{userName}
+       <!-- <foreach collection="userNames" index="index" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>-->
     </select>
     <!-- 获取所有过期的角色关联的用户 -->
     <select id="getUsersOfAllExpiredRole" resultType="java.lang.String">

@@ -15,14 +15,27 @@ public class Query extends LinkedHashMap<String, Object> {
 	// 每页条数
 	private int limit;
 
-	public Query(Object obj,int pageNumber, int pageData) {
+	public Query(Object obj,String pageNumber, String pageData) {
+		int pageIndex;
+		int pageSize;
 		if(obj!=null){
 			Map<String, Object> params= StringUtility.ConvertObjToMap(obj);
 			this.putAll(params);
 		}
+        if (!StringUtility.isNum(pageNumber)||!StringUtility.isNum(pageData)) {
+        	pageIndex=1;
+        	pageSize=20;
+        }else if (Integer.parseInt(pageData)>3000){
+        	pageIndex=Integer.parseInt(pageNumber);
+        	pageSize=20;
+        }else{
+        	pageIndex=Integer.parseInt(pageNumber);
+        	pageSize=Integer.parseInt(pageData);
+        }
+
 		// 分页参数
-		this.limit = (pageData==0 ? 10 : pageData);
-		this.offset = (pageNumber==0 ? 0 :  ((pageNumber - 1)*this.limit));
+		this.limit = (pageSize==0 ? 20 : pageSize);
+		this.offset = (pageIndex==0 ? 0 :  ((pageIndex - 1)*this.limit));
 		this.put("offset", offset);
 		this.put("page", offset / limit + 1);
 		this.put("limit", limit);

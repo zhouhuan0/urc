@@ -23,7 +23,7 @@ public interface IDataRuleService {
      * @param userName
      * @return
      */
-    ResultVO getMyDataRuleTempl(int pageNumber, int pageData, String userName);
+    ResultVO getMyDataRuleTempl(String pageNumber, String pageData, String userName);
 
     /**
      * 获取多个用户的所有数据权限

@@ -80,8 +80,8 @@ public class UrcServiceImpl implements IUrcService {
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
@@ -95,8 +95,8 @@ public class UrcServiceImpl implements IUrcService {
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
     }
 
@@ -117,19 +117,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
-        
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         if (userVO==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
-        
         return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 
@@ -266,8 +261,8 @@ public class UrcServiceImpl implements IUrcService {
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
     }
@@ -356,8 +351,8 @@ public class UrcServiceImpl implements IUrcService {
         if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }
@@ -440,7 +435,7 @@ public class UrcServiceImpl implements IUrcService {
      */
     @Override
     public ResultVO addOrUpdateDataRule(String jsonStr) {
-        return null;
+        return dataRuleService.addOrUpdateDataRule(jsonStr);
     }
 
     /**

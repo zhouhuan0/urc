@@ -231,9 +231,9 @@ public class RoleMapperTest extends BaseMapperTest {
     }
     @Test
     public void getRoleName(){
-        String username ="panyun";
+    /*    String username ="panyun";
        List<String> roleName=  roleMapper.selectRoleNameByUserName(username);
-        System.out.println(roleName);
+        System.out.println(roleName);*/
     }
 
 

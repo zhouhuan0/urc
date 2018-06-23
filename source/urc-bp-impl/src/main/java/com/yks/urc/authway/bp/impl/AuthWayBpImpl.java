@@ -9,6 +9,8 @@
 package com.yks.urc.authway.bp.impl;
 
 import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.*;
 import com.yks.urc.vo.AuthWayVO;
 import com.yks.urc.vo.SysAuthWayVO;
@@ -43,8 +45,7 @@ public class AuthWayBpImpl implements AuthWayBp {
             //2. 通过管理员拿到sys_key
             List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
             //组装sysAuthWayVO
-            SysAuthWayVO sysAuthWayVO = this.AssembleSysAuthWay(getSysKey);
-            lstAuthWayVOS.add(sysAuthWayVO);
+            lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
         } else {
             lstAuthWayVOS = null;
         }
@@ -59,13 +60,17 @@ public class AuthWayBpImpl implements AuthWayBp {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 17:14
      */
-    public SysAuthWayVO AssembleSysAuthWay(List<String> getSysKey) {
-        SysAuthWayVO sysAuthWayVO = new SysAuthWayVO();
+    public List<SysAuthWayVO> AssembleSysAuthWay(List<String> getSysKey) {
+        List<SysAuthWayVO> sysAuthWayVOList =new ArrayList<>();
         List<AuthWayVO> authWayVOS = new ArrayList();
         //3. sys_key 拿到对应的业务系统实体
         for (String sysKey : getSysKey) {
+            SysAuthWayVO sysAuthWayVO = new SysAuthWayVO();
             //获取最终结果
             AuthWayVO authWayVO = authWayMapper.getAuthWayVoBySysKey(sysKey);
+            if (authWayVO == null){
+                throw new URCBizException("result authWay is null", ErrorCode.E_000000);
+            }
             //组装sysKey
             sysAuthWayVO.sysKey = authWayVO.sysKey;
             //然后将authWayVO的sysKey置为空
@@ -78,9 +83,11 @@ public class AuthWayBpImpl implements AuthWayBp {
             authWayVO.sysName =null;
             //组装 lstEntity  authWayVO 和 entity 是一对一的关系 entity和sysAuthWayVO 是一对多的关系
             authWayVOS.add(authWayVO);
+            sysAuthWayVO.lstEntity = authWayVOS;
+            sysAuthWayVOList.add(sysAuthWayVO);
         }
-        sysAuthWayVO.lstEntity = authWayVOS;
-        return sysAuthWayVO;
+
+        return sysAuthWayVOList;
     }
 
     public static void main(String[] args) {

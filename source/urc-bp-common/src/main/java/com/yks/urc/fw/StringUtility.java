@@ -23,6 +23,8 @@ import org.slf4j.LoggerFactory;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.util.IOUtils;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 public class StringUtility {
 	private static Logger logger = LoggerFactory.getLogger(StringUtility.class);
@@ -112,10 +114,13 @@ public class StringUtility {
 	}
 
 	public static String inputStream2String(InputStream in) throws IOException {
+		List<String> lstStr = org.apache.commons.io.IOUtils.readLines(in, java.nio.charset.Charset.forName("utf-8"));
 		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[4096];
-		for (int n; (n = in.read(b)) != -1;) {
-			out.append(new String(b, 0, n, "utf-8"));
+		if (lstStr != null) {
+			for (String mem : lstStr) {
+				out.append(mem);
+				out.append(StringUtility.NewLine());
+			}
 		}
 		return out.toString();
 	}
