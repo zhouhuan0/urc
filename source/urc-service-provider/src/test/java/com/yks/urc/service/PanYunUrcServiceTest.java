@@ -112,16 +112,17 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
-
+	
+//	@Test
 	public void test_funcPermitValidate() {
 		Map<String, String> map = new HashMap<>();
-		map.put("apiUrl", "/api/grab/smt/batchMarking");
-		map.put("moduleUrl", "/");
-		map.put(StringConstant.operator, "dcadmin");
-		map.put(StringConstant.ticket, "bfba159f79a0f4b77ee82fabd41507f2");
-		map.put(StringConstant.ip, "pyIP");
-		map.put(StringConstant.urcVersion, "eb1043692883ef9010cd6cdc8b624e90");
-		map.put(StringConstant.sysKey, "001");
+		map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
+//		map.put("moduleUrl", "/");
+		map.put(StringConstant.operator, "houyunfeng");
+		map.put(StringConstant.ticket, "614ad7c40b5ba830780df9316ef3c58b");
+		map.put(StringConstant.ip, "192.168.201.53");
+//		map.put(StringConstant.urcVersion, "eb1043692883ef9010cd6cdc8b624e90");
+//		map.put(StringConstant.sysKey, "001");
 		System.out.println("----------------------" + userService.funcPermitValidate(map));
 	}
 
@@ -136,8 +137,20 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 	@Test
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
-		lstUserName.add("dcadmin");
+		lstUserName.add("panyun");
+		lstUserName.add("renmaohua");
+		lstUserName.add("tangfeng");
+		lstUserName.add("tangyong");
+		lstUserName.add("weijie");
+		lstUserName.add("yangbo");
+		lstUserName.add("chenglifu");
+		lstUserName.add("chensi");
+		lstUserName.add("mengyuhua");
+		lstUserName.add("chensi2");
+		lstUserName.add("xieyi1");
+		lstUserName.add("xieyi2");
 		permitStatBp.updateUserPermitCache(lstUserName);
+//		permitStatBp.updateUserPermitCache(lstUserName);
 	}
 
 	// @Test
@@ -163,12 +176,12 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 	
 	public void getAllFuc_Test() {
 		Map<String, Object> map = new HashMap<>();
-		map.put(StringConstant.operator, "panyun");
+		map.put(StringConstant.operator, "linwanxian");
 		String jsonStr = StringUtility.toJSONString_NoException(map);
 
 		service.getAllFuncPermit(jsonStr);
 	}
-	@Test
+	
 	public void createRole_Test() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(StringConstant.operator, "panyun");

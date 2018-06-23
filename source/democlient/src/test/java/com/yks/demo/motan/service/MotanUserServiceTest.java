@@ -16,10 +16,13 @@ import com.yks.urc.vo.UserVO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +30,20 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DemoClientApplication.class)
 public class MotanUserServiceTest {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@MotanReferer
 	private IUrcService urcService;
-	@Test
+
+	// @Test
 	public void testFilter() {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("operator", "py");
-		jsonObject.put("newRoleName","admin2");
-		jsonObject.put("roleId","");
+		jsonObject.put("newRoleName", "admin2");
+		jsonObject.put("roleId", "");
 
 		ResultVO<Integer> rslt = urcService.checkDuplicateRoleName(jsonObject.toJSONString());
-		System.out.println(">>>>>>>>>>>>>>>>>>"+StringUtility.toJSONString_NoException(rslt));
+		System.out.println(">>>>>>>>>>>>>>>>>>" + StringUtility.toJSONString_NoException(rslt));
 	}
 
 	// @Test
@@ -61,7 +66,7 @@ public class MotanUserServiceTest {
 
 	}
 
-	@Test
+	// @Test
 	public void logout_Test() {
 		Map<String, String> map = new HashMap<>();
 		map.put(StringConstant.operator, "test2");
@@ -93,14 +98,20 @@ public class MotanUserServiceTest {
 		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.funcPermitValidate(map)));
 	}
 
-	// @Test
+	@Test
+	public void importPermit_Test() throws IOException {
+		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+		logger.info(strJson1);
+		urcService.importSysPermit(strJson1);
+	}
+	
 	public void testLogin() {
 		// 登陆+获取功能权限版本号+鉴权
 		String ip = "192.168.201.62";
 		Map<String, String> map = new HashMap<>();
 		UserVO authUser = new UserVO();
-		map.put("userName", "dcadmin");
-		map.put("pwd", "Ldap_test");
+		map.put("userName", "panyun");
+		map.put("pwd", "yYKS1234");
 		map.put("ip", ip);
 		ResultVO<LoginRespVO> loginResp = urcService.login(map);
 

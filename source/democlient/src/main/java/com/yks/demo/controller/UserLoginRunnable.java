@@ -24,6 +24,8 @@ public class UserLoginRunnable implements Runnable {
 	}
 
 	public static String getStatStr() {
+		long maxTime = 0L;
+		long minTime = 0L;
 		long totalTime = 0L;
 		long totalRequest = 0L;
 		long avgRespTime = 0L;
@@ -36,6 +38,11 @@ public class UserLoginRunnable implements Runnable {
 		while (it.hasNext()) {
 			ThdInfo thd = map.get(it.next());
 			totalTime += thd.totalTime;
+			if (thd.totalTime > maxTime)
+				maxTime = thd.totalTime;
+
+			if (minTime == 0 || thd.totalTime < minTime)
+				minTime = thd.totalTime;
 			totalRequest += thd.totalRequest;
 			totalSuccessRequest += thd.successRequest;
 			totalFailedRequest += thd.failRequest;
@@ -52,7 +59,8 @@ public class UserLoginRunnable implements Runnable {
 			avgRespTime = totalTime / totalRequest;
 		}
 
-		return String.format("并发数:%s 运行总耗时：%s 运行起止时间:【%s - %s】总请求数：%s 成功:%s 出错:%s 总请求耗时：%s 平均响应时间：%s\r\nErrMsg:\r\n%s", map.size(), endTime - startTime, StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(startTime)), StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(endTime)), totalRequest, totalSuccessRequest, totalFailedRequest, totalTime, avgRespTime, sbFailedMsg);
+		return String.format("并发数:%s 运行总耗时：%s 运行起止时间:【%s - %s】总请求数：%s 成功:%s 出错:%s 总请求耗时：%s 平均响应时间：%s maxTime:%s minTime:%s \r\nErrMsg:\r\n%s", map.size(), endTime - startTime, StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(startTime)), StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(endTime)), totalRequest, totalSuccessRequest, totalFailedRequest, totalTime, avgRespTime, maxTime,
+				minTime, sbFailedMsg);
 	}
 
 	public UserLoginRunnable(String userName, String pwd, IUrcService urcService) {
