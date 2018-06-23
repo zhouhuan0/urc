@@ -287,31 +287,35 @@
       DELETE FROM urc_user
     </delete>
 
-    <select id="getUsersByUserInfo" resultType="com.yks.urc.vo.UserVO">
+    <select id="getUsersByUserInfo" parameterType="com.yks.urc.vo.helper.Query" resultType="com.yks.urc.vo.UserVO">
         select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
-        INNER JOIN urc_user_role r on u.user_name=r.user_name WHERE  1=1
-        <if test="query.userName != null and query.userName !=''">
+        INNER JOIN urc_user_role r on u.user_name=r.user_name
+        <where>
+        <if test="userName != null and userName !=''">
          AND   u.user_name  IN
-            <foreach collection="list" index="index" item="query" open="(" separator="," close=")">
-                      #{query.userName}
+            <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
+                      #{userName}
              </foreach>
         </if>
+        </where>
         limit #{query.offset},#{query.limit}
     </select>
 
-    <select id="getUsersByUserInfoCount" resultType="java.lang.Integer">
+    <select id="getUsersByUserInfoCount" parameterType="com.yks.urc.vo.helper.Query" resultType="java.lang.Integer">
         select count(*)
         from urc_user u
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
-        INNER JOIN urc_user_role r on u.user_name=r.user_name WHERE  1=1
-        <if test="query.userName != null and query.userName !=''">
+        INNER JOIN urc_user_role r on u.user_name=r.user_name
+        <where>
+        <if test="userName != null and userName !=''">
             AND   u.user_name  IN
-            <foreach collection="list" index="index" item="query" open="(" separator="," close=")">
-                #{query.userName}
+            <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
+                #{userName}
             </foreach>
         </if>
+        </where>
     </select>
     <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
         SELECT <include refid="Base_Column_List"/>

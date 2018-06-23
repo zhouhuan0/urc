@@ -194,9 +194,13 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\t\"userName\":\"panyun\"\n" +
 				"\t}\n" +
 				"}";
-		ResultVO resultVO=service.getUsersByUserInfo(json);
+		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(json);
 		System.out.println("=================");
 		System.out.println(resultVO.msg);
+		List<UserVO>  userVOS= (List<UserVO>) resultVO.data.lst;
+		for (UserVO userVO:userVOS){
+			System.out.println(userVO.userName);
+		}
 	}
 	@Test
 	public void getShopList(){
