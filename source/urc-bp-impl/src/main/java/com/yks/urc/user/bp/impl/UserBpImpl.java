@@ -304,19 +304,20 @@ public class UserBpImpl implements IUserBp {
      * @date 2018年6月6日 下午2:20:46
      */
     private void insertLoginLog(UserLoginLogDO loginLog) {
-        fixedThreadPool.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    loginLog.createTime = new Date();
-                    loginLog.modifiedTime = new Date();
-                    userLoginLogMapper.insertUserLoginLog(loginLog);
-                } catch (Exception ex) {
-                    logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
-                }
-            }
-        });
+    	logger.info(StringUtility.toJSONString_NoException(StringUtility.toJSONString_NoException(loginLog)));
+//        fixedThreadPool.execute(new Runnable() {
+//
+//            @Override
+//            public void run() {
+//                try {
+//                    loginLog.createTime = new Date();
+//                    loginLog.modifiedTime = new Date();
+//                    userLoginLogMapper.insertUserLoginLog(loginLog);
+//                } catch (Exception ex) {
+//                    logger.error(StringUtility.toJSONString_NoException(loginLog), ex);
+//                }
+//            }
+//        });
     }
 
     @Override
