@@ -632,6 +632,9 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     public ResultVO<Integer> checkDuplicateRoleName(String operator, String newRoleName, String roleId) {
+        if (StringUtils.isBlank(newRoleName)){
+            throw new URCBizException(ErrorCode.E_000002);
+        }
         return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
 
