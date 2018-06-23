@@ -86,7 +86,7 @@ public class RoleServiceImpl implements IRoleService {
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         /*组装查询条件queryMap*/
         Map<String, Object> queryMap = new HashMap<>();
@@ -107,7 +107,7 @@ public class RoleServiceImpl implements IRoleService {
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException(String.format("parameter pageNumber or pageData is not num pageNumber:%s , pageData:%s",pageNumber,pageData),ErrorCode.E_000002);
         }
         int currPage = Integer.valueOf(pageNumber);
         int pageSize = Integer.valueOf(pageData);
@@ -149,11 +149,11 @@ public class RoleServiceImpl implements IRoleService {
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         if (roleVO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter role is null",ErrorCode.E_000002);
         }
         /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -292,19 +292,19 @@ public class RoleServiceImpl implements IRoleService {
 		/* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String roleIdStr = jsonObject.getString("roleId");
         if (!StringUtil.isNum(roleIdStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("parameter roleId is not a num ;the  roleId is "+roleIdStr,ErrorCode.E_000003);
         }
         RoleDO roleDO = roleMapper.getRoleDatasByRoleId(Long.valueOf(roleIdStr));
         if (roleDO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("roleDo is null where roleId is"+roleIdStr,ErrorCode.E_000002);
         }
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException(String.format("%s is not superAdmin ",operator),ErrorCode.E_000002);
         }
         /*3、将roleDO转为roleVO*/
         RoleVO roleVO = new RoleVO();
@@ -372,11 +372,11 @@ public class RoleServiceImpl implements IRoleService {
         /*2、获取参数并校验*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         String lstRoleIdStr = jsonObject.getString("lstRoleId");
         if (StringUtil.isEmpty(lstRoleIdStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter lstRoleId is null",ErrorCode.E_000002);
         }
         List<Long> lstRoleId = StringUtility.jsonToList(lstRoleIdStr, Long.class);
 		/* 非管理员用户只能管理自己创建的角色 */
