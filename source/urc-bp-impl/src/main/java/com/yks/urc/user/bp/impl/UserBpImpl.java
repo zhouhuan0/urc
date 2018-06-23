@@ -166,7 +166,7 @@ public class UserBpImpl implements IUserBp {
      * @Date 2018/6/11 10:28
      */
     @Override
-    public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, int pageNumber, int pageData) {
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         //先切割UserVo 的username
         String allUserName =userVO.userName;
         //根据 , 切割用户名,用数组装,转成list

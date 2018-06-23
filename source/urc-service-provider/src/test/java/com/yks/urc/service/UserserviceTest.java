@@ -25,7 +25,7 @@ public class UserserviceTest extends BaseServiceTest {
         userVO.userName="panyun";
         ResultVO<PageResultVO> resultVO =new ResultVO<>();
 
-        resultVO=userService.getUsersByUserInfo("panyun",userVO,0,10);
+        resultVO=userService.getUsersByUserInfo("panyun",userVO,"0","10");
        for (int i=0;i<resultVO.data.lst.size();i++){
            System.out.println(resultVO.data.lst.get(i));
        }

@@ -34,7 +34,7 @@ public interface IUserService {
 	 * @param pageData
 	 * @return
 	 */
-	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData);
+	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, String pageNumber, String pageData);
 	/**
 	 *  获取所有平台
 	 * @param operator
@@ -71,6 +71,6 @@ public interface IUserService {
 	 * @param roleId
 	 * @return
 	 */
-	ResultVO fuzzySearchUsersByUserName(int pageNumber,int pageData,String userName,String operator);
+	ResultVO fuzzySearchUsersByUserName(String pageNumber,String pageData,String userName,String operator);
 
 }
