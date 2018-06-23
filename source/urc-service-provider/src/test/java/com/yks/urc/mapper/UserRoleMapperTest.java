@@ -44,6 +44,15 @@ public class UserRoleMapperTest extends BaseMapperTest {
         int rtn = roleMapper.insert(roleDO);
         Assert.assertEquals(1, rtn);
     }
+    @Test
+    public void updateByRoleId(){
+        RoleDO roleDO = new RoleDO();
+        roleDO.setRoleId(1529742315053000002L);
+        roleDO.setRoleName("admin角色");
+        roleDO.setModifiedBy("lvchagntong");
+        roleDO.setModifiedTime(new Date());
+        int rtn = roleMapper.updateByRoleId(roleDO);
+    }
 
     @Test
     public void deleteBatch() {
