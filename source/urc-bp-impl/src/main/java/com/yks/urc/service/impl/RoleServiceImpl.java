@@ -149,11 +149,11 @@ public class RoleServiceImpl implements IRoleService {
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
         }
         RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         if (roleVO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter role is null",ErrorCode.E_000002);
         }
         /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -197,7 +197,7 @@ public class RoleServiceImpl implements IRoleService {
         if (rtn == 1) {
             /*rtn == 1；表示新增角色*/
             /*批量新增角色-操作权限关系数据*/
-            insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
+            insertBatchRolePermission(roleVO, operator, roleVO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         } else {
@@ -463,6 +463,21 @@ public class RoleServiceImpl implements IRoleService {
                     rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
                 }
             }
+            List<Long> lstRoleId = new ArrayList<>();
+            for(RoleVO roleVO:lstRole){
+                lstRoleId.add(roleVO.getRoleId());
+            }
+            Map dataMap = new HashMap();
+            if (roleMapper.isSuperAdminAccount(operator)) {
+                dataMap.put("createBy", "");
+            } else {
+                dataMap.put("createBy", operator);
+            }
+            dataMap.put("roleIds", lstRoleId);
+        /*3、获取roleIds角色对应的用户名*/
+            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        /*4、更新用户操作权限冗余表和缓存*/
+            permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             return VoHelper.getErrorResult();
