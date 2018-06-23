@@ -550,6 +550,7 @@ public class RoleServiceImpl implements IRoleService {
             }
             userRoleMapper.insertBatch(userRoleDOS);
         }
+        permitStatBp.updateUserPermitCache(operator);
         return VoHelper.getSuccessResult();
     }
 
