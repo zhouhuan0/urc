@@ -77,6 +77,9 @@ public class DataAuthorizationImpl implements DataAuthorization {
         List<OmsAccountVO> omsAccountVoList = new ArrayList<>();
         String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
+        if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
+            return  null;
+        }
         JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
