@@ -194,7 +194,7 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setModifiedTime(new Date());
             int rtn = roleMapper.insert(roleDO);
              /*批量新增角色-操作权限关系数据*/
-            insertBatchRolePermission(roleVO, operator, roleVO.getRoleId());
+            insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         }else{
