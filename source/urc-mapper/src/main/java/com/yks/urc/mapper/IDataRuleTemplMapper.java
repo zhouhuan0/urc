@@ -52,8 +52,7 @@ public interface IDataRuleTemplMapper {
      * @date: 2018/6/13 11:26
      * @see
      */
-//    Long getCounts(@Param("createBy") String createBy);
-    Long getCounts(Map<String, Object> data);
+    Long getCounts(@Param("createBy") String createBy);
 
     /**
      * Description: 根据templId删除记录

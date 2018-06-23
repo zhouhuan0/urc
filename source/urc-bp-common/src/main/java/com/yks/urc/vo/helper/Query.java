@@ -3,7 +3,6 @@ package com.yks.urc.vo.helper;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.fw.StringUtility;
 
 /**
@@ -23,7 +22,7 @@ public class Query extends LinkedHashMap<String, Object> {
 			Map<String, Object> params= StringUtility.ConvertObjToMap(obj);
 			this.putAll(params);
 		}
-        if (!(StringUtility.isNum(pageNumber))&&StringUtility.isNum(pageData)) {
+        if (!StringUtility.isNum(pageNumber)||!StringUtility.isNum(pageData)) {
         	pageIndex=1;
         	pageSize=20;
         }else if (Integer.parseInt(pageData)>3000){
@@ -33,7 +32,7 @@ public class Query extends LinkedHashMap<String, Object> {
         	pageIndex=Integer.parseInt(pageNumber);
         	pageSize=Integer.parseInt(pageData);
         }
-        
+
 		// 分页参数
 		this.limit = (pageSize==0 ? 20 : pageSize);
 		this.offset = (pageIndex==0 ? 0 :  ((pageIndex - 1)*this.limit));

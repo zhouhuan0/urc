@@ -191,8 +191,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*4、List<DO> 转 List<VO>*/
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
         /*5、获取总条数*/
-        Long total = dataRuleTemplMapper.getCounts(queryMap);
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, queryMap.get("pageSize").toString());
+        Long total = dataRuleTemplMapper.getCounts(queryMap.get("createBy").toString());
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
@@ -590,12 +590,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
             templDO.setCreateBy(operator);
         }
 
-        Query query = new Query(templDO, pageNumber, pageData);
+        Query query = new Query(templDO, pageNumber,pageData);
         List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
 
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, pageData);
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, Integer.parseInt(pageData));
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
@@ -698,8 +698,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*批量新增列权限数据*/
         dataRuleColMapper.insertBatch(dataRuleColCache);
 
-        /*发送MQ*/
-        sendToMq(dataRuleSysCache, lstUserName);
+
         return VoHelper.getSuccessResult();
     }
 

@@ -11,7 +11,6 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
-
 public class PageResultVO implements Serializable {
     private static final long serialVersionUID = 199412161535815664L;
     /**
@@ -34,17 +33,10 @@ public class PageResultVO implements Serializable {
     public PageResultVO() {
 	}
     
-    public PageResultVO(List<?> list, long total,String pageSize) {
-		  int pageData;
-		  if(pageSize==null||pageSize.equals("")||!pageSize.matches("^\\d+$")||Integer.parseInt(pageSize)>3000){
-			  pageData=20;
-		  }else{
-			  pageData=Integer.parseInt(pageSize);
-		  }
-    	
+    public PageResultVO(List<?> list, long total,int pageSize) {
 		this.lst = list;
 		this.total = total;
-		this.pageSize= (pageData ==0 ? 20 : pageData);
+		this.pageSize= (pageSize==0 ? 10 : pageSize);
 		this.totalPage= (int) ((this.total  +  this.pageSize  - 1) / this.pageSize);  
 	}
 

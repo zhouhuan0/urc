@@ -3,7 +3,6 @@ package com.yks.urc.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
@@ -11,7 +10,6 @@ import com.yks.urc.vo.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,21 +20,14 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Autowired
     private IDataRuleService dataRuleService;
 
-    @Autowired
-    private DataAuthorization service;
-
 
     @Test
     public void getDataRuleTemplByTemplId() {
-        try {
-            JSONObject jsonObject = new JSONObject();
-//            jsonObject.put("operator", "admin");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator","admin");
         jsonObject.put("templId",1529375579688L);
-            ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
-            System.out.println(resultVO);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
+        ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
+        System.out.println(resultVO);
     }
 
     @Test
@@ -75,8 +66,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
                 .append("数据权限模板9").append(System.getProperty("line.separator"))
                 .append("数据权限模板10");
         dataRuleTemplVO.templName=stringBuilder.toString();
-//        jsonObject.put("templ",dataRuleTemplVO);
-        jsonObject.put("templ","");
+        jsonObject.put("templ",dataRuleTemplVO);
         ResultVO<PageResultVO> resultVO = dataRuleService.getDataRuleTempl(jsonObject.toString());
         System.out.println(resultVO);
     }
@@ -148,8 +138,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
-//        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
-        dataRuleTemplVO.setTemplName("");
+        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
         dataRuleTemplVO.setRemark("给xxxx的方案");
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
 //        dataRuleTemplVO.setTemplId("1529030029337");
@@ -256,24 +245,13 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void deleteDataRuleTempl(){
         List<Long> ids = new ArrayList<>();
-//        ids.add(1529375579688L);
-        ids.add(1529639277433000002L);
+        ids.add(1529375579688L);
+        ids.add(1529375579689L);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operator","lvchangrong");
+        jsonObject.put("operator","admin");
         jsonObject.put("lstTemplId",ids);
 
         ResultVO resultVO = dataRuleService.deleteDataRuleTempl(jsonObject.toString());
-        System.out.println(resultVO);
-    }
-
-
-
-    @Test
-    public void getPlatformTest(){
-        String json="{\n" +
-                "\t\"operator\":\"test3\"\n" +
-                "}";
-        List<OmsPlatformVO> resultVO=service.getPlatformList(json);
         System.out.println(resultVO);
     }
 }

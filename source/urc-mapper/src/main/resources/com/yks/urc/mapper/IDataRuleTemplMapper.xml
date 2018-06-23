@@ -73,17 +73,11 @@
         limit #{currIndex},#{pageSize}
     </select>
     <!--获取总条目-->
-    <select id="getCounts" parameterType="java.util.HashMap" resultType="java.lang.Long">
+    <select id="getCounts" resultType="java.lang.Long">
         select count(1) from urc_data_rule_templ
         <where>
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
-            </if>
-            <if test="templNames != null and templNames != ''">
-                and templ_name in
-                <foreach item="item" index="index" collection="templNames" open="(" separator="," close=")">
-                    #{item}
-                </foreach>
             </if>
         </where>
     </select>
