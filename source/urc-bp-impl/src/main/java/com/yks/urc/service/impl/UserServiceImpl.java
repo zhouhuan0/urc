@@ -80,7 +80,7 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData) {
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, String pageNumber, String pageData) {
         return userBp.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
     }
 
@@ -165,7 +165,7 @@ public class UserServiceImpl implements IUserService {
 
 
 
-	public ResultVO fuzzySearchUsersByUserName(int pageNumber, int pageData, String userName, String operator) {
+	public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
 		UserVO userVO=new UserVO();
 		userVO.userName=userName;
 		if(!roleMapper.isSuperAdminAccount(operator)){

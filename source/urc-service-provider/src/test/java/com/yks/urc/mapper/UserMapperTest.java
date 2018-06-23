@@ -100,7 +100,7 @@ public class UserMapperTest extends BaseMapperTest {
         UserVO userVO =new UserVO();
         userVO.userName="panyun";
 
-        Query query =new Query(userVO,0,10);
+        Query query =new Query(userVO,"0","10");
 
         List<UserVO> userVOList = userMapper.getUsersByUserInfo(query);
       //int count=   userMapper.getUsersByUserInfoCount(query);

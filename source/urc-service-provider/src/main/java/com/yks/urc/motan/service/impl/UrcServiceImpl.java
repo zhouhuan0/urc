@@ -77,11 +77,8 @@ public class UrcServiceImpl implements IUrcService {
         if (!StringUtility.isNum(dingOrgId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
         }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageData = jsonObject.getString("pageData");
+        String pageNumber = jsonObject.getString("pageNumber");
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
@@ -92,11 +89,8 @@ public class UrcServiceImpl implements IUrcService {
         if (personVo==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageData = jsonObject.getString("pageData");
+        String pageNumber = jsonObject.getString("pageNumber");
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
     }
 
@@ -124,11 +118,8 @@ public class UrcServiceImpl implements IUrcService {
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageData = jsonObject.getString("pageData");
+        String pageNumber = jsonObject.getString("pageNumber");
         
         return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
@@ -263,11 +254,8 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageData = jsonObject.getString("pageData");
+        String pageNumber = jsonObject.getString("pageNumber");
         
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
     }
@@ -353,11 +341,8 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
-        int pageData = Integer.valueOf(jsonObject.getString("pageData"));
-        int pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
+        String pageData = jsonObject.getString("pageData");
+        String pageNumber = jsonObject.getString("pageNumber");
         
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }

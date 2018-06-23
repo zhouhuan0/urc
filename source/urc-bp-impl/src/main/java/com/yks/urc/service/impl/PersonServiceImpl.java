@@ -61,7 +61,7 @@ public class PersonServiceImpl implements IPersonService {
     private IOperationBp operationBp;
 
 	@Override
-	public ResultVO getUserByDingOrgId(String dingOrgId,int pageNumber, int pageData) {
+	public ResultVO getUserByDingOrgId(String dingOrgId,String pageNumber, String pageData) {
 		PersonVO person=new PersonVO();
 		person.setDingOrgId(dingOrgId);
 		Query query=new Query(person, pageNumber, pageData);
@@ -73,7 +73,7 @@ public class PersonServiceImpl implements IPersonService {
 
 
 	@Override
-	public ResultVO getUserByUserInfo(PersonVO person,int pageNumber, int pageData) {
+	public ResultVO getUserByUserInfo(PersonVO person,String pageNumber, String pageData) {
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.list(query);
 		long count= personMapper.count(query);

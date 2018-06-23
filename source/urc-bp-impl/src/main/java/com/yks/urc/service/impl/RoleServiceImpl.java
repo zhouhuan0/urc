@@ -118,7 +118,7 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleVOS = convertDoToVO(roleDOS);
         /* 5、获取总条数 */
         Long total = roleMapper.getCounts(queryMap.get("createBy").toString());
-        PageResultVO pageResultVO = new PageResultVO(roleVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
+        PageResultVO pageResultVO = new PageResultVO(roleVOS, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
 

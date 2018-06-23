@@ -192,7 +192,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
         /*5、获取总条数*/
         Long total = dataRuleTemplMapper.getCounts(queryMap.get("createBy").toString());
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
@@ -581,7 +581,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getMyDataRuleTempl(int pageNumber, int pageData, String operator) {
+    public ResultVO getMyDataRuleTempl(String pageNumber, String pageData, String operator) {
         DataRuleTemplDO templDO = new DataRuleTemplDO();
         if (!roleMapper.isSuperAdminAccount(operator)) {
             templDO.setCreateBy(operator);

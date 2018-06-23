@@ -22,7 +22,7 @@ public interface IUserBp {
 	 * @param pageData
 	 * @return
 	 */
-	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, int pageNumber, int pageData);
+	ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, String pageNumber, String pageData);
 	/**
 	 * 获取系统key
 	 * @param
