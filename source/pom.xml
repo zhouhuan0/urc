@@ -293,7 +293,7 @@
 			    <artifactId>buildnumber-maven-plugin</artifactId>
 			    <version>1.4</version>
 			    <configuration>
-			        <timestampFormat>yyyy-MM-dd HH:mm</timestampFormat>
+			        <timestampFormat>yyyy-MM-dd HH:mm:ss</timestampFormat>
 			    </configuration>
 			    <executions>
 			        <execution>
