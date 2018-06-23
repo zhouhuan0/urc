@@ -415,7 +415,7 @@ public class RoleServiceImpl implements IRoleService {
             List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
             for (RolePermissionDO rolePermissionDO : rolePermissionList) {
                 Permission permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSysKey(), permission.getSysContext());
+                String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
                 PermissionVO permissionVO = new PermissionVO();
                 permissionVO.setSysKey(rolePermissionDO.getSysKey());
                 permissionVO.setSysContext(SelectedContext);
