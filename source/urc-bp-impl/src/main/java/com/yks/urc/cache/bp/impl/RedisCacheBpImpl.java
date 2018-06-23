@@ -272,6 +272,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 					continue;
 				rslt.lstSysRoot.add(map.get(key));
 			}
+			rslt.funcVersion = getFuncVersion(userName);
 			return rslt;
 		}
 		return null;

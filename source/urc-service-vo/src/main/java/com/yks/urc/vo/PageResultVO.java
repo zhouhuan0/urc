@@ -33,10 +33,10 @@ public class PageResultVO implements Serializable {
     public PageResultVO() {
 	}
     
-    public PageResultVO(List<?> list, long total,int pageSize) {
+    public PageResultVO(List<?> list, long total,String pageSize) {
 		this.lst = list;
 		this.total = total;
-		this.pageSize= (pageSize==0 ? 10 : pageSize);
+		this.pageSize= (Integer.parseInt(pageSize) ==0 ? 10 : Integer.parseInt(pageSize));
 		this.totalPage= (int) ((this.total  +  this.pageSize  - 1) / this.pageSize);  
 	}
 

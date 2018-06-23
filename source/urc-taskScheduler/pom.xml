@@ -25,7 +25,7 @@
 	   <profiles>
         <profile>  
             <properties>  
-                <maven.package.time>${maven.build.timestamp}</maven.package.time>  
+                <maven.package.time>${maven.build.time}</maven.package.time>  
             </properties>  
             <activation>  
                 <activeByDefault>true</activeByDefault>  
