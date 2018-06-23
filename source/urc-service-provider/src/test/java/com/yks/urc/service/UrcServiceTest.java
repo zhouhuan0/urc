@@ -238,4 +238,18 @@ public class UrcServiceTest extends BaseServiceTest {
         ResultVO resultVO =service.updateRolePermission(json);
         System.out.println(resultVO.msg);
     }
+    @Test
+	public void searchUserByUserName(){
+		String json ="{\n" +
+				"\t\"operator\":\"test3\",\n" +
+				"\t\"pageNumber\":0,\n" +
+				"\t\"pageData\":30,\n" +
+				"\t\"user\":{\n" +
+				"\t\t\"userName\":\"panyun\"\n" +
+				"\t}\n" +
+				"}";
+		ResultVO resultVO=service.getUserByUserName(json);
+		System.out.println("==================");
+		System.out.println(resultVO.msg);
+	}
 }

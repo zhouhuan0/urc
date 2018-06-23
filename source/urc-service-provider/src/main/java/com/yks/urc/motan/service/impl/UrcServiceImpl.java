@@ -49,7 +49,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "同步数据",level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
         JSONObject jsonObject = StringUtility.parseString(json);
-        String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
+        String operator = jsonObject.getString("operator");
         return userService.syncUserInfo(operator);
     }
 
@@ -115,7 +115,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "搜索用户",level = LogLevel.INFO)
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
+        String operator = jsonObject.getString("operator");
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
@@ -175,15 +175,15 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
         return userService.getPlatformList(operator);
     }
 
     @Override
     public ResultVO<List<OmsAccountVO>> getShopList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
-        String platform = jsonObject.get("platform").toString();
+        String operator = jsonObject.getString("operator");
+        String platform = jsonObject.getString("platform");
         return userService.getShopList(operator, platform);
     }
 
@@ -292,7 +292,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getUserAuthorizablePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
         return permissionService.getUserAuthorizablePermission(operator);
     }
 
@@ -313,7 +313,7 @@ public class UrcServiceImpl implements IUrcService {
         
         return roleService.getRolePermission(operator, lstRoleId);
     }
-
+    @Log(value = "精确搜索用户",level = LogLevel.INFO)
     @Override
     public ResultVO getUserByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -361,7 +361,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO updateUsersOfRole(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
         return roleService.updateUsersOfRole(lstRole, operator);
     }
@@ -370,7 +370,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "更新多个角色的功能权限",level = LogLevel.INFO)
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = jsonObject.getString("operator");
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
         return roleService.updateRolePermission(operator, lstRole);
     }

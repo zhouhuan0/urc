@@ -582,7 +582,7 @@ public class RoleServiceImpl implements IRoleService {
                 	UserVO userVO=new UserVO();
                 	userVO.userName=userNameList.get(i);
                 	userVO.createBy=operator;
-                    UserDO usreDO = userMapper.getUserByUserName(userVO).get(0);
+                    UserDO usreDO = userMapper.getUserByUserName(userVO);
                     if (usreDO.getCreateBy().equals(operator)) {
                         UserRoleDO userRoleDO = new UserRoleDO();
                         userRoleDO.setUserName(userNameList.get(i));

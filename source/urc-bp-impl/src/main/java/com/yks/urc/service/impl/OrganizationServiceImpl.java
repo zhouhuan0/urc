@@ -70,7 +70,8 @@ public class OrganizationServiceImpl implements IOrganizationService {
         	if(!roleMapper.isAdminAccount(operator)){
         		userVo.createBy=operator;
         	}
-            List<UserDO> userDO = userMapper.getUserByUserName(userVo);
+            UserDO userDO = userMapper.getUserByUserName(userVo);
+        	userVo.userName=userDO.getUserName();
             return VoHelper.getSuccessResult(userVo);
         } catch (Exception e) {
             return VoHelper.getErrorResult();

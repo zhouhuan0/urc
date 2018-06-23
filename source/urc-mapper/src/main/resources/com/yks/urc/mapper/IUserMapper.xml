@@ -325,12 +325,8 @@
         SELECT <include refid="Base_Column_List"/>
         FROM urc_user
         	<where>
-        		<if test="userName != null and userName != '' ">
-        			 user_name =#{userName}
-        		</if>
-        		
-        		<if test="createBy != null and createBy != '' ">
-        			and  create_by =#{create_by}
+        		<if test="userVO.userName != null and userVO.userName != '' ">
+        			 user_name =#{userVO.userName}
         		</if>
         	</where>
     </select>
