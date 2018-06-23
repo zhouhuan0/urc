@@ -52,6 +52,7 @@ public class PermissionServiceImpl implements IPermissionService {
 	@Transactional
 	@Override
 	public ResultVO importSysPermit(String jsonStr) {
+		logger.info(String.format("importSysPermit:%s", jsonStr));
 		ResultVO rslt = new ResultVO();
 		try {
 			JSONObject jsonObject = StringUtility.parseString(jsonStr);
