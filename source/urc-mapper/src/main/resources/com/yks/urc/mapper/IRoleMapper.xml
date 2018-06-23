@@ -64,6 +64,37 @@
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
       #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
   </insert>
+   <update id="updateByRoleId" parameterType="com.yks.urc.entity.RoleDO">
+      update urc_role
+      <set>
+          <if test="roleName != null and roleName != ''">
+              role_name = #{roleName,jdbcType=VARCHAR},
+          </if>
+          <if test="isActive != null">
+          is_active = #{isActive,jdbcType=TINYINT},
+          </if>
+          <if test="isAuthorizable != null">
+          is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
+          </if>
+          <if test="isForever != null">
+          is_forever = #{isForever,jdbcType=TINYINT},
+          </if>
+          <if test="effectiveTime != null">
+          effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="expireTime != null">
+          expire_time = #{expireTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="modifiedTime != null">
+          modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+          </if>
+          <if test="modifiedBy != null and modifiedBy != ''">
+          modified_by = #{modifiedBy,jdbcType=VARCHAR},
+          </if>
+      </set>
+      where role_id = #{roleId,jdbcType=TINYINT}
+   </update>
+
     <!--roleName建立唯一约束，不存在就添加，存在就更新-->
     <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
     insert into urc_role

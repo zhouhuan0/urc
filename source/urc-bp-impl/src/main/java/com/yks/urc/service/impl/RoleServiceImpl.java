@@ -157,17 +157,16 @@ public class RoleServiceImpl implements IRoleService {
         }
         /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+        RoleDO opRoleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
         if (isAdmin) {
-            insertOrUpdateRole(operator, roleVO);
+            insertOrUpdateRole(operator, roleVO,opRoleDO);
         } else {
-            /* 4、非管理员，查询需要操作的角色 */
-            RoleDO opRoleDO = roleMapper.getByRoleName(roleVO.getRoleName());
             /* 4.1 非管理员———该角色存在但是创建人不是当前用户 */
             if (opRoleDO != null && !opRoleDO.getCreateBy().equals(operator)) {
-                return VoHelper.getErrorResult(UserCentralStatusEnum.No_PERMISSION.getCode(), UserCentralStatusEnum.No_PERMISSION.getDesc());
+                throw new URCBizException(String.format("该角色的创建人不是当前用户 当前用户:%s ,角色:%s",operator,opRoleDO.getRoleName()),ErrorCode.E_100003);
             } else {
 				/* 4.2 非管理员———a.该角色存在且创建人是当前用户；b.该角色不存在 */
-                insertOrUpdateRole(operator, roleVO);
+                insertOrUpdateRole(operator, roleVO,opRoleDO);
             }
 
         }
@@ -183,8 +182,38 @@ public class RoleServiceImpl implements IRoleService {
      * @date: 2018/6/13 20:44
      * @see
      */
-    private void insertOrUpdateRole(String operator, RoleVO roleVO) {
-		/* 1、添加或更新角色表 */
+    private void insertOrUpdateRole(String operator, RoleVO roleVO,RoleDO opRoleDO) {
+        if(opRoleDO==null){
+            RoleDO roleDO = new RoleDO();
+            BeanUtils.copyProperties(roleVO, roleDO);
+            Long roleId = seqBp.getNextRoleId();
+            roleDO.setRoleId(roleId);
+            roleDO.setCreateBy(operator);
+            roleDO.setCreateTime(new Date());
+            roleDO.setModifiedBy(operator);
+            roleDO.setModifiedTime(new Date());
+            int rtn = roleMapper.insert(roleDO);
+             /*批量新增角色-操作权限关系数据*/
+            insertBatchRolePermission(roleVO, operator, roleVO.getRoleId());
+            /*批量新增用户-角色关系数据*/
+            insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
+        }else{
+            RoleDO roleDO = new RoleDO();
+            BeanUtils.copyProperties(roleVO, roleDO);
+            roleDO.setModifiedBy(operator);
+            roleDO.setModifiedTime(new Date());
+            roleDO.setRoleId(opRoleDO.getRoleId());
+            roleMapper.updateByRoleId(roleDO);
+              /*删除原有角色-权限关系数据*/
+            rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
+            /*批量新增角色-操作权限关系数据*/
+            insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
+            /*删除原有用户-角色关系数据*/
+            userRoleMapper.deleteByRoleId(roleDO.getRoleId());
+            /*批量新增用户-角色关系数据*/
+            insertBatchUserRole(roleVO, operator,roleDO.getRoleId());
+        }
+		/* 1、添加或更新角色表 *//*
         RoleDO roleDO = new RoleDO();
         BeanUtils.copyProperties(roleVO, roleDO);
         Long roleId = seqBp.getNextRoleId();
@@ -195,22 +224,22 @@ public class RoleServiceImpl implements IRoleService {
         roleDO.setModifiedTime(new Date());
         int rtn = roleMapper.insertOrUpdate(roleDO);
         if (rtn == 1) {
-            /*rtn == 1；表示新增角色*/
-            /*批量新增角色-操作权限关系数据*/
+            *//*rtn == 1；表示新增角色*//*
+            *//*批量新增角色-操作权限关系数据*//*
             insertBatchRolePermission(roleVO, operator, roleVO.getRoleId());
-            /*批量新增用户-角色关系数据*/
+            *//*批量新增用户-角色关系数据*//*
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         } else {
-            /*rtn>1; 表示编辑;需要先删除原有数据，再重新批量添加*/
-            /*删除原有角色-权限关系数据*/
+            *//*rtn>1; 表示编辑;需要先删除原有数据，再重新批量添加*//*
+            *//*删除原有角色-权限关系数据*//*
             rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
-            /*批量新增角色-操作权限关系数据*/
+            *//*批量新增角色-操作权限关系数据*//*
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
-            /*删除原有用户-角色关系数据*/
+            *//*删除原有用户-角色关系数据*//*
             userRoleMapper.deleteByRoleId(roleId);
-            /*批量新增用户-角色关系数据*/
+            *//*批量新增用户-角色关系数据*//*
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
-        }
+        }*/
     }
 
     /**

@@ -31,6 +31,9 @@ public interface IRoleMapper {
      */
     Integer insert(RoleDO roleDO);
 
+
+    Integer updateByRoleId(RoleDO roleDO);
+
     /**
      * Description: 根据roleName的唯一约束，roleName不重复则添加，roleName重复则更新
      * 1、返回1说明添加成功
