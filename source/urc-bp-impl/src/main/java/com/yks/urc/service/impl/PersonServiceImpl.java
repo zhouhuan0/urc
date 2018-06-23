@@ -156,64 +156,68 @@ public class PersonServiceImpl implements IPersonService {
 		List<Organization> initOrg=new ArrayList<Organization>();
 		List<Person> initPerson=new ArrayList<Person>();
 		List<PersonOrg> initPersonOrg=new ArrayList<PersonOrg>();
-		for (int i = 0; i < dingAllDept.size(); i++) {
-			DingDeptVO dept=dingAllDept.get(i);
-			Organization org=new Organization();
-			JSONArray array=dingApiProxy.getDingParentDepts(String.valueOf(dept.id));
-			org.setCreateBy(userName);
-			org.setCreateTime(new Date());
-			org.setDingOrgId(String.valueOf(dept.id));
-			org.setFullIdPath(array.toJSONString().replace(",","/").replace("[", "").replace("]", "").replace("\"", ""));
-			JSONArray fullNamePath=getfullNamePath(dingAllDept,array);
-			org.setFullNamePath(fullNamePath.toJSONString().replace(",", "/").replace("[", "").replace("]", "").replace("\"", ""));
-			org.setModifiedBy(userName);
-			org.setModifiedTime(new Date());
-			org.setOrgLevel(array.size());
-			org.setOrgName(dept.name);
-			org.setParentDingOrgId(String.valueOf(dept.parentid));
-			initOrg.add(org);
-			
-			//根据部门查询人员信息
-			List<DingUserVO> userList=dingApiProxy.getDingMemberByDepId(String.valueOf(dept.id));
-			for (int j = 0; j < userList.size(); j++) {
-				//初始化人员信息
-				DingUserVO user=userList.get(j);
-				Person person=new Person();
-				person.setBirthday(user.birthday);
-				person.setCreateBy(userName);
-				person.setCreateTime(new Date());
-				person.setDingId(user.unionid);
-				person.setDingUnionid(user.unionid);
-				person.setDingUserId(user.userid);
-				person.setEmail(user.email);
-				if(!StringUtil.isEmpty(user.gender)){
-					if(user.gender.equals("男")){
-						person.setGender(1);
-					}else if (user.gender.equals("女")){
-						person.setGender(0);
-					}else{
-						person.setGender(2);
+		if(dingAllDept!=null&&dingAllDept.size()>0){
+			for (int i = 0; i < dingAllDept.size(); i++) {
+				DingDeptVO dept=dingAllDept.get(i);
+				Organization org=new Organization();
+				JSONArray array=dingApiProxy.getDingParentDepts(String.valueOf(dept.id));
+				org.setCreateBy(userName);
+				org.setCreateTime(new Date());
+				org.setDingOrgId(String.valueOf(dept.id));
+				org.setFullIdPath(array.toJSONString().replace(",","/").replace("[", "").replace("]", "").replace("\"", ""));
+				JSONArray fullNamePath=getfullNamePath(dingAllDept,array);
+				org.setFullNamePath(fullNamePath.toJSONString().replace(",", "/").replace("[", "").replace("]", "").replace("\"", ""));
+				org.setModifiedBy(userName);
+				org.setModifiedTime(new Date());
+				org.setOrgLevel(array.size());
+				org.setOrgName(dept.name);
+				org.setParentDingOrgId(String.valueOf(dept.parentid));
+				initOrg.add(org);
+				
+				//根据部门查询人员信息
+				List<DingUserVO> userList=dingApiProxy.getDingMemberByDepId(String.valueOf(dept.id));
+				if(userList!=null&&userList.size()>0){
+					for (int j = 0; j < userList.size(); j++) {
+						//初始化人员信息
+						DingUserVO user=userList.get(j);
+						Person person=new Person();
+						person.setBirthday(user.birthday);
+						person.setCreateBy(userName);
+						person.setCreateTime(new Date());
+						person.setDingId(user.unionid);
+						person.setDingUnionid(user.unionid);
+						person.setDingUserId(user.userid);
+						person.setEmail(user.email);
+						if(!StringUtil.isEmpty(user.gender)){
+							if(user.gender.equals("男")){
+								person.setGender(1);
+							}else if (user.gender.equals("女")){
+								person.setGender(0);
+							}else{
+								person.setGender(2);
+							}
+						}
+						person.setJobNumber(user.jobnumber);
+						person.setJoinDate(new Date(user.hiredDate));
+						person.setLeaveDate(null);
+						person.setModifiedBy(userName);
+						person.setModifiedTime(new Date());
+						person.setPersonName(user.name);
+						person.setPhoneNum(user.mobile);
+						person.setPosition(user.position);
+						initPerson.add(person);
+						
+						//初始化人员、部门信息
+						PersonOrg personOrg=new PersonOrg();
+						personOrg.setCreateBy(userName);
+						personOrg.setCreateTime(new Date());
+						personOrg.setDingOrgId(String.valueOf(dept.id));
+						personOrg.setDingUserId(user.userid);
+						personOrg.setModifiedBy(userName);
+						personOrg.setModifiedTime(new Date());
+						initPersonOrg.add(personOrg);
 					}
 				}
-				person.setJobNumber(user.jobnumber);
-				person.setJoinDate(new Date(user.hiredDate));
-				person.setLeaveDate(null);
-				person.setModifiedBy(userName);
-				person.setModifiedTime(new Date());
-				person.setPersonName(user.name);
-				person.setPhoneNum(user.mobile);
-				person.setPosition(user.position);
-				initPerson.add(person);
-				
-				//初始化人员、部门信息
-				PersonOrg personOrg=new PersonOrg();
-				personOrg.setCreateBy(userName);
-				personOrg.setCreateTime(new Date());
-				personOrg.setDingOrgId(String.valueOf(dept.id));
-				personOrg.setDingUserId(user.userid);
-				personOrg.setModifiedBy(userName);
-				personOrg.setModifiedTime(new Date());
-				initPersonOrg.add(personOrg);
 			}
 		}
 		mapInfo.put("org", initOrg);//部门集合
