@@ -274,6 +274,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         /*3、获取该模板对应的数据权限对应系统数据*/
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
+        if(dataRuleSysDOS==null || dataRuleSysDOS.isEmpty()){
+            throw new URCBizException("get urc_data_rule_sys is null where templId is:"+templId,ErrorCode.E_000003);
+        }
         /*数据权限对应系统缓存列表 */
         List<DataRuleSysDO> dataRuleSysDOSCache = new ArrayList<>();
         /*用户-数据权限关系缓存列表*/
