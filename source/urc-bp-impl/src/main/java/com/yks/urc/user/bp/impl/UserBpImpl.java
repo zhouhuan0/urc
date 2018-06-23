@@ -111,6 +111,8 @@ public class UserBpImpl implements IUserBp {
                     userDo.setDingUserId(user.ding_userid);
                     userDo.setCreateBy(username);
                     userDo.setModifiedBy(username);
+                    userDo.setCreateTime(StringUtility.getDateTimeNow());
+                    userDo.setModifiedTime(StringUtility.getDateTimeNow());
                     userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
                     // 1 表示启用,0表示禁用
                     if ("66050".equals(user.userAccountControl)) {
@@ -203,8 +205,8 @@ public class UserBpImpl implements IUserBp {
             userVOList.add(userVO1);
         }
         // 获取总条数
-        int total = userMapper.getUsersByUserInfoCount(query);
-        PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+        long total = userMapper.getUsersByUserInfoCount(query);
+        PageResultVO pageResultVO = new PageResultVO(userVOList, total, Integer.parseInt(pageData));
         return VoHelper.getSuccessResult(pageResultVO);
     }
 

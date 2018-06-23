@@ -77,8 +77,11 @@ public class UrcServiceImpl implements IUrcService {
         if (!StringUtility.isNum(dingOrgId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
         }
-        String pageData = jsonObject.getString("pageData");
-        String pageNumber = jsonObject.getString("pageNumber");
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
+        }
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
     }
 
@@ -89,8 +92,11 @@ public class UrcServiceImpl implements IUrcService {
         if (personVo==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
-        String pageData = jsonObject.getString("pageData");
-        String pageNumber = jsonObject.getString("pageNumber");
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
+        }
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
     }
 
@@ -111,22 +117,13 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = StringUtility.toJSONString(jsonObject.getString("operator"));
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
-        int pageNumber;
-        int pageData;
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         if (userVO==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
-        }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-             pageNumber = 0;
-             pageData =20;
-        }else if (Integer.parseInt(jsonObject.get("pageData").toString()) > 3000 || Integer.parseInt(jsonObject.get("pageData").toString()) <=0 ){
-          return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"超出每页的合法值,合法值为[1,3000]");
-        }else {
-            pageNumber = Integer.valueOf(jsonObject.getString("pageNumber"));
-            pageData = Integer.valueOf(jsonObject.getString("pageData"));
         }
         return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
@@ -261,8 +258,11 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        String pageData = jsonObject.getString("pageData");
-        String pageNumber = jsonObject.getString("pageNumber");
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
+        }
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
     }
@@ -348,8 +348,11 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        String pageData = jsonObject.getString("pageData");
-        String pageNumber = jsonObject.getString("pageNumber");
+        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
+        }
+        String pageNumber=jsonObject.getString("pageNumber");
+        String pageData=jsonObject.getString("pageData");
         
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }
