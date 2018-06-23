@@ -435,7 +435,7 @@ public class UrcServiceImpl implements IUrcService {
      */
     @Override
     public ResultVO addOrUpdateDataRule(String jsonStr) {
-        return null;
+        return dataRuleService.addOrUpdateDataRule(jsonStr);
     }
 
     /**
