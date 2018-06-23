@@ -471,6 +471,21 @@ public class RoleServiceImpl implements IRoleService {
                     rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
                 }
             }
+            List<Long> lstRoleId = new ArrayList<>();
+            for(RoleVO roleVO:lstRole){
+                lstRoleId.add(roleVO.getRoleId());
+            }
+            Map dataMap = new HashMap();
+            if (roleMapper.isSuperAdminAccount(operator)) {
+                dataMap.put("createBy", "");
+            } else {
+                dataMap.put("createBy", operator);
+            }
+            dataMap.put("roleIds", lstRoleId);
+        /*3、获取roleIds角色对应的用户名*/
+            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        /*4、更新用户操作权限冗余表和缓存*/
+            permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             return VoHelper.getErrorResult();
