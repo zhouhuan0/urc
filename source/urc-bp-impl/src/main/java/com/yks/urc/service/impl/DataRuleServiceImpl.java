@@ -695,7 +695,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*批量新增列权限数据*/
         dataRuleColMapper.insertBatch(dataRuleColCache);
 
-
+        /*发送MQ*/
+        sendToMq(dataRuleSysCache, lstUserName);
         return VoHelper.getSuccessResult();
     }
 
