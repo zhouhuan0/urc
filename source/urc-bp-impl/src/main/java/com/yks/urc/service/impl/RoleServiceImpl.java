@@ -525,40 +525,51 @@ public class RoleServiceImpl implements IRoleService {
             UserRoleDO userRole = new UserRoleDO();
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             List<String> userNameList = roleVO.getLstUserName();
-            userRole.setRoleId(roleVO.getRoleId());
-            if (roleMapper.isSuperAdminAccount(operator)) {
-                userRoleMapper.deleteUserRole(userRole);
-                for (int j = 0; j < userNameList.size(); j++) {
-                    UserRoleDO userRoleDO = new UserRoleDO();
-                    userRoleDO.setUserName(userNameList.get(i));
-                    userRoleDO.setRoleId(roleVO.getRoleId());
-                    userRoleDO.setCreateBy(operator);
-                    userRoleDO.setCreateTime(new Date());
-                    userRoleDO.setModifiedBy(operator);
-                    userRoleDO.setModifiedTime(new Date());
-                }
-            } else {
-                userRole.setCreateBy(operator);
-                userRoleMapper.deleteUserRole(userRole);
-                for (int j = 0; j < userNameList.size(); j++) {
-                	UserVO userVO=new UserVO();
-                	userVO.userName=userNameList.get(i);
-                	userVO.createBy=operator;
-                    UserDO usreDO = userMapper.getUserByUserName(userVO).get(0);
-                    if (usreDO.getCreateBy().equals(operator)) {
-                        UserRoleDO userRoleDO = new UserRoleDO();
-                        userRoleDO.setUserName(userNameList.get(i));
-                        userRoleDO.setRoleId(roleVO.getRoleId());
-                        userRoleDO.setCreateBy(operator);
-                        userRoleDO.setCreateTime(new Date());
-                        userRoleDO.setModifiedBy(operator);
-                        userRoleDO.setModifiedTime(new Date());
-                    }
-                }
+            if(userNameList!=null&&userNameList.size()>0){
+            	userRole.setRoleId(roleVO.getRoleId());
+            	List<String> roleUser= userRoleMapper.getUserNameByRoleId(userRole);
+            	if(roleUser!=null&&roleUser.size()>0){
+            		for (int j = 0; j < roleUser.size(); j++) {
+            			permitStatBp.updateUserPermitCache(roleUser.get(i));
+            		}
+            	}
+            	
+            	if (roleMapper.isSuperAdminAccount(operator)) {
+            		userRoleMapper.deleteUserRole(userRole);
+            		for (int j = 0; j < userNameList.size(); j++) {
+            			UserRoleDO userRoleDO = new UserRoleDO();
+            			userRoleDO.setUserName(userNameList.get(i));
+            			userRoleDO.setRoleId(roleVO.getRoleId());
+            			userRoleDO.setCreateBy(operator);
+            			userRoleDO.setCreateTime(new Date());
+            			userRoleDO.setModifiedBy(operator);
+            			userRoleDO.setModifiedTime(new Date());
+            			userRoleDOS.add(userRoleDO);
+            		}
+            	} else {
+            		userRole.setCreateBy(operator);
+            		userRoleMapper.deleteUserRole(userRole);
+            		for (int j = 0; j < userNameList.size(); j++) {
+            			UserVO userVO=new UserVO();
+            			userVO.userName=userNameList.get(i);
+            			userVO.createBy=operator;
+            			UserDO usreDO = userMapper.getUserByUserName(userVO).get(0);
+            			if (usreDO.getCreateBy().equals(operator)) {
+            				UserRoleDO userRoleDO = new UserRoleDO();
+            				userRoleDO.setUserName(userNameList.get(i));
+            				userRoleDO.setRoleId(roleVO.getRoleId());
+            				userRoleDO.setCreateBy(operator);
+            				userRoleDO.setCreateTime(new Date());
+            				userRoleDO.setModifiedBy(operator);
+            				userRoleDO.setModifiedTime(new Date());
+            				userRoleDOS.add(userRoleDO);
+            			}
+            		}
+            	}
+            	userRoleMapper.insertBatch(userRoleDOS);
             }
-            userRoleMapper.insertBatch(userRoleDOS);
         }
-        permitStatBp.updateUserPermitCache(operator);
+       
         return VoHelper.getSuccessResult();
     }
 
