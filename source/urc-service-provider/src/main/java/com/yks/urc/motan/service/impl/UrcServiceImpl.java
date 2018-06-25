@@ -217,7 +217,7 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.getString("operator");
         String roleId = jsonObject.getString("roleId");
         
-        if (StringUtility.isNum(roleId)) {
+        if (!StringUtility.isNum(roleId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "roleId为空");
         }
         if (StringUtility.isNullOrEmpty(operator)) {
