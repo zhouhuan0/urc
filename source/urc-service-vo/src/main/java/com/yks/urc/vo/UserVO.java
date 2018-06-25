@@ -33,7 +33,7 @@ public class UserVO implements Serializable {
     /**
      *  启用时间
      */
-    public String activeTime;
+    public Date activeTime;
     /**
      *  启用时间 (前端)
      */

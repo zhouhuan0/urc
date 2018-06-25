@@ -2,6 +2,7 @@ package com.yks.urc.user.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
@@ -175,7 +176,6 @@ public class UserBpImpl implements IUserBp {
         if (userVO != null) {
             String allUserName = userVO.userName;
             //根据 , 切割用户名,用数组装,转成list
-
             if (allUserName.contains(",")) {
                 String[] str = allUserName.split(",");
                 strings = Arrays.asList(str);
@@ -193,7 +193,7 @@ public class UserBpImpl implements IUserBp {
         // 2.将拿到的用户名再分别去获取角色名称
        // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
-            userVO1.activeTimeStr=userVO1.activeTime;
+            userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime,"yyyy-MM-dd HH:mm:ss");
             // 查询角色
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
             if (roleNameList.size() == 0){
@@ -293,16 +293,6 @@ public class UserBpImpl implements IUserBp {
             this.insertLoginLog(loginLog);
             resp.userName = authUser.userName;
             if (blnOk) {
-                // 先从缓存取
-//				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
-//				if (lstSysKey == null) {
-//					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
-//					if (resp.sysKey == null)
-//						resp.sysKey = new ArrayList<>();
-//					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
-//				} else {
-//					resp.sysKey = lstSysKey;
-//				}
                 resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
@@ -310,10 +300,13 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = authUser.ip;
                 cacheBp.insertUser(u);
+				return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             }
-            return VoHelper.getResultVO(resp, blnOk ? "000001" : "000000", null);
+            else {
+				return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");	
+            }            
         } catch (Exception ex) {
-            return VoHelper.getResultVO(null, "000000", "login error");
+			return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
         }
     }
 

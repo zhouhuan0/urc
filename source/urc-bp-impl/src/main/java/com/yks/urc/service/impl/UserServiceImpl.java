@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,8 +107,9 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
-        ResultVO<List<OmsAccountVO>> rslt = new ResultVO();
+    public ResultVO<List<OmsShopVO>> getShopList(String operator, String platform) {
+
+        ResultVO<List<OmsShopVO>> rslt = new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
                 return rslt;
@@ -137,7 +140,7 @@ public class UserServiceImpl implements IUserService {
             }
             rslt.msg = "Success, " + operator;
         } catch (Exception e) {
-            e.printStackTrace();
+          throw  new URCBizException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常");
         } finally {
             return rslt;
         }

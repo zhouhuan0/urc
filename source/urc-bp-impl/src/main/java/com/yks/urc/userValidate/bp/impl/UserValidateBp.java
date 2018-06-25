@@ -482,7 +482,7 @@ public class UserValidateBp implements IUserValidateBp {
 		String operator = map.get(StringConstant.operator);
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
-		String urcVersion = map.get(StringConstant.urcVersion);
+		String urcVersion = map.get(StringConstant.funcVersion);
 
 		UserVO u = cacheBp.getUser(operator);
 		// 校验ticket

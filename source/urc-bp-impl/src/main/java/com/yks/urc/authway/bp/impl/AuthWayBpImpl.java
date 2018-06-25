@@ -38,16 +38,23 @@ public class AuthWayBpImpl implements AuthWayBp {
      */
     @Override
     public List<SysAuthWayVO> getMyAuthWay(String operator) {
-        boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+        boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         List<SysAuthWayVO> lstAuthWayVOS = new ArrayList<>();
-        //1.首先通过用户判断是否是管理员
-        if (isAdmin == true) {
-            //2. 通过管理员拿到sys_key
-            List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+        //1.首先通过用户判断是否是超级管理员 还是业务管理员,超级管理员拿到所有的业务系统key
+        if (isSuperAdmin == true){
+            List<String> getSysKey = rolePermissionMapper.getAllSysKey();
             //组装sysAuthWayVO
             lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
-        } else {
-            lstAuthWayVOS = null;
+        }else {
+            boolean isAdmin = roleMapper.isAdminAccount(operator);
+            if (isAdmin == true) {
+                //2. 通过管理员拿到sys_key
+                List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+                //组装sysAuthWayVO
+                lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
+            } else {
+                lstAuthWayVOS = null;
+            }
         }
         return lstAuthWayVOS;
     }

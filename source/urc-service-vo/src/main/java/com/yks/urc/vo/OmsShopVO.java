@@ -11,19 +11,19 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class OmsAccountVO implements Serializable {
+public class OmsShopVO implements Serializable {
     private static final long serialVersionUID = 6296977801408635617L;
     /**
      * 账号名称
      */
-    public String accountName;
+    public String shopName;
     /**
      * 账号ID
      */
-    public String accountId;
+    public String shopId;
     /**
      * 站点
      */
-    public List<OmsSiteVO> lstOmsSite;
+    public List<OmsSiteVO> lstSite;
 
 }

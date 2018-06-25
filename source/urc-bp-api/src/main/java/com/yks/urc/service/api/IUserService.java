@@ -1,6 +1,5 @@
 package com.yks.urc.service.api;
 
-import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.vo.*;
 
 import java.util.List;
@@ -47,7 +46,8 @@ public interface IUserService {
 	 * @param platform
 	 * @return
 	 */
-	ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform);
+	ResultVO<List<OmsShopVO>> getShopList(String operator, String platform);
+
 
 	/**
 	 *  获取应用系统及其授权方式
