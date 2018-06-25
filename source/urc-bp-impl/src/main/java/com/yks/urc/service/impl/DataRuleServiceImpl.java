@@ -2,6 +2,7 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
@@ -550,15 +551,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*3、添加到列权限数据列表*/
             /*获取列权限数据*/
             List<DataRuleColVO> dataRuleColVOS = dataRuleSysVO.getCol();
-            for (DataRuleColVO dataRuleColVO : dataRuleColVOS) {
-                DataRuleColDO dataRuleColDO = new DataRuleColDO();
-                BeanUtils.copyProperties(dataRuleColVO, dataRuleColDO);
-                dataRuleColDO.setDataRuleSysId(dataRuleSysId);
-                dataRuleColDO.setCreateTime(new Date());
-                dataRuleColDO.setCreateBy(operator);
-                dataRuleColCache.add(dataRuleColDO);
+            if(dataRuleColVOS!=null && !dataRuleColVOS.isEmpty()) {
+                for (DataRuleColVO dataRuleColVO : dataRuleColVOS) {
+                    DataRuleColDO dataRuleColDO = new DataRuleColDO();
+                    BeanUtils.copyProperties(dataRuleColVO, dataRuleColDO);
+                    dataRuleColDO.setDataRuleSysId(dataRuleSysId);
+                    dataRuleColDO.setCreateTime(new Date());
+                    dataRuleColDO.setCreateBy(operator);
+                    dataRuleColCache.add(dataRuleColDO);
+                }
             }
-
         }
     }
 
@@ -577,6 +579,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
             DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
             BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
+            dataRuleTemplVO.setCreateTimeStr(dataRuleTemplDO.getCreateTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            dataRuleTemplVO.setModifiedTimeStr(dataRuleTemplDO.getModifiedTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss"):null);
             dataRuleTemplVOS.add(dataRuleTemplVO);
         }
         return dataRuleTemplVOS;

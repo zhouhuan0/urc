@@ -42,6 +42,7 @@ public class DataRuleTemplVO implements Serializable {
      * 创建时间
      */
     private Date createTime;
+    private String createTimeStr;
     /**
      * 创建人
      */
@@ -50,6 +51,7 @@ public class DataRuleTemplVO implements Serializable {
      * 更新时间
      */
     private Date modifiedTime;
+    private String modifiedTimeStr;
     /**
      * 更新人
      */
@@ -125,5 +127,21 @@ public class DataRuleTemplVO implements Serializable {
 
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy;
+    }
+
+    public String getCreateTimeStr() {
+        return createTimeStr;
+    }
+
+    public void setCreateTimeStr(String createTimeStr) {
+        this.createTimeStr = createTimeStr;
+    }
+
+    public String getModifiedTimeStr() {
+        return modifiedTimeStr;
+    }
+
+    public void setModifiedTimeStr(String modifiedTimeStr) {
+        this.modifiedTimeStr = modifiedTimeStr;
     }
 }
