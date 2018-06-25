@@ -68,4 +68,8 @@ public interface ICacheBp {
 
 	List<Permission> getSysApiUrlPrefix();
 	void setSysApiUrlPrefix(List<Permission> lst);
+	
+	String getDingAccessToken(String accessTokeTime);
+	
+	void setDingAccessToken(String accessTokeTime,String accessTokeValue);
 }

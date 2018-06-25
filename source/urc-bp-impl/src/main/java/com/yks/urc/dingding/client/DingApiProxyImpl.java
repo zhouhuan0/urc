@@ -12,13 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.vo.DingApiRespVO;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
-import com.yks.urc.entity.SystemParameter;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.SystemParameterMapper;
 
 /**
  * 获取钉钉部门以及成员信息
@@ -50,9 +49,10 @@ public class DingApiProxyImpl implements  DingApiProxy{
     
     @Value("${yks.ding.parent_sub_dept_url}")
     private String parentSubDeptUrl;
-    
+	
 	@Autowired
-	SystemParameterMapper systemParameterMapper;
+	ICacheBp  cacheBp;
+	
 	
 	
     // 调整到1小时30分钟，钉钉保存2个小时，30分钟缓冲
@@ -66,11 +66,10 @@ public class DingApiProxyImpl implements  DingApiProxy{
     @Transactional(rollbackFor=Exception.class)
     public  String getDingAccessToken() throws Exception {
     	   long curTime = System.currentTimeMillis();
-    	   SystemParameter systemParameter= systemParameterMapper.querySystemValuebyParameterName(accessTokeTime);
-    	   JSONObject accessTokenValue=JSONObject.parseObject(systemParameter.getParameterValue());
+    	   JSONObject accessTokenValue=JSONObject.parseObject(cacheBp.getDingAccessToken(accessTokeTime));
     	   String accToken = "";
            JSONObject jsontemp = new JSONObject();
-           if (accessTokenValue == null || curTime - accessTokenValue.getLong("begin_time") >= cacheTime) {
+          if (accessTokenValue == null || curTime - accessTokenValue.getLong("begin_time") >= cacheTime) {
         	   try {
         		   StringBuffer param=new StringBuffer();
         		   param.append("corpid=").append(corpid).append("&corpsecret=").append(corpsecret);
@@ -86,9 +85,7 @@ public class DingApiProxyImpl implements  DingApiProxy{
         		   jsontemp.clear();
                    jsontemp.put("access_token", accToken);
                    jsontemp.put("begin_time", curTime);
-        		   systemParameter.setModifiedTime(new Date());
-        		   systemParameter.setParameterValue(jsontemp.toJSONString());
-        		   systemParameterMapper.updateByPrimaryKeySelective(systemParameter);
+                   cacheBp.setDingAccessToken(accessTokeTime,jsontemp.toString());
         	   } catch (Exception e) {
         		   LOG.error("钉钉获取accessToken出错，message={}",e.getMessage());
         		   throw new Exception(e.getMessage());
