@@ -35,6 +35,7 @@ public class UserServiceImpl implements IUserService {
     private AuthWayBp authWayBp;
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
+	@Autowired
 	private IUserMapper userMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
