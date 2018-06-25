@@ -6,6 +6,8 @@ import java.util.*;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.IUserPermitStatMapper;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
@@ -130,10 +132,7 @@ public class PermissionServiceImpl implements IPermissionService {
 		JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、请求参数的基本校验并转换为内部使用的Map*/
 		Map<String, Object> queryMap = new HashMap<>();
-		Boolean rtn = checkAndConvertParam(queryMap, jsonObject);
-		if (!rtn) {
-			return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
-		}
+		checkAndConvertParam(queryMap, jsonObject);
         /*3、查询数据群贤模板列表信息*/
 		List<UserPermitStatDO> userPermitStatDOS = userPermitStatMapper.listUserPermitStatsByPage(queryMap);
         /*4、List<DO> 转 List<VO>*/
@@ -165,26 +164,23 @@ public class PermissionServiceImpl implements IPermissionService {
 	 * @date: 2018/6/13 11:54
 	 * @see
 	 */
-	private Boolean checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
+	private void checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
          /*获取当前用户*/
 		String userName = jsonObject.getString("operator");
 		if (StringUtility.isNullOrEmpty(userName)) {
-			logger.error("当期用户为空");
-			return Boolean.FALSE;
+			throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
 		}
 		queryMap.put("userName", userName);
 		String pageNumber = jsonObject.getString("pageNumber");
 		String pageData = jsonObject.getString("pageData");
 		if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-			logger.error("分页参数有误");
-			return Boolean.FALSE;
+			throw new URCBizException("parameter operator is null", ErrorCode.E_000003);
 		}
 		int currPage = Integer.valueOf(pageNumber);
 		int pageSize = Integer.valueOf(pageData);
 		queryMap.put("currIndex", (currPage - 1) * pageSize);
 		queryMap.put("pageSize", pageSize);
 
-		return Boolean.TRUE;
 
 
 	}

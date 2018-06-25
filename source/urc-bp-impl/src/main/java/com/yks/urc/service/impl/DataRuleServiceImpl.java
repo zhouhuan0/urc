@@ -122,8 +122,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
             for (ExpressionDO expressionDO : expressionDOS) {
                 if (expressionDO.getParentExpressionId() != null && parentExpressionDO.getExpressionId().equals(expressionDO.getParentExpressionId())) {
                     subExpressionDOList.add(expressionDO);
-                } else {
-                    continue;
                 }
                 parentExpressionDO.setExpressionDOList(subExpressionDOList);
             }
@@ -240,7 +238,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
 
     /**
-     * Description: 数据授权方案
+     * Description: 数据授权方案 快速分配数据权限模板给用户
      * 1-快速分配
      * 2-发送到MQ
      *
@@ -442,7 +440,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             Long currentTemplId = Long.valueOf(tempIdStr);
             DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
             if (dataRuleTemplDO == null) {
-                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000002);
+                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             dataRuleTemplMapper.delTemplDatasById(currentTemplId);
