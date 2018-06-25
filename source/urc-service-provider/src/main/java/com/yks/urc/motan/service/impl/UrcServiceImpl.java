@@ -2,6 +2,8 @@ package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
@@ -74,7 +76,7 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(params);
         String dingOrgId = jsonObject.getString("dingOrgId");
         if (!StringUtility.isNum(dingOrgId)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
+            throw new URCBizException("dingOrgId为空", ErrorCode.E_000002);
         }
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
@@ -84,10 +86,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        PersonVO personVo = StringUtility.parseObject(jsonObject.getString("user"), PersonVO.class);
-        if (personVo==null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
-        }
+        PersonVO personVo = jsonObject.getObject("user", PersonVO.class);
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
@@ -219,10 +218,10 @@ public class UrcServiceImpl implements IUrcService {
         String roleId = jsonObject.getString("roleId");
         
         if (!StringUtility.isNum(roleId)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "roleId为空");
+            throw new URCBizException("roleId为空", ErrorCode.E_000002);
         }
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
         
         return roleService.getUserByRoleId(operator, roleId);
@@ -250,7 +249,7 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
         
         String pageNumber=jsonObject.getString("pageNumber");
@@ -265,10 +264,10 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.getString("operator");
         
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstUserName"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstUserName为空");
+            throw new URCBizException("lstUserName为空", ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
         
@@ -294,11 +293,11 @@ public class UrcServiceImpl implements IUrcService {
         String operator = jsonObject.getString("operator");
       
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        	  throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
         
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRoleId为空");
+            throw new URCBizException("lstRoleId为空", ErrorCode.E_000002);
         }
         
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
@@ -336,7 +335,7 @@ public class UrcServiceImpl implements IUrcService {
         String userName = jsonObject.getString("username");
         
         if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        	throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
         
         String pageNumber=jsonObject.getString("pageNumber");
