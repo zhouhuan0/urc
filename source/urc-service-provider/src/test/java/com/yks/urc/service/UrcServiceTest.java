@@ -257,4 +257,32 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println("==================");
 		System.out.println(resultVO.msg);
 	}
+	@Test
+	public void updateRolePermission(){
+		Map map =new HashMap();
+		map.put("operator","panyun");
+		List<RoleVO> lstRole =new ArrayList<>();
+		RoleVO roleVO =new RoleVO();
+		roleVO.roleId = Long.parseLong("1529550145551000001");
+		List<PermissionVO> selectedContext =new ArrayList<>();
+		PermissionVO permissionVO =new PermissionVO();
+		String sysCOntext="{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}";
+		permissionVO.setSysContext(sysCOntext);
+		selectedContext.add(permissionVO);
+		roleVO.selectedContext=selectedContext;
+		lstRole.add(roleVO);
+		map.put("lstRole",lstRole);
+		String json =StringUtility.toJSONString(map);
+		ResultVO resultVO =service.updateRolePermission(json);
+		System.out.println(resultVO.msg);
+
+	}
+	@Test
+	public void testsyncUserInfo(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		String json =StringUtility.toJSONString(map);
+		ResultVO resultVO =service.syncUserInfo(json);
+		System.out.println(resultVO.msg);
+	}
 }

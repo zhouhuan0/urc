@@ -9,16 +9,15 @@ public interface IUrcService {
     /**
      * 同步数据
      *
-     * @param operator
+     * @param json
      * @return
      */
-    ResultVO syncUserInfo(String operator);
+    ResultVO syncUserInfo(String json);
 
     /**
      * 登陆校验：用户名密码检验
      *
-     * @param curUser
-     * @param authUser
+     * @param map
      * @return
      * @author panyun@youkeshu.com
      * @date 2018年6月6日 下午12:22:35

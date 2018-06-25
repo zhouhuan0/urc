@@ -235,24 +235,27 @@
     </select>
     <!--更新角色的功能权限-->
     <update id="updateUserRoleByRoleId">
-        update urc_user_role
+        update urc_role_permission
         <set>
-            <if test="roleId != null">
+            <if test="rolePermissionDO.roleId != null and rolePermissionDO.roleId !='' ">
                 role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER},
             </if>
-            <if test="userName != null">
-                user_name = #{rolePermissionDO.userName,jdbcType=VARCHAR},
+            <if test="rolePermissionDO.sysKey != null and rolePermissionDO.roleId !='' ">
+                sys_key = #{rolePermissionDO.sysKey,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.createBy != null">
+            <if test="rolePermissionDO.sysKey != null and rolePermissionDO.roleId !='' ">
+                selected_context = #{rolePermissionDO.selectedContext,jdbcType=VARCHAR},
+            </if>
+            <if test="rolePermissionDO.createBy != null and rolePermissionDO.createBy != ''">
                 create_by = #{rolePermissionDO.createBy,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.createTime != null">
+            <if test="rolePermissionDO.createTime != null and rolePermissionDO.createTime != ''" >
                 create_time = #{rolePermissionDO.createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="rolePermissionDO.modifiedBy != null">
+            <if test="rolePermissionDO.modifiedBy != null and rolePermissionDO.modifiedBy != ''">
                 modified_by = #{rolePermissionDO.modifiedBy,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.modifiedTime != null">
+            <if test="rolePermissionDO.modifiedTime != null and rolePermissionDO.modifiedTime !=''">
                 modified_time = #{rolePermissionDO.modifiedTime,jdbcType=TIMESTAMP},
             </if>
         </set>

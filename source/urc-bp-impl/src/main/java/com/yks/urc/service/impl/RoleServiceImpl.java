@@ -489,7 +489,8 @@ public class RoleServiceImpl implements IRoleService {
                     return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"获取的功能权限为空");
                 }
                 for (PermissionVO permissionVO : permissionVOS) {
-                    //将功能版本放入do中
+                    //将功能版本放入do中 ,通过roleId来更新角色的功能权限
+                    rolePermissionDO.setRoleId(userRole.getRoleId());
                     rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
                     rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
                 }
@@ -499,6 +500,7 @@ public class RoleServiceImpl implements IRoleService {
                 lstRoleId.add(roleVO.getRoleId());
             }
             Map dataMap = new HashMap();
+            //如果是超级管理员,则更新所有,否则只能更新自己的
             if (roleMapper.isSuperAdminAccount(operator)) {
                 dataMap.put("createBy", "");
             } else {

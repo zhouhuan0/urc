@@ -166,6 +166,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
+    @Log(value = "获取所有平台",level = LogLevel.INFO)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -173,6 +174,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log(value = "获取指定平台的店铺和站点",level = LogLevel.INFO)
     public ResultVO<List<OmsShopVO>> getShopList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -321,6 +323,9 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.get("operator").toString();
+        if (StringUtility.isNullOrEmpty(operator)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
+        }
         return userService.getMyAuthWay(operator);
     }
 

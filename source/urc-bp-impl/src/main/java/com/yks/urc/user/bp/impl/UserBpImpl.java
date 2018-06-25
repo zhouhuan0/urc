@@ -146,7 +146,7 @@ public class UserBpImpl implements IUserBp {
                 lock.unlock();
             }
         } else {
-            if ("system".equals(username)) {
+            if (!"system".equals(username)) {
                 // 手动触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
             } else {
