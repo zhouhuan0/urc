@@ -129,11 +129,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
         ResultVO<List<SysAuthWayVO>> rslt = new ResultVO();
+        List<SysAuthWayVO> lstAuthWayVOS =new ArrayList<>();
         try {
             if (StringUtility.isNullOrEmpty(operator)) {
                 return rslt;
             }
-            rslt.data = authWayBp.getMyAuthWay(operator);
+           lstAuthWayVOS = authWayBp.getMyAuthWay(operator);
+            rslt.data=lstAuthWayVOS;
             if (rslt.data == null) {
                 rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限哦";
                 rslt.state=CommonMessageCodeEnum.FAIL.getCode();
