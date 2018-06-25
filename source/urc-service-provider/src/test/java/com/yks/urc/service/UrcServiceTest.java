@@ -194,7 +194,12 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\t\"userName\":\"panyun,chenglifu\"\n" +
 				"\t}\n" +
 				"}";
-		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(json);
+		String json1 ="{\n" +
+				"\t\"operator\":\"test3\",\n" +
+				"\t\"pageNumber\":0,\n" +
+				"\t\"pageData\":30\n" +
+				"}";
+		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(json1);
 		System.out.println("=================");
 		System.out.println(resultVO.msg);
 		List<UserVO>  userVOS= (List<UserVO>) resultVO.data.lst;

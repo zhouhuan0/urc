@@ -171,14 +171,17 @@ public class UserBpImpl implements IUserBp {
     @Override
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         //先切割UserVo 的username
-        String allUserName =userVO.userName;
-        //根据 , 切割用户名,用数组装,转成list
-        List<String> strings =new ArrayList<>();
-        if (allUserName.contains(",")){
-            String [] str =allUserName.split(",");
-            strings=Arrays.asList(str);
-        }else {
-            strings.add(allUserName);
+        List<String> strings = new ArrayList<>();
+        if (userVO != null) {
+            String allUserName = userVO.userName;
+            //根据 , 切割用户名,用数组装,转成list
+
+            if (allUserName.contains(",")) {
+                String[] str = allUserName.split(",");
+                strings = Arrays.asList(str);
+            } else {
+                strings.add(allUserName);
+            }
         }
         // 1.首先查询出所有数据  分页
         Query query = new Query(null, pageNumber, pageData);

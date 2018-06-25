@@ -110,9 +110,12 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = jsonObject.getString("operator");
-        UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
+        UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
+        if (userVO == null){
+            return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
+        }
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
