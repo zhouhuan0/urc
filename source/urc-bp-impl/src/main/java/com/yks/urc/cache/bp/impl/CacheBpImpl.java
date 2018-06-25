@@ -190,4 +190,16 @@ public class CacheBpImpl implements ICacheBp {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public String getDingAccessToken(String accessTokeTime) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setDingAccessToken(String accessTokeTime, String accessTokeValue) {
+		// TODO Auto-generated method stub
+		
+	}
 }

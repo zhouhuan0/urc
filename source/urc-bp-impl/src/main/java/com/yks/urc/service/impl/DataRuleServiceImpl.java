@@ -481,11 +481,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (dataRuleSysVOS != null) {
             assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, templId, operator);
             /*批量新增数据权限Sys*/
-            dataRuleSysMapper.insertBatch(dataRuleSysCache);
+            if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()){
+                dataRuleSysMapper.insertBatch(dataRuleSysCache);
+            }
              /*批量新增行权限数据*/
-            expressionMapper.insertBatch(expressionCache);
+            if(expressionCache!=null && !expressionCache.isEmpty()) {
+                expressionMapper.insertBatch(expressionCache);
+            }
             /*批量新增列权限数据*/
-            dataRuleColMapper.insertBatch(dataRuleColCache);
+            if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
+                dataRuleColMapper.insertBatch(dataRuleColCache);
+            }
         }
 
 
@@ -693,13 +699,21 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
         }
         /*批量新增用户-数据权限关系*/
-        dataRuleMapper.insertBatch(dataRuleDOSCache);
+        if(dataRuleDOSCache!=null && !dataRuleDOSCache.isEmpty()){
+            dataRuleMapper.insertBatch(dataRuleDOSCache);
+        }
          /*批量新增数据权限Sys*/
-        dataRuleSysMapper.insertBatch(dataRuleSysCache);
+        if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()) {
+            dataRuleSysMapper.insertBatch(dataRuleSysCache);
+        }
              /*批量新增行权限数据*/
-        expressionMapper.insertBatch(expressionCache);
+        if(expressionCache!=null && !expressionCache.isEmpty()) {
+            expressionMapper.insertBatch(expressionCache);
+        }
             /*批量新增列权限数据*/
-        dataRuleColMapper.insertBatch(dataRuleColCache);
+        if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
+            dataRuleColMapper.insertBatch(dataRuleColCache);
+        }
 
 
         return VoHelper.getSuccessResult();
