@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.Permission;
+import com.yks.urc.vo.PermissionVO;
 
 import java.util.List;
 
@@ -65,4 +66,6 @@ public interface PermissionMapper {
      * @Date 2018/6/15 9:44
      */
    Permission getPermission(@Param("sysKey") String sysKey);
+
+	List<Permission> getSysApiUrlPrefix();
 }

@@ -2,8 +2,10 @@ package com.yks.urc.cache.bp.api;
 
 import java.util.List;
 
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
+import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.UserVO;
 
 public interface ICacheBp {
@@ -19,8 +21,6 @@ public interface ICacheBp {
 	 */
 	GetAllFuncPermitRespVO getUserFunc(String userName);
 
-//	List<String> getUserSysKey(String userName);
-
 	void insertUser(UserVO u);
 	void removeUser(String userName);
 
@@ -32,11 +32,6 @@ public interface ICacheBp {
 	 * @date 2018年6月21日 下午8:01:38
 	 */
 	void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache);
-
-
-//	void insertUserSysKey(String userName, List<String> lst);
-
-//	void removeUserSysKey(String userName);
 
 	/**
 	 * 获取某个user的功能权限版本
@@ -70,4 +65,7 @@ public interface ICacheBp {
 	String getFuncJson(String userName, String sysKey);
 
 	void insertSysContext(String sysKey, String sysContext);
+
+	List<Permission> getSysApiUrlPrefix();
+	void setSysApiUrlPrefix(List<Permission> lst);
 }

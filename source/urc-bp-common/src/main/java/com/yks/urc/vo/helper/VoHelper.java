@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.entity.Person;
+import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.vo.ResultVO;
 
 /**
@@ -44,5 +45,9 @@ public class VoHelper {
 
 	public static <T> ResultVO getSuccessResult(T data) {
 		return getResultVO(data, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
+	}
+
+	public static ResultVO getResultVO(ErrorCode err, String strMsg) {
+		return getResultVO(err.getState(), strMsg);
 	}
 }

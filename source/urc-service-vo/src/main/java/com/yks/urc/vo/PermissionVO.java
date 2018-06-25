@@ -20,6 +20,7 @@ public class PermissionVO implements Serializable {
     private String sysName;
 
     private String sysContext;
+    private String apiUrlPrefixJson;
 
      public String getSysKey() {
          return sysKey;
@@ -44,4 +45,12 @@ public class PermissionVO implements Serializable {
      public void setSysName(String sysName) {
          this.sysName = sysName;
      }
+
+	public String getApiUrlPrefixJson() {
+		return apiUrlPrefixJson;
+	}
+
+	public void setApiUrlPrefixJson(String apiUrlPrefixJson) {
+		this.apiUrlPrefixJson = apiUrlPrefixJson;
+	}
  }
