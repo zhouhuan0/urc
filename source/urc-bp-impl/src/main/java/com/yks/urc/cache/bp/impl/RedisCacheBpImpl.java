@@ -329,4 +329,21 @@ public class RedisCacheBpImpl implements ICacheBp {
 			logger.error(String.format("removeUser:%s", userName), ex);
 		}
 	}
+	
+	public String getDingAccessToken(String accessTokeTime) {
+		try {
+			String accessToke= getKey(accessTokeTime);
+			return accessToke;
+		} catch (Exception ex) {
+			logger.error(String.format("getDingAccessToken:%s", accessTokeTime), ex);
+			return null;
+		}
+	}
+	
+	
+	public void setDingAccessToken(String accessTokeTime,String accessTokeValue) {
+		if (StringUtility.isNullOrEmpty(accessTokeTime))
+			return;
+		setKey(accessTokeTime, accessTokeValue, 0);
+	}
 }
