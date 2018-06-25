@@ -96,7 +96,7 @@ public class UserBpImpl implements IUserBp {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void SynUserFromUserInfo(String username) {
+    public ResultVO SynUserFromUserInfo(String username) {
         if (lock.tryLock()) {
             List<UserInfo> userInfoList = this.getUserInfo();
             if (userInfoList == null || userInfoList.size() ==0){
@@ -139,22 +139,25 @@ public class UserBpImpl implements IUserBp {
                     userMapper.insertBatchUser(userDoList);
                 }
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"同步userInfo数据成功..");
             } catch (Exception e) {
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
                 e.printStackTrace();
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"同步userInfo数据出错..");
             } finally {
                 lock.unlock();
             }
         } else {
+            logger.info("同步userInfo数据正在执行...,");
             if (!"system".equals(username)) {
                 // 手动触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"手动触发正在执行..");
             } else {
                 // 定时任务触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"定时任务正在执行..");
             }
-            logger.info("同步userInfo数据正在执行...,");
-
         }
 
     }

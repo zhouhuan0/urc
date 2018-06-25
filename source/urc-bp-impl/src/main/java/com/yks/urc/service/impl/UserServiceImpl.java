@@ -48,16 +48,13 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO syncUserInfo(String operator) {
-        ResultVO rslt = null;
+        ResultVO resultVO= new ResultVO();
         try {
-            userBp.SynUserFromUserInfo(operator);
-            rslt = VoHelper.getSuccessResult();
-            rslt.msg = "Success " + operator;
+            resultVO=userBp.SynUserFromUserInfo(operator);
         } catch (Exception e) {
-            rslt = VoHelper.getErrorResult();
-            rslt.msg = "Error" + operator;
+            return VoHelper.getErrorResult();
         } finally {
-            return rslt;
+            return resultVO;
         }
     }
 

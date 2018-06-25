@@ -10,7 +10,7 @@ import com.yks.urc.vo.UserVO;
 
 public interface IUserBp {
 
-	void SynUserFromUserInfo(String userName);
+	ResultVO SynUserFromUserInfo(String userName);
 
 	ResultVO login(UserVO authUser);
 	
