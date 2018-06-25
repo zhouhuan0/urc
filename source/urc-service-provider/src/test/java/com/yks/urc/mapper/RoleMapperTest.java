@@ -62,24 +62,6 @@ public class RoleMapperTest extends BaseMapperTest {
         Assert.assertEquals(1, rtn);
     }
 
-    /**
-     * 根据roleName做唯一约束，roleName不重复则添加，roleName重复则更新
-     * rtn=2表示更新
-     * rtn=1表示添加
-     */
-    @Test
-    public void insertOrUpdate() {
-        RoleDO roleDO = new RoleDO();
-        roleDO.setRoleName("admin121");
-        roleDO.setActive(Boolean.TRUE);
-        roleDO.setAuthorizable(Boolean.TRUE);
-        roleDO.setCreateBy("admin");
-        roleDO.setEffectiveTime(new Date());
-        roleDO.setCreateTime(new Date());
-        roleDO.setForever(Boolean.FALSE);
-        int rtn = roleMapper.insertOrUpdate(roleDO);
-        System.out.println(rtn);
-    }
 
     @Test
     public void deleteBatch() {

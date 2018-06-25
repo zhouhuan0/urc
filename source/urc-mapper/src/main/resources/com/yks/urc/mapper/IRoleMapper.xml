@@ -95,31 +95,6 @@
       where role_id = #{roleId,jdbcType=TINYINT}
    </update>
 
-    <!--roleName建立唯一约束，不存在就添加，存在就更新-->
-    <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
-    insert into urc_role
-     (role_id, role_name, is_active,
-      is_authorizable, is_forever, effective_time,
-      expire_time, create_time, create_by,
-      modified_time, modified_by)
-      values
-      ( #{roleId,jdbcType=TINYINT}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
-      #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT},
-      #{effectiveTime,jdbcType=TIMESTAMP},#{expireTime,jdbcType=TIMESTAMP},
-      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
-      on DUPLICATE key
-      UPDATE
-        role_name = #{roleName,jdbcType=VARCHAR},
-        is_active = #{isActive,jdbcType=TINYINT},
-        is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
-        is_forever = #{isForever,jdbcType=TINYINT},
-        effective_time = #{effectiveTime,jdbcType=TIMESTAMP},
-        expire_time = #{expireTime,jdbcType=TIMESTAMP},
-        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-        modified_by = #{modifiedBy,jdbcType=VARCHAR}
-    </insert>
-
     <!--批量删除-->
     <delete id="deleteBatch" parameterType="java.util.List">
         delete from urc_role where id in

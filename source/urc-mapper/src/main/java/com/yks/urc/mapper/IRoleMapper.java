@@ -35,19 +35,6 @@ public interface IRoleMapper {
     Integer updateByRoleId(RoleDO roleDO);
 
     /**
-     * Description: 根据roleName的唯一约束，roleName不重复则添加，roleName重复则更新
-     * 1、返回1说明添加成功
-     * 2、返回2说明更新成功
-     *
-     * @param : roleDO
-     * @return: Integer
-     * @auther: lvcr
-     * @date: 2018/6/7 18:26
-     * @see
-     */
-    Integer insertOrUpdate(RoleDO roleDO);
-
-    /**
      * Description: 批量删除角色
      *
      * @param : ids
