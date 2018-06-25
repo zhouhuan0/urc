@@ -24,5 +24,5 @@ public class OmsPlatformVO implements Serializable {
     /**
      * 账号
      */
-    public List<OmsAccountVO> lstOmsAccount;
+    public List<OmsShopVO> lstShop;
 }
