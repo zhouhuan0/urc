@@ -283,6 +283,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("operator","linwanxian");
 		String json =StringUtility.toJSONString(map);
 		ResultVO resultVO =service.syncUserInfo(json);
+		System.out.println("====================");
 		System.out.println(resultVO.msg);
 	}
 }

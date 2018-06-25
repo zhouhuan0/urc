@@ -137,7 +137,7 @@ public class UserBpImpl implements IUserBp {
                     userMapper.insertBatchUser(userDoList);
                 }
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"同步userInfo数据成功..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"同步userInfo数据成功..");
             } catch (Exception e) {
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
                 e.printStackTrace();
@@ -150,11 +150,11 @@ public class UserBpImpl implements IUserBp {
             if (!"system".equals(username)) {
                 // 手动触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"手动触发正在执行..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"手动触发正在执行..");
             } else {
                 // 定时任务触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"定时任务正在执行..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"定时任务正在执行..");
             }
         }
 
