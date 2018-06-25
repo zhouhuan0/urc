@@ -348,9 +348,6 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         
