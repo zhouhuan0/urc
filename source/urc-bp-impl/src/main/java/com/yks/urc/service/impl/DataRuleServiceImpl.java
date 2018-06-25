@@ -2,6 +2,7 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
@@ -577,6 +578,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
             DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
             BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
+            dataRuleTemplVO.setCreateTimeStr(dataRuleTemplDO.getCreateTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            dataRuleTemplVO.setModifiedTimeStr(dataRuleTemplDO.getModifiedTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss"):null);
             dataRuleTemplVOS.add(dataRuleTemplVO);
         }
         return dataRuleTemplVOS;
