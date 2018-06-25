@@ -86,10 +86,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        PersonVO personVo = StringUtility.parseObject(jsonObject.getString("user"), PersonVO.class);
-        if (personVo==null) {
-            throw new URCBizException("user为空", ErrorCode.E_000002);
-        }
+        PersonVO personVo = jsonObject.getObject("user", PersonVO.class);
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         return personService.getUserByUserInfo(personVo, pageNumber, pageData);
