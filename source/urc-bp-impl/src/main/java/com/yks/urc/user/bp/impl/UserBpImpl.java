@@ -26,6 +26,7 @@ import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -357,6 +358,12 @@ public class UserBpImpl implements IUserBp {
     public ResultVO logout(String jsonStr) {
         JSONObject jo = StringUtility.parseString(jsonStr);
         String strOperator = jo.getString(StringConstant.operator);
+        String ticket = jo.getString(StringConstant.ticket);
+        String ip = jo.getString(StringConstant.ip);
+        UserVO u = cacheBp.getUser(strOperator);
+        if (!StringUtils.equalsIgnoreCase(u.ticket, ticket) || !StringUtils.equalsIgnoreCase(u.ip, ip)){
+            throw new URCBizException(ErrorCode.E_000003);
+        }
         cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
     }
