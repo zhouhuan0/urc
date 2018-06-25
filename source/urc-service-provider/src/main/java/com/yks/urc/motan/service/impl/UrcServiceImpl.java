@@ -359,6 +359,9 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
+        if (lstRole == null){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
+        }
         return roleService.updateRolePermission(operator, lstRole);
     }
     @Override

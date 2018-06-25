@@ -253,7 +253,15 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\t\"userName\":\"panyun\"\n" +
 				"\t}\n" +
 				"}";
-		ResultVO resultVO=service.getUserByUserName(json);
+		UserVO userVO =new UserVO();
+		userVO.userName="panyun";
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		map.put("user",userVO);
+		String jsonStr =StringUtility.toJSONString(map);
+		System.out.println("==================");
+		System.out.println(jsonStr);
+		ResultVO resultVO=service.getUserByUserName(jsonStr);
 		System.out.println("==================");
 		System.out.println(resultVO.msg);
 	}
@@ -273,6 +281,8 @@ public class UrcServiceTest extends BaseServiceTest {
 		lstRole.add(roleVO);
 		map.put("lstRole",lstRole);
 		String json =StringUtility.toJSONString(map);
+		System.out.println("==================");
+		System.out.println(json);
 		ResultVO resultVO =service.updateRolePermission(json);
 		System.out.println(resultVO.msg);
 
