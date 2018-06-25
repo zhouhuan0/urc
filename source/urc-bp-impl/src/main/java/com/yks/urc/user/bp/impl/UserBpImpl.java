@@ -293,16 +293,6 @@ public class UserBpImpl implements IUserBp {
             this.insertLoginLog(loginLog);
             resp.userName = authUser.userName;
             if (blnOk) {
-                // 先从缓存取
-//				List<String> lstSysKey = cacheBp.getUserSysKey(resp.userName);
-//				if (lstSysKey == null) {
-//					resp.sysKey = userRoleMapper.getSysKeyByUser(authUser.userName);
-//					if (resp.sysKey == null)
-//						resp.sysKey = new ArrayList<>();
-//					cacheBp.insertUserSysKey(resp.userName, resp.sysKey);
-//				} else {
-//					resp.sysKey = lstSysKey;
-//				}
                 resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
@@ -310,10 +300,13 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = authUser.ip;
                 cacheBp.insertUser(u);
+				return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             }
-            return VoHelper.getResultVO(resp, blnOk ? "000001" : "000000", null);
+            else {
+				return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");	
+            }            
         } catch (Exception ex) {
-            return VoHelper.getResultVO(null, "000000", "login error");
+			return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
         }
     }
 

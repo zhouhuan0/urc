@@ -31,6 +31,7 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
+import com.yks.urc.vo.ExpressionVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.UserVO;
@@ -98,13 +99,28 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		new MQConsumerClient().subscribe(topic, callBack);
 	}
 
-	// @Test
+	@Test
 	public void mq_Test() {
 		DataRuleVO dr = new DataRuleVO();
 		dr.userName = "py";
 		dr.lstDataRuleSys = new ArrayList<>();
 		DataRuleSysVO e = new DataRuleSysVO();
 		e.sysKey = "001";
+		e.userName = "panyun";
+
+		ExpressionVO exp = new ExpressionVO();
+		exp.setIsAnd(1);
+		List<ExpressionVO> subWhereClause = new ArrayList<>();
+		ExpressionVO subExp = new ExpressionVO();
+		subExp.setFiledCode("F_Platform_Shop_Site");
+		subExp.setEntityCode("E_PlatformShopSite");
+		subExp.setOper("in");
+		List<String> operValuesArr = new ArrayList<>();
+		subExp.setOperValuesArr(operValuesArr);
+		subWhereClause.add(subExp);
+		exp.setSubWhereClause(subWhereClause);
+		e.row = exp;
+
 		dr.lstDataRuleSys.add(e);
 		mqBp.send2Mq(dr);
 	}
@@ -118,7 +134,6 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
 
-	@Test
 	public void funcPermitValidate_Test() {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/urc1/motan/service/api/IUrcService/getAllOrgTree");
@@ -126,9 +141,9 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		map.put(StringConstant.operator, "panyun");
 		map.put(StringConstant.ticket, "6fae714a8e5f8ebdec4cb8e405091c83");
 		map.put(StringConstant.ip, "192.168.201.62");
-		map.put(StringConstant.urcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
+		map.put(StringConstant.funcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
 		// map.put(StringConstant.sysKey, "001");
-		System.out.println("----------------------" +StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
+		System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
 	}
 
 	public void testLogin() {
@@ -158,19 +173,22 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
-		// lstUserName.add("panyun");
-		// lstUserName.add("renmaohua");
-		// lstUserName.add("tangfeng");
-		// lstUserName.add("tangyong");
-		// lstUserName.add("weijie");
-		// lstUserName.add("yangbo");
-		// lstUserName.add("chenglifu");
-		// lstUserName.add("chensi");
-		// lstUserName.add("mengyuhua");
-		// lstUserName.add("chensi2");
-		// lstUserName.add("xieyi1");
-		// lstUserName.add("xieyi2");
+		lstUserName.add("panyun");
+		lstUserName.add("renmaohua");
+		lstUserName.add("tangfeng");
+		lstUserName.add("tangyong");
+		lstUserName.add("weijie");
+		lstUserName.add("yangbo");
+		lstUserName.add("chenglifu");
+		lstUserName.add("chensi");
+		lstUserName.add("mengyuhua");
+		lstUserName.add("chensi2");
+		lstUserName.add("xieyi1");
+		lstUserName.add("xieyi2");
 		lstUserName.add("liujun");
+		lstUserName.add("huangpeiqin");
+		lstUserName.add("houyunfeng");
+		lstUserName.add("panxi");
 		permitStatBp.updateUserPermitCache(lstUserName);
 		// permitStatBp.updateUserPermitCache(lstUserName);
 	}

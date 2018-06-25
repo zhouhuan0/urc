@@ -34,9 +34,18 @@ public class DataRuleSysVO  implements Serializable{
      * 列权限
      */
     public List<DataRuleColVO> col;
+	public String userName;
     
 
-    public String getSysKey() {
+    public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getSysKey() {
         return sysKey;
     }
 
