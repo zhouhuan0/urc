@@ -191,7 +191,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleTemplVO> dataRuleTemplVOS = convertDoToVO(dataRuleTemplDOS);
         /*5、获取总条数*/
         Long total = dataRuleTemplMapper.getCounts(queryMap);
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, Integer.valueOf(queryMap.get("pageSize").toString()));
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTemplVOS, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
@@ -594,7 +594,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
 
-        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, Integer.parseInt(pageData));
+        PageResultVO pageResultVO = new PageResultVO(dataRuleTempListVO, dataRuleTempCount, pageData);
         return VoHelper.getSuccessResult(pageResultVO);
     }
 

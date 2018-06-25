@@ -35,6 +35,7 @@ public class UserServiceImpl implements IUserService {
     private AuthWayBp authWayBp;
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
+	@Autowired
 	private IUserMapper userMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
@@ -174,7 +175,7 @@ public class UserServiceImpl implements IUserService {
 		Query query=new Query(userVO, pageNumber, pageData);
 		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
 		long userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
-		PageResultVO pageResultVO=new PageResultVO(userList, userCount, Integer.parseInt(pageData));
+		PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 }

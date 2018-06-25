@@ -67,7 +67,7 @@ public class PersonServiceImpl implements IPersonService {
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.getUserByDingOrgId(query);
 		long count= personMapper.getUserByDingOrgIdCount(query);
-		PageResultVO pageResultVO = new PageResultVO(personList,count,Integer.parseInt(pageData));
+		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 
@@ -77,7 +77,7 @@ public class PersonServiceImpl implements IPersonService {
 		Query query=new Query(person, pageNumber, pageData);
 		List<PersonVO> personList= personMapper.list(query);
 		long count= personMapper.count(query);
-		PageResultVO pageResultVO = new PageResultVO(personList,count,Integer.parseInt(pageData));
+		PageResultVO pageResultVO = new PageResultVO(personList,count,pageData);
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 	

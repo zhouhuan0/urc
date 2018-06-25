@@ -286,14 +286,14 @@
     <delete id="deleteUrcUser">
       DELETE FROM urc_user
     </delete>
-
+    <!--用户管理搜索用户分页-->
     <select id="getUsersByUserInfo" parameterType="com.yks.urc.vo.helper.Query" resultType="com.yks.urc.vo.UserVO">
         select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name
         <where>
-        <if test="userName != null and userName !=''">
+        <if test="list.size >0">
          AND   u.user_name  IN
             <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
                       #{userName}
@@ -309,7 +309,7 @@
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name
         <where>
-        <if test="userName != null and userName !=''">
+        <if test="list.size >0">
             AND   u.user_name  IN
             <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
                 #{userName}

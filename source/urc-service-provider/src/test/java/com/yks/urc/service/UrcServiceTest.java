@@ -191,7 +191,7 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\"pageNumber\":0,\n" +
 				"\t\"pageData\":30,\n" +
 				"\t\"user\":{\n" +
-				"\t\t\"userName\":\"panyun\"\n" +
+				"\t\t\"userName\":\"panyun,chenglifu\"\n" +
 				"\t}\n" +
 				"}";
 		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(json);

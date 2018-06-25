@@ -139,7 +139,7 @@ public class PermissionServiceImpl implements IPermissionService {
 		List<UserPermitStatVO> userPermitStatVOs = convertUserPermitStatDoToVO(userPermitStatDOS);
         /*5、获取总条数*/
 		Long total = userPermitStatMapper.getCounts(queryMap.get("userName").toString());
-		PageResultVO pageResultVO = new PageResultVO(userPermitStatVOs, total, Integer.valueOf(queryMap.get("pageSize").toString()));
+		PageResultVO pageResultVO = new PageResultVO(userPermitStatVOs, total,queryMap.get("pageSize").toString());
 		return VoHelper.getSuccessResult(pageResultVO);
 	}
 
