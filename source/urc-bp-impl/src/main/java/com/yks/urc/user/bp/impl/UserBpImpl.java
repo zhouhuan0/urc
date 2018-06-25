@@ -301,7 +301,7 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = authUser.ip;
                 cacheBp.insertUser(u);
-                return VoHelper.getResultVO(ErrorCode.E_000001 , "登陆成功");
+				return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             }
             else {
 				return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");	
