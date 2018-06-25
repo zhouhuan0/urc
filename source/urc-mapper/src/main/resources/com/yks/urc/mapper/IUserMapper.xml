@@ -272,7 +272,7 @@
 
     <insert id="insertBatchUser" parameterType="com.yks.urc.entity.UserDO">
         insert into urc_user
-        (user_name,is_active,active_time,ding_user_id,create_by,modified_by)
+        (user_name,is_active,active_time,ding_user_id,create_by,modified_by,create_time,modified_time)
         values
         <foreach collection="userDoList" item="list" separator=",">
             (#{list.userName},
@@ -280,7 +280,10 @@
             #{list.activeTime},
             #{list.dingUserId},
             #{list.createBy},
-            #{list.modifiedBy})
+            #{list.modifiedBy},
+            #{list.createTime},
+            #{list.modifiedTime})
+
         </foreach>
     </insert>
     <delete id="deleteUrcUser">
