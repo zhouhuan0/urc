@@ -132,10 +132,12 @@ public class UserServiceImpl implements IUserService {
             }
             rslt.data = authWayBp.getMyAuthWay(operator);
             if (rslt.data == null) {
-                rslt.msg = "Success ," + operator + "您不是管理员,没有授权权限哦";
+                rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限哦";
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.msg = "Success, " + operator;
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
           throw  new URCBizException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常");
         } finally {
