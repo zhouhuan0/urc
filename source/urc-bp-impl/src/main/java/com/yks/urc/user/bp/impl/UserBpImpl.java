@@ -362,7 +362,7 @@ public class UserBpImpl implements IUserBp {
         String ip = jo.getString(StringConstant.ip);
         UserVO u = cacheBp.getUser(strOperator);
         if (!StringUtils.equalsIgnoreCase(u.ticket, ticket) || !StringUtils.equalsIgnoreCase(u.ip, ip)){
-            throw new URCBizException(ErrorCode.E_000003);
+            throw new URCBizException(ErrorCode.E_100002);
         }
         cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
