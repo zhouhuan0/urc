@@ -313,19 +313,19 @@ public class RoleServiceImpl implements IRoleService {
 		/* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String roleIdStr = jsonObject.getString("roleId");
         if (!StringUtil.isNum(roleIdStr)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("parameter roleId is not a num", ErrorCode.E_000003);
         }
         RoleDO roleDO = roleMapper.getRoleDatasByRoleId(Long.valueOf(roleIdStr));
         if (roleDO == null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("role data is null where roleId is:"+roleIdStr, ErrorCode.E_000003);
         }
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建"+roleIdStr, ErrorCode.E_000003);
         }
         /*3、将roleDO转为roleVO*/
         RoleVO roleVO = new RoleVO();
