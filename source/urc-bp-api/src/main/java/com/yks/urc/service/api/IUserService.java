@@ -72,5 +72,13 @@ public interface IUserService {
 	 * @return
 	 */
 	ResultVO fuzzySearchUsersByUserName(String pageNumber,String pageData,String userName,String operator);
-
+	/**
+	 * 精确搜索用户
+	 * @param   operator
+	 * @param userVO
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/25 14:46
+	 */
+	ResultVO<List<UserVO>> getUserByUserName(String operator, UserVO userVO);
 }
