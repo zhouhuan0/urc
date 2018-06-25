@@ -176,7 +176,6 @@ public class UserBpImpl implements IUserBp {
         if (userVO != null) {
             String allUserName = userVO.userName;
             //根据 , 切割用户名,用数组装,转成list
-
             if (allUserName.contains(",")) {
                 String[] str = allUserName.split(",");
                 strings = Arrays.asList(str);

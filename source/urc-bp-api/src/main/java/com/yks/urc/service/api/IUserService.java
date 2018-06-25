@@ -48,7 +48,7 @@ public interface IUserService {
 	 */
 	ResultVO<List<OmsShopVO>> getShopList(String operator, String platform);
 
-	
+
 	/**
 	 *  获取应用系统及其授权方式
 	 * @param

@@ -46,7 +46,8 @@ public class AuthWayBpImpl implements AuthWayBp {
             //组装sysAuthWayVO
             lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
         }else {
-            if (isSuperAdmin == true) {
+            boolean isAdmin = roleMapper.isAdminAccount(operator);
+            if (isAdmin == true) {
                 //2. 通过管理员拿到sys_key
                 List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
                 //组装sysAuthWayVO
