@@ -69,9 +69,9 @@ public class AuthWayBpImpl implements AuthWayBp {
      */
     public List<SysAuthWayVO> AssembleSysAuthWay(List<String> getSysKey) {
         List<SysAuthWayVO> sysAuthWayVOList =new ArrayList<>();
-        List<AuthWayVO> authWayVOS = new ArrayList();
         //3. sys_key 拿到对应的业务系统实体
         for (String sysKey : getSysKey) {
+            List<AuthWayVO> authWayVOS = new ArrayList();
             SysAuthWayVO sysAuthWayVO = new SysAuthWayVO();
             //获取最终结果
             AuthWayVO authWayVO = authWayMapper.getAuthWayVoBySysKey(sysKey);

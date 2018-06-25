@@ -94,6 +94,9 @@ public class UserServiceImpl implements IUserService {
                 return rslt;
             }
             rslt.data = dataAuthorization.getPlatformList(operator);
+            if (rslt.data == null){
+
+            }
             rslt.msg = "Success " + operator;
         } catch (Exception e) {
             rslt = VoHelper.getErrorResult();
@@ -136,7 +139,7 @@ public class UserServiceImpl implements IUserService {
                 rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
-            rslt.msg = "Success, " + operator;
+            rslt.msg = "成功, " + operator;
             rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
           throw  new URCBizException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常");
