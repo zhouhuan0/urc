@@ -551,15 +551,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*3、添加到列权限数据列表*/
             /*获取列权限数据*/
             List<DataRuleColVO> dataRuleColVOS = dataRuleSysVO.getCol();
-            for (DataRuleColVO dataRuleColVO : dataRuleColVOS) {
-                DataRuleColDO dataRuleColDO = new DataRuleColDO();
-                BeanUtils.copyProperties(dataRuleColVO, dataRuleColDO);
-                dataRuleColDO.setDataRuleSysId(dataRuleSysId);
-                dataRuleColDO.setCreateTime(new Date());
-                dataRuleColDO.setCreateBy(operator);
-                dataRuleColCache.add(dataRuleColDO);
+            if(dataRuleColVOS!=null && !dataRuleColVOS.isEmpty()) {
+                for (DataRuleColVO dataRuleColVO : dataRuleColVOS) {
+                    DataRuleColDO dataRuleColDO = new DataRuleColDO();
+                    BeanUtils.copyProperties(dataRuleColVO, dataRuleColDO);
+                    dataRuleColDO.setDataRuleSysId(dataRuleSysId);
+                    dataRuleColDO.setCreateTime(new Date());
+                    dataRuleColDO.setCreateBy(operator);
+                    dataRuleColCache.add(dataRuleColDO);
+                }
             }
-
         }
     }
 
