@@ -1,11 +1,13 @@
 package com.yks.urc.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.UserDO;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,50 +27,50 @@ import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class UserServiceImpl implements IUserService {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@Autowired
-	IUserBp userBp;
+    @Autowired
+    IUserBp userBp;
     @Autowired
     DataAuthorization dataAuthorization;
     @Autowired
     private AuthWayBp authWayBp;
-	@Autowired
-	private IUserRoleMapper userRoleMapper;
-	@Autowired
-	private IUserMapper userMapper;
-	@Autowired
-	private IUserValidateBp userValidateBp;
-	@Autowired
-	private IRoleMapper roleMapper;
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
+    @Autowired
+    private IUserMapper userMapper;
+    @Autowired
+    private IUserValidateBp userValidateBp;
+    @Autowired
+    private IRoleMapper roleMapper;
 
-	@Override
-	public ResultVO syncUserInfo(String operator) {
-		ResultVO rslt = null;
-		try {
-			userBp.SynUserFromUserInfo(operator);
-			rslt = VoHelper.getSuccessResult();
-			rslt.msg = "Success " + operator;
-		} catch (Exception e) {
-			rslt = VoHelper.getErrorResult();
-			rslt.msg = "Error" + operator;
-		} finally {
-			return rslt;
-		}
-	}
+    @Override
+    public ResultVO syncUserInfo(String operator) {
+        ResultVO rslt = null;
+        try {
+            userBp.SynUserFromUserInfo(operator);
+            rslt = VoHelper.getSuccessResult();
+            rslt.msg = "Success " + operator;
+        } catch (Exception e) {
+            rslt = VoHelper.getErrorResult();
+            rslt.msg = "Error" + operator;
+        } finally {
+            return rslt;
+        }
+    }
 
-	@Override
-	public ResultVO login(UserVO authUser) {
-		return userBp.login(authUser);
-	}
+    @Override
+    public ResultVO login(UserVO authUser) {
+        return userBp.login(authUser);
+    }
 
-	@Override
-	public ResultVO logout(String jsonStr) {
-		return userBp.logout(jsonStr);
-	}
+    @Override
+    public ResultVO logout(String jsonStr) {
+        return userBp.logout(jsonStr);
+    }
 
 	/*
-	 * public ResultVO queryUserDataByRuleId(DataRuleDO ruleDO) { List<UserDO>
+     * public ResultVO queryUserDataByRuleId(DataRuleDO ruleDO) { List<UserDO>
 	 * userList = userMapper.queryUserDataByRuleId(ruleDO); if (userList != null &&
 	 * userList.size() > 0) { return VoHelper.getSuccessResult(userList); } return
 	 * VoHelper.getErrorResult(); }
@@ -81,41 +83,41 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public ResultVO<PageResultVO> getUsersByUserInfo(String operator,UserVO userVO, String pageNumber, String pageData) {
-        return userBp.getUsersByUserInfo(operator,userVO, pageNumber, pageData);
+    public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
+        return userBp.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 
-	@Override
-	public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
-		ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
-		try {
-			if (StringUtility.isNullOrEmpty(operator)) {
-				return rslt;
-			}
-			rslt.data = dataAuthorization.getPlatformList(operator);
-			rslt.msg = "Success " + operator;
-		} catch (Exception e) {
-			rslt = VoHelper.getErrorResult();
-		}finally {
-		 	return rslt;
-		}
-	}
+    @Override
+    public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
+        ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
+        try {
+            if (StringUtility.isNullOrEmpty(operator)) {
+                return rslt;
+            }
+            rslt.data = dataAuthorization.getPlatformList(operator);
+            rslt.msg = "Success " + operator;
+        } catch (Exception e) {
+            rslt = VoHelper.getErrorResult();
+        } finally {
+            return rslt;
+        }
+    }
 
 
     @Override
     public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
-		ResultVO<List<OmsAccountVO>> rslt = new ResultVO();
+        ResultVO<List<OmsAccountVO>> rslt = new ResultVO();
         try {
-			if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
-				return rslt;
-			}
+            if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
+                return rslt;
+            }
             rslt.data = dataAuthorization.getShopList(operator, platform);
             rslt.msg = "Success " + operator;
-            if(rslt.data == null){
-            	rslt.msg="Error 无法找到此平台的店铺信息,或者无此平台," +operator;
-			}
+            if (rslt.data == null) {
+                rslt.msg = "Error 无法找到此平台的店铺信息,或者无此平台," + operator;
+            }
         } catch (Exception e) {
-			rslt = VoHelper.getErrorResult();
+            rslt = VoHelper.getErrorResult();
         } finally {
             return rslt;
         }
@@ -123,16 +125,16 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
-		ResultVO<List<SysAuthWayVO>>  rslt = new ResultVO();
+        ResultVO<List<SysAuthWayVO>> rslt = new ResultVO();
         try {
-			if (StringUtility.isNullOrEmpty(operator)) {
-				return rslt;
-			}
+            if (StringUtility.isNullOrEmpty(operator)) {
+                return rslt;
+            }
             rslt.data = authWayBp.getMyAuthWay(operator);
-			if (rslt.data == null){
-				rslt.msg ="Success ," +operator + "您不是管理员,没有授权权限哦";
-				return rslt;
-			}
+            if (rslt.data == null) {
+                rslt.msg = "Success ," + operator + "您不是管理员,没有授权权限哦";
+                return rslt;
+            }
             rslt.msg = "Success, " + operator;
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,41 +143,51 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-	@Override
-	public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
-		try {
-			JSONObject jsonObject = StringUtility.parseString(jsonStr);
-			String operator = jsonObject.getString(StringConstant.operator);
-			return userBp.getAllFuncPermit(operator);
-		} catch (Exception ex) {
-			logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
-			return VoHelper.getErrorResult();
-		}
-	}
+    @Override
+    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
+        try {
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+            String operator = jsonObject.getString(StringConstant.operator);
+            return userBp.getAllFuncPermit(operator);
+        } catch (Exception ex) {
+            logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
+            return VoHelper.getErrorResult();
+        }
+    }
 
 
-	@Override
-	public ResultVO funcPermitValidate(Map<String, String> map) {
-		return userValidateBp.funcPermitValidate(map);
-	}
+    @Override
+    public ResultVO funcPermitValidate(Map<String, String> map) {
+        return userValidateBp.funcPermitValidate(map);
+    }
 
-	@Override
-	public ResultVO getUserByName(String userName) {
-		return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
-	}
+    @Override
+    public ResultVO getUserByName(String userName) {
+        return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
+    }
 
 
-	@Override
-	public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
-		UserVO userVO=new UserVO();
-		userVO.userName=userName;
-		if(!roleMapper.isSuperAdminAccount(operator)){
-			userVO.createBy=operator;
-		}
-		Query query=new Query(userVO, pageNumber, pageData);
-		List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
-		long userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
-		PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
-		return VoHelper.getSuccessResult(pageResultVO);
-	}
+    @Override
+    public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
+        UserVO userVO = new UserVO();
+        userVO.userName = userName;
+        if (!roleMapper.isSuperAdminAccount(operator)) {
+            userVO.createBy = operator;
+        }
+        Query query = new Query(userVO, pageNumber, pageData);
+        List<UserVO> userList = userMapper.fuzzySearchUsersByUserName(query);
+        long userCount = userMapper.fuzzySearchUsersByUserNameCount(query);
+        PageResultVO pageResultVO = new PageResultVO(userList, userCount, pageData);
+        return VoHelper.getSuccessResult(pageResultVO);
+    }
+
+    @Override
+    public ResultVO<List<UserVO>> getUserByUserName(String operator, UserVO userVO) {
+        List<UserVO> userVOS = new ArrayList<>();
+        UserVO userVO1 = new UserVO();
+        UserDO userDO = userMapper.getUserByUserName(userVO);
+        userVO1.userName = userDO.getUserName();
+        userVOS.add(userVO1);
+        return VoHelper.getSuccessResult(userVOS);
+    }
 }
