@@ -187,9 +187,8 @@ public class UserBpImpl implements IUserBp {
         if (userVOS.size() == 0){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
         }
-        // 2.将拿到的用户名再去获取角色名称
+        // 2.将拿到的用户名再分别去获取角色名称
        // List<String> userNames =new ArrayList<>();
-        List<RoleVO> roleVOS = new ArrayList();
         for (UserVO userVO1 : userVOS) {
             userVO1.activeTimeStr=userVO1.activeTime;
             // 查询角色
@@ -198,6 +197,7 @@ public class UserBpImpl implements IUserBp {
                 return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
             }
             //组装角色
+            List<RoleVO> roleVOS = new ArrayList();
             for (String roleName : roleNameList) {
                 RoleVO roleVO = new RoleVO();
                 roleVO.roleName = roleName;
