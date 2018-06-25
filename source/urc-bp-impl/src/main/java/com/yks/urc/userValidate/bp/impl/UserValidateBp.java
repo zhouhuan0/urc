@@ -16,6 +16,7 @@ import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.entity.UserPermitStatDO;
+import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
@@ -27,6 +28,7 @@ import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.ModuleVO;
+import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
 import com.yks.urc.vo.UserVO;
@@ -162,11 +164,10 @@ public class UserValidateBp implements IUserValidateBp {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
 		String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
 		System.out.println(new UserValidateBp().cleanDeletedNode(strJson1, strJson2));
-		
-		
-//		SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
-//		System.out.println(StringUtility.toJSONString_NoException(sys1));
-//		new UserValidateBp().plainSys(sys1, "panyun");
+
+		// SystemRootVO sys1 = StringUtility.parseObject(strJson1, SystemRootVO.class);
+		// System.out.println(StringUtility.toJSONString_NoException(sys1));
+		// new UserValidateBp().plainSys(sys1, "panyun");
 
 		// 读取func2.json文件
 		// String strJson2 =
@@ -218,7 +219,7 @@ public class UserValidateBp implements IUserValidateBp {
 		for (MenuVO m : sysOld.menu) {
 			cleanDeletedModule(m.module, lstNewestKey);
 		}
-		
+
 		return StringUtility.toJSONString_NoException(sysOld);
 	}
 
@@ -482,7 +483,6 @@ public class UserValidateBp implements IUserValidateBp {
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
 		String urcVersion = map.get(StringConstant.urcVersion);
-		String sysKey = map.get(StringConstant.sysKey);
 
 		UserVO u = cacheBp.getUser(operator);
 		// 校验ticket
@@ -496,16 +496,53 @@ public class UserValidateBp implements IUserValidateBp {
 		}
 
 		// 校验功能权限版本
-		if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator, sysKey))) {
+		if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator))) {
 			return VoHelper.getResultVO("100007", "功能权限版本错误");
 		}
 
 		// 校验是否有权限
+		String sysKey = getSysKeyByApiUrl(apiUrl);
+		if (StringUtility.isNullOrEmpty(sysKey)) {
+			return VoHelper.getResultVO(ErrorCode.E_100007, String.format("%s don't belong to any system", apiUrl));
+		}
 		if (!hasApiFunc(moduleUrl, apiUrl, operator, sysKey)) {
-			return VoHelper.getResultVO("100003", "没有权限");
+			return VoHelper.getResultVO(ErrorCode.E_100003, "没有权限");
 		}
 		return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 	}
+
+	/**
+	 * 获取apiUrl是哪个sysKey
+	 * 
+	 * @param strApiUrl
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月25日 下午2:30:19
+	 */
+	private String getSysKeyByApiUrl(String strApiUrl) {
+		if (StringUtility.isNullOrEmpty(strApiUrl))
+			return StringUtility.Empty;
+		List<Permission> lstApiPrefix = cacheBp.getSysApiUrlPrefix();
+		if (lstApiPrefix == null) {
+			lstApiPrefix = permissionMapper.getSysApiUrlPrefix();
+			cacheBp.setSysApiUrlPrefix(lstApiPrefix);
+		}
+		if (lstApiPrefix == null || lstApiPrefix.size() == 0)
+			return StringUtility.Empty;
+
+		for (Permission p : lstApiPrefix) {
+			String[] arrPrefix = StringUtility.parseObject(p.getApiUrlPrefixJson(), arrEmpty.getClass());
+			if (arrPrefix == null || arrPrefix.length == 0)
+				continue;
+			for (String prefix : arrPrefix) {
+				if (strApiUrl.startsWith(prefix))
+					return p.getSysKey();
+			}
+		}
+		return StringUtility.Empty;
+	}
+
+	private String[] arrEmpty = new String[0];
 
 	@Autowired
 	private IPermitStatBp permitStatBp;
@@ -519,7 +556,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午4:43:27
 	 */
-	public String getFuncVersionFromDbOrCache(String userName, String sysKey) {
+	public String getFuncVersionFromDbOrCache(String userName) {
 		String funcVersion = cacheBp.getFuncVersion(userName);
 		if (funcVersion == null) {
 			GetAllFuncPermitRespVO ca = permitStatBp.updateUserPermitCache(userName);

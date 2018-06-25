@@ -8,11 +8,15 @@
  */
 package com.yks.urc.service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserInfo;
 import com.yks.urc.fw.EncryptHelper;
+import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
@@ -42,6 +46,7 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
 //@Component
@@ -112,18 +117,18 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 	public void testGetAllFuncPermit() {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
-	
-//	@Test
-	public void test_funcPermitValidate() {
+
+	@Test
+	public void funcPermitValidate_Test() {
 		Map<String, String> map = new HashMap<>();
-		map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
-//		map.put("moduleUrl", "/");
-		map.put(StringConstant.operator, "houyunfeng");
-		map.put(StringConstant.ticket, "614ad7c40b5ba830780df9316ef3c58b");
-		map.put(StringConstant.ip, "192.168.201.53");
-//		map.put(StringConstant.urcVersion, "eb1043692883ef9010cd6cdc8b624e90");
-//		map.put(StringConstant.sysKey, "001");
-		System.out.println("----------------------" + userService.funcPermitValidate(map));
+		map.put("apiUrl", "/urc1/motan/service/api/IUrcService/getAllOrgTree");
+		// map.put("moduleUrl", "/");
+		map.put(StringConstant.operator, "panyun");
+		map.put(StringConstant.ticket, "6fae714a8e5f8ebdec4cb8e405091c83");
+		map.put(StringConstant.ip, "192.168.201.62");
+		map.put(StringConstant.urcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
+		// map.put(StringConstant.sysKey, "001");
+		System.out.println("----------------------" +StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
 	}
 
 	public void testLogin() {
@@ -134,23 +139,40 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
 	}
 
-	@Test
+	@Autowired
+	private DingApiProxy myDingApiProxy;
+
+	public void syncDingOrgAndUser_Test() throws Exception {
+		myDingApiProxy.getDingAccessToken();
+	}
+
+	public void getUserInfo_Test() throws Exception {
+		// userBp.SynUserFromUserInfo("panyun");
+		String httpOrgCreateTest = "https://userinfo.youkeshu.com/api/get_token";
+		JSONObject object = new JSONObject();
+		object.put("username", "panyun");
+		object.put("password", "ASDFhjkl1234");
+		String httpOrgCreateTestRtn = HttpUtility.sendPost(httpOrgCreateTest, object.toJSONString());
+		System.out.println("result:" + httpOrgCreateTestRtn);
+	}
+
 	public void testPermitCache() {
 		List<String> lstUserName = new ArrayList<>();
-		lstUserName.add("panyun");
-		lstUserName.add("renmaohua");
-		lstUserName.add("tangfeng");
-		lstUserName.add("tangyong");
-		lstUserName.add("weijie");
-		lstUserName.add("yangbo");
-		lstUserName.add("chenglifu");
-		lstUserName.add("chensi");
-		lstUserName.add("mengyuhua");
-		lstUserName.add("chensi2");
-		lstUserName.add("xieyi1");
-		lstUserName.add("xieyi2");
+		// lstUserName.add("panyun");
+		// lstUserName.add("renmaohua");
+		// lstUserName.add("tangfeng");
+		// lstUserName.add("tangyong");
+		// lstUserName.add("weijie");
+		// lstUserName.add("yangbo");
+		// lstUserName.add("chenglifu");
+		// lstUserName.add("chensi");
+		// lstUserName.add("mengyuhua");
+		// lstUserName.add("chensi2");
+		// lstUserName.add("xieyi1");
+		// lstUserName.add("xieyi2");
+		lstUserName.add("liujun");
 		permitStatBp.updateUserPermitCache(lstUserName);
-//		permitStatBp.updateUserPermitCache(lstUserName);
+		// permitStatBp.updateUserPermitCache(lstUserName);
 	}
 
 	// @Test
@@ -173,7 +195,6 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		// System.out.println(seqBp.getNextSeq("roleId"));
 	}
 
-	
 	public void getAllFuc_Test() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(StringConstant.operator, "linwanxian");
@@ -181,7 +202,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 
 		service.getAllFuncPermit(jsonStr);
 	}
-	
+
 	public void createRole_Test() {
 		Map<String, Object> map = new HashMap<>();
 		map.put(StringConstant.operator, "panyun");
