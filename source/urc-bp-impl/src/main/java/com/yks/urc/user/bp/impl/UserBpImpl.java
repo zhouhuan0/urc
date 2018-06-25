@@ -119,10 +119,8 @@ public class UserBpImpl implements IUserBp {
                     // 1 表示启用,0表示禁用
                     if ("66050".equals(user.userAccountControl)) {
                         userDo.setIsActive(0);
-                    } else if ("66048".equals(user.userAccountControl) || "512".equals(user.userAccountControl)) {
-                        userDo.setIsActive(1);
                     } else {
-                        userDo.setIsActive(Integer.parseInt(user.userAccountControl));
+                        userDo.setIsActive(1);
                     }
                     // 传入手动同步的创建人员
                     userDo.setCreateBy(username);
