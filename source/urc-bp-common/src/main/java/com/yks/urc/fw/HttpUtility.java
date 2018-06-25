@@ -27,7 +27,8 @@ public class HttpUtility {
 		CloseableHttpClient httpCilent = HttpClients.createDefault();// Creates CloseableHttpClient instance with default configuration.
 		HttpGet httpGet = new HttpGet(url);
 		try {
-			httpCilent.execute(httpGet);
+			HttpResponse httpResponse = httpCilent.execute(httpGet);
+			return EntityUtils.toString(httpResponse.getEntity(), "utf-8");
 		} catch (IOException e) {
 			LOG.error(String.format("httpGet:%s", httpGet), e);
 		} finally {
