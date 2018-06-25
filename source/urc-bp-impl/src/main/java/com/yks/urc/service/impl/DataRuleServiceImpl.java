@@ -585,8 +585,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
             DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
             BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
-            dataRuleTemplVO.setCreateTimeStr(dataRuleTemplDO.getCreateTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss"):null);
-            dataRuleTemplVO.setModifiedTimeStr(dataRuleTemplDO.getModifiedTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            dataRuleTemplVO.setCreateTimeStr(dataRuleTemplDO.getCreateTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss:SSS"):null);
+            dataRuleTemplVO.setModifiedTimeStr(dataRuleTemplDO.getModifiedTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss:SSS"):null);
             dataRuleTemplVOS.add(dataRuleTemplVO);
         }
         return dataRuleTemplVOS;
