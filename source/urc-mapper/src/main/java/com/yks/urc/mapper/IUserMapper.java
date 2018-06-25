@@ -30,19 +30,21 @@ public interface IUserMapper {
      * 搜索用户 分页 ,多个用户搜索
      *
      * @param query
+     * @param userName
      * @return  List<UserDO>
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 10:34
      */
-    List<UserVO> getUsersByUserInfo(Query query);
+    List<UserVO> getUsersByUserInfo(@Param("query") Query query,@Param("list") List userName);
     /**
      * 获取搜索用户分页的总数
      * @param  query
+     * @param userName
      * @return int
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 17:05
      */
-   int getUsersByUserInfoCount(Query query);
+   int getUsersByUserInfoCount(@Param("query") Query query,@Param("list") List userName);
     /**
      * 批量同步到数据库
      *

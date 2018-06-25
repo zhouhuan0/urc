@@ -80,12 +80,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-           // logger.error("当前用户不能为空");
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            // logger.error("当前用户不能为空");
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
         if (StringUtil.isEmpty(templIdStr)) {
-            throw new URCBizException("parameter templId is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter templId is null", ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
@@ -94,7 +94,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
         DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, operator);
         if (dataRuleTemplDO == null) {
-            throw new URCBizException(String.format("urc_data_rule_templ is null where templId is: %s and operator is: %s",templId,operator),ErrorCode.E_000002);
+            return VoHelper.getSuccessResult();
+            //throw new URCBizException(String.format("urc_data_rule_templ is null where templId is: %s and operator is: %s",templId,operator),ErrorCode.E_000002);
         }
         BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
         dataRuleTemplVO.setTemplId(String.valueOf(dataRuleTemplDO.getTemplId()));
@@ -209,13 +210,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
          /*获取当前用户*/
         String createBy = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(createBy)) {
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         queryMap.put("createBy", createBy);
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-            throw new URCBizException(String.format("parameter pageNumber or pageData is not num pageNumber:%s , pageData:%s",pageNumber,pageData),ErrorCode.E_000002);
+            throw new URCBizException(String.format("parameter pageNumber or pageData is not num pageNumber:%s , pageData:%s", pageNumber, pageData), ErrorCode.E_000002);
         }
         int currPage = Integer.valueOf(pageNumber);
         int pageSize = Integer.valueOf(pageData);
@@ -257,25 +258,25 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数并校验*/
         String createBy = jsonObject.getString("operator");
         if (StringUtil.isEmpty(createBy)) {
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
         if (StringUtil.isEmpty(templIdStr)) {
-            throw new URCBizException("parameter templId is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter templId is null", ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
         String lstUserNameStr = jsonObject.getString("lstUserName");
         if (StringUtil.isEmpty(lstUserNameStr)) {
-            throw new URCBizException("parameter lstUserName is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(lstUserNameStr, String.class);
         if (lstUserName == null || lstUserName.isEmpty()) {
-            throw new URCBizException("parameter lstUserName is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
         /*3、获取该模板对应的数据权限对应系统数据*/
         List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
-        if(dataRuleSysDOS==null || dataRuleSysDOS.isEmpty()){
-            throw new URCBizException("get urc_data_rule_sys is null where templId is:"+templId,ErrorCode.E_000003);
+        if (dataRuleSysDOS == null || dataRuleSysDOS.isEmpty()) {
+            throw new URCBizException("get urc_data_rule_sys is null where templId is:" + templId, ErrorCode.E_000003);
         }
         /*数据权限对应系统缓存列表 */
         List<DataRuleSysDO> dataRuleSysDOSCache = new ArrayList<>();
@@ -427,11 +428,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         DataRuleTemplVO templVO = StringUtility.parseObject(jsonObject.getString("templ"), DataRuleTemplVO.class);
         if (templVO == null) {
-            throw new URCBizException("parameter templ is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter templ is null", ErrorCode.E_000002);
         }
         /** 3、判断该方案是否属于当前用户（非管理员角色）
          *  1)、当temp方案存在 2)、当前用户非管理员  3)、temp方案不属于当前用户
@@ -441,7 +442,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             Long currentTemplId = Long.valueOf(tempIdStr);
             DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
             if (dataRuleTemplDO == null) {
-                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s",currentTemplId,operator),ErrorCode.E_000002);
+                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000002);
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             dataRuleTemplMapper.delTemplDatasById(currentTemplId);
@@ -590,7 +591,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             templDO.setCreateBy(operator);
         }
 
-        Query query = new Query(templDO, pageNumber,pageData);
+        Query query = new Query(templDO, pageNumber, pageData);
         List<DataRuleTemplDO> dataRuleTempList = dataRuleTemplMapper.getMyDataRuleTempl(query);
         List<DataRuleTemplVO> dataRuleTempListVO = convertDoToVO(dataRuleTempList);
         int dataRuleTempCount = dataRuleTemplMapper.getMyDataRuleTemplCount(query);
@@ -615,11 +616,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String lstTemplIdStr = jsonObject.getString("lstTemplId");
         if (StringUtil.isEmpty(lstTemplIdStr)) {
-            throw new URCBizException("parameter lstTemplIdStr is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter lstTemplIdStr is null", ErrorCode.E_000002);
         }
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
 
@@ -650,16 +651,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*2、获取参数*/
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            throw new URCBizException("parameter operator is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String lstDataRuleStr = jsonObject.getString("lstDataRule");
         if (StringUtil.isEmpty(lstDataRuleStr)) {
-            throw new URCBizException("parameter lstDataRule is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
         List<JSONObject> sourceDataRuleVOS = StringUtility.parseObject(lstDataRuleStr, List.class);
         List<DataRuleVO> dataRuleVOS = convertList(sourceDataRuleVOS);
         if (dataRuleVOS == null || dataRuleVOS.isEmpty()) {
-            throw new URCBizException("parameter lstDataRule is null",ErrorCode.E_000002);
+            throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
         List<String> lstUserName = new ArrayList<>();
         for (DataRuleVO dataRuleVO : dataRuleVOS) {
@@ -704,9 +705,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     private List<DataRuleVO> convertList(List<JSONObject> sourceDataRuleVOS) {
         List<DataRuleVO> dataRuleVOS = new ArrayList<>();
-        for(JSONObject jsonObject : sourceDataRuleVOS){
+        for (JSONObject jsonObject : sourceDataRuleVOS) {
             DataRuleVO dataRuleVO = new DataRuleVO();
-            dataRuleVO = StringUtility.parseObject(jsonObject.toJSONString(),DataRuleVO.class);
+            dataRuleVO = StringUtility.parseObject(jsonObject.toJSONString(), DataRuleVO.class);
             dataRuleVOS.add(dataRuleVO);
         }
         return dataRuleVOS;
@@ -732,12 +733,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
                 List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
                 for (ExpressionDO expressionDO : expressionList) {
-                	ExpressionVO expressionVO = new ExpressionVO();
-                	if(!StringUtility.isNullOrEmpty(expressionDO.getOperValues())){
-                		String operValues=expressionDO.getOperValues();
-                		List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
-                		expressionVO.setOperValuesArr(operValuesArr);
-                	}
+                    ExpressionVO expressionVO = new ExpressionVO();
+                    if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
+                        String operValues = expressionDO.getOperValues();
+                        List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+                        expressionVO.setOperValuesArr(operValuesArr);
+                    }
                     BeanUtils.copyProperties(expressionDO, expressionVO);
                     expressionVOList.add(expressionVO);
                 }

@@ -173,14 +173,15 @@ public class UserBpImpl implements IUserBp {
         String allUserName =userVO.userName;
         //根据 , 切割用户名,用数组装,转成list
         List<String> strings =new ArrayList<>();
-
         if (allUserName.contains(",")){
             String [] str =allUserName.split(",");
             strings=Arrays.asList(str);
+        }else {
+            strings.add(allUserName);
         }
         // 1.首先查询出所有数据  分页
-        Query query = new Query(strings, pageNumber, pageData);
-        List<UserVO> userVOS = userMapper.getUsersByUserInfo(query);
+        Query query = new Query(null, pageNumber, pageData);
+        List<UserVO> userVOS = userMapper.getUsersByUserInfo(query,strings);
         List<UserVO> userVOList =new ArrayList<>();
         if (userVOS.size() == 0){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
@@ -205,7 +206,7 @@ public class UserBpImpl implements IUserBp {
             userVOList.add(userVO1);
         }
         // 获取总条数
-        long total = userMapper.getUsersByUserInfoCount(query);
+        long total = userMapper.getUsersByUserInfoCount(query,strings);
         PageResultVO pageResultVO = new PageResultVO(userVOList, total, Integer.parseInt(pageData));
         return VoHelper.getSuccessResult(pageResultVO);
     }
@@ -267,10 +268,7 @@ public class UserBpImpl implements IUserBp {
         return dingUserList;
     }
 
-    public static void main(String[] args) {
-        UserBpImpl userBp = new UserBpImpl();
-        userBp.SynUserFromUserInfo("lwx");
-    }
+
 
     @Override
     public ResultVO login(UserVO authUser) {
@@ -362,6 +360,11 @@ public class UserBpImpl implements IUserBp {
         cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
     }
-
-
+    public static void main(String[] args) {
+       List list =new ArrayList();
+       list.add("linwanxian");
+       list.add("panyun");
+       String str =list.toString();
+        System.out.println("======================"+str);
+    }
 }
