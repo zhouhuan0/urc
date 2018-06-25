@@ -2,6 +2,7 @@ package com.yks.urc.user.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserDO;
@@ -193,7 +194,7 @@ public class UserBpImpl implements IUserBp {
         // 2.将拿到的用户名再分别去获取角色名称
        // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
-            userVO1.activeTimeStr=userVO1.activeTime;
+            userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime,"yyyy-MM-dd HH:mm:ss");
             // 查询角色
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
             if (roleNameList.size() == 0){

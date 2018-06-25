@@ -73,8 +73,8 @@ public class DataAuthorizationImpl implements DataAuthorization {
      * @Date 2018/6/12 21:14
      */
     @Override
-    public List<OmsAccountVO> getShopList(String operator, String platform) {
-        List<OmsAccountVO> omsAccountVoList = new ArrayList<>();
+    public List<OmsShopVO> getShopList(String operator, String platform) {
+        List<OmsShopVO> omsShopVoList = new ArrayList<>();
         String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
@@ -85,19 +85,19 @@ public class DataAuthorizationImpl implements DataAuthorization {
             JSONArray dataArray = shopObject.getJSONArray("data");
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
             for (ShopAndSiteResp shopAndSiteResp:shopAndSiteResps){
-                OmsAccountVO omsAccountVO =new OmsAccountVO();
+                OmsShopVO omsShopVO =new OmsShopVO();
                 OmsSiteVO omsSiteVO=new OmsSiteVO();
                 List<OmsSiteVO> omsSiteVOList =new ArrayList<>();
-                omsAccountVO.accountId=shopAndSiteResp.sellerid;
-                omsAccountVO.accountName=shopAndSiteResp.shop_system;
+                omsShopVO.shopId=shopAndSiteResp.sellerid;
+                omsShopVO.shopName=shopAndSiteResp.shop_system;
                 omsSiteVO.siteId=shopAndSiteResp.site_code;
                 omsSiteVO.siteName=shopAndSiteResp.site_name;
                 omsSiteVOList.add(omsSiteVO);
-                omsAccountVO.lstOmsSite=omsSiteVOList;
-                omsAccountVoList.add(omsAccountVO);
+                omsShopVO.lstSite=omsSiteVOList;
+                omsShopVoList.add(omsShopVO);
             }
         }
-        return omsAccountVoList;
+        return omsShopVoList;
     }
 
     public static void main(String[] args) {
@@ -108,9 +108,9 @@ public class DataAuthorizationImpl implements DataAuthorization {
         }
         System.out.println("============================");
         String platform = "eBay";
-        List<OmsAccountVO> omsAccountVoList  = dataAuthorizationImpl.getShopList("test3",platform);
-        for (OmsAccountVO omsAccountVO :omsAccountVoList){
-            System.out.println(omsAccountVO.accountName);
+        List<OmsShopVO> omsShopVoList = dataAuthorizationImpl.getShopList("test3",platform);
+        for (OmsShopVO omsShopVO : omsShopVoList){
+            System.out.println(omsShopVO.shopName);
         }
     }
 }

@@ -8,7 +8,7 @@
  */
 package com.yks.urc.dataauthorization.bp.api;
 
-import com.yks.urc.vo.OmsAccountVO;
+import com.yks.urc.vo.OmsShopVO;
 import com.yks.urc.vo.OmsPlatformVO;
 
 import java.util.List;
@@ -17,6 +17,6 @@ public interface DataAuthorization {
 
     List<OmsPlatformVO> getPlatformList(String operator);
 
-    List<OmsAccountVO> getShopList(String operator, String platform);
+    List<OmsShopVO> getShopList(String operator, String platform);
 
 }

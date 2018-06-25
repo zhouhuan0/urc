@@ -105,8 +105,8 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    public ResultVO<List<OmsAccountVO>> getShopList(String operator, String platform) {
-        ResultVO<List<OmsAccountVO>> rslt = new ResultVO();
+    public ResultVO<List<OmsShopVO>> getShopList(String operator, String platform) {
+        ResultVO<List<OmsShopVO>> rslt = new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
                 return rslt;

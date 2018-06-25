@@ -1,10 +1,8 @@
 package com.yks.urc.motan.service.api;
 
-import java.awt.geom.RectangularShape;
 import java.util.List;
 import java.util.Map;
 
-import com.sun.org.apache.regexp.internal.RE;
 import com.yks.urc.vo.*;
 
 public interface IUrcService {
@@ -120,7 +118,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    ResultVO<List<OmsAccountVO>> getShopList(String jsonStr);
+    ResultVO<List<OmsShopVO>> getShopList(String jsonStr);
 
     /**
      * 角色名判重

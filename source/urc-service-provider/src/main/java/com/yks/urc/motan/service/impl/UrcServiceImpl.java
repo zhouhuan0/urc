@@ -2,7 +2,6 @@ package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.StringUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
@@ -174,7 +173,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO<List<OmsAccountVO>> getShopList(String jsonStr) {
+    public ResultVO<List<OmsShopVO>> getShopList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         String platform = jsonObject.getString("platform");
