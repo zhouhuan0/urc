@@ -16,18 +16,18 @@ import com.yks.urc.vo.ResultVO;
  */
 public class VoHelper {
 	public static ResultVO getSuccessResult() {
-		return getResultVO(null, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
+		return getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(), null);
 	}
 
 	public static <T> ResultVO getSuccessResult(String msg) {
-		return getResultVO(null, CommonMessageCodeEnum.SUCCESS.getCode(), msg);
+		return getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), msg, null);
 	}
 
 	public static ResultVO getResultVO(String state, String strMsg) {
-		return getResultVO(null, state, strMsg);
+		return getResultVO(state, strMsg, null);
 	}
 
-	public static <T> ResultVO getResultVO(T data, String state, String strMsg) {
+	public static <T> ResultVO getResultVO(String state, String strMsg, T data) {
 		ResultVO<T> rslt = new ResultVO<>();
 		rslt.data = data;
 		rslt.state = state;
@@ -36,18 +36,22 @@ public class VoHelper {
 	}
 
 	public static ResultVO getErrorResult() {
-		return getResultVO(null, CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc());
+		return getResultVO(CommonMessageCodeEnum.FAIL.getCode(), CommonMessageCodeEnum.FAIL.getDesc(), null);
 	}
 
 	public static ResultVO getErrorResult(String state, String strMsg) {
-		return getResultVO(null, state, strMsg);
+		return getResultVO(state, strMsg, null);
 	}
 
 	public static <T> ResultVO getSuccessResult(T data) {
-		return getResultVO(data, CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc());
+		return getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(), data);
 	}
 
 	public static ResultVO getResultVO(ErrorCode err, String strMsg) {
 		return getResultVO(err.getState(), strMsg);
+	}
+
+	public static <T> ResultVO getResultVO(ErrorCode err, String strMsg, T data) {
+		return getResultVO(err.getState(), strMsg, data);
 	}
 }

@@ -116,7 +116,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put(StringConstant.operator, "dcadmin");
 		map.put(StringConstant.ticket, "bfba159f79a0f4b77ee82fabd41507f2");
 		map.put(StringConstant.ip, "pyIP");
-		map.put(StringConstant.urcVersion, "eb1043692883ef9010cd6cdc8b624e90");
+		map.put(StringConstant.funcVersion, "eb1043692883ef9010cd6cdc8b624e90");
 		map.put(StringConstant.sysKey, "001");
 		System.out.println("----------------------" + userService.funcPermitValidate(map));
 	}
