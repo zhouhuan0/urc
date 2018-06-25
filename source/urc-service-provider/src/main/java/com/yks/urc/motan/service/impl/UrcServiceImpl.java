@@ -77,9 +77,6 @@ public class UrcServiceImpl implements IUrcService {
         if (!StringUtility.isNum(dingOrgId)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "dingOrgId为空");
         }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         return personService.getUserByDingOrgId(dingOrgId, pageNumber, pageData);
@@ -91,9 +88,6 @@ public class UrcServiceImpl implements IUrcService {
         PersonVO personVo = StringUtility.parseObject(jsonObject.getString("user"), PersonVO.class);
         if (personVo==null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
-        }
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
         }
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
@@ -258,9 +252,6 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         
-        if (!(StringUtility.isNum(jsonObject.getString("pageNumber")))&&StringUtility.isNum(jsonObject.getString("pageData"))) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "分页非法");
-        }
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         
