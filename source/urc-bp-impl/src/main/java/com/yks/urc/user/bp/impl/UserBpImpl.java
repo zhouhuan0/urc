@@ -191,6 +191,7 @@ public class UserBpImpl implements IUserBp {
        // List<String> userNames =new ArrayList<>();
         List<RoleVO> roleVOS = new ArrayList();
         for (UserVO userVO1 : userVOS) {
+            userVO1.activeTimeStr=userVO1.activeTime;
             // 查询角色
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
             if (roleNameList.size() == 0){

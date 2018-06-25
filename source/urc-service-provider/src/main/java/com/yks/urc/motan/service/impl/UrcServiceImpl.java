@@ -113,9 +113,6 @@ public class UrcServiceImpl implements IUrcService {
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
-        if (userVO==null) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "user为空");
-        }
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }

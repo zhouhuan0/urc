@@ -35,6 +35,10 @@ public class UserVO implements Serializable {
      */
     public String activeTime;
     /**
+     *  启用时间 (前端)
+     */
+    public String activeTimeStr;
+    /**
      * 性别
      */
     public String gender;
@@ -68,6 +72,14 @@ public class UserVO implements Serializable {
      * 离职日期
      */
     public Date leaveDate;
+    /**
+     *  加入集团时间 (前端)
+     */
+    public String joinDateStr;
+    /**
+     * 离职日期 (前端)
+     */
+    public String leaveDateStr;
     /**
      * 工号
      */
