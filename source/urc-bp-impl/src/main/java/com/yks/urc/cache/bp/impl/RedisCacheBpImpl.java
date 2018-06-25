@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
@@ -24,6 +25,7 @@ import com.yks.urc.log.LogLevel;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
+import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
@@ -37,44 +39,10 @@ public class RedisCacheBpImpl implements ICacheBp {
 	@Autowired
 	private ShardedJedisPool shardedJedisPool;
 
-	/**
-	 * 用户基础信息
-	 * 
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月5日 上午10:07:11
-	 */
-	private Cache<String, UserVO> userInfoCache = null;// new DistributedCache<>("URC-User", 2, TimeUnit.HOURS);
-
-	/**
-	 * 用户有功能权限的系统key
-	 * 
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月5日 上午10:06:51
-	 */
-	// private Cache<String, List<String>> userSysKeyCache = new
-	// DistributedCache<>("URC-User-SysKeys");// , 1, TimeUnit.DAYS);
-
-	/**
-	 * 系统功能权限定义
-	 * 
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月14日 下午3:00:25
-	 */
-	private Cache<String, String> sysFuncJsonCache = null;// new DistributedCache<>("URC-SysFuncJson-Define");// , 100, TimeUnit.DAYS);
-
-	/**
-	 * 用户所有系统功能权限及版本号
-	 * 
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月5日 上午10:06:36
-	 */
-	private Cache<String, GetAllFuncPermitRespVO> userFuncCache = null;// new DistributedCache<>("URC-User-Sys-FuncVersion");// , 2, TimeUnit.HOURS);
-
 	@Log(value = "insertUser", level = LogLevel.ERROR)
 	public void insertUser(UserVO u) {
 		try {
 			setKey(getCacheKey_UserLogin(u.userName), StringUtility.toJSONString_NoException(u), 7200);
-			// userInfoCache.put(u.userName, u);
 		} catch (Exception ex) {
 			logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
 		}
@@ -159,23 +127,6 @@ public class RedisCacheBpImpl implements ICacheBp {
 		}
 	}
 
-	// public void insertUserSysKey(String userName, List<String> lst) {
-	// try {
-	// userSysKeyCache.put(userName, lst);
-	// } catch (Exception ex) {
-	// logger.error(String.format("insertUserSysKey:%s %s", userName,
-	// StringUtility.toJSONString(lst)), ex);
-	// }
-	// }
-
-	// public List<String> getUserSysKey(String userName) {
-	// try {
-	// return userSysKeyCache.get(userName);
-	// } catch (Exception ex) {
-	// logger.error(String.format("getUserSysKey:%s", userName), ex);
-	// return null;
-	// }
-	// }
 	private static final String NA = "NA";
 
 	public void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache) {
@@ -276,6 +227,50 @@ public class RedisCacheBpImpl implements ICacheBp {
 			return rslt;
 		}
 		return null;
+	}
+
+	public List<Permission> getSysApiUrlPrefix() {
+		try {
+			Map<String, String> map = hgetAll(getCacheKey_SysApiUrlPrefix());
+			if (map == null)
+				return null;
+			List<Permission> lstRslt = new ArrayList<>();
+			Iterator<String> it = map.keySet().iterator();
+			while (it.hasNext()) {
+				String strKey = it.next();
+				if (StringUtility.stringEqualsIgnoreCase(NA, strKey))
+					continue;
+				Permission p = new Permission();
+				p.setSysKey(strKey);
+				p.setApiUrlPrefixJson(map.get(strKey));
+				lstRslt.add(p);
+			}
+			return lstRslt;
+		} catch (Exception ex) {
+			logger.error("getSysApiUrlPrefix", ex);
+		}
+		return null;
+	}
+
+	public void setSysApiUrlPrefix(List<Permission> lst) {
+		try {
+			String strKey = getCacheKey_SysApiUrlPrefix();
+			Map<String, String> map = new HashMap<>();
+			if (lst == null || lst.size() == 0) {
+				map.put(NA, NA);
+			} else {
+				for (Permission p : lst) {
+					map.put(p.getSysKey(), p.getApiUrlPrefixJson());
+				}
+			}
+			hmset(strKey, map);
+		} catch (Exception ex) {
+			logger.error(String.format("setSysApiUrlPrefix:%s", StringUtility.toJSONString_NoException(lst)), ex);
+		}
+	}
+
+	private String getCacheKey_SysApiUrlPrefix() {
+		return "sys_api_url_prefix";
 	}
 
 	public static void main(String[] args) {

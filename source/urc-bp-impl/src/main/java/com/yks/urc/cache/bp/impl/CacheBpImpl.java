@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
@@ -176,5 +177,17 @@ public class CacheBpImpl implements ICacheBp {
 	public long getNextSeq(String strKey) {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public List<Permission> getSysApiUrlPrefix() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setSysApiUrlPrefix(List<Permission> lst) {
+		// TODO Auto-generated method stub
+		
 	}
 }

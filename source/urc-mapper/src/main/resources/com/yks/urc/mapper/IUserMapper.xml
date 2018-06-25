@@ -288,7 +288,7 @@
     </delete>
     <!--用户管理搜索用户分页-->
     <select id="getUsersByUserInfo" parameterType="com.yks.urc.vo.helper.Query" resultType="com.yks.urc.vo.UserVO">
-        select u.user_name AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
+        select DISTINCT (u.user_name) AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
         from urc_user u
         INNER JOIN urc_person p on u.ding_user_id = p.ding_user_id
         INNER JOIN urc_user_role r on u.user_name=r.user_name

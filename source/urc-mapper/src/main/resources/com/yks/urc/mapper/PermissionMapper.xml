@@ -12,6 +12,7 @@
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.Permission">
     <result column="sys_context" jdbcType="LONGVARCHAR" property="sysContext" />
+    <result column="api_url_prefix_json" jdbcType="LONGVARCHAR" property="apiUrlPrefixJson" />
   </resultMap>
   <sql id="Base_Column_List">
     id, sys_name, sys_key, create_by, create_time, modified_by, modified_time
@@ -128,5 +129,10 @@
   <select id="getPermission" resultType="com.yks.urc.entity.Permission">
     SELECT  <include refid="Base_Column_List" /> FROM  urc_permission
     WHERE sys_key  =#{sysKey}
+  </select>
+  
+  <select id="getSysApiUrlPrefix" resultMap="BaseResultMap">
+  	SELECT  sys_key,api_url_prefix_json FROM urc_permission
+  	where api_url_prefix_json is not null or api_url_prefix_json!=''
   </select>
 </mapper>

@@ -31,6 +31,7 @@ public class Permission {
      */
     private String sysContext;
 
+    private String apiUrlPrefixJson;
     public Long getId() {
         return id;
     }
@@ -94,4 +95,12 @@ public class Permission {
     public void setSysContext(String sysContext) {
         this.sysContext = sysContext == null ? null : sysContext.trim();
     }
+
+	public String getApiUrlPrefixJson() {
+		return apiUrlPrefixJson;
+	}
+
+	public void setApiUrlPrefixJson(String apiUrlPrefixJson) {
+		this.apiUrlPrefixJson = apiUrlPrefixJson;
+	}
 }
