@@ -577,6 +577,7 @@ public class RoleServiceImpl implements IRoleService {
     	if(lstRole!=null&&lstRole.size()>0){
     		for (int i = 0; i < lstRole.size(); i++) {
     			RoleVO roleVO = lstRole.get(i);
+    			RoleDO roleDO=roleMapper.getRoleByRoleId(roleVO.getRoleId());
     			UserRoleDO userRole = new UserRoleDO();
     			List<UserRoleDO> userRoleDOS = new ArrayList<>();
     			List<String> userNameList = roleVO.getLstUserName();
@@ -598,25 +599,23 @@ public class RoleServiceImpl implements IRoleService {
     					userRoleDO.setModifiedBy(operator);
     					userRoleDO.setModifiedTime(new Date());
     					userRoleDOS.add(userRoleDO);
-    				}
+    					permitStatBp.updateUserPermitCache(userNameList.get(i));
+      				}
     			} else {
-    				userRole.setCreateBy(operator);
-    				userRoleMapper.deleteUserRole(userRole);
-    				for (int j = 0; j < userNameList.size(); j++) {
-    					UserVO userVO=new UserVO();
-    					userVO.userName=userNameList.get(i);
-    					userVO.createBy=operator;
-    					UserDO usreDO = userMapper.getUserByUserName(userVO);
-    					if (usreDO.getCreateBy().equals(operator)) {
-    						UserRoleDO userRoleDO = new UserRoleDO();
-    						userRoleDO.setUserName(userNameList.get(i));
-    						userRoleDO.setRoleId(roleVO.getRoleId());
-    						userRoleDO.setCreateBy(operator);
-    						userRoleDO.setCreateTime(new Date());
-    						userRoleDO.setModifiedBy(operator);
-    						userRoleDO.setModifiedTime(new Date());
-    						userRoleDOS.add(userRoleDO);
-    					}
+    				if(roleDO.getCreateBy().equals(operator)){
+        				userRole.setCreateBy(operator);
+        				userRoleMapper.deleteUserRole(userRole);
+          				for (int j = 0; j < userNameList.size(); j++) {
+        					UserRoleDO userRoleDO = new UserRoleDO();
+        					userRoleDO.setUserName(userNameList.get(i));
+        					userRoleDO.setRoleId(roleVO.getRoleId());
+        					userRoleDO.setCreateBy(operator);
+        					userRoleDO.setCreateTime(new Date());
+        					userRoleDO.setModifiedBy(operator);
+        					userRoleDO.setModifiedTime(new Date());
+        					userRoleDOS.add(userRoleDO);
+        					permitStatBp.updateUserPermitCache(userNameList.get(i));
+          				}
     				}
     			}
     			userRoleMapper.insertBatch(userRoleDOS);
