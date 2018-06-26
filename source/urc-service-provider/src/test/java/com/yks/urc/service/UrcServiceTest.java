@@ -268,13 +268,13 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void updateRolePermission(){
 		Map map =new HashMap();
-		map.put("operator","panyun");
+		map.put("operator","linwanxian");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
-		roleVO.roleId = Long.parseLong("1529746382848000008");
+		roleVO.roleId = Long.parseLong("1529746076695000006");
 		List<PermissionVO> selectedContext =new ArrayList<>();
 		PermissionVO permissionVO =new PermissionVO();
-		String sysCOntext="{sasdada}";
+		String sysCOntext="{bbbbbb}";
 		permissionVO.setSysContext(sysCOntext);
 		selectedContext.add(permissionVO);
 		roleVO.selectedContext=selectedContext;
