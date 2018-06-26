@@ -134,6 +134,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
 	}
 
+	@Test
 	public void funcPermitValidate_Test() {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/urc1/motan/service/api/IUrcService/getAllOrgTree");
