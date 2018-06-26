@@ -52,6 +52,9 @@ public class MqBpImpl implements IMqBp {
                 if (StringUtility.isNullOrEmpty(drSys.sysKey)) {
                     continue;
                 }
+                if(StringUtility.isNullOrEmpty(drSys.getUserName())){
+                    drSys.setUserName(dataRuleVO.getUserName());
+                }
                 String sysKey = drSys.sysKey;
                 String topic = getDataRuleTopic(sysKey);
                 String value = StringUtility.toJSONString_NoException(drSys);

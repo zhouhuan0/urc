@@ -104,16 +104,13 @@ public class UrcServiceImpl implements IUrcService {
      * @return
      */
     @Override
-    @Log(value = "搜索用户",level = LogLevel.INFO)
+    @Log(value = "用户管理/搜索用户",level = LogLevel.INFO)
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         String operator = jsonObject.getString("operator");
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
-        if (userVO == null){
-            return userService.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
-        }
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
@@ -310,7 +307,6 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"), UserVO.class);
-
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
