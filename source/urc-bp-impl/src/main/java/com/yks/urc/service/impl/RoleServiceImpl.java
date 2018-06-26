@@ -126,7 +126,6 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleDO roleDO : roleDOS) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(roleDO, roleVO);
-            roleVO.setRoleIdStr(roleDO.getRoleId().toString());
             roleVO.setCreateTimeStr(roleDO.getCreateTime() != null ? DateUtil.formatDate(roleDO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setExpireTimeStr(roleDO.getExpireTime() != null ? DateUtil.formatDate(roleDO.getExpireTime(), "yyyy-MM-dd HH:mm:ss") : null);
@@ -176,15 +175,7 @@ public class RoleServiceImpl implements IRoleService {
         }
 
          /*更新用户功能权限缓存*/
-        UserRoleDO userRoleDO = new UserRoleDO();
-        userRoleDO.setRoleId(roleVO.getRoleId());
-        List<String> lstUserName = new ArrayList<>();
-        /*获取角色原关联的用户userName*/
-        List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
-        /*获取角色现在关联的用户userName*/
-        List<String> newRelationUsers = roleVO.getLstUserName();
-        lstUserName.addAll(oldRelationUsers);
-        lstUserName.addAll(newRelationUsers);
+        List<String> lstUserName = roleVO.getLstUserName();
         if (lstUserName != null && !lstUserName.isEmpty()) {
             permitStatBp.updateUserPermitCache(lstUserName);
         }
@@ -324,9 +315,9 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     public ResultVO<RoleVO> getRoleByRoleId(String jsonStr) {
-        /* 1、将json字符串转为Json对象 */
+		/* 1、将json字符串转为Json对象 */
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        /* 2、获取参数并校验 */
+		/* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
@@ -512,16 +503,16 @@ public class RoleServiceImpl implements IRoleService {
         try {
             Map dataMap = new HashMap();
             //判断用户是否是普通用户
-            if (!roleMapper.isAdminOrSuperAdmin(operator)) {
-                return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "您不是管理员,没有权限更新数据");
+            if(!roleMapper.isAdminOrSuperAdmin(operator)){
+                return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"您不是管理员,没有权限更新数据");
             }
             //如果是超级管理员,则更新所有,否则只能更新自己的创建的
             List<Long> lstRoleId = new ArrayList<>();
             for (RoleVO roleVO : lstRole) {
                 //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的创建人不是他自己的话,则无权限更新此数据,跳过处理
-                if (!roleMapper.isSuperAdminAccount(operator)) {
-                    RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
-                    if (!operator.equals(roleDO.getCreateBy())) {
+                if (!roleMapper.isSuperAdminAccount(operator)){
+                    RoleDO roleDO =roleMapper.getRoleByRoleId(roleVO.getRoleId());
+                    if (!operator.equals(roleDO.getCreateBy())){
                         continue;
                     }
                 }
@@ -529,8 +520,8 @@ public class RoleServiceImpl implements IRoleService {
                 userRole.setRoleId(roleVO.roleId);
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
-                List<Long> roleIds = new ArrayList<>();
-                List<RolePermissionDO> permissionDOS = new ArrayList<>();
+                List<Long> roleIds =new ArrayList<>();
+                List<RolePermissionDO> permissionDOS =new ArrayList<>();
                 for (PermissionVO permissionVO : permissionVOS) {
                     //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
                     rolePermissionDO.setRoleId(userRole.getRoleId());
@@ -609,63 +600,63 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
-        if (lstRole != null && lstRole.size() > 0) {
-            for (int i = 0; i < lstRole.size(); i++) {
-                RoleVO roleVO = lstRole.get(i);
-                RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
-                UserRoleDO userRole = new UserRoleDO();
-                List<UserRoleDO> userRoleDOS = new ArrayList<>();
-                List<String> userNameList = roleVO.getLstUserName();
-                userRole.setRoleId(roleVO.getRoleId());
-                List<UserDO> userList = userMapper.getUserByRoleId(userRole);
-                if (roleMapper.isSuperAdminAccount(operator)) {
-                    userRoleMapper.deleteUserRole(userRole);
-                    if (userList != null && userList.size() > 0) {
-                        for (int q = 0; q < userList.size(); q++) {
-                            permitStatBp.updateUserPermitCache(userList.get(i).getUserName());
-                        }
-                    }
-                    for (int j = 0; j < userNameList.size(); j++) {
-                        UserRoleDO userRoleDO = new UserRoleDO();
-                        userRoleDO.setUserName(userNameList.get(i));
-                        userRoleDO.setRoleId(roleVO.getRoleId());
-                        userRoleDO.setCreateBy(operator);
-                        userRoleDO.setCreateTime(new Date());
-                        userRoleDO.setModifiedBy(operator);
-                        userRoleDO.setModifiedTime(new Date());
-                        userRoleDOS.add(userRoleDO);
-                    }
-                } else {
-                    if (roleDO.getCreateBy().equals(operator)) {
-                        userRole.setCreateBy(operator);
-                        userRoleMapper.deleteUserRole(userRole);
-                        if (userList != null && userList.size() > 0) {
-                            for (int q = 0; q < userList.size(); q++) {
-                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
-                            }
-                        }
-                        for (int j = 0; j < userNameList.size(); j++) {
-                            UserRoleDO userRoleDO = new UserRoleDO();
-                            userRoleDO.setUserName(userNameList.get(i));
-                            userRoleDO.setRoleId(roleVO.getRoleId());
-                            userRoleDO.setCreateBy(operator);
-                            userRoleDO.setCreateTime(new Date());
-                            userRoleDO.setModifiedBy(operator);
-                            userRoleDO.setModifiedTime(new Date());
-                            userRoleDOS.add(userRoleDO);
-                        }
-                    }
-                }
-                userRoleMapper.insertBatch(userRoleDOS);
-                if (userRoleDOS != null && userRoleDOS.size() > 0) {
-                    for (int j = 0; j < userRoleDOS.size(); j++) {
-                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
-                    }
+    	if(lstRole!=null&&lstRole.size()>0){
+    		for (int i = 0; i < lstRole.size(); i++) {
+    			RoleVO roleVO = lstRole.get(i);
+    			RoleDO roleDO=roleMapper.getRoleByRoleId(roleVO.getRoleId());
+    			UserRoleDO userRole = new UserRoleDO();
+    			List<UserRoleDO> userRoleDOS = new ArrayList<>();
+    			List<String> userNameList = roleVO.getLstUserName();
+    			userRole.setRoleId(roleVO.getRoleId());
+    			List<UserDO> userList= userMapper.getUserByRoleId(userRole);
+    			if (roleMapper.isSuperAdminAccount(operator)) {
+    				userRoleMapper.deleteUserRole(userRole);
+  	    			if(userList!=null&&userList.size()>0){
+	    				for (int q = 0; q < userList.size(); q++) {
+	    					permitStatBp.updateUserPermitCache(userList.get(i).getUserName());
+	    				}
+	    			}
+    				for (int j = 0; j < userNameList.size(); j++) {
+    					UserRoleDO userRoleDO = new UserRoleDO();
+    					userRoleDO.setUserName(userNameList.get(i));
+    					userRoleDO.setRoleId(roleVO.getRoleId());
+    					userRoleDO.setCreateBy(operator);
+    					userRoleDO.setCreateTime(new Date());
+    					userRoleDO.setModifiedBy(operator);
+    					userRoleDO.setModifiedTime(new Date());
+    					userRoleDOS.add(userRoleDO);
+      				}
+    			} else {
+    				if(roleDO.getCreateBy().equals(operator)){
+        				userRole.setCreateBy(operator);
+        				userRoleMapper.deleteUserRole(userRole);
+      	    			if(userList!=null&&userList.size()>0){
+    	    				for (int q = 0; q < userList.size(); q++) {
+    	    					permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+    	    				}
+    	    			}
+          				for (int j = 0; j < userNameList.size(); j++) {
+        					UserRoleDO userRoleDO = new UserRoleDO();
+        					userRoleDO.setUserName(userNameList.get(i));
+        					userRoleDO.setRoleId(roleVO.getRoleId());
+        					userRoleDO.setCreateBy(operator);
+        					userRoleDO.setCreateTime(new Date());
+        					userRoleDO.setModifiedBy(operator);
+        					userRoleDO.setModifiedTime(new Date());
+        					userRoleDOS.add(userRoleDO);
+          				}
+    				}
+    			}
+    			userRoleMapper.insertBatch(userRoleDOS);
+    			if(userRoleDOS!=null&&userRoleDOS.size()>0){
+    				for (int j = 0; j < userRoleDOS.size(); j++) {
+    					permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+    				}
 
-                }
-            }
+    			}
+    		}
 
-        }
+    	}
         return VoHelper.getSuccessResult();
     }
 
@@ -688,12 +679,12 @@ public class RoleServiceImpl implements IRoleService {
             throw new URCBizException(ErrorCode.E_000002);
         }
 		/* 非admin用户只能管理自己创建的角色 */
-        long roleId = 1529550145551000001L;
-//        try {
-//            roleId = Long.parseLong(sourceRoleId);
-//        } catch (NumberFormatException e) {
-//            throw new URCBizException(ErrorCode.E_000003);
-//        }
+        long roleId = 0;
+        try {
+            roleId = Long.parseLong(sourceRoleId);
+        } catch (NumberFormatException e) {
+            throw new URCBizException(ErrorCode.E_000003);
+        }
         Date currentDate = new Date();
         RoleDO roleDO = getRoleInfo(operator, newRoleName, roleId);
         // 复制角色信息
