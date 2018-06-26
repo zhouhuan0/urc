@@ -86,7 +86,7 @@ public class RoleServiceImpl implements IRoleService {
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         /*组装查询条件queryMap*/
         Map<String, Object> queryMap = new HashMap<>();
@@ -94,9 +94,8 @@ public class RoleServiceImpl implements IRoleService {
         //RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         RoleVO roleVo = jsonObject.getObject("role", RoleVO.class);
         if (roleVo != null) {
-            RoleDO roleDO = new RoleDO();
-            BeanUtils.copyProperties(roleVo, roleDO);
-            queryMap.put("roleDO", roleDO);
+            String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
+            queryMap.put("roleNames", roleNames);
         }
         /*管理员角色不需要createBy条件，可以查看所有的角色*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -107,7 +106,7 @@ public class RoleServiceImpl implements IRoleService {
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(), CommonMessageCodeEnum.PARAM_INVALID.getDesc());
+            throw new URCBizException("pageNumber or  pageData is not a num" , ErrorCode.E_000003);
         }
         int currPage = Integer.valueOf(pageNumber);
         int pageSize = Integer.valueOf(pageData);
@@ -117,7 +116,7 @@ public class RoleServiceImpl implements IRoleService {
         /* 4、List<DO> 转 List<VO> */
         List<RoleVO> roleVOS = convertDoToVO(roleDOS);
         /* 5、获取总条数 */
-        Long total = roleMapper.getCounts(queryMap.get("createBy").toString());
+        Long total = roleMapper.getCounts(queryMap);
         PageResultVO pageResultVO = new PageResultVO(roleVOS, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }

@@ -228,22 +228,29 @@
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
             </if>
-            <if test="roleDO!=null and roleDO.roleName != null and roleDO.roleName != ''">
-                and role_name=#{roleDO.roleName,jdbcType=VARCHAR}
-            </if>
-            <if test="roleDO!=null and roleDO.remark != null and roleDO.remark != ''">
-                and remark=#{roleDO.remark,jdbcType=VARCHAR}
+            <if test="roleNames != null and roleNames != ''">
+                and role_name in
+                <foreach item="item" index="index" collection="roleNames" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
         </where>
+        order by create_time desc
         limit #{currIndex},#{pageSize}
     </select>
 
     <!--获取总条目-->
-    <select id="getCounts" resultType="java.lang.Long">
+    <select id="getCounts" parameterType="java.util.HashMap" resultType="java.lang.Long">
         select count(1) from urc_role
         <where>
             <if test="createBy != null and createBy != ''">
                 create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+            <if test="roleNames != null and roleNames != ''">
+                and role_name in
+                <foreach item="item" index="index" collection="roleNames" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
         </where>
     </select>
