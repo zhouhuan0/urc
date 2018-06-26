@@ -26,6 +26,7 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class UserServiceImpl implements IUserService {
@@ -47,6 +48,7 @@ public class UserServiceImpl implements IUserService {
     private IRoleMapper roleMapper;
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO syncUserInfo(String operator) {
         ResultVO resultVO= new ResultVO();
         try {

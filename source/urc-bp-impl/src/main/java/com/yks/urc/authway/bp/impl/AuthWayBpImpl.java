@@ -76,7 +76,8 @@ public class AuthWayBpImpl implements AuthWayBp {
             //获取最终结果
             AuthWayVO authWayVO = authWayMapper.getAuthWayVoBySysKey(sysKey);
             if (authWayVO == null){
-                throw new URCBizException("result authWay is null", ErrorCode.E_000000);
+                //有的系统授权方式没有
+               continue;
             }
             //组装sysKey
             sysAuthWayVO.sysKey = authWayVO.sysKey;

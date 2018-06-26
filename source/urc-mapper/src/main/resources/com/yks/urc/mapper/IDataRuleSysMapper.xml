@@ -148,6 +148,25 @@
         left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
         where us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
     </select>
+    
+    
+        <!--根据用户名得到sys_id-->
+    <select id="getDataRuleSysByUserName" parameterType="com.yks.urc.entity.UserDO" resultMap="BaseResultMap">
+        select
+        udrs.data_rule_sys_id,
+        udrs.data_rule_id,
+        udrs.sys_key 
+        from
+        urc_data_rule_sys udrs 
+        LEFT JOIN urc_data_rule udr ON udrs.data_rule_id = udr.data_rule_id
+		<where>
+			<if test=" userName !=null and userName != '' ">
+			     udr.user_name = #{userName} 
+			</if>
+		</where>
+	
+    </select>
+    
 
 
 </mapper>
