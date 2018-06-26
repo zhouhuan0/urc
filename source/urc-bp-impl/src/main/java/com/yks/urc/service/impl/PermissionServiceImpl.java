@@ -1,6 +1,5 @@
 package com.yks.urc.service.impl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 import com.alibaba.fastjson.JSONObject;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.PermissionMapper;
@@ -72,9 +70,9 @@ public class PermissionServiceImpl implements IPermissionService {
 			}
 			SystemRootVO[] arr = StringUtility.parseObject(data, new SystemRootVO[0].getClass());
 			if (arr != null && arr.length > 0) {
-				List<Permission> lstPermit = new ArrayList<>(arr.length);
+				List<PermissionDO> lstPermit = new ArrayList<>(arr.length);
 				for (SystemRootVO root : arr) {
-					Permission p = new Permission();
+					PermissionDO p = new PermissionDO();
 					p.setSysName(root.system.name);
 					p.setSysKey(root.system.key);
 					p.setSysContext(StringUtility.toJSONString_NoException(root));
@@ -86,7 +84,7 @@ public class PermissionServiceImpl implements IPermissionService {
 				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
 
 				// 更新缓存
-				for (Permission p : lstPermit) {
+				for (PermissionDO p : lstPermit) {
 					cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
 				}
 				rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
@@ -149,7 +147,7 @@ public class PermissionServiceImpl implements IPermissionService {
 			UserPermitStatVO userPermitStatVO = new UserPermitStatVO();
 			BeanUtils.copyProperties(userPermitStatDO, userPermitStatVO);
 			userPermitStatVO.setFuncDesc(userPermitStatDO.getFuncJson());
-			userPermitStatVO.setSysName(userPermitStatDO.getPermission().getSysName());
+			userPermitStatVO.setSysName(userPermitStatDO.getPermissionDO().getSysName());
 			userPermitStatVOS.add(userPermitStatVO);
 		}
 		return userPermitStatVOS;

@@ -2,7 +2,7 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class Permission {
+public class PermissionDO {
     private Long id;
     /**
      * 系统名称

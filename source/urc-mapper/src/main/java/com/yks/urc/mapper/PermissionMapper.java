@@ -1,54 +1,39 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.Permission;
-import com.yks.urc.vo.PermissionVO;
+import com.yks.urc.entity.PermissionDO;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
-
 public interface PermissionMapper {
-	int deleteByPrimaryKey(Long id);
-
-	int insert(Permission record);
-
-	int insertSelective(Permission record);
-
-	Permission selectByPrimaryKey(Long id);
-
-	int updateByPrimaryKeySelective(Permission record);
-
-	int updateByPrimaryKeyWithBLOBs(Permission record);
-
-	int updateByPrimaryKey(Permission record);
-
-	/**
-	 * 获取systemKey
-	 *
-	 * @param sysKey
-	 * @return Permission
-	 * @Author linwanxian@youkeshu.com
-	 * @Date 2018/6/12 9:28
-	 */
-	Permission getSystemKey(@Param("sysName") String sysKey);
-
-	Permission getPermissionBySysKey(@Param("sysKey") String sysKey);
-
-	void deleteSyspermitDefine(@Param("lstPermit") List<Permission> lstPermit);
-
-	/**
-	 * 先按sysKey删除，再insert
-	 *
-	 * @param lstPermit
-	 * @author panyun@youkeshu.com
-	 * @date 2018年6月14日 下午7:59:31
-	 */
-	void insertSysPermitDefine(@Param("lstPermit") List<Permission> lstPermit);
     /**
+     * 获取systemKey
+     *
+     * @param sysKey
+     * @return Permission
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/12 9:28
+     */
+    PermissionDO getSystemKey(@Param("sysName") String sysKey);
+
+    PermissionDO getPermissionBySysKey(@Param("sysKey") String sysKey);
+
+    void deleteSyspermitDefine(@Param("lstPermit") List<PermissionDO> lstPermit);
 
     /**
+     * 先按sysKey删除，再insert
+     *
+     * @param lstPermit
+     * @author panyun@youkeshu.com
+     * @date 2018年6月14日 下午7:59:31
+     */
+    void insertSysPermitDefine(@Param("lstPermit") List<PermissionDO> lstPermit);
+    /**
+
+     /**
      * 获取 systemname
      * @param
      * @return
@@ -65,7 +50,19 @@ public interface PermissionMapper {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/15 9:44
      */
-   Permission getPermission(@Param("sysKey") String sysKey);
+    PermissionDO getPermission(@Param("sysKey") String sysKey);
 
-	List<Permission> getSysApiUrlPrefix();
+    List<PermissionDO> getSysApiUrlPrefix();
+
+    /**
+     * Description: 根据roleId获取对应的系统功能权限数据
+     *
+     * @param :
+     * @throws Exception 对可能产生的异常进行说明
+     * @return:
+     * @see
+     */
+    @MapKey("sysKey")
+    Map<String,PermissionDO> getSysContextByRoleId(@Param("roleId") Long roleId);
+
 }

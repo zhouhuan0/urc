@@ -8,17 +8,24 @@
  */
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.Permission;
+import com.yks.urc.entity.PermissionDO;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class PermissionMapperTest extends BaseMapperTest {
 
     @Autowired
     PermissionMapper permissionMapper;
+
+
+    @Test
+    public void getPermissionDoByRoleId(){
+        Map<String,PermissionDO> map= permissionMapper.getSysContextByRoleId(1529743116993000004L);
+        System.out.println(map);
+    }
 
 
 

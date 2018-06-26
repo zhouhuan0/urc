@@ -26,7 +26,7 @@
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
-        <association property="permission" javaType="com.yks.urc.entity.Permission">
+        <association property="permission" javaType="com.yks.urc.entity.PermissionDO">
             <result column="sys_name" jdbcType="VARCHAR" property="sysName"/>
         </association>
     </resultMap>

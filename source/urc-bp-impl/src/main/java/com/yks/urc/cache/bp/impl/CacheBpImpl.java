@@ -1,24 +1,19 @@
 package com.yks.urc.cache.bp.impl;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.ignite.binary.Binarylizable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.Permission;
-import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.user.bp.impl.UserBpImpl;
-import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
@@ -180,13 +175,13 @@ public class CacheBpImpl implements ICacheBp {
 	}
 
 	@Override
-	public List<Permission> getSysApiUrlPrefix() {
+	public List<PermissionDO> getSysApiUrlPrefix() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void setSysApiUrlPrefix(List<Permission> lst) {
+	public void setSysApiUrlPrefix(List<PermissionDO> lst) {
 		// TODO Auto-generated method stub
 		
 	}

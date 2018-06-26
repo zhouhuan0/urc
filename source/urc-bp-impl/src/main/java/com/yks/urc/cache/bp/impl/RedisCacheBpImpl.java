@@ -5,10 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.ignite.binary.Binarylizable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +14,12 @@ import org.springframework.stereotype.Component;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.Permission;
-import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.user.bp.impl.UserBpImpl;
-import com.yks.urc.vo.BizSysVO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
-import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
@@ -229,18 +223,18 @@ public class RedisCacheBpImpl implements ICacheBp {
 		return null;
 	}
 
-	public List<Permission> getSysApiUrlPrefix() {
+	public List<PermissionDO> getSysApiUrlPrefix() {
 		try {
 			Map<String, String> map = hgetAll(getCacheKey_SysApiUrlPrefix());
 			if (map == null)
 				return null;
-			List<Permission> lstRslt = new ArrayList<>();
+			List<PermissionDO> lstRslt = new ArrayList<>();
 			Iterator<String> it = map.keySet().iterator();
 			while (it.hasNext()) {
 				String strKey = it.next();
 				if (StringUtility.stringEqualsIgnoreCase(NA, strKey))
 					continue;
-				Permission p = new Permission();
+				PermissionDO p = new PermissionDO();
 				p.setSysKey(strKey);
 				p.setApiUrlPrefixJson(map.get(strKey));
 				lstRslt.add(p);
@@ -252,14 +246,14 @@ public class RedisCacheBpImpl implements ICacheBp {
 		return null;
 	}
 
-	public void setSysApiUrlPrefix(List<Permission> lst) {
+	public void setSysApiUrlPrefix(List<PermissionDO> lst) {
 		try {
 			String strKey = getCacheKey_SysApiUrlPrefix();
 			Map<String, String> map = new HashMap<>();
 			if (lst == null || lst.size() == 0) {
 				map.put(NA, NA);
 			} else {
-				for (Permission p : lst) {
+				for (PermissionDO p : lst) {
 					map.put(p.getSysKey(), p.getApiUrlPrefixJson());
 				}
 			}

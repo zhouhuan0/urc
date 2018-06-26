@@ -2,19 +2,14 @@ package com.yks.urc.userValidate.bp.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
-import com.weibo.api.motan.util.CollectionUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.Permission;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.fw.StringUtility;
@@ -28,7 +23,6 @@ import com.yks.urc.vo.FunctionVO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.MenuVO;
 import com.yks.urc.vo.ModuleVO;
-import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
 import com.yks.urc.vo.UserVO;
@@ -524,7 +518,7 @@ public class UserValidateBp implements IUserValidateBp {
 	private String getSysKeyByApiUrl(String strApiUrl) {
 		if (StringUtility.isNullOrEmpty(strApiUrl))
 			return StringUtility.Empty;
-		List<Permission> lstApiPrefix = cacheBp.getSysApiUrlPrefix();
+		List<PermissionDO> lstApiPrefix = cacheBp.getSysApiUrlPrefix();
 		if (lstApiPrefix == null) {
 			lstApiPrefix = permissionMapper.getSysApiUrlPrefix();
 			cacheBp.setSysApiUrlPrefix(lstApiPrefix);
@@ -532,7 +526,7 @@ public class UserValidateBp implements IUserValidateBp {
 		if (lstApiPrefix == null || lstApiPrefix.size() == 0)
 			return StringUtility.Empty;
 
-		for (Permission p : lstApiPrefix) {
+		for (PermissionDO p : lstApiPrefix) {
 			String[] arrPrefix = StringUtility.parseObject(p.getApiUrlPrefixJson(), arrEmpty.getClass());
 			if (arrPrefix == null || arrPrefix.length == 0)
 				continue;
@@ -611,7 +605,7 @@ public class UserValidateBp implements IUserValidateBp {
 	PermissionMapper permissionMapper;
 
 	private String getSysContextFromDb(String sysKey) {
-		Permission per = permissionMapper.getPermissionBySysKey(sysKey);
+		PermissionDO per = permissionMapper.getPermissionBySysKey(sysKey);
 		if (per == null || per.getSysContext() == null)
 			return StringUtility.Empty;
 		return per.getSysContext();

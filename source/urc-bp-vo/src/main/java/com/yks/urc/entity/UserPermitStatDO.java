@@ -11,14 +11,14 @@ public class UserPermitStatDO {
 
 	private String moduleName;
 
-	private Permission permission;
+	private PermissionDO permissionDO;
 
-	public Permission getPermission() {
-		return permission;
+	public PermissionDO getPermissionDO() {
+		return permissionDO;
 	}
 
-	public void setPermission(Permission permission) {
-		this.permission = permission;
+	public void setPermissionDO(PermissionDO permissionDO) {
+		this.permissionDO = permissionDO;
 	}
 
 	public Date getCreateTime() {

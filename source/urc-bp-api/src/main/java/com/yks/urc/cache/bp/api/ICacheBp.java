@@ -2,10 +2,8 @@ package com.yks.urc.cache.bp.api;
 
 import java.util.List;
 
-import com.yks.urc.entity.Permission;
-import com.yks.urc.entity.UserPermissionCacheDO;
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
-import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.UserVO;
 
 public interface ICacheBp {
@@ -66,8 +64,8 @@ public interface ICacheBp {
 
 	void insertSysContext(String sysKey, String sysContext);
 
-	List<Permission> getSysApiUrlPrefix();
-	void setSysApiUrlPrefix(List<Permission> lst);
+	List<PermissionDO> getSysApiUrlPrefix();
+	void setSysApiUrlPrefix(List<PermissionDO> lst);
 	
 	String getDingAccessToken(String accessTokeTime);
 	
