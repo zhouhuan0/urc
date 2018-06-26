@@ -63,6 +63,12 @@ public interface PermissionMapper {
      * @see
      */
     @MapKey("sysKey")
-    Map<String,PermissionDO> getSysContextByRoleId(@Param("roleId") Long roleId);
+    Map<String, PermissionDO> getSysContextByRoleId(@Param("roleId") Long roleId);
 
+    /**
+     * 得到所有的sys_key
+     *
+     * @return
+     */
+    List<PermissionDO> getAllSysKey();
 }

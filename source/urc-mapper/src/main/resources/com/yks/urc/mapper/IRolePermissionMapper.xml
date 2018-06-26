@@ -72,18 +72,6 @@
         where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
     </select>
 
-    <select id="getUserAuthorizablePermission" parameterType="java.lang.String" resultMap="BaseResultMap">
-		SELECT 
-		 	urp.sys_key,
-		 	urp.selected_context  
-		FROM 
-			urc_role ur 
-		LEFT JOIN urc_user_role uur ON ur.role_id = uur.role_id 
-		LEFT JOIN urc_role_permission urp ON urp.role_id=ur.role_id  
-		WHERE
-			ur.is_authorizable='1' AND uur.user_name = #{userName}  
-    </select>
-
     <select id="getRolePermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
         SELECT sys_key, selected_context FROM urc_role_permission
         <where>

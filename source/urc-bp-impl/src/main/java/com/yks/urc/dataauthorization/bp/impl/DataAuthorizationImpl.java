@@ -10,7 +10,9 @@ package com.yks.urc.dataauthorization.bp.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 
@@ -22,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 public class DataAuthorizationImpl implements DataAuthorization {
     private static Logger logger = LoggerFactory.getLogger(DataAuthorizationImpl.class);
@@ -29,12 +32,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
      * 请求平台url
      */
     @Value("${dataAuthorization.getPlatformList}")
-    private String GET_PLATFORM ;
+    private String GET_PLATFORM;
     /**
      * 请求店铺账号和站点信息
      */
     @Value("${dataAuthorization.getShopList}")
-    private  String GET_SHOP_AND_SITE;
+    private String GET_SHOP_AND_SITE;
 
     /**
      * 获取平台信息
@@ -52,15 +55,15 @@ public class DataAuthorizationImpl implements DataAuthorization {
         JSONObject platformObject = StringUtility.parseString(getPlatformResult);
         if (platformObject.getInteger("state") == 200) {
             JSONArray dataArray = platformObject.getJSONArray("data");
-            List<PlatformResp> platformResps= StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
-            for(PlatformResp platformResp : platformResps){
-                OmsPlatformVO omsPlatformVO =new OmsPlatformVO();
-                omsPlatformVO.platformId =platformResp.code;
+            List<PlatformResp> platformResps = StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
+            for (PlatformResp platformResp : platformResps) {
+                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                omsPlatformVO.platformId = platformResp.code;
                 // 如果id 为空,则不装载数据
-                if (StringUtility.isNullOrEmpty(omsPlatformVO.platformId)){
+                if (StringUtility.isNullOrEmpty(omsPlatformVO.platformId)) {
                     continue;
                 }
-                omsPlatformVO.platformName=platformResp.name;
+                omsPlatformVO.platformName = platformResp.name;
                 omsPlatformVoList.add(omsPlatformVO);
             }
         }
@@ -82,38 +85,39 @@ public class DataAuthorizationImpl implements DataAuthorization {
         String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
-            return  null;
+            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息异常");
         }
         JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
-            for (ShopAndSiteResp shopAndSiteResp:shopAndSiteResps){
-                OmsShopVO omsShopVO =new OmsShopVO();
-                OmsSiteVO omsSiteVO=new OmsSiteVO();
-                List<OmsSiteVO> omsSiteVOList =new ArrayList<>();
-                omsShopVO.shopId=shopAndSiteResp.sellerid;
+            for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
+                OmsShopVO omsShopVO = new OmsShopVO();
+                omsShopVO.shopId = shopAndSiteResp.sellerid;
                 // 如果id 为空,则不装载数据
-                if (StringUtility.isNullOrEmpty(omsShopVO.shopId)){
+                if (StringUtility.isNullOrEmpty(omsShopVO.shopId)) {
                     continue;
                 }
-                omsShopVO.shopName=shopAndSiteResp.shop_system;
+                omsShopVO.shopName = shopAndSiteResp.shop_system;
                 // name 没有 将id  赋值给name
-                if (StringUtility.isNullOrEmpty( omsShopVO.shopName)){
-                    omsShopVO.shopName=omsShopVO.shopId;
+                if (StringUtility.isNullOrEmpty(omsShopVO.shopName)) {
+                    omsShopVO.shopName = omsShopVO.shopId;
                 }
-                omsSiteVO.siteId=shopAndSiteResp.site_code;
-                // 如果id 为空,则不装载数据
-                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)){
-                    continue;
+
+                // 如果获取的site_code 为空,则不装载数
+                if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code)) {
+                    omsShopVO.lstSite = null;
+                } else {
+                    OmsSiteVO omsSiteVO = new OmsSiteVO();
+                    omsSiteVO.siteId = shopAndSiteResp.site_code;
+                    omsSiteVO.siteName = shopAndSiteResp.site_name;
+                    // name 没有 将id  赋值给name
+                    if (StringUtility.isNullOrEmpty(omsSiteVO.siteName)) {
+                        omsSiteVO.siteName = omsSiteVO.siteId;
+                    }
+                    omsShopVO.lstSite = new ArrayList<>();
+                    omsShopVO.lstSite.add(omsSiteVO);
                 }
-                omsSiteVO.siteName=shopAndSiteResp.site_name;
-                // name 没有 将id  赋值给name
-                if (StringUtility.isNullOrEmpty( omsShopVO.shopName)){
-                    omsSiteVO.siteName=omsSiteVO.siteId;
-                }
-                omsSiteVOList.add(omsSiteVO);
-                omsShopVO.lstSite=omsSiteVOList;
                 omsShopVoList.add(omsShopVO);
             }
         }
@@ -122,14 +126,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
 
     public static void main(String[] args) {
         DataAuthorizationImpl dataAuthorizationImpl = new DataAuthorizationImpl();
-        List<OmsPlatformVO> omsPlatformVOS=  dataAuthorizationImpl.getPlatformList("test3");
-        for (OmsPlatformVO omsPlatformVO :omsPlatformVOS){
+        List<OmsPlatformVO> omsPlatformVOS = dataAuthorizationImpl.getPlatformList("test3");
+        for (OmsPlatformVO omsPlatformVO : omsPlatformVOS) {
             System.out.println(omsPlatformVO.platformName);
         }
         System.out.println("============================");
         String platform = "eBay";
-        List<OmsShopVO> omsShopVoList = dataAuthorizationImpl.getShopList("test3",platform);
-        for (OmsShopVO omsShopVO : omsShopVoList){
+        List<OmsShopVO> omsShopVoList = dataAuthorizationImpl.getShopList("test3", platform);
+        for (OmsShopVO omsShopVO : omsShopVoList) {
             System.out.println(omsShopVO.shopName);
         }
     }

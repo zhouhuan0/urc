@@ -8,6 +8,7 @@ import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.IUserPermitStatMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +20,13 @@ import org.springframework.stereotype.Component;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserPermissionCacheMapper;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.IPermissionService;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +42,12 @@ public class PermissionServiceImpl implements IPermissionService {
 	PermissionMapper permissionMapper;
 	
 	@Autowired
+	private IUserRoleMapper userRoleMapper;
+	
+	@Autowired
+	IRoleMapper roleMapper;
+	
+	@Autowired
 	IRolePermissionMapper rolePermissionMapper;
 
 	@Autowired
@@ -48,6 +58,10 @@ public class PermissionServiceImpl implements IPermissionService {
 
 	@Autowired
 	ICacheBp cacheBp;
+	
+	private IUserPermissionCacheMapper permissionCacheMapper;
+	@Autowired
+	private IUserValidateBp userValidateBp;
 
 	@Transactional
 	@Override
@@ -99,19 +113,32 @@ public class PermissionServiceImpl implements IPermissionService {
 		return rslt;
 	}
 
-
-	
 	@Override
 	public ResultVO getUserAuthorizablePermission(String userName) {
-		//根据用户名获取角色的管理员
-		List<RolePermissionDO> rolePermissionList=rolePermissionMapper.getUserAuthorizablePermission(userName);
 		List<PermissionVO> permissionVOs=new ArrayList<PermissionVO>();
-        for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-        	PermissionVO permissionVO = new PermissionVO();
-        	permissionVO.setSysKey(rolePermissionDO.getSysKey());
-        	permissionVO.setSysContext(rolePermissionDO.getSelectedContext());
-            permissionVOs.add(permissionVO);
-        }
+		if(roleMapper.isSuperAdminAccount(userName)){
+			//查询所有的角色功能权限
+			List<Permission> lstSysKey = permissionMapper.getAllSysKey();
+			for (Permission permission : lstSysKey) {
+				PermissionVO permissionVO = new PermissionVO();
+	        	permissionVO.setSysKey(permission.getSysKey());
+	        	permissionVO.setSysContext(permission.getSysContext());
+				permissionVOs.add(permissionVO);
+			}
+		}else{
+			//业务管理员
+			List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+			for (String sysKey : lstSysKey) {
+				// 获取用户sys的功能权限json
+				List<String> lstFuncJson = roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
+				// 合并json树
+				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
+				PermissionVO permissionVO = new PermissionVO();
+	        	permissionVO.setSysKey(sysKey);
+	        	permissionVO.setSysContext(StringUtility.toJSONString_NoException(rootVO));
+				permissionVOs.add(permissionVO);
+			}
+		}
 		return VoHelper.getSuccessResult(permissionVOs);
 	}
 
