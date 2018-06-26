@@ -82,7 +82,7 @@ public class LogAspect implements InitializingBean, DisposableBean {
 
     @Override
     public void afterPropertiesSet(){
-        System.out.println("日志拦截器初始化...");
+        log.info("日志拦截器初始化...");
 
         executorService = new ThreadPoolExecutor(logThreads, logThreads,
                 0L, TimeUnit.MILLISECONDS,

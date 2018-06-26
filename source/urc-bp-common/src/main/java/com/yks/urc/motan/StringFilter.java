@@ -9,14 +9,13 @@
  */
 package com.yks.urc.motan;
 
-import com.google.common.collect.Lists;
+import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.common.MotanConstants;
 import com.weibo.api.motan.core.extension.Activation;
 import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.filter.Filter;
 import com.weibo.api.motan.rpc.*;
 import com.weibo.api.motan.serialize.DeserializableObject;
-import com.yks.crud.utils.SpringUtils;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.ResultVO;
 import org.apache.commons.lang3.ArrayUtils;
@@ -27,7 +26,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
+import java.util.Map;
 
 /**
  * @author OuJie
@@ -40,8 +39,32 @@ import java.util.Arrays;
 @Activation(key = {MotanConstants.NODE_TYPE_REFERER,MotanConstants.NODE_TYPE_SERVICE})
 public class StringFilter implements Filter {
     private final static Logger log = LoggerFactory.getLogger(StringFilter.class);
+    private void decodeSession(Request request){
+        try {
+            Object[] arrArg = request.getArguments();
+            if (arrArg != null && arrArg.length > 0) {
+                if (arrArg[0] instanceof Map) {
+                    Map<String, String> mapArg = (Map<String, String>) arrArg[0];
+                    MotanRequest req = new MotanRequest();
+                    req.setMapArg(mapArg);
+                    MotanSession.setRequest(req);
+                } else if (arrArg[0] instanceof String) {
+                    JSONObject jo = StringUtility.parseString((String) arrArg[0]);
+                    MotanRequest req = new MotanRequest();
+                    req.setJSONObjectArg(jo);
+                    MotanSession.setRequest(req);
+                }
+            }
+        }
+        catch(Exception ex){
+            log.error(String.format("decodeSession:%s",StringUtility.toJSONString_NoException(request.getArguments())),ex);
+        }
+    }
+
     @Override
     public Response filter(Caller<?> caller, Request request) {
+        decodeSession(request);
+
         Response response = caller.call(request);
         long startTime = System.currentTimeMillis();
         //返回值类型不是字符串对象
