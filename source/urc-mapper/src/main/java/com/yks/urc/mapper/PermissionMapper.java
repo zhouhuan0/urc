@@ -68,4 +68,9 @@ public interface PermissionMapper {
    Permission getPermission(@Param("sysKey") String sysKey);
 
 	List<Permission> getSysApiUrlPrefix();
+	/**
+	 * 得到所有的sys_key
+	 * @return
+	 */
+	List<Permission> getAllSysKey();
 }

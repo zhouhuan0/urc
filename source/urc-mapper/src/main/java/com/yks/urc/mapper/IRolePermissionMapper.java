@@ -55,12 +55,7 @@ public interface IRolePermissionMapper {
      */
     Integer insertBatch(List<RolePermissionDO> rolePermissionDOS);
 
-    /**
-     * 获取指定用户可授权给其它角色的功能权限
-     * @param userName
-     * @return
-     */
-	List<RolePermissionDO> getUserAuthorizablePermission(String userName);
+
 
 	/**
 	 * 获取多个角色已有的功能权限
