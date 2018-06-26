@@ -756,9 +756,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            if(syskeyList!=null &&syskeyList.size()>0){
 	            	for (int j = 0; j < syskeyList.size(); j++) {
 	            		//通过sysKey得到 行权限
-	            		List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(j).getDataRuleSysId());
 	            		//通过sysKey得到列权限
-	            		List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(j).getDataRuleSysId());
 	            		List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
 	            		for (DataRuleColDO colDO : dataRuleColList) {
 	            			DataRuleColVO dataRuleColVO = new DataRuleColVO();
@@ -779,7 +779,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
 	            		ExpressionVO expressionVO = new ExpressionVO();
 	            		expressionVO.setSubWhereClause(expressionVOList);
-	            		dataRuleSysVO.sysKey = syskeyList.get(i).getSysKey();
+	            		dataRuleSysVO.sysKey = syskeyList.get(j).getSysKey();
 	            		dataRuleSysVO.col = dataRuleColVOList;
 	            		dataRuleSysVO.row = expressionVO;
 	            		lstDataRuleSys.add(dataRuleSysVO);
