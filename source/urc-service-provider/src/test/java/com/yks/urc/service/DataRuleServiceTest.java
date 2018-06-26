@@ -138,7 +138,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
-        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
+//        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
         dataRuleTemplVO.setRemark("给xxxx的方案");
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
 //        dataRuleTemplVO.setTemplId("1529030029337");

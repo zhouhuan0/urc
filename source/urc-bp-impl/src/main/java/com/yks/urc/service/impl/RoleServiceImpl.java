@@ -202,6 +202,7 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setCreateTime(new Date());
             roleDO.setModifiedBy(operator);
             roleDO.setModifiedTime(new Date());
+            checkEffective(roleDO);
             int rtn = roleMapper.insert(roleDO);
              /*批量新增角色-操作权限关系数据*/
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
@@ -213,6 +214,7 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setModifiedBy(operator);
             roleDO.setModifiedTime(new Date());
             roleDO.setRoleId(opRoleDO.getRoleId());
+            checkEffective(roleDO);
             roleMapper.updateByRoleId(roleDO);
               /*删除原有角色-权限关系数据*/
             rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
@@ -223,33 +225,27 @@ public class RoleServiceImpl implements IRoleService {
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator,roleDO.getRoleId());
         }
-		/* 1、添加或更新角色表 *//*
-        RoleDO roleDO = new RoleDO();
-        BeanUtils.copyProperties(roleVO, roleDO);
-        Long roleId = seqBp.getNextRoleId();
-        roleDO.setRoleId(roleId);
-        roleDO.setCreateBy(operator);
-        roleDO.setCreateTime(new Date());
-        roleDO.setModifiedBy(operator);
-        roleDO.setModifiedTime(new Date());
-        int rtn = roleMapper.insertOrUpdate(roleDO);
-        if (rtn == 1) {
-            *//*rtn == 1；表示新增角色*//*
-            *//*批量新增角色-操作权限关系数据*//*
-            insertBatchRolePermission(roleVO, operator, roleVO.getRoleId());
-            *//*批量新增用户-角色关系数据*//*
-            insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
-        } else {
-            *//*rtn>1; 表示编辑;需要先删除原有数据，再重新批量添加*//*
-            *//*删除原有角色-权限关系数据*//*
-            rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
-            *//*批量新增角色-操作权限关系数据*//*
-            insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
-            *//*删除原有用户-角色关系数据*//*
-            userRoleMapper.deleteByRoleId(roleId);
-            *//*批量新增用户-角色关系数据*//*
-            insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
-        }*/
+    }
+    /**
+     * Description: 不是永久有效，需要判断有效期，如果有效期无效，则把状态置为不可用
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/6/26 11:39
+     * @see
+     */
+    private void checkEffective(RoleDO roleDO) {
+        if(!roleDO.isForever()){
+          Date effectiveTime = roleDO.getEffectiveTime();
+          Date expireTime = roleDO.getExpireTime();
+          if(effectiveTime==null || expireTime==null){
+              roleDO.setActive(Boolean.FALSE);
+          }
+          Date nowTime = new Date();
+          if(effectiveTime.after(nowTime) || expireTime.before(nowTime)){
+              roleDO.setActive(Boolean.FALSE);
+          }
+        }
     }
 
     /**

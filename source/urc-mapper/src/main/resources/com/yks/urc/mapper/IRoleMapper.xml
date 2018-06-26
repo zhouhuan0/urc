@@ -91,6 +91,9 @@
           <if test="modifiedBy != null and modifiedBy != ''">
           modified_by = #{modifiedBy,jdbcType=VARCHAR},
           </if>
+          <if test="remark != null and remark != ''">
+              remark = #{remark,jdbcType=VARCHAR},
+          </if>
       </set>
       where role_id = #{roleId,jdbcType=TINYINT}
    </update>

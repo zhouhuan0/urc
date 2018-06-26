@@ -1,6 +1,7 @@
 package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.util.DateUtil;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.service.api.IRoleService;
@@ -11,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,16 +62,16 @@ public class RoleServiceTest extends BaseServiceTest {
 
 
     @Test
-    public void addOrUpdateRoleInfo() {
+    public void addOrUpdateRoleInfo() throws ParseException {
         JSONObject jsonObject = new JSONObject();
         RoleVO roleVO = new RoleVO();
 //        roleVO.setRoleId(1529746076695000006L);
         roleVO.setRoleName("admin-update");
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.TRUE);
-        roleVO.setForever(Boolean.TRUE);
-        roleVO.setEffectiveTime(new Date());
-        roleVO.setExpireTime(new Date());
+        roleVO.setForever(Boolean.FALSE);
+        roleVO.setEffectiveTime(DateUtil.String2Date("2018-06-25 12:00:00",DateUtil.YYYY_MM_DD_HH_MM_SS));
+        roleVO.setExpireTime(DateUtil.String2Date("2018-06-27 12:00:00",DateUtil.YYYY_MM_DD_HH_MM_SS));
         roleVO.setRemark("我的备注");
         List<PermissionVO> permissionVOS = new ArrayList<>();
         PermissionVO permissionVO1 = new PermissionVO();
