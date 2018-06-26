@@ -56,6 +56,10 @@ public class DataAuthorizationImpl implements DataAuthorization {
             for(PlatformResp platformResp : platformResps){
                 OmsPlatformVO omsPlatformVO =new OmsPlatformVO();
                 omsPlatformVO.platformId =platformResp.code;
+                // 如果id 为空,则不装载数据
+                if (StringUtility.isNullOrEmpty(omsPlatformVO.platformId)){
+                    continue;
+                }
                 omsPlatformVO.platformName=platformResp.name;
                 omsPlatformVoList.add(omsPlatformVO);
             }
@@ -89,9 +93,25 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 OmsSiteVO omsSiteVO=new OmsSiteVO();
                 List<OmsSiteVO> omsSiteVOList =new ArrayList<>();
                 omsShopVO.shopId=shopAndSiteResp.sellerid;
+                // 如果id 为空,则不装载数据
+                if (StringUtility.isNullOrEmpty(omsShopVO.shopId)){
+                    continue;
+                }
                 omsShopVO.shopName=shopAndSiteResp.shop_system;
+                // name 没有 将id  赋值给name
+                if (StringUtility.isNullOrEmpty( omsShopVO.shopName)){
+                    omsShopVO.shopName=omsShopVO.shopId;
+                }
                 omsSiteVO.siteId=shopAndSiteResp.site_code;
+                // 如果id 为空,则不装载数据
+                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)){
+                    continue;
+                }
                 omsSiteVO.siteName=shopAndSiteResp.site_name;
+                // name 没有 将id  赋值给name
+                if (StringUtility.isNullOrEmpty( omsShopVO.shopName)){
+                    omsSiteVO.siteName=omsSiteVO.siteId;
+                }
                 omsSiteVOList.add(omsSiteVO);
                 omsShopVO.lstSite=omsSiteVOList;
                 omsShopVoList.add(omsShopVO);
