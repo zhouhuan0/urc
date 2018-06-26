@@ -624,7 +624,6 @@ public class RoleServiceImpl implements IRoleService {
     					userRoleDO.setModifiedBy(operator);
     					userRoleDO.setModifiedTime(new Date());
     					userRoleDOS.add(userRoleDO);
-    					permitStatBp.updateUserPermitCache(userNameList.get(i));
       				}
     			} else {
     				if(roleDO.getCreateBy().equals(operator)){
@@ -644,11 +643,16 @@ public class RoleServiceImpl implements IRoleService {
         					userRoleDO.setModifiedBy(operator);
         					userRoleDO.setModifiedTime(new Date());
         					userRoleDOS.add(userRoleDO);
-        					permitStatBp.updateUserPermitCache(userNameList.get(i));
           				}
     				}
     			}
     			userRoleMapper.insertBatch(userRoleDOS);
+    			if(userRoleDOS!=null&&userRoleDOS.size()>0){
+    				for (int j = 0; j < userRoleDOS.size(); j++) {
+    					permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+    				}
+    				
+    			}
     		}
     		
     	}
