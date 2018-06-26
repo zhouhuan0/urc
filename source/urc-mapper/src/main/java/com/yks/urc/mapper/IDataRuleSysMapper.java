@@ -2,6 +2,8 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleSysDO;
+import com.yks.urc.entity.UserDO;
+
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -66,4 +68,10 @@ public interface IDataRuleSysMapper {
      */
     List<DataRuleSysDO> getDataRuleSysDatas(@Param("dataRuleId") Long dataRuleId);
 
+    /**
+     * 根据用户名查询sys-id
+     * @param userDO
+     * @return
+     */
+	List<DataRuleSysDO> getDataRuleSysByUserName(UserDO userDO);
 }

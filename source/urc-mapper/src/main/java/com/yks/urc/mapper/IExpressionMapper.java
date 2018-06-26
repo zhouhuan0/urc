@@ -1,10 +1,12 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.ExpressionDO;
+import com.yks.urc.entity.UserDO;
 
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
+
 
 public interface IExpressionMapper {
 
@@ -16,7 +18,7 @@ public interface IExpressionMapper {
 
     int insertBatch(List<ExpressionDO> expressionDOS);
 
-    List<ExpressionDO> listExpressionDOsBySysKey(@Param("sysKey") String sysKey,@Param("userName")  String userName);
+    List<ExpressionDO> listExpressionDOsBySysKey(@Param("dataRuleSysId") long dataRuleSysId );
 
 
 }
