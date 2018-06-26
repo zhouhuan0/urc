@@ -75,7 +75,6 @@
 		FROM
 			urc_data_rule_col  udrc
 		LEFT JOIN urc_data_rule_sys udrs ON udrc.data_rule_sys_id = udrs.data_rule_sys_id 
-		LEFT JOIN urc_data_rule udr ON udr.data_rule_id=udrs.data_rule_id 
 		WHERE  
 			udrc.data_rule_sys_id=#{dataRuleSysId} 
     </select>
