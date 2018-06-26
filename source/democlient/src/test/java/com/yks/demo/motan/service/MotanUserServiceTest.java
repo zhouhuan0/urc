@@ -93,7 +93,7 @@ public class MotanUserServiceTest {
 		map.put(StringConstant.operator, "dcadmin");
 		map.put(StringConstant.ticket, "f57be85c55187292236b0d95ba719a43");
 		map.put(StringConstant.ip, "192.168.201.62");
-		map.put(StringConstant.urcVersion, "007d787e2b15e66fd9451f5adef0d2f5");
+		map.put(StringConstant.funcVersion, "007d787e2b15e66fd9451f5adef0d2f5");
 		map.put(StringConstant.sysKey, "004");
 		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.funcPermitValidate(map)));
 	}
@@ -130,7 +130,7 @@ public class MotanUserServiceTest {
 		map.put(StringConstant.operator, "dcadmin");
 		map.put(StringConstant.ticket, loginResp.data.ticket);
 		map.put(StringConstant.ip, ip);
-		map.put(StringConstant.urcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
+		map.put(StringConstant.funcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
 		map.put(StringConstant.sysKey, strSysKey);
 		System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
 	}

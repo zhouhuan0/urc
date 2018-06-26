@@ -62,8 +62,7 @@ public interface IUserService {
 	ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr);
 
 	ResultVO funcPermitValidate(Map<String, String> map);
-	
-	ResultVO getUserByName(String userName);
+
 	
 	/**
 	 * 模糊搜索用户域账号

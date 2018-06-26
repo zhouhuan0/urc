@@ -84,11 +84,13 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         return userBp.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
         ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
         try {
@@ -114,6 +116,7 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<OmsShopVO>> getShopList(String operator, String platform) {
 
         ResultVO<List<OmsShopVO>> rslt = new ResultVO();
@@ -137,6 +140,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
         ResultVO<List<SysAuthWayVO>> rslt = new ResultVO();
         try {
@@ -176,10 +180,6 @@ public class UserServiceImpl implements IUserService {
         return userValidateBp.funcPermitValidate(map);
     }
 
-    @Override
-    public ResultVO getUserByName(String userName) {
-        return VoHelper.getSuccessResult(userMapper.getUserByName(userName));
-    }
 
 
     @Override
@@ -197,6 +197,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<UserVO>> getUserByUserName(String operator, UserVO userVO) {
         List<UserVO> userVOS = new ArrayList<>();
         UserVO userVO1 = new UserVO();

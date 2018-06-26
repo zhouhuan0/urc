@@ -468,6 +468,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
         List<String> userNameList = new ArrayList<>();
@@ -479,27 +480,29 @@ public class RoleServiceImpl implements IRoleService {
             for (RoleVO roleVO : lstRole) {
                 UserRoleDO userRole = new UserRoleDO();
                 userRole.setRoleId(roleVO.roleId);
-                List<UserDO> userDOList = userMapper.getUserByRoleId(userRole);
-                if (userDOList == null){
-                    return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
-                }
-                //更新缓存
-                for (int i = 0; i < userDOList.size(); i++) {
-                    String userName = userDOList.get(i).getUserName();
-                    userNameList.add(userName);
-                }
-                permitStatBp.updateUserPermitCache(userNameList);
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
                 if (permissionVOS == null){
                     return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"获取的功能权限为空");
                 }
+                List<Long> roleIds =new ArrayList<>();
+                List<RolePermissionDO> permissionDOS =new ArrayList<>();
                 for (PermissionVO permissionVO : permissionVOS) {
-                    //将功能版本放入do中 ,通过roleId来更新角色的功能权限
+                    //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
                     rolePermissionDO.setRoleId(userRole.getRoleId());
+                    rolePermissionDO.setModifiedBy(operator);
+                    rolePermissionDO.setCreateBy(operator);
+                    rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
+                    rolePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
                     rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
-                    rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
+                    //将roleId 装载进list
+                    roleIds.add(userRole.getRoleId());
+                    permissionDOS.add(rolePermissionDO);
                 }
+                rolePermissionMapper.deleteBatch(roleIds);
+                logger.info("清理相关的功能权限完成");
+                rolePermissionMapper.insertBatch(permissionDOS);
+                logger.info("更新相关功能权限完成");
             }
             List<Long> lstRoleId = new ArrayList<>();
             for(RoleVO roleVO:lstRole){
