@@ -207,11 +207,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
      */
     private void checkAndConvertParam(Map<String, Object> queryMap, JSONObject jsonObject) {
          /*获取当前用户*/
-        String createBy = jsonObject.getString("operator");
-        if (StringUtility.isNullOrEmpty(createBy)) {
+        String operator = jsonObject.getString("operator");
+        if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
-        queryMap.put("createBy", createBy);
+        queryMap.put("createBy", operator);
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
@@ -223,8 +223,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         queryMap.put("pageSize", pageSize);
 
         /*获取当前用户的角色*/
-        RoleDO roleDO = new RoleDO();
-        if (roleDO.isAuthorizable()) {
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+        if (isAdmin) {
             //如果是管理员,createBy不作为查询条件
             queryMap.put("createBy", null);
         }

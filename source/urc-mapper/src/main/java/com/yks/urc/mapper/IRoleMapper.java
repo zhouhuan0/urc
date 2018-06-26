@@ -145,7 +145,7 @@ public interface IRoleMapper {
      * @date: 2018/6/13 11:26
      * @see
      */
-    Long getCounts(@Param("createBy") String createBy);
+    Long getCounts(Map<String, Object> data);
 
     /**
      * 获取所有过期的角色关联的用户
