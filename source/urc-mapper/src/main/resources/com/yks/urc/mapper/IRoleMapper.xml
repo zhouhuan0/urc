@@ -57,12 +57,12 @@
      (role_id,role_name, is_active,
       is_authorizable, is_forever, effective_time,
       expire_time, create_time, create_by,
-      modified_time, modified_by)
+      modified_time, modified_by,remark)
     values
      (#{roleId,jdbcType=TINYINT}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
       #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR})
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
   </insert>
    <update id="updateByRoleId" parameterType="com.yks.urc.entity.RoleDO">
       update urc_role

@@ -38,10 +38,10 @@ public class RoleServiceTest extends BaseServiceTest {
     @Test
     public void getRoleByRoleId() {
         JSONObject  jsonObject = new JSONObject();
-        jsonObject.put("operator","admin");
-        jsonObject.put("roleId",1);
+        jsonObject.put("operator","lvchangrong");
+        jsonObject.put("roleId",1529743116993000004L);
         ResultVO<RoleVO>  resultVO= roleService.getRoleByRoleId(jsonObject.toString());
-        Assert.assertNull(resultVO);
+        Assert.assertNotNull(resultVO);
     }
 
     @Test
