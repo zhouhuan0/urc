@@ -439,9 +439,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
         String tempIdStr = templVO.getTemplId();
         if (!StringUtil.isEmpty(tempIdStr)) {
             Long currentTemplId = Long.valueOf(tempIdStr);
-            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
-            if (dataRuleTemplDO == null) {
-                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
+            /*判断是否为管理员*/
+            Boolean isAdmin = roleMapper.isAdminAccount(operator);
+            if(!isAdmin) {
+                DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
+                if (dataRuleTemplDO == null) {
+                    throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
+                }
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             dataRuleTemplMapper.delTemplDatasById(currentTemplId);
