@@ -536,19 +536,24 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO getRoleUser(String operator, List<String> lstRoleId) {
 		/* 非管理员只能查看自己创建的角色 */
         List<RoleVO> roleList = new ArrayList<>();
-        for (int i = 0; i < lstRoleId.size(); i++) {
-            RoleDO roleDO = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
-            RoleVO roleVO = new RoleVO();
-            roleVO.setRoleName(roleDO.getRoleName());
-            roleVO.setRoleId(roleDO.getRoleId());
-            UserRoleDO userRoleDO = new UserRoleDO();
-            userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-            if (!roleMapper.isSuperAdminAccount(operator)) {
-                userRoleDO.setCreateBy(operator);
-            }
-            List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
-            roleVO.setLstUserName(lstUserName);
-            roleList.add(roleVO);
+        if(lstRoleId!=null&&lstRoleId.size()>0){
+        	for (int i = 0; i < lstRoleId.size(); i++) {
+        		RoleDO roleDO = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
+        		if(roleDO!=null){
+        			RoleVO roleVO = new RoleVO();
+        			roleVO.setRoleName(roleDO.getRoleName());
+        			roleVO.setRoleId(roleDO.getRoleId());
+        			UserRoleDO userRoleDO = new UserRoleDO();
+        			userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+        			if (!roleMapper.isSuperAdminAccount(operator)) {
+        				userRoleDO.setCreateBy(operator);
+        			}
+        			List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+        			roleVO.setLstUserName(lstUserName);
+        			roleList.add(roleVO);
+        		}
+        	}
+        	
         }
 		/* 查询用户角色关系表 */
         return VoHelper.getSuccessResult(roleList);
