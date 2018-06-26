@@ -583,13 +583,13 @@ public class RoleServiceImpl implements IRoleService {
     			List<String> userNameList = roleVO.getLstUserName();
     			userRole.setRoleId(roleVO.getRoleId());
     			List<UserDO> userList= userMapper.getUserByRoleId(userRole);
-    			if(userList!=null&&userList.size()>0){
-    				for (int j = 0; j < userList.size(); j++) {
-    					permitStatBp.updateUserPermitCache(userList.get(i).getUserName());
-    				}
-    			}
     			if (roleMapper.isSuperAdminAccount(operator)) {
     				userRoleMapper.deleteUserRole(userRole);
+  	    			if(userList!=null&&userList.size()>0){
+	    				for (int q = 0; q < userList.size(); q++) {
+	    					permitStatBp.updateUserPermitCache(userList.get(i).getUserName());
+	    				}
+	    			}
     				for (int j = 0; j < userNameList.size(); j++) {
     					UserRoleDO userRoleDO = new UserRoleDO();
     					userRoleDO.setUserName(userNameList.get(i));
@@ -605,6 +605,11 @@ public class RoleServiceImpl implements IRoleService {
     				if(roleDO.getCreateBy().equals(operator)){
         				userRole.setCreateBy(operator);
         				userRoleMapper.deleteUserRole(userRole);
+      	    			if(userList!=null&&userList.size()>0){
+    	    				for (int q = 0; q < userList.size(); q++) {
+    	    					permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+    	    				}
+    	    			}
           				for (int j = 0; j < userNameList.size(); j++) {
         					UserRoleDO userRoleDO = new UserRoleDO();
         					userRoleDO.setUserName(userNameList.get(i));
