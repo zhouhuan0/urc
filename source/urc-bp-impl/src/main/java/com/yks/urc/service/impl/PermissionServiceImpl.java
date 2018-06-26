@@ -118,8 +118,8 @@ public class PermissionServiceImpl implements IPermissionService {
 		List<PermissionVO> permissionVOs=new ArrayList<PermissionVO>();
 		if(roleMapper.isSuperAdminAccount(userName)){
 			//查询所有的角色功能权限
-			List<Permission> lstSysKey = permissionMapper.getAllSysKey();
-			for (Permission permission : lstSysKey) {
+			List<PermissionDO> lstSysKey = permissionMapper.getAllSysKey();
+			for (PermissionDO permission : lstSysKey) {
 				PermissionVO permissionVO = new PermissionVO();
 	        	permissionVO.setSysKey(permission.getSysKey());
 	        	permissionVO.setSysContext(permission.getSysContext());
