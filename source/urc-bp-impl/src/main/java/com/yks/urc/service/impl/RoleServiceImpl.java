@@ -174,6 +174,12 @@ public class RoleServiceImpl implements IRoleService {
             }
 
         }
+
+         /*更新用户功能权限缓存*/
+         List<String> lstUserName = roleVO.getLstUserName();
+         if(lstUserName!=null && !lstUserName.isEmpty()){
+             permitStatBp.updateUserPermitCache(lstUserName);
+         }
         return VoHelper.getSuccessResult();
     }
 
