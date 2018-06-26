@@ -16,6 +16,7 @@ import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
+import org.h2.engine.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -439,9 +440,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
         String tempIdStr = templVO.getTemplId();
         if (!StringUtil.isEmpty(tempIdStr)) {
             Long currentTemplId = Long.valueOf(tempIdStr);
-            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
-            if (dataRuleTemplDO == null) {
-                throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
+            /*判断是否为管理员*/
+            Boolean isAdmin = roleMapper.isAdminAccount(operator);
+            if(!isAdmin) {
+                DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
+                if (dataRuleTemplDO == null) {
+                    throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
+                }
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             dataRuleTemplMapper.delTemplDatasById(currentTemplId);
@@ -449,52 +454,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*5、新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）*/
         insertDataRuleTemlDatas(templVO, operator);
         return VoHelper.getSuccessResult(templVO);
-    }
-
-    /**
-     * Description: 新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/15 16:43
-     * @see
-     */
-    private void insertDataRuleTemlDatas(DataRuleTemplVO templVO, String operator) {
-        /*1、新增数据权限模板 urc_data_rule_templ*/
-        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
-        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
-        Long templId = seqBp.getNextDataRuleTemplId();
-        dataRuleTemplDO.setTemplId(templId);
-        dataRuleTemplDO.setCreateBy(operator);
-        dataRuleTemplDO.setCreateTime(new Date());
-        dataRuleTemplMapper.insert(dataRuleTemplDO);
-        /*2、新增数据权限sys urc_data_rule_sys */
-        /*数据权限Sys列表*/
-        List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
-        /*列权限数据列表*/
-        List<DataRuleColDO> dataRuleColCache = new ArrayList<>();
-        /*行权限数据列表*/
-        List<ExpressionDO> expressionCache = new ArrayList<>();
-
-        List<DataRuleSysVO> dataRuleSysVOS = templVO.getLstDataRuleSys();
-        if (dataRuleSysVOS != null) {
-            assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, templId, operator);
-            /*批量新增数据权限Sys*/
-            if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()){
-                dataRuleSysMapper.insertBatch(dataRuleSysCache);
-            }
-             /*批量新增行权限数据*/
-            if(expressionCache!=null && !expressionCache.isEmpty()) {
-                expressionMapper.insertBatch(expressionCache);
-            }
-            /*批量新增列权限数据*/
-            if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
-                dataRuleColMapper.insertBatch(dataRuleColCache);
-            }
-        }
-
-
     }
 
     /**
@@ -570,6 +529,52 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
     }
 
+    /**
+     * Description: 新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/15 16:43
+     * @see
+     */
+    private void insertDataRuleTemlDatas(DataRuleTemplVO templVO, String operator) {
+        /*1、新增数据权限模板 urc_data_rule_templ*/
+        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
+        Long templId = seqBp.getNextDataRuleTemplId();
+        dataRuleTemplDO.setTemplId(templId);
+        dataRuleTemplDO.setCreateBy(operator);
+        dataRuleTemplDO.setCreateTime(new Date());
+        dataRuleTemplMapper.insert(dataRuleTemplDO);
+        /*2、新增数据权限sys urc_data_rule_sys */
+        /*数据权限Sys列表*/
+        List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
+        /*列权限数据列表*/
+        List<DataRuleColDO> dataRuleColCache = new ArrayList<>();
+        /*行权限数据列表*/
+        List<ExpressionDO> expressionCache = new ArrayList<>();
+
+        List<DataRuleSysVO> dataRuleSysVOS = templVO.getLstDataRuleSys();
+        if (dataRuleSysVOS != null) {
+            assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, templId, operator);
+            /*批量新增数据权限Sys*/
+            if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()){
+                dataRuleSysMapper.insertBatch(dataRuleSysCache);
+            }
+             /*批量新增行权限数据*/
+            if(expressionCache!=null && !expressionCache.isEmpty()) {
+                expressionMapper.insertBatch(expressionCache);
+            }
+            /*批量新增列权限数据*/
+            if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
+                dataRuleColMapper.insertBatch(dataRuleColCache);
+            }
+        }
+
+
+    }
+
 
     /**
      * Description: List<DO> 转List<VO>
@@ -585,6 +590,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleTemplDO dataRuleTemplDO : dataRuleTemplDOS) {
             DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
             BeanUtils.copyProperties(dataRuleTemplDO, dataRuleTemplVO);
+            dataRuleTemplVO.setTemplId(String.valueOf(dataRuleTemplDO.getTemplId()));
             dataRuleTemplVO.setCreateTimeStr(dataRuleTemplDO.getCreateTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss"):null);
             dataRuleTemplVO.setModifiedTimeStr(dataRuleTemplDO.getModifiedTime()!=null?DateUtil.formatDate(dataRuleTemplDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss"):null);
             dataRuleTemplVOS.add(dataRuleTemplVO);
@@ -732,47 +738,53 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     public ResultVO getDataRuleByUser(List<String> lstUserName) {
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
-        for (int i = 0; i < lstUserName.size(); i++) {
-            //通过用户名得到sys_key
-            List<String> syskeyList = userRoleMapper.getSysKeyByUser(lstUserName.get(i));
-            List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
-            for (int j = 0; j < syskeyList.size(); j++) {
-                //通过sysKey得到 行权限
-                List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i), lstUserName.get(i));
-                //通过sysKey得到列权限
-                List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i), lstUserName.get(i));
-                List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
-                for (DataRuleColDO colDO : dataRuleColList) {
-                    DataRuleColVO dataRuleColVO = new DataRuleColVO();
-                    BeanUtils.copyProperties(colDO, dataRuleColVO);
-                    dataRuleColVOList.add(dataRuleColVO);
-                }
-                List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
-                for (ExpressionDO expressionDO : expressionList) {
-                    ExpressionVO expressionVO = new ExpressionVO();
-                    if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
-                        String operValues = expressionDO.getOperValues();
-                        List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
-                        expressionVO.setOperValuesArr(operValuesArr);
-                    }
-                    BeanUtils.copyProperties(expressionDO, expressionVO);
-                    expressionVOList.add(expressionVO);
-                }
-                DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-                ExpressionVO expressionVO = new ExpressionVO();
-                expressionVO.setSubWhereClause(expressionVOList);
-                dataRuleSysVO.sysKey = syskeyList.get(i);
-                dataRuleSysVO.col = dataRuleColVOList;
-                dataRuleSysVO.row = expressionVO;
-                lstDataRuleSys.add(dataRuleSysVO);
-            }
-            DataRuleVO dataRuleVO = new DataRuleVO();
-            dataRuleVO.userName = lstUserName.get(i);
-            dataRuleVO.lstDataRuleSys = lstDataRuleSys;
-            dataRuel.add(dataRuleVO);
+        if(lstUserName!=null&&lstUserName.size()>0){
+	        for (int i = 0; i < lstUserName.size(); i++) {
+	        	UserDO userDO=new UserDO();
+	        	userDO.setUserName(lstUserName.get(i));
+	            //通过用户名得到sys_key
+	            List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO);
+	            List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
+	            if(syskeyList!=null &&syskeyList.size()>0){
+	            	for (int j = 0; j < syskeyList.size(); j++) {
+	            		//通过sysKey得到 行权限
+	            		List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		//通过sysKey得到列权限
+	            		List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
+	            		for (DataRuleColDO colDO : dataRuleColList) {
+	            			DataRuleColVO dataRuleColVO = new DataRuleColVO();
+	            			BeanUtils.copyProperties(colDO, dataRuleColVO);
+	            			dataRuleColVOList.add(dataRuleColVO);
+	            		}
+	            		List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
+	            		for (ExpressionDO expressionDO : expressionList) {
+	            			ExpressionVO expressionVO = new ExpressionVO();
+	            			if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
+	            				String operValues = expressionDO.getOperValues();
+	            				List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+	            				expressionVO.setOperValuesArr(operValuesArr);
+	            			}
+	            			BeanUtils.copyProperties(expressionDO, expressionVO);
+	            			expressionVOList.add(expressionVO);
+	            		}
+	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+	            		ExpressionVO expressionVO = new ExpressionVO();
+	            		expressionVO.setSubWhereClause(expressionVOList);
+	            		dataRuleSysVO.sysKey = syskeyList.get(i).getSysKey();
+	            		dataRuleSysVO.col = dataRuleColVOList;
+	            		dataRuleSysVO.row = expressionVO;
+	            		lstDataRuleSys.add(dataRuleSysVO);
+	            	}
+	            	DataRuleVO dataRuleVO = new DataRuleVO();
+	            	dataRuleVO.userName = lstUserName.get(i);
+	            	dataRuleVO.lstDataRuleSys = lstDataRuleSys;
+	            	dataRuel.add(dataRuleVO);
+	            }
+	        }
         }
-        return VoHelper.getSuccessResult(dataRuel);
-    }
+          return VoHelper.getSuccessResult(dataRuel);
+      }
 
 
 }

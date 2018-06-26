@@ -43,16 +43,15 @@
     
     
     <!--获取条件表达式 list列表-->
-    <select id="listExpressionDOsBySysKey" resultMap="ResultMapWithBLOBs">
+    <select id="listExpressionDOsBySysKey"  parameterType="java.lang.Long"  resultMap="ResultMapWithBLOBs">
         SELECT 
 			<include refid="Base_SYS_Column_List"/> , <include refid="Blob_Column_List"/>   
 		FROM
 			urc_expression ue
 		LEFT JOIN urc_data_rule_sys udrs ON ue.data_rule_sys_id = udrs.data_rule_sys_id  
 		LEFT JOIN urc_data_rule udr ON udr.data_rule_id=udrs.data_rule_id
-		WHERE
-			udrs.sys_key=#{sysKey} 
-			AND udr.user_name=#{userName} 
+		WHERE  
+			ue.data_rule_sys_id =#{dataRuleSysId} 
     </select>
     
     
