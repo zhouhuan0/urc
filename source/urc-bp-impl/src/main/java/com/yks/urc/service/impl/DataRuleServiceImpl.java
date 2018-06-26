@@ -430,10 +430,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
-        DataRuleTemplVO templVO = StringUtility.parseObject(jsonObject.getString("templ"), DataRuleTemplVO.class);
-        if (templVO == null) {
-            throw new URCBizException("parameter templ is null", ErrorCode.E_000002);
-        }
+        DataRuleTemplVO templVO = jsonObject.getObject("templ",DataRuleTemplVO.class);
+        /*校验基本参数*/
+        checkParam(templVO);
         /** 3、判断该方案是否属于当前用户（非管理员角色）
          *  1)、当temp方案存在 2)、当前用户非管理员  3)、temp方案不属于当前用户
          */
@@ -454,6 +453,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*5、新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）*/
         insertDataRuleTemlDatas(templVO, operator);
         return VoHelper.getSuccessResult(templVO);
+    }
+
+    private void checkParam(DataRuleTemplVO templVO) {
+        if (templVO == null) {
+            throw new URCBizException("parameter templ is null", ErrorCode.E_000002);
+        }
+        if(StringUtil.isEmpty(templVO.getTemplName())){
+            throw new URCBizException("parameter templName is null", ErrorCode.E_000002);
+        }
     }
 
     /**
@@ -720,8 +728,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
             dataRuleColMapper.insertBatch(dataRuleColCache);
         }
-
-
+        /*发送MQ*/
+        sendToMq(dataRuleSysCache, lstUserName);
         return VoHelper.getSuccessResult();
     }
 
