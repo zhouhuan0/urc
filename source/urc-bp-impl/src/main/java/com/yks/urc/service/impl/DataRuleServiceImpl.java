@@ -16,6 +16,7 @@ import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.log4j.Logger;
+import org.h2.engine.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -745,47 +746,53 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     public ResultVO getDataRuleByUser(List<String> lstUserName) {
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
-        for (int i = 0; i < lstUserName.size(); i++) {
-            //通过用户名得到sys_key
-            List<String> syskeyList = userRoleMapper.getSysKeyByUser(lstUserName.get(i));
-            List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
-            for (int j = 0; j < syskeyList.size(); j++) {
-                //通过sysKey得到 行权限
-                List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i), lstUserName.get(i));
-                //通过sysKey得到列权限
-                List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i), lstUserName.get(i));
-                List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
-                for (DataRuleColDO colDO : dataRuleColList) {
-                    DataRuleColVO dataRuleColVO = new DataRuleColVO();
-                    BeanUtils.copyProperties(colDO, dataRuleColVO);
-                    dataRuleColVOList.add(dataRuleColVO);
-                }
-                List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
-                for (ExpressionDO expressionDO : expressionList) {
-                    ExpressionVO expressionVO = new ExpressionVO();
-                    if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
-                        String operValues = expressionDO.getOperValues();
-                        List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
-                        expressionVO.setOperValuesArr(operValuesArr);
-                    }
-                    BeanUtils.copyProperties(expressionDO, expressionVO);
-                    expressionVOList.add(expressionVO);
-                }
-                DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-                ExpressionVO expressionVO = new ExpressionVO();
-                expressionVO.setSubWhereClause(expressionVOList);
-                dataRuleSysVO.sysKey = syskeyList.get(i);
-                dataRuleSysVO.col = dataRuleColVOList;
-                dataRuleSysVO.row = expressionVO;
-                lstDataRuleSys.add(dataRuleSysVO);
-            }
-            DataRuleVO dataRuleVO = new DataRuleVO();
-            dataRuleVO.userName = lstUserName.get(i);
-            dataRuleVO.lstDataRuleSys = lstDataRuleSys;
-            dataRuel.add(dataRuleVO);
+        if(lstUserName!=null&&lstUserName.size()>0){
+	        for (int i = 0; i < lstUserName.size(); i++) {
+	        	UserDO userDO=new UserDO();
+	        	userDO.setUserName(lstUserName.get(i));
+	            //通过用户名得到sys_key
+	            List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO);
+	            List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
+	            if(syskeyList!=null &&syskeyList.size()>0){
+	            	for (int j = 0; j < syskeyList.size(); j++) {
+	            		//通过sysKey得到 行权限
+	            		List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		//通过sysKey得到列权限
+	            		List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(syskeyList.get(i).getDataRuleSysId());
+	            		List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
+	            		for (DataRuleColDO colDO : dataRuleColList) {
+	            			DataRuleColVO dataRuleColVO = new DataRuleColVO();
+	            			BeanUtils.copyProperties(colDO, dataRuleColVO);
+	            			dataRuleColVOList.add(dataRuleColVO);
+	            		}
+	            		List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
+	            		for (ExpressionDO expressionDO : expressionList) {
+	            			ExpressionVO expressionVO = new ExpressionVO();
+	            			if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
+	            				String operValues = expressionDO.getOperValues();
+	            				List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+	            				expressionVO.setOperValuesArr(operValuesArr);
+	            			}
+	            			BeanUtils.copyProperties(expressionDO, expressionVO);
+	            			expressionVOList.add(expressionVO);
+	            		}
+	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+	            		ExpressionVO expressionVO = new ExpressionVO();
+	            		expressionVO.setSubWhereClause(expressionVOList);
+	            		dataRuleSysVO.sysKey = syskeyList.get(i).getSysKey();
+	            		dataRuleSysVO.col = dataRuleColVOList;
+	            		dataRuleSysVO.row = expressionVO;
+	            		lstDataRuleSys.add(dataRuleSysVO);
+	            	}
+	            	DataRuleVO dataRuleVO = new DataRuleVO();
+	            	dataRuleVO.userName = lstUserName.get(i);
+	            	dataRuleVO.lstDataRuleSys = lstDataRuleSys;
+	            	dataRuel.add(dataRuleVO);
+	            }
+	        }
         }
-        return VoHelper.getSuccessResult(dataRuel);
-    }
+          return VoHelper.getSuccessResult(dataRuel);
+      }
 
 
 }
