@@ -45,6 +45,11 @@ public class RoleVO implements Serializable {
      * 有效结束时间
      */
     public Date expireTime;
+
+    private String effectiveTimeStr;
+    private String expireTimeStr;
+    private String createTimeStr;
+    private String modifiedTimeStr;
     /**
      * 创建时间
      */
@@ -197,5 +202,37 @@ public class RoleVO implements Serializable {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    public String getEffectiveTimeStr() {
+        return effectiveTimeStr;
+    }
+
+    public void setEffectiveTimeStr(String effectiveTimeStr) {
+        this.effectiveTimeStr = effectiveTimeStr;
+    }
+
+    public String getExpireTimeStr() {
+        return expireTimeStr;
+    }
+
+    public void setExpireTimeStr(String expireTimeStr) {
+        this.expireTimeStr = expireTimeStr;
+    }
+
+    public String getCreateTimeStr() {
+        return createTimeStr;
+    }
+
+    public void setCreateTimeStr(String createTimeStr) {
+        this.createTimeStr = createTimeStr;
+    }
+
+    public String getModifiedTimeStr() {
+        return modifiedTimeStr;
+    }
+
+    public void setModifiedTimeStr(String modifiedTimeStr) {
+        this.modifiedTimeStr = modifiedTimeStr;
     }
 }
