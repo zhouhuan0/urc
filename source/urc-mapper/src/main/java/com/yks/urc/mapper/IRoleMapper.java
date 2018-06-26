@@ -124,7 +124,14 @@ public interface IRoleMapper {
      * @Date 2018/6/13 17:27
      */
     boolean isAdminAccount(@Param("userName") String userName);
-
+    /**
+     * 判断用户是否是管理员或超级管理员
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/6/26 18:15
+     */
+    boolean isAdminOrSuperAdmin(@Param("userName") String userName);
     /**
      * Description: 根据角色名获取角色
      *

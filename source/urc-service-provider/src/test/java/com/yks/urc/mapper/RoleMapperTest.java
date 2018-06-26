@@ -236,4 +236,10 @@ public class RoleMapperTest extends BaseMapperTest {
         int rtn = roleMapper.deleteBatchRoleDatas(dataMap);
         System.out.println(rtn);
     }
+    @Test
+    public void testIsAdmin(){
+        String str ="zhangqun";
+       boolean flag= roleMapper.isAdminOrSuperAdmin(str);
+        System.out.println(flag);
+    }
 }

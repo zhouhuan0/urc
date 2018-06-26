@@ -502,11 +502,8 @@ public class RoleServiceImpl implements IRoleService {
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
         try {
             Map dataMap = new HashMap();
-            if (roleMapper.isSuperAdminAccount(operator)) {
-                dataMap.put("createBy", operator);
-            } else if(roleMapper.isAdminAccount(operator)){
-                dataMap.put("createBy", operator);
-            }else {
+            //判断用户是否是普通用户
+            if(!roleMapper.isAdminOrSuperAdmin(operator)){
                 return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"您不是管理员,没有权限更新数据");
             }
             //如果是超级管理员,则更新所有,否则只能更新自己的创建的
