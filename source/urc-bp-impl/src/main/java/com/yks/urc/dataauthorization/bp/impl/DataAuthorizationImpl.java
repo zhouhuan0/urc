@@ -91,6 +91,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
+            long number = 10000;
             for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                 OmsShopVO omsShopVO = new OmsShopVO();
                 omsShopVO.shopId = shopAndSiteResp.sellerid;
@@ -105,11 +106,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 }
 
                 // 如果获取的site_code 为空,则不装载数
-                if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code)) {
+               /* if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code)) {
                     omsShopVO.lstSite = null;
-                } else {
+                } else {*/
                     OmsSiteVO omsSiteVO = new OmsSiteVO();
-                    omsSiteVO.siteId = shopAndSiteResp.site_code;
+
+                    omsSiteVO.siteId = String.valueOf(number++);
                     omsSiteVO.siteName = shopAndSiteResp.site_name;
                     // name 没有 将id  赋值给name
                     if (StringUtility.isNullOrEmpty(omsSiteVO.siteName)) {
@@ -117,7 +119,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                     }
                     omsShopVO.lstSite = new ArrayList<>();
                     omsShopVO.lstSite.add(omsSiteVO);
-                }
+                //}
                 omsShopVoList.add(omsShopVO);
             }
         }

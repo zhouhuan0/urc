@@ -211,7 +211,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void getShopList(){
 		String json ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
-				"\t\"platform\":\"eBay\"\n" +
+				"\t\"platform\":\"速卖通\"\n" +
 				"}";
 		ResultVO resultVO =service.getShopList(json);
 		System.out.println("==================");
@@ -271,10 +271,10 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("operator","panyun");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
-		roleVO.roleId = Long.parseLong("1529550145551000001");
+		roleVO.roleId = Long.parseLong("1529746382848000008");
 		List<PermissionVO> selectedContext =new ArrayList<>();
 		PermissionVO permissionVO =new PermissionVO();
-		String sysCOntext="{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[],\"name\":\"数据\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}";
+		String sysCOntext="{sasdada}";
 		permissionVO.setSysContext(sysCOntext);
 		selectedContext.add(permissionVO);
 		roleVO.selectedContext=selectedContext;
