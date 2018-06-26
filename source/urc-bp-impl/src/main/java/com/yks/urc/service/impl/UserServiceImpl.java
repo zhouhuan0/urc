@@ -91,13 +91,18 @@ public class UserServiceImpl implements IUserService {
         ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator)) {
+                rslt.msg = "操作人员为空 " + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.data = dataAuthorization.getPlatformList(operator);
             if (rslt.data == null){
-
+                rslt.msg = "Error,获取的平台为空 " + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                return rslt;
             }
             rslt.msg = "Success " + operator;
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
             rslt = VoHelper.getErrorResult();
         } finally {
@@ -116,8 +121,11 @@ public class UserServiceImpl implements IUserService {
             }
             rslt.data = dataAuthorization.getShopList(operator, platform);
             rslt.msg = "Success " + operator;
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
             if (rslt.data == null) {
                 rslt.msg = "Error 无法找到此平台的店铺信息,或者无此平台," + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                return rslt;
             }
         } catch (Exception e) {
             rslt = VoHelper.getErrorResult();
