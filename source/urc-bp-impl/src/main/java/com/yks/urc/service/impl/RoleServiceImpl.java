@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.enums.UserCentralStatusEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.Permission;
 import com.yks.urc.entity.RoleDO;
@@ -126,6 +127,10 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleDO roleDO : roleDOS) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(roleDO, roleVO);
+            roleVO.setCreateTimeStr(roleDO.getCreateTime()!=null?DateUtil.formatDate(roleDO.getCreateTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            roleVO.setModifiedTimeStr(roleDO.getModifiedTime()!=null? DateUtil.formatDate(roleDO.getModifiedTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            roleVO.setExpireTimeStr(roleDO.getExpireTime()!=null? DateUtil.formatDate(roleDO.getExpireTime(),"yyyy-MM-dd HH:mm:ss"):null);
+            roleVO.setEffectiveTimeStr(roleDO.getEffectiveTime()!=null? DateUtil.formatDate(roleDO.getEffectiveTime(),"yyyy-MM-dd HH:mm:ss"):null);
             roleVOS.add(roleVO);
         }
         return roleVOS;

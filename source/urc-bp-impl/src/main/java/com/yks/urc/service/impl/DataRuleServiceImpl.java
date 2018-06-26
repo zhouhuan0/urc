@@ -452,52 +452,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     /**
-     * Description: 新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/15 16:43
-     * @see
-     */
-    private void insertDataRuleTemlDatas(DataRuleTemplVO templVO, String operator) {
-        /*1、新增数据权限模板 urc_data_rule_templ*/
-        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
-        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
-        Long templId = seqBp.getNextDataRuleTemplId();
-        dataRuleTemplDO.setTemplId(templId);
-        dataRuleTemplDO.setCreateBy(operator);
-        dataRuleTemplDO.setCreateTime(new Date());
-        dataRuleTemplMapper.insert(dataRuleTemplDO);
-        /*2、新增数据权限sys urc_data_rule_sys */
-        /*数据权限Sys列表*/
-        List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
-        /*列权限数据列表*/
-        List<DataRuleColDO> dataRuleColCache = new ArrayList<>();
-        /*行权限数据列表*/
-        List<ExpressionDO> expressionCache = new ArrayList<>();
-
-        List<DataRuleSysVO> dataRuleSysVOS = templVO.getLstDataRuleSys();
-        if (dataRuleSysVOS != null) {
-            assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, templId, operator);
-            /*批量新增数据权限Sys*/
-            if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()){
-                dataRuleSysMapper.insertBatch(dataRuleSysCache);
-            }
-             /*批量新增行权限数据*/
-            if(expressionCache!=null && !expressionCache.isEmpty()) {
-                expressionMapper.insertBatch(expressionCache);
-            }
-            /*批量新增列权限数据*/
-            if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
-                dataRuleColMapper.insertBatch(dataRuleColCache);
-            }
-        }
-
-
-    }
-
-    /**
      * Description:
      * 1、组装数据权限sys数据，并添加到缓存List dataRuleSysCache里，供批量添加
      * 2、组装行权限数据，并添加到缓存List expressionCache里，供批量添加
@@ -568,6 +522,52 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
         }
+    }
+
+    /**
+     * Description: 新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/15 16:43
+     * @see
+     */
+    private void insertDataRuleTemlDatas(DataRuleTemplVO templVO, String operator) {
+        /*1、新增数据权限模板 urc_data_rule_templ*/
+        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
+        Long templId = seqBp.getNextDataRuleTemplId();
+        dataRuleTemplDO.setTemplId(templId);
+        dataRuleTemplDO.setCreateBy(operator);
+        dataRuleTemplDO.setCreateTime(new Date());
+        dataRuleTemplMapper.insert(dataRuleTemplDO);
+        /*2、新增数据权限sys urc_data_rule_sys */
+        /*数据权限Sys列表*/
+        List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
+        /*列权限数据列表*/
+        List<DataRuleColDO> dataRuleColCache = new ArrayList<>();
+        /*行权限数据列表*/
+        List<ExpressionDO> expressionCache = new ArrayList<>();
+
+        List<DataRuleSysVO> dataRuleSysVOS = templVO.getLstDataRuleSys();
+        if (dataRuleSysVOS != null) {
+            assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, templId, operator);
+            /*批量新增数据权限Sys*/
+            if(dataRuleSysCache!=null && !dataRuleSysCache.isEmpty()){
+                dataRuleSysMapper.insertBatch(dataRuleSysCache);
+            }
+             /*批量新增行权限数据*/
+            if(expressionCache!=null && !expressionCache.isEmpty()) {
+                expressionMapper.insertBatch(expressionCache);
+            }
+            /*批量新增列权限数据*/
+            if(dataRuleColCache!=null && !dataRuleColCache.isEmpty()) {
+                dataRuleColMapper.insertBatch(dataRuleColCache);
+            }
+        }
+
+
     }
 
 

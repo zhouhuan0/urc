@@ -99,9 +99,15 @@ public class RoleServiceTest extends BaseServiceTest {
     public void getRolesByInfo(){
         JSONObject jsonObject = new JSONObject();
         RoleVO roleVO = new RoleVO();
-        jsonObject.put("operator","admin");
+        StringBuilder roleNames = new StringBuilder();
+        /*roleNames.append("admin-hehe").append(System.getProperty("line.separator"))
+                .append("admin-update");
+        roleVO.setRoleName(roleNames.toString());*/
+        roleVO.setRoleName("");
+        jsonObject.put("operator","lvchangrong");
         jsonObject.put("pageNumber",1);
         jsonObject.put("pageData",4);
+        jsonObject.put("role",roleVO);
         ResultVO resultVO = roleService.getRolesByInfo(jsonObject.toString());
         System.out.println(resultVO);
     }
