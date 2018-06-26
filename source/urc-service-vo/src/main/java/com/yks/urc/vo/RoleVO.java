@@ -16,6 +16,8 @@ public class RoleVO implements Serializable {
     private static final long serialVersionUID = -706052625111152853L;
     
     public long roleId;
+
+    public String roleIdStr;
     
     /**
      *
@@ -234,5 +236,13 @@ public class RoleVO implements Serializable {
 
     public void setModifiedTimeStr(String modifiedTimeStr) {
         this.modifiedTimeStr = modifiedTimeStr;
+    }
+
+    public String getRoleIdStr() {
+        return roleIdStr;
+    }
+
+    public void setRoleIdStr(String roleIdStr) {
+        this.roleIdStr = roleIdStr;
     }
 }
