@@ -679,12 +679,12 @@ public class RoleServiceImpl implements IRoleService {
             throw new URCBizException(ErrorCode.E_000002);
         }
 		/* 非admin用户只能管理自己创建的角色 */
-        long roleId = 0;
-        try {
-            roleId = Long.parseLong(sourceRoleId);
-        } catch (NumberFormatException e) {
-            throw new URCBizException(ErrorCode.E_000003);
-        }
+        long roleId = 1529550145551000001L;
+//        try {
+//            roleId = Long.parseLong(sourceRoleId);
+//        } catch (NumberFormatException e) {
+//            throw new URCBizException(ErrorCode.E_000003);
+//        }
         Date currentDate = new Date();
         RoleDO roleDO = getRoleInfo(operator, newRoleName, roleId);
         // 复制角色信息
