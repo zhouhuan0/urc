@@ -243,7 +243,7 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO getMyDataRuleTempl(String jsonStr) {
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+/*        JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
@@ -252,7 +252,8 @@ public class UrcServiceImpl implements IUrcService {
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         
-        return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);
+        return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);*/
+    	return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
     @Override
