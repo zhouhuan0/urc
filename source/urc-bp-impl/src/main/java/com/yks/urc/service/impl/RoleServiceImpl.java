@@ -160,13 +160,15 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             throw new URCBizException("parameter role is null", ErrorCode.E_000002);
         }
+        String roleIdStr = roleVO.getRoleId();
+        Long roleId = StringUtil.isEmpty(roleIdStr)?null:Long.valueOf(roleVO.getRoleId());
           /*获取角色原关联的用户userName*/
         UserRoleDO userRoleDO = new UserRoleDO();
-        userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+        userRoleDO.setRoleId(roleId);
         List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
           /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
-        RoleDO opRoleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
+        RoleDO opRoleDO = roleMapper.getRoleByRoleId(roleId);
         if (isAdmin) {
             insertOrUpdateRole(operator, roleVO, opRoleDO);
         } else {
