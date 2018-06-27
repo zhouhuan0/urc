@@ -271,7 +271,7 @@ public class UserBpImpl implements IUserBp {
             // 解析json数组
             logger.info("获取userInfo");
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
-            logger.info("需要解析的数组为%s",String.format(dingUserList.toString()));
+            logger.info("需要解析的数组为%s",String.format(String.valueOf(dingUserList)));
         } catch (Exception e) {
             logger.error("请求的地址为%s,获取的token为%,调用的结果为%s,需要解析的数组为%s",String.format(USER_INFO_ADDRESS,accessToken,userInfo,dingUserList.toString()), e.getMessage());
         }
