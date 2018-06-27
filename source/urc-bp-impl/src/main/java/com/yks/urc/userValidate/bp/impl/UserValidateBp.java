@@ -2,6 +2,7 @@ package com.yks.urc.userValidate.bp.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -63,6 +64,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @date 2018年6月12日 下午7:22:38
 	 */
 	public List<UserPermitStatDO> plainSys(SystemRootVO sys1, String userName) {
+		if (sys1 == null) return Collections.emptyList();
 		List<MenuVO> lstMenu = sys1.menu;
 
 		List<ModuleVO> lstModuleRslt = new ArrayList<>();
@@ -457,12 +459,16 @@ public class UserValidateBp implements IUserValidateBp {
 	public SystemRootVO mergeFuncJson2Obj(List<String> lstJson) {
 		if (lstJson == null || lstJson.size() == 0)
 			return null;
-		SystemRootVO sys1 = StringUtility.parseObject(lstJson.get(0), SystemRootVO.class);
-		for (int i = 1; i < lstJson.size(); i++) {
-			String strMem = lstJson.get(i);
+		List<SystemRootVO> lstSysRootVO = new ArrayList<>();
+		for (String mem : lstJson) {
+			SystemRootVO sys1 = StringUtility.parseObject(mem, SystemRootVO.class);
+			if (sys1 != null) lstSysRootVO.add(sys1);
+		}
+		if (lstSysRootVO.size() == 0) return null;
+		SystemRootVO sys1 = lstSysRootVO.get(0);
+		for (int i = 1; i < lstSysRootVO.size(); i++) {
 			// sys2中的功能权限合并到sys1中
-			SystemRootVO sys2 = StringUtility.parseObject(strMem, SystemRootVO.class);
-
+			SystemRootVO sys2 = lstSysRootVO.get(i);
 			distinctSystemRootVO(sys1, sys2);
 		}
 		return sys1;

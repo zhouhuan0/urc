@@ -480,9 +480,11 @@ public class StringUtility {
 
 	public static String toJSONString_NoException(Object objSrc) {
 		try {
+			if (objSrc == null) return Empty;
 			return JSON.toJSONString(objSrc, mapping);
 		} catch (Exception ex) {
-			return "";
+			logger.error("toJSONString_NoException", ex);
+			return Empty;
 		}
 	}
 
