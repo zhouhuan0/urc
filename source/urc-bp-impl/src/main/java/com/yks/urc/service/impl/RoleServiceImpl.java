@@ -561,11 +561,13 @@ public class RoleServiceImpl implements IRoleService {
             }
             dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
+        logger.info("获取的角色id为:%a,获取的用户名为%s",String.format(String.valueOf(lstRoleId)),operator);
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         /*4、更新用户操作权限冗余表和缓存*/
             permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
+            logger.error(e.getMessage());
            throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),e.getMessage());
         }
     }

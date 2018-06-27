@@ -265,6 +265,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("operator","linwanxian");
 		map.put("user",userVO);
 		String jsonStr =StringUtility.toJSONString(map);
+		MotanSession.initialSession(jsonStr);
 		System.out.println("==================");
 		System.out.println(jsonStr);
 		ResultVO resultVO=service.getUserByUserName(jsonStr);
@@ -274,7 +275,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void updateRolePermission(){
 		Map map =new HashMap();
-		map.put("operator","zhangqun");
+		map.put("operator","panyun");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
 		roleVO.roleId = "1529746076695000006";
@@ -289,6 +290,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		String json =StringUtility.toJSONString(map);
 		System.out.println("==================");
 		System.out.println(json);
+		MotanSession.initialSession(json);
 		ResultVO resultVO =service.updateRolePermission(json);
 		System.out.println(resultVO.msg);
 

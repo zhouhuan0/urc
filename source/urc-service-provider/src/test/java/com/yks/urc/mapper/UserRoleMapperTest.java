@@ -9,9 +9,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * 〈一句话功能简述〉
@@ -110,6 +108,15 @@ public class UserRoleMapperTest extends BaseMapperTest {
         int rtn =  userRoleMapper.deleteByRoleId(1L);
         System.out.println(rtn);
 
+    }
+    @Test
+    public void listUserNamesByRoleIdsTest(){
+        Map map =new HashMap();
+        map.put("role_id","1529550145551000001");
+        List<String> strings=userRoleMapper.listUserNamesByRoleIds(map);
+        for (String str:strings){
+            System.out.println(str);
+        }
     }
 
 }
