@@ -176,7 +176,15 @@ public class RoleServiceImpl implements IRoleService {
         }
 
          /*更新用户功能权限缓存*/
-        List<String> lstUserName = roleVO.getLstUserName();
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+        List<String> lstUserName = new ArrayList<>();
+        /*获取角色原关联的用户userName*/
+        List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
+        /*获取角色现在关联的用户userName*/
+        List<String> newRelationUsers = roleVO.getLstUserName();
+        lstUserName.addAll(oldRelationUsers);
+        lstUserName.addAll(newRelationUsers);
         if (lstUserName != null && !lstUserName.isEmpty()) {
             permitStatBp.updateUserPermitCache(lstUserName);
         }

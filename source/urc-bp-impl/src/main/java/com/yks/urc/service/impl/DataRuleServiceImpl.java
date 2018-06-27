@@ -439,8 +439,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         String tempIdStr = templVO.getTemplId();
         if (!StringUtil.isEmpty(tempIdStr)) {
             Long currentTemplId = Long.valueOf(tempIdStr);
-            /*判断是否为管理员*/
-            Boolean isAdmin = roleMapper.isAdminAccount(operator);
+            /*判断是否为超级管理员*/
+            Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
             if(!isAdmin) {
                 DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
                 if (dataRuleTemplDO == null) {
