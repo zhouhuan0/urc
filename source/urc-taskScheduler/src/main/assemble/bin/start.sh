@@ -30,7 +30,7 @@ JAVA_OPTS="$JAVA_OPTS -XX:CMSInitiatingOccupancyFraction=75"
 #JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCTimeStamps"
 #JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails"
 #debug Options
-JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8065,server=y,suspend=n"
+JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8066,server=y,suspend=n"
 #==============================================================================
 
 TEMP_CLASSPATH="$BASE_HOME/conf"
