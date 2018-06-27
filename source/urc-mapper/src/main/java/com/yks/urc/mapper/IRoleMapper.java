@@ -189,5 +189,8 @@ public interface IRoleMapper {
      */
     Integer deleteBatchRoleDatas(Map<String,Object> dataMap);
 
+    
+	List<String> getBizAdminFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
+
 
 }

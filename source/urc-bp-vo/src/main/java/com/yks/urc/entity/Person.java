@@ -2,6 +2,7 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
+
 public class Person {
     private Long id;
 
@@ -172,4 +173,17 @@ public class Person {
     public void setModifiedBy(String modifiedBy) {
         this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
     }
+    
+	@Override
+	public int hashCode() {
+		String str = dingUserId + phoneNum;
+		return str.hashCode();
+	}
+	
+
+	@Override
+	public boolean equals(Object arg0) {
+		Person p = (Person) arg0;
+		return dingUserId.equals(p.dingUserId) && phoneNum.equals(p.phoneNum);
+	}
 }

@@ -3,8 +3,10 @@ package com.yks.urc.service.impl;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -110,6 +112,12 @@ public class PersonServiceImpl implements IPersonService {
 							List<Person> personList=initInfo.get("person");
 							List<PersonOrg> personOrgList=initInfo.get("personOrg");
 							
+							//dingUserId + phoneNum作为维度去重Person
+					        Set<Person> setData = new HashSet<Person>();  
+					        setData.addAll(personList);  
+					        personList.clear();
+					        personList = new ArrayList<>(setData);
+							
 							//插入部门表
 							organizationMapper.insertBatchOrg(orgList);
 							//插入人员表
@@ -121,7 +129,7 @@ public class PersonServiceImpl implements IPersonService {
 							logger.error("同步钉钉数据出错，message={}",e.getMessage());
 							operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
 						}
-		            }
+	            }
 		        });
 					
 				TaskVO taskVO=new TaskVO();	
@@ -150,7 +158,6 @@ public class PersonServiceImpl implements IPersonService {
 			taskVO.taskId="1";
 			return VoHelper.getSuccessResult(taskVO);
 		}
-		
 	}
 	
 
