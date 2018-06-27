@@ -233,7 +233,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	    map.put("operator","linwanxian");
         RoleVO roleVO =new RoleVO();
         List<RoleVO> lstRole =new ArrayList<>();
-        roleVO.roleId= Long.parseLong("1529550145551000001");
+        roleVO.roleId= "1529550145551000001";
         lstRole.add(roleVO);
 
         map.put("lstRole",lstRole);
@@ -271,7 +271,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("operator","zhangqun");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
-		roleVO.roleId = Long.parseLong("1529746076695000006");
+		roleVO.roleId = "1529746076695000006";
 		List<PermissionVO> selectedContext =new ArrayList<>();
 		PermissionVO permissionVO =new PermissionVO();
 		String sysCOntext="{bbbbbb}";

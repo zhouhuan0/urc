@@ -126,6 +126,7 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleDO roleDO : roleDOS) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(roleDO, roleVO);
+            roleVO.setRoleId(roleDO.getRoleId().toString());
             roleVO.setCreateTimeStr(roleDO.getCreateTime() != null ? DateUtil.formatDate(roleDO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setExpireTimeStr(roleDO.getExpireTime() != null ? DateUtil.formatDate(roleDO.getExpireTime(), "yyyy-MM-dd HH:mm:ss") : null);
@@ -160,7 +161,7 @@ public class RoleServiceImpl implements IRoleService {
         }
         /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
-        RoleDO opRoleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
+        RoleDO opRoleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
         if (isAdmin) {
             insertOrUpdateRole(operator, roleVO, opRoleDO);
         } else {
@@ -483,7 +484,7 @@ public class RoleServiceImpl implements IRoleService {
                     permissionVOs.add(permissionVO);
                 }
                 RoleDO roleDo = roleMapper.getRoleByRoleId(Long.parseLong(lstRoleId.get(i)));
-                roleVO.roleId = Long.parseLong(lstRoleId.get(i));
+                roleVO.roleId = lstRoleId.get(i);
                 roleVO.roleName = roleDo.getRoleName();
                 roleVO.selectedContext = permissionVOs;
                 roleVoList.add(roleVO);
@@ -507,17 +508,17 @@ public class RoleServiceImpl implements IRoleService {
                 return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"您不是管理员,没有权限更新数据");
             }
             //如果是超级管理员,则更新所有,否则只能更新自己的创建的
-            List<Long> lstRoleId = new ArrayList<>();
+            List<String> lstRoleId = new ArrayList<>();
             for (RoleVO roleVO : lstRole) {
                 //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的创建人不是他自己的话,则无权限更新此数据,跳过处理
                 if (!roleMapper.isSuperAdminAccount(operator)){
-                    RoleDO roleDO =roleMapper.getRoleByRoleId(roleVO.getRoleId());
+                    RoleDO roleDO =roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
                     if (!operator.equals(roleDO.getCreateBy())){
                         continue;
                     }
                 }
                 UserRoleDO userRole = new UserRoleDO();
-                userRole.setRoleId(roleVO.roleId);
+                userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
                 List<Long> roleIds =new ArrayList<>();
@@ -571,7 +572,7 @@ public class RoleServiceImpl implements IRoleService {
                 if (roleDO != null) {
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
-                    roleVO.setRoleId(roleDO.getRoleId());
+                    roleVO.setRoleId(roleDO.getRoleId().toString());
                     UserRoleDO userRoleDO = new UserRoleDO();
                     userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
                     if (!roleMapper.isSuperAdminAccount(operator)) {
@@ -603,11 +604,11 @@ public class RoleServiceImpl implements IRoleService {
     	if(lstRole!=null&&lstRole.size()>0){
     		for (int i = 0; i < lstRole.size(); i++) {
     			RoleVO roleVO = lstRole.get(i);
-    			RoleDO roleDO=roleMapper.getRoleByRoleId(roleVO.getRoleId());
+    			RoleDO roleDO=roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
     			UserRoleDO userRole = new UserRoleDO();
     			List<UserRoleDO> userRoleDOS = new ArrayList<>();
     			List<String> userNameList = roleVO.getLstUserName();
-    			userRole.setRoleId(roleVO.getRoleId());
+    			userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
     			List<UserDO> userList= userMapper.getUserByRoleId(userRole);
     			if (roleMapper.isSuperAdminAccount(operator)) {
     				userRoleMapper.deleteUserRole(userRole);
@@ -619,7 +620,7 @@ public class RoleServiceImpl implements IRoleService {
     				for (int j = 0; j < userNameList.size(); j++) {
     					UserRoleDO userRoleDO = new UserRoleDO();
     					userRoleDO.setUserName(userNameList.get(i));
-    					userRoleDO.setRoleId(roleVO.getRoleId());
+    					userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
     					userRoleDO.setCreateBy(operator);
     					userRoleDO.setCreateTime(new Date());
     					userRoleDO.setModifiedBy(operator);
@@ -638,7 +639,7 @@ public class RoleServiceImpl implements IRoleService {
           				for (int j = 0; j < userNameList.size(); j++) {
         					UserRoleDO userRoleDO = new UserRoleDO();
         					userRoleDO.setUserName(userNameList.get(i));
-        					userRoleDO.setRoleId(roleVO.getRoleId());
+        					userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
         					userRoleDO.setCreateBy(operator);
         					userRoleDO.setCreateTime(new Date());
         					userRoleDO.setModifiedBy(operator);
