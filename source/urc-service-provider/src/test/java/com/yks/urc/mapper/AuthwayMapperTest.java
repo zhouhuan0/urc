@@ -13,6 +13,8 @@ import com.yks.urc.vo.AuthWayVO;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 public class AuthwayMapperTest extends BaseMapperTest {
 
     @Autowired
@@ -21,7 +23,7 @@ public class AuthwayMapperTest extends BaseMapperTest {
     @Test
     public void testGetentity(){
 
-        AuthWayVO authWayVO =authWayMapper.getAuthWayVoBySysKey("001");
-        System.out.println(authWayVO.entityName);
+        List<AuthWayVO> authWayVOS =authWayMapper.getAuthWayVoBySysKey("001");
+        System.out.println(authWayVOS.get(0).entityName);
     }
 }
