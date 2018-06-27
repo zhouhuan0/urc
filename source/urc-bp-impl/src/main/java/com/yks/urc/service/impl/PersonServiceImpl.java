@@ -27,6 +27,7 @@ import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
@@ -128,8 +129,9 @@ public class PersonServiceImpl implements IPersonService {
 						} catch (Exception e) {
 							logger.error("同步钉钉数据出错，message={}",e.getMessage());
 							operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
+			                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步钉钉数据出错..");
 						}
-	            }
+					}
 		        });
 					
 				TaskVO taskVO=new TaskVO();	
@@ -139,9 +141,7 @@ public class PersonServiceImpl implements IPersonService {
 			} catch (Exception e) {
 				logger.error("同步钉钉数据出错，message={}",e.getMessage());
 				operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
-				TaskVO taskVO=new TaskVO();	
-				taskVO.taskId="0";
-				return VoHelper.getSuccessResult(taskVO);
+                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步钉钉数据出错..");
 			}finally{
 				lock.unlock();
 				logger.info("同步钉钉数据完成");
