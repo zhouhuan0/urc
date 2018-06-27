@@ -147,6 +147,7 @@
         select  distinct p.person_name
         from urc_user u left join urc_person p ON u.ding_user_id=p.ding_user_id
         where u.user_name=#{userName}
+        limit 1
     </select>
     
    <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultType="java.lang.String">
