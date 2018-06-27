@@ -21,6 +21,7 @@ import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
@@ -759,6 +760,44 @@ public class RoleServiceImpl implements IRoleService {
         return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
 
+
+    @Autowired
+    ISessionBp sessionBp;
+    @Autowired
+    PermissionMapper permitMapper;
+    @Autowired
+    private IRolePermissionMapper rolePermitMapper;
+
+    @Override
+    @Transactional
+    public ResultVO assignAllPermit2Role() {
+        Long roleId = sessionBp.getLong("roleId");
+        RoleDO roleFromDb = roleMapper.getRoleByRoleId(roleId);
+        if (roleFromDb == null) throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);
+        List<RolePermissionDO> lstRolePermit = new ArrayList<>();
+        List<PermissionDO> lstPermit = permitMapper.getAllSysPermit();
+        if (lstPermit != null && lstPermit.size() > 0) {
+            for (PermissionDO permit : lstPermit) {
+                RolePermissionDO rp = new RolePermissionDO();
+                rp.setRoleId(roleId);
+                rp.setSysKey(permit.getSysKey());
+                rp.setSelectedContext(permit.getSysContext());
+                rp.setCreateTime(new Date());
+                rp.setCreateBy(sessionBp.getOperator());
+                rp.setModifiedBy(sessionBp.getOperator());
+                rp.setModifiedTime(rp.getCreateTime());
+                lstRolePermit.add(rp);
+            }
+            rolePermitMapper.deleteByRoleId(roleId);
+            rolePermitMapper.insertBatch(lstRolePermit);
+        }
+        // 更新角色下的用户的权限缓存
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(roleId);
+        List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+        permitStatBp.updateUserPermitCache(lstUserName);
+        return VoHelper.getSuccessResult();
+    }
 
     @Override
     public void handleExpiredRole() {

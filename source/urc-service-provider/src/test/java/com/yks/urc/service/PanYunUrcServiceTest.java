@@ -13,13 +13,15 @@ import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UserInfo;
+import com.yks.urc.entity.*;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
@@ -175,7 +177,19 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
     }
 
     @Test
-    public void testPermitCache() {
+    public void assignAllPermit2Role_Test() {
+        // 将所有系统的所有功能权限授予指定角色
+        Long roleId = 1529746874242000015L;
+        Map<String, Object> map = new HashMap<>();
+        map.put(StringConstant.operator, "panyun");
+        map.put("roleId", roleId);
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        MotanSession.initialSession(map);
+        service.assignAllPermit2Role(jsonStr);
+    }
+
+    @Test
+    public void updateUserPermitCache_Test() {
         List<String> lstUserName = new ArrayList<>();
         lstUserName.add("panyun");
         lstUserName.add("renmaohua");

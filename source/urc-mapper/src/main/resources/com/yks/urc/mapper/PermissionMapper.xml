@@ -102,6 +102,14 @@
         WHERE sys_key =#{sysKey}
     </select>
 
+    <select id="getAllSysPermit" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from urc_permission
+    </select>
+
     <select id="getSysApiUrlPrefix" resultMap="BaseResultMap">
   	SELECT  sys_key,api_url_prefix_json FROM urc_permission
   	where api_url_prefix_json is not null or api_url_prefix_json!=''

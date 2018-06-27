@@ -61,4 +61,5 @@ public interface IRoleService {
 	 */
 	void handleExpiredRole();
 
+    ResultVO assignAllPermit2Role();
 }
