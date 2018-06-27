@@ -206,7 +206,7 @@ public class UserServiceImpl implements IUserService {
         List<UserVO> userVOS = new ArrayList<>();
         UserVO userVO1 = new UserVO();
         UserDO userDO = userMapper.getUserByUserName(userVO);
-        if (StringUtility.isNullOrEmpty(userDO.getUserName())){
+        if (userDO == null){
             return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"用户不存在");
         }
         userVO1.userName = userDO.getUserName();

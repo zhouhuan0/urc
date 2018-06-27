@@ -274,7 +274,7 @@ public class UserBpImpl implements IUserBp {
             logger.info(String.format("获取userInfo",userInfo));
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
         } catch (Exception e) {
-            logger.error(String.format("请求地址为: %s %s ,请求参数为: %s,获取的token为: %s, 调用的结果为: %s",GET_TOKEN,USER_INFO_ADDRESS,StringUtility.toJSONString(object),accessToken,userInfo),e);
+            logger.error(String.format("请求地址为: %s,%s ,请求参数为: %s,获取的token为: %s, 调用的结果为: %s",GET_TOKEN,USER_INFO_ADDRESS,StringUtility.toJSONString(object),accessToken,userInfo),e);
         }
         return dingUserList;
     }

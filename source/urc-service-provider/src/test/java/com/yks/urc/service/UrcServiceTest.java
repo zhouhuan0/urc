@@ -256,11 +256,11 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\"pageNumber\":0,\n" +
 				"\t\"pageData\":30,\n" +
 				"\t\"user\":{\n" +
-				"\t\t\"userName\":\"panyun\"\n" +
+				"\t\t\"userName\":\"xxxx\"\n" +
 				"\t}\n" +
 				"}";
 		UserVO userVO =new UserVO();
-		userVO.userName="panyun";
+		userVO.userName="xxxxx";
 		Map map =new HashMap();
 		map.put("operator","linwanxian");
 		map.put("user",userVO);
