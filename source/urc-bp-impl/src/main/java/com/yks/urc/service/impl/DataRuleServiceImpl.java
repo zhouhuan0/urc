@@ -515,7 +515,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 for (ExpressionVO subExpressionVO : subExpressions) {
                     ExpressionDO subExpressionDO = new ExpressionDO();
                     BeanUtils.copyProperties(subExpressionVO, subExpressionDO);
-                    if(!StringUtility.isNullOrEmpty(subExpressionVO.getOperValues())){
+                    List<String> operValuesArrList = subExpressionVO.getOperValuesArr();
+                    if(operValuesArrList!=null && !operValuesArrList.isEmpty()){
                         subExpressionDO.setOperValues(StringUtility.toJSONString(subExpressionVO.getOperValuesArr()));
                     }
                     subExpressionDO.setDataRuleSysId(dataRuleSysId);
