@@ -565,7 +565,7 @@ public class RoleServiceImpl implements IRoleService {
         logger.info(String.format("获取的角色id为%s", lstRoleId));
         if (lstRoleId.size() == 0) {
             logger.info("roleID 的集合为空");
-            throw new URCBizException(CommonMessageCodeEnum.SUCCESS.getCode(), "没有更新任何数据");
+           return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有任何数据可以更新");
         }
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
