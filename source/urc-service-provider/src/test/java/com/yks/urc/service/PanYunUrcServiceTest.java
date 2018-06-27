@@ -20,6 +20,7 @@ import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -199,7 +200,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
     @Test
     public void importSysPermit_Test() throws IOException {
         String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
-
+        MotanSession.initialSession(strJson1);
         permissionService.importSysPermit(strJson1);
     }
 

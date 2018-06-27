@@ -43,17 +43,7 @@ public class StringFilter implements Filter {
         try {
             Object[] arrArg = request.getArguments();
             if (arrArg != null && arrArg.length > 0) {
-                if (arrArg[0] instanceof Map) {
-                    Map<String, String> mapArg = (Map<String, String>) arrArg[0];
-                    MotanRequest req = new MotanRequest();
-                    req.setMapArg(mapArg);
-                    MotanSession.setRequest(req);
-                } else if (arrArg[0] instanceof String) {
-                    JSONObject jo = StringUtility.parseString((String) arrArg[0]);
-                    MotanRequest req = new MotanRequest();
-                    req.setJSONObjectArg(jo);
-                    MotanSession.setRequest(req);
-                }
+                MotanSession.initialSession(arrArg[0]);
             }
         }
         catch(Exception ex){

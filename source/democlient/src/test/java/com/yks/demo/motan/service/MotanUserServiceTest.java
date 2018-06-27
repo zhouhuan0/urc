@@ -86,6 +86,7 @@ public class MotanUserServiceTest {
 		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.getAllFuncPermit(jsonStr)));
 	}
 
+	@Test
 	public void test_funcPermitValidate() {
 		Map<String, String> map = new HashMap<>();
 		map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
@@ -102,7 +103,7 @@ public class MotanUserServiceTest {
 	public void importPermit_Test() throws IOException {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
 		logger.info(strJson1);
-		urcService.importSysPermit(strJson1);
+		System.out.println(StringUtility.toJSONString_NoException(urcService.importSysPermit(strJson1)));
 	}
 	
 	public void testLogin() {
