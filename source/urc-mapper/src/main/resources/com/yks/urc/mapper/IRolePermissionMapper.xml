@@ -207,7 +207,7 @@
         FROM urc_user_role ur
         INNER JOIN urc_role r on ur.role_id =r.role_id
         inner JOIN urc_role_permission up on ur.role_id =up.role_id
-        WHERE r.is_active=1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
+        WHERE r.is_active=1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)  
         <if test="userName !=null and userName !=''">
          AND   ur.user_name =#{userName}
         </if>

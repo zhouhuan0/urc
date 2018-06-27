@@ -301,7 +301,8 @@
     <!--判断用户是否是管理员或超级管理员-->
     <select id="isAdminOrSuperAdmin" resultType="java.lang.Boolean">
        SELECT COUNT(r.role_id) > 0 FROM urc_user_role ur
-        LEFT JOIN urc_role r ON ur.role_id = r.role_id AND r.is_authorizable = 1 and r.is_active = 1
+        LEFT JOIN urc_role r ON ur.role_id = r.role_id AND r.is_authorizable !=0 and r.is_active = 1
+        AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
         WHERE ur.user_name = #{userName}
     </select>
 </mapper>
