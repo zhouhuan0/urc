@@ -258,7 +258,7 @@ public class UserBpImpl implements IUserBp {
         try {
             accessToken=  HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
             if (StringUtility.isNullOrEmpty(accessToken)) {
-                return null;
+               throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
             }
             logger.info("获取token");
             // 将拿到的string 转为json
@@ -267,14 +267,16 @@ public class UserBpImpl implements IUserBp {
             // 2.只调用UserInfo接口，同步UserInfo数据
              userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
             if (StringUtility.isNullOrEmpty(userInfo)) {
-                return null;
+                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取userInfo失败,userInfo返回数据为空");
             }
             // 解析json数组
             logger.info("获取userInfo");
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
             logger.info("需要解析的数组为%s",String.format(String.valueOf(dingUserList)));
         } catch (Exception e) {
-            logger.error("请求的地址为%s,获取的token为%,调用的结果为%s,需要解析的数组为%s",String.format(USER_INFO_ADDRESS,accessToken,userInfo,dingUserList.toString()), e.getMessage());
+            logger.error(String.format("获取的token为: %s",accessToken));
+            logger.error(String.format(" 调用的结果为: %s",userInfo));
+            logger.error(String.format("需要解析的数组为: %s",dingUserList));
         }
         return dingUserList;
     }

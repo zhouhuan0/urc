@@ -517,63 +517,59 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
-        try {
-            RolePermissionDO rolePermissionDO = new RolePermissionDO();
-            Map dataMap = new HashMap();
-            //判断用户是否是普通用户
-            if (!roleMapper.isAdminOrSuperAdmin(operator)) {
-                return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "您不是管理员,没有权限更新数据");
-            }
-            //如果是超级管理员,则更新所有,否则只能更新自己的创建的
-            List<String> lstRoleId = new ArrayList<>();
-            for (RoleVO roleVO : lstRole) {
-                //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的创建人不是他自己的话,则无权限更新此数据,跳过处理
-                if (!roleMapper.isSuperAdminAccount(operator)) {
-                    RoleDO roleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
-                    if (!operator.equals(roleDO.getCreateBy())) {
-                        continue;
-                    }
+        RolePermissionDO rolePermissionDO = new RolePermissionDO();
+        Map dataMap = new HashMap();
+        //判断用户是否是普通用户
+        if (!roleMapper.isAdminOrSuperAdmin(operator)) {
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "您不是管理员,没有权限更新数据");
+        }
+        //如果是超级管理员,则更新所有,否则只能更新自己的创建的
+        List<String> lstRoleId = new ArrayList<>();
+        for (RoleVO roleVO : lstRole) {
+            //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的创建人不是他自己的话,则无权限更新此数据,跳过处理
+            if (!roleMapper.isSuperAdminAccount(operator)) {
+                RoleDO roleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
+                if (!operator.equals(roleDO.getCreateBy())) {
+                    continue;
                 }
-                UserRoleDO userRole = new UserRoleDO();
-                userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                //2. 更新角色的功能权限
-                List<PermissionVO> permissionVOS = roleVO.selectedContext;
-                List<Long> roleIds = new ArrayList<>();
-                List<RolePermissionDO> permissionDOS = new ArrayList<>();
-                for (PermissionVO permissionVO : permissionVOS) {
-                    //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
-                    rolePermissionDO.setRoleId(userRole.getRoleId());
-                    rolePermissionDO.setModifiedBy(operator);
-                    rolePermissionDO.setCreateBy(operator);
-                    rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
-                    rolePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
-                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
-                    //将roleId 装载进list
-                    roleIds.add(userRole.getRoleId());
-                    permissionDOS.add(rolePermissionDO);
-                }
-                rolePermissionMapper.deleteBatch(roleIds);
-                logger.info("清理相关的功能权限完成");
-                rolePermissionMapper.insertBatch(permissionDOS);
-                logger.info("更新相关功能权限完成");
-                // 将roleId 放入到 list里面, 用于后面更新缓存
-                lstRoleId.add(roleVO.getRoleId());
             }
-            dataMap.put("roleIds", lstRoleId);
+            UserRoleDO userRole = new UserRoleDO();
+            userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
+            //2. 更新角色的功能权限
+            List<PermissionVO> permissionVOS = roleVO.selectedContext;
+            List<Long> roleIds = new ArrayList<>();
+            List<RolePermissionDO> permissionDOS = new ArrayList<>();
+            for (PermissionVO permissionVO : permissionVOS) {
+                //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
+                rolePermissionDO.setRoleId(userRole.getRoleId());
+                rolePermissionDO.setModifiedBy(operator);
+                rolePermissionDO.setCreateBy(operator);
+                rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
+                rolePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
+                rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                //将roleId 装载进list
+                roleIds.add(userRole.getRoleId());
+                permissionDOS.add(rolePermissionDO);
+            }
+            rolePermissionMapper.deleteBatch(roleIds);
+            logger.info("清理相关的功能权限完成");
+            rolePermissionMapper.insertBatch(permissionDOS);
+            logger.info("更新相关功能权限完成");
+            // 将roleId 放入到 list里面, 用于后面更新缓存
+            lstRoleId.add(roleVO.getRoleId());
+        }
+        dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
-        logger.info(String.format("获取的角色id为%s",lstRoleId));
-        if (lstRoleId.size() == 0 ){
-            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"roleID 的集合为空");
+        logger.info(String.format("获取的角色id为%s", lstRoleId));
+        if (lstRoleId.size() == 0) {
+            logger.info("roleID 的集合为空");
+            throw new URCBizException(CommonMessageCodeEnum.SUCCESS.getCode(), "没有更新任何数据");
         }
-            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
-            logger.info(String.format("获取的用户名为%s",userNames));
+        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        logger.info(String.format("获取的用户名为%s", userNames));
         /*4、更新用户操作权限冗余表和缓存*/
-            permitStatBp.updateUserPermitCache(userNames);
-            return VoHelper.getSuccessResult();
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-           throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"未知异常");
-        }
+        permitStatBp.updateUserPermitCache(userNames);
+        return VoHelper.getSuccessResult();
     }
 
     /**

@@ -275,7 +275,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void updateRolePermission(){
 		Map map =new HashMap();
-		map.put("operator","panyun");
+		map.put("operator","linwanxian");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
 		roleVO.roleId = "1529746076695000006";
