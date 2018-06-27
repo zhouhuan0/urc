@@ -147,10 +147,11 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
     }
 
-    public void testLogin() {
+    @Test
+    public void login_Test() {
         UserVO authUser = new UserVO();
-        authUser.userName = "dcadmin";
-        authUser.pwd = "Ldap_test";
+        authUser.userName = "panyun";
+        authUser.pwd = "ASDFGhjkl;12345";
         authUser.ip = "pyIP";
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
     }
@@ -172,6 +173,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         System.out.println("result:" + httpOrgCreateTestRtn);
     }
 
+    @Test
     public void testPermitCache() {
         List<String> lstUserName = new ArrayList<>();
         lstUserName.add("panyun");
