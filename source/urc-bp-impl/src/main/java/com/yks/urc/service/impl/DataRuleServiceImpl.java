@@ -1,5 +1,6 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
@@ -15,6 +16,7 @@ import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.h2.engine.User;
 import org.springframework.beans.BeanUtils;
@@ -157,6 +159,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             for (ExpressionDO subExpressionDO : subExpressionDOS) {
                 ExpressionVO subExpressionVO = new ExpressionVO();
                 BeanUtils.copyProperties(subExpressionDO, subExpressionVO);
+                subExpressionVO.setOperValuesArr(JSONArray.parseArray(subExpressionDO.getOperValues(),String.class));
                 subExpressionVOS.add(subExpressionVO);
             }
             parentExpressionVO.setSubWhereClause(subExpressionVOS);
@@ -512,6 +515,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 for (ExpressionVO subExpressionVO : subExpressions) {
                     ExpressionDO subExpressionDO = new ExpressionDO();
                     BeanUtils.copyProperties(subExpressionVO, subExpressionDO);
+                    if(!StringUtility.isNullOrEmpty(subExpressionVO.getOperValues())){
+                        subExpressionDO.setOperValues(StringUtility.toJSONString(subExpressionVO.getOperValuesArr()));
+                    }
                     subExpressionDO.setDataRuleSysId(dataRuleSysId);
                     subExpressionDO.setParentExpressionId(parentExpressionId);
                     Long expressionId = seqBp.getExpressionId();
