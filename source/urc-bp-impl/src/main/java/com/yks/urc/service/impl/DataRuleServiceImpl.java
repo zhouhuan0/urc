@@ -558,6 +558,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
         BeanUtils.copyProperties(templVO, dataRuleTemplDO);
         Long templId = seqBp.getNextDataRuleTemplId();
+        templVO.setTemplId(templId.toString());
         dataRuleTemplDO.setTemplId(templId);
         dataRuleTemplDO.setCreateBy(operator);
         dataRuleTemplDO.setCreateTime(new Date());
