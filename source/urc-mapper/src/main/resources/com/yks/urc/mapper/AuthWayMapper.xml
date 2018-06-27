@@ -112,6 +112,7 @@
           INNER JOIN urc_permission up ON uw.sys_key =up.sys_key
           INNER JOIN urc_entity ue on uw.entity_code =ue.entity_code
           WHERE uw.sys_key =#{sysKey}
+          ORDER  BY  up.sys_key,uw.sort_idx
   </select>
   <!--通过sysKey 获取entitycode-->
   <select id="getEntityBySyskey" resultMap="BaseResultMap">

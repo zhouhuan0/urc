@@ -656,8 +656,8 @@ public class RoleServiceImpl implements IRoleService {
           				}
     				}
     			}
-    			userRoleMapper.insertBatch(userRoleDOS);
     			if(userRoleDOS!=null&&userRoleDOS.size()>0){
+    				userRoleMapper.insertBatch(userRoleDOS);
     				for (int j = 0; j < userRoleDOS.size(); j++) {
     					permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
     				}

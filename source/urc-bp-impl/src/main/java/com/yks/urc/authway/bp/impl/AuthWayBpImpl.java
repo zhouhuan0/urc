@@ -71,30 +71,32 @@ public class AuthWayBpImpl implements AuthWayBp {
         List<SysAuthWayVO> sysAuthWayVOList =new ArrayList<>();
         //3. sys_key 拿到对应的业务系统实体
         for (String sysKey : getSysKey) {
-            List<AuthWayVO> authWayVOS = new ArrayList();
             SysAuthWayVO sysAuthWayVO = new SysAuthWayVO();
-            //获取最终结果
-            AuthWayVO authWayVO = authWayMapper.getAuthWayVoBySysKey(sysKey);
-            if (authWayVO == null){
-                //有的系统授权方式没有
-               continue;
+            //获取最终结果 , 一个系统对应的多个授权方式
+            List<AuthWayVO> authWayVOS = authWayMapper.getAuthWayVoBySysKey(sysKey);
+            if (authWayVOS.size() == 0){
+                continue;
             }
-            //组装sysKey
-            sysAuthWayVO.sysKey = authWayVO.sysKey;
-            //然后将authWayVO的sysKey置为空
-            authWayVO.sysKey =null;
-            //组装sortIdx
-            sysAuthWayVO.sortIdx = authWayVO.sortIdx;
-            authWayVO.sortIdx = null;
-            //组装sysName
-            sysAuthWayVO.sysName = authWayVO.sysName;
-            authWayVO.sysName =null;
+            for (AuthWayVO authWayVO : authWayVOS) {
+                if (authWayVO == null) {
+                    //有的系统授权方式没有
+                    continue;
+                }
+                //组装sysKey
+                sysAuthWayVO.sysKey = authWayVO.sysKey;
+                //然后将authWayVO的sysKey置为空
+                authWayVO.sysKey = null;
+                //组装sortIdx
+                sysAuthWayVO.sortIdx = authWayVO.sortIdx;
+                authWayVO.sortIdx = null;
+                //组装sysName
+                sysAuthWayVO.sysName = authWayVO.sysName;
+                authWayVO.sysName = null;
+            }
             //组装 lstEntity  authWayVO 和 entity 是一对一的关系 entity和sysAuthWayVO 是一对多的关系
-            authWayVOS.add(authWayVO);
             sysAuthWayVO.lstEntity = authWayVOS;
             sysAuthWayVOList.add(sysAuthWayVO);
         }
-
         return sysAuthWayVOList;
     }
 

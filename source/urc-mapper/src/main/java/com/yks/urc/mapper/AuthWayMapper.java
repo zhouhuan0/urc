@@ -22,7 +22,7 @@ public interface AuthWayMapper {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/14 16:40
      */
-    AuthWayVO getAuthWayVoBySysKey(@Param("sysKey") String sysKey);
+    List<AuthWayVO> getAuthWayVoBySysKey(@Param("sysKey") String sysKey);
 
     /**
      *  通过sysKey 拿到entitiyCode
