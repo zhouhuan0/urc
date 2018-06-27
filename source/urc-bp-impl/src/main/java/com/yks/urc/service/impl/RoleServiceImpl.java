@@ -188,9 +188,18 @@ public class RoleServiceImpl implements IRoleService {
         /*添加角色现在关联的用户列表*/
         lstUserName.addAll(newRelationUsers);
         if (lstUserName != null && !lstUserName.isEmpty()) {
+            /*去重*/
+            lstUserName = removeDuplicate(lstUserName);
             permitStatBp.updateUserPermitCache(lstUserName);
         }
         return VoHelper.getSuccessResult();
+    }
+
+    private List<String> removeDuplicate(List<String> lstUserName) {
+        HashSet h = new HashSet(lstUserName);
+        lstUserName.clear();
+        lstUserName.addAll(h);
+        return lstUserName;
     }
 
     /**
