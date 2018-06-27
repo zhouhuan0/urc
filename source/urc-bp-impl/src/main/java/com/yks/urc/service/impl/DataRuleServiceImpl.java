@@ -786,6 +786,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
 	            		ExpressionVO expressionVO = new ExpressionVO();
 	            		expressionVO.setSubWhereClause(expressionVOList);
+	            		expressionVO.setIsAnd(1);
 	            		dataRuleSysVO.sysKey = syskeyList.get(j).getSysKey();
 	            		dataRuleSysVO.col = dataRuleColVOList;
 	            		dataRuleSysVO.row = expressionVO;

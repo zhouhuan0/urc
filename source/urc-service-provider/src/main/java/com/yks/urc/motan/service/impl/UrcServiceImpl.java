@@ -8,6 +8,7 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
+import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.*;
@@ -18,7 +19,6 @@ import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 public class UrcServiceImpl implements IUrcService {
 
     @Autowired
@@ -49,13 +49,12 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log(value = "同步数据",level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
-        JSONObject jsonObject = StringUtility.parseString(json);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         return userService.syncUserInfo(operator);
     }
 
     @Override
-	@Log(value = "login", level = LogLevel.ERROR)
+    @Log(value = "login", level = LogLevel.ERROR)
     public ResultVO<LoginRespVO> login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
@@ -72,7 +71,7 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO getUserByDingOrgId(String params) {
-    	
+
         JSONObject jsonObject = StringUtility.parseString(params);
         String dingOrgId = jsonObject.getString("dingOrgId");
         if (!StringUtility.isNum(dingOrgId)) {
@@ -107,7 +106,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "用户管理/搜索用户",level = LogLevel.INFO)
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
@@ -165,7 +164,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "获取所有平台",level = LogLevel.INFO)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         return userService.getPlatformList(operator);
     }
 
@@ -173,7 +172,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "获取指定平台的店铺和站点",level = LogLevel.INFO)
     public ResultVO<List<OmsShopVO>> getShopList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         String platform = jsonObject.getString("platform");
         return userService.getShopList(operator, platform);
     }
@@ -213,14 +212,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         String roleId = jsonObject.getString("roleId");
-        
+
         if (!StringUtility.isNum(roleId)) {
             throw new URCBizException("roleId为空", ErrorCode.E_000002);
         }
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         return roleService.getUserByRoleId(operator, roleId);
     }
 
@@ -228,15 +227,15 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-        
-        
+
+
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRoleId为空");
         }
-        
+
         List<String> roleList = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
         return roleService.getRoleUser(operator, roleList);
     }
@@ -248,19 +247,19 @@ public class UrcServiceImpl implements IUrcService {
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
-        
+
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);*/
-    	return dataRuleService.getDataRuleTempl(jsonStr);
+        return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
     @Override
     public ResultVO getDataRuleByUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-        
+
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
@@ -268,7 +267,7 @@ public class UrcServiceImpl implements IUrcService {
             throw new URCBizException("lstUserName为空", ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
-        
+
         return dataRuleService.getDataRuleByUser(lstUserName);
     }
 
@@ -289,24 +288,24 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-      
+
         if (StringUtility.isNullOrEmpty(operator)) {
-        	  throw new URCBizException("operator为空", ErrorCode.E_000002);
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
             throw new URCBizException("lstRoleId为空", ErrorCode.E_000002);
         }
-        
+
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-        
+
         return roleService.getRolePermission(operator, lstRoleId);
     }
     @Log(value = "精确搜索用户",level = LogLevel.INFO)
     @Override
     public ResultVO<List<UserVO>> getUserByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"), UserVO.class);
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
@@ -317,8 +316,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log(value = "获取应用系统及其授权方式",level = LogLevel.INFO)
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = MotanSession.getRequest().getOperator();
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
@@ -330,14 +328,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         String userName = jsonObject.getString("username");
-        
+
         if (StringUtility.isNullOrEmpty(operator)) {
-        	throw new URCBizException("operator为空", ErrorCode.E_000002);
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
-        
+
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }
 
@@ -354,10 +352,10 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "更新多个角色的功能权限",level = LogLevel.INFO)
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
         if (lstRole == null){
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
         }
         return roleService.updateRolePermission(operator, lstRole);
     }
@@ -477,4 +475,8 @@ public class UrcServiceImpl implements IUrcService {
         return roleService.deleteRoles(jsonStr);
     }
 
+    @Override
+    public ResultVO assignAllPermit2Role(String jsonStr) {
+        return roleService.assignAllPermit2Role();
+    }
 }

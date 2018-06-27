@@ -27,6 +27,10 @@ public class PermissionMapperTest extends BaseMapperTest {
         System.out.println(map);
     }
 
+    @Test
+    public void  getAllKey(){
+        permissionMapper.getAllSysKey();
+    }
 
 
 }

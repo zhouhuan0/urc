@@ -77,4 +77,6 @@ public interface PermissionMapper {
      * @param p
      */
     int updateSysContextBySysKey(PermissionDO p);
+
+    List<PermissionDO> getAllSysPermit();
 }

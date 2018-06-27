@@ -11,6 +11,7 @@ import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
@@ -196,19 +197,19 @@ public class UserBpImpl implements IUserBp {
         // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
             userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime, "yyyy-MM-dd HH:mm:ss");
-            // 查询角色
+            // 查询角色 , 有的用户可能没有角色,则不装载角色,角色为空
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
             if (roleNameList.size() == 0) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "查询结果为空");
+              userVO1.roles =null;
+            }else {
+                //组装角色
+                userVO1.roles =new ArrayList<>();
+                for (String roleName : roleNameList) {
+                    RoleVO roleVO = new RoleVO();
+                    roleVO.roleName = roleName;
+                    userVO1.roles.add(roleVO);
+                }
             }
-            //组装角色
-            List<RoleVO> roleVOS = new ArrayList();
-            for (String roleName : roleNameList) {
-                RoleVO roleVO = new RoleVO();
-                roleVO.roleName = roleName;
-                roleVOS.add(roleVO);
-            }
-            userVO1.roles = roleVOS;
             // 4.组装userVo
             userVOList.add(userVO1);
         }
@@ -310,7 +311,8 @@ public class UserBpImpl implements IUserBp {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
             }
         } catch (Exception ex) {
-            return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
+            logger.error(String.format("login ERROR:%s", StringUtility.toJSONString_NoException(authUser)), ex);
+            throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
     }
 

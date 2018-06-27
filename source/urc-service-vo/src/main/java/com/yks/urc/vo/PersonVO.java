@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class PersonVO implements Serializable {
 	
-    private Long id;
+    private String id;
 
     private String personName;
 
@@ -65,11 +65,11 @@ public class PersonVO implements Serializable {
 		this.dingOrgId = dingOrgId;
 	}
 
-	public Long getId() {
+	public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

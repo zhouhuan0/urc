@@ -16,6 +16,7 @@ import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -197,15 +198,20 @@ public class UrcServiceTest extends BaseServiceTest {
 		String json1 ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
 				"\t\"pageNumber\":0,\n" +
-				"\t\"pageData\":30\n" +
+				"\t\"pageData\":32\n" +
 				"}";
-		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(json1);
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		map.put("pageNumber",0);
+		map.put("pageData",50);
+		String mapStr =StringUtility.toJSONString(map);
+		MotanSession.initialSession(mapStr);
+		ResultVO<PageResultVO> resultVO=service.getUsersByUserInfo(mapStr);
 		System.out.println("=================");
 		System.out.println(resultVO.msg);
 		List<UserVO>  userVOS= (List<UserVO>) resultVO.data.lst;
-		for (UserVO userVO:userVOS){
-			System.out.println(userVO.userName);
-		}
+		System.out.println("=================");
+		System.out.println(userVOS.size());
 	}
 	@Test
 	public void getShopList(){
@@ -259,6 +265,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("operator","linwanxian");
 		map.put("user",userVO);
 		String jsonStr =StringUtility.toJSONString(map);
+		MotanSession.initialSession(jsonStr);
 		System.out.println("==================");
 		System.out.println(jsonStr);
 		ResultVO resultVO=service.getUserByUserName(jsonStr);
@@ -268,7 +275,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void updateRolePermission(){
 		Map map =new HashMap();
-		map.put("operator","zhangqun");
+		map.put("operator","panyun");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
 		roleVO.roleId = "1529746076695000006";
@@ -283,6 +290,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		String json =StringUtility.toJSONString(map);
 		System.out.println("==================");
 		System.out.println(json);
+		MotanSession.initialSession(json);
 		ResultVO resultVO =service.updateRolePermission(json);
 		System.out.println(resultVO.msg);
 

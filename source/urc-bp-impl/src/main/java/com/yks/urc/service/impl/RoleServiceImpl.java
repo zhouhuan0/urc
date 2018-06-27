@@ -21,6 +21,7 @@ import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IRoleService;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
@@ -516,9 +517,6 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
-        if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult();
-        }
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
         try {
             Map dataMap = new HashMap();
@@ -563,12 +561,14 @@ public class RoleServiceImpl implements IRoleService {
             }
             dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
+        logger.info("获取的角色id为:%a,获取的用户名为%s",String.format(String.valueOf(lstRoleId)),operator);
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         /*4、更新用户操作权限冗余表和缓存*/
             permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
-            return VoHelper.getErrorResult();
+            logger.error(e.getMessage());
+           throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),e.getMessage());
         }
     }
 
@@ -762,6 +762,44 @@ public class RoleServiceImpl implements IRoleService {
         return VoHelper.getSuccessResult(roleMapper.checkDuplicateRoleName(newRoleName, roleId) ? 1 : 0);
     }
 
+
+    @Autowired
+    ISessionBp sessionBp;
+    @Autowired
+    PermissionMapper permitMapper;
+    @Autowired
+    private IRolePermissionMapper rolePermitMapper;
+
+    @Override
+    @Transactional
+    public ResultVO assignAllPermit2Role() {
+        Long roleId = sessionBp.getLong("roleId");
+        RoleDO roleFromDb = roleMapper.getRoleByRoleId(roleId);
+        if (roleFromDb == null) throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);
+        List<RolePermissionDO> lstRolePermit = new ArrayList<>();
+        List<PermissionDO> lstPermit = permitMapper.getAllSysPermit();
+        if (lstPermit != null && lstPermit.size() > 0) {
+            for (PermissionDO permit : lstPermit) {
+                RolePermissionDO rp = new RolePermissionDO();
+                rp.setRoleId(roleId);
+                rp.setSysKey(permit.getSysKey());
+                rp.setSelectedContext(permit.getSysContext());
+                rp.setCreateTime(new Date());
+                rp.setCreateBy(sessionBp.getOperator());
+                rp.setModifiedBy(sessionBp.getOperator());
+                rp.setModifiedTime(rp.getCreateTime());
+                lstRolePermit.add(rp);
+            }
+            rolePermitMapper.deleteByRoleId(roleId);
+            rolePermitMapper.insertBatch(lstRolePermit);
+        }
+        // 更新角色下的用户的权限缓存
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(roleId);
+        List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+        permitStatBp.updateUserPermitCache(lstUserName);
+        return VoHelper.getSuccessResult();
+    }
 
     @Override
     public void handleExpiredRole() {

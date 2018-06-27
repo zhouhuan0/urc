@@ -33,4 +33,16 @@ public class MotanRequest {
         if (_jsonArg != null) return _jsonArg.getString(StringConstant.operator);
         return StringUtility.Empty;
     }
+
+    public String getStringValue(String strKey) {
+        if (_jsonArg != null) return _jsonArg.getString(strKey);
+        if (_mapArg != null) return _mapArg.get(strKey);
+        return StringUtility.Empty;
+    }
+
+    public Long getLongValue(String strKey) {
+        if (_jsonArg != null) return _jsonArg.getLong(strKey);
+        if (_mapArg != null) return StringUtility.convertToLong(_mapArg.get(strKey), null);
+        return null;
+    }
 }
