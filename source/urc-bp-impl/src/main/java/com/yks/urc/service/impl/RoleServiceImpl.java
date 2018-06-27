@@ -516,9 +516,9 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
-        RolePermissionDO rolePermissionDO = new RolePermissionDO();
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
         try {
+            RolePermissionDO rolePermissionDO = new RolePermissionDO();
             Map dataMap = new HashMap();
             //判断用户是否是普通用户
             if (!roleMapper.isAdminOrSuperAdmin(operator)) {
@@ -561,14 +561,15 @@ public class RoleServiceImpl implements IRoleService {
             }
             dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
-        logger.info("获取的角色id为:%a,获取的用户名为%s",String.format(String.valueOf(lstRoleId)),operator);
+        logger.info(String.format("获取的角色id为%s",lstRoleId));
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+            logger.info(String.format("获取的用户名为%s",userNames));
         /*4、更新用户操作权限冗余表和缓存*/
             permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             logger.error(e.getMessage());
-           throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),e.getMessage());
+           throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"未知异常");
         }
     }
 
