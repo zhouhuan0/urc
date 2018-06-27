@@ -143,8 +143,7 @@ public class UserBpImpl implements IUserBp {
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
             } catch (Exception e) {
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
-                e.printStackTrace();
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..");
+                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..");
             } finally {
                 lock.unlock();
             }
