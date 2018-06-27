@@ -516,9 +516,6 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
-        if (StringUtility.isNullOrEmpty(operator)) {
-            return VoHelper.getErrorResult();
-        }
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
         try {
             Map dataMap = new HashMap();
@@ -568,7 +565,7 @@ public class RoleServiceImpl implements IRoleService {
             permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
-            return VoHelper.getErrorResult();
+           throw  new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),e.getMessage());
         }
     }
 
