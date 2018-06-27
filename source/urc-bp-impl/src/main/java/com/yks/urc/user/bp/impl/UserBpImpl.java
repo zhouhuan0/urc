@@ -142,8 +142,7 @@ public class UserBpImpl implements IUserBp {
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
             } catch (Exception e) {
-                operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
-                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..");
+                throw  new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..",e);
             } finally {
                 lock.unlock();
             }
@@ -274,9 +273,7 @@ public class UserBpImpl implements IUserBp {
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
             logger.info("需要解析的数组为%s",String.format(String.valueOf(dingUserList)));
         } catch (Exception e) {
-            logger.error(String.format("获取的token为: %s",accessToken));
-            logger.error(String.format(" 调用的结果为: %s",userInfo));
-            logger.error(String.format("需要解析的数组为: %s",dingUserList));
+            logger.error(String.format("获取的token为: %s, 调用的结果为: %s",accessToken,userInfo),e);
         }
         return dingUserList;
     }
