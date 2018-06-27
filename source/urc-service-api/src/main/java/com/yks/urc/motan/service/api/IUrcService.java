@@ -336,4 +336,10 @@ public interface IUrcService {
      */
     ResultVO deleteRoles(String jsonStr);
 
+    /**
+     * 将所有系统的所有功能权限授予指定角色
+     * @param jsonStr
+     * @return
+     */
+    ResultVO assignAllPermit2Role(String jsonStr);
 }

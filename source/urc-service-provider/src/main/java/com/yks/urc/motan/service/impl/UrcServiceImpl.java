@@ -19,7 +19,6 @@ import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
-
 public class UrcServiceImpl implements IUrcService {
 
     @Autowired
@@ -55,7 +54,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-	@Log(value = "login", level = LogLevel.ERROR)
+    @Log(value = "login", level = LogLevel.ERROR)
     public ResultVO<LoginRespVO> login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
@@ -72,7 +71,7 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO getUserByDingOrgId(String params) {
-    	
+
         JSONObject jsonObject = StringUtility.parseString(params);
         String dingOrgId = jsonObject.getString("dingOrgId");
         if (!StringUtility.isNum(dingOrgId)) {
@@ -213,14 +212,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         String roleId = jsonObject.getString("roleId");
-        
+
         if (!StringUtility.isNum(roleId)) {
             throw new URCBizException("roleId为空", ErrorCode.E_000002);
         }
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         return roleService.getUserByRoleId(operator, roleId);
     }
 
@@ -228,15 +227,15 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-        
-        
+
+
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRoleId为空");
         }
-        
+
         List<String> roleList = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
         return roleService.getRoleUser(operator, roleList);
     }
@@ -248,19 +247,19 @@ public class UrcServiceImpl implements IUrcService {
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
-        
+
         return dataRuleService.getMyDataRuleTempl(pageNumber, pageData, operator);*/
-    	return dataRuleService.getDataRuleTempl(jsonStr);
+        return dataRuleService.getDataRuleTempl(jsonStr);
     }
 
     @Override
     public ResultVO getDataRuleByUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-        
+
         if (StringUtility.isNullOrEmpty(operator)) {
             throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
@@ -268,7 +267,7 @@ public class UrcServiceImpl implements IUrcService {
             throw new URCBizException("lstUserName为空", ErrorCode.E_000002);
         }
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
-        
+
         return dataRuleService.getDataRuleByUser(lstUserName);
     }
 
@@ -289,17 +288,17 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-      
+
         if (StringUtility.isNullOrEmpty(operator)) {
-        	  throw new URCBizException("operator为空", ErrorCode.E_000002);
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
             throw new URCBizException("lstRoleId为空", ErrorCode.E_000002);
         }
-        
+
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-        
+
         return roleService.getRolePermission(operator, lstRoleId);
     }
     @Log(value = "精确搜索用户",level = LogLevel.INFO)
@@ -329,14 +328,14 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         String userName = jsonObject.getString("username");
-        
+
         if (StringUtility.isNullOrEmpty(operator)) {
-        	throw new URCBizException("operator为空", ErrorCode.E_000002);
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
         }
-        
+
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
-        
+
         return userService.fuzzySearchUsersByUserName(pageNumber, pageData, userName, operator);
     }
 
@@ -356,7 +355,7 @@ public class UrcServiceImpl implements IUrcService {
         String operator = MotanSession.getRequest().getOperator();
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
         if (lstRole == null){
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
         }
         return roleService.updateRolePermission(operator, lstRole);
     }
@@ -476,4 +475,8 @@ public class UrcServiceImpl implements IUrcService {
         return roleService.deleteRoles(jsonStr);
     }
 
+    @Override
+    public ResultVO assignAllPermit2Role(String jsonStr) {
+        return roleService.assignAllPermit2Role();
+    }
 }
