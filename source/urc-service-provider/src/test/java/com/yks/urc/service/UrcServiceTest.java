@@ -28,10 +28,10 @@ import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.Test;
@@ -289,11 +289,19 @@ public class UrcServiceTest extends BaseServiceTest {
 	}
 	@Test
 	public void testsyncUserInfo(){
+		System.out.println("****************************");
+		long startTime = System.currentTimeMillis();    //获取开始时间
+
 		Map map =new HashMap();
 		map.put("operator","linwanxian");
 		String json =StringUtility.toJSONString(map);
 		ResultVO resultVO =service.syncUserInfo(json);
 		System.out.println("====================");
 		System.out.println(resultVO.msg);
+		long endTime = System.currentTimeMillis();    //获取结束时间
+		System.out.println("**************************");
+		System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时
+
+
 	}
 }

@@ -95,7 +95,6 @@ public class UserBpImpl implements IUserBp {
     DistributedReentrantLock lock = new DistributedReentrantLock("SynUserFromUserInfo");
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public ResultVO SynUserFromUserInfo(String username) {
         if (lock.tryLock()) {
             try {
@@ -253,8 +252,10 @@ public class UserBpImpl implements IUserBp {
         JSONObject object = new JSONObject();
         object.put("username", username);
         object.put("password", password);
+        String accessToken =null;
+        String userInfo = null;
         try {
-            String accessToken = HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
+            accessToken=  HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
             if (StringUtility.isNullOrEmpty(accessToken)) {
                 return null;
             }
@@ -263,15 +264,16 @@ public class UserBpImpl implements IUserBp {
             JSONObject jsonToken = StringUtility.parseString(accessToken);
             String token = jsonToken.getString("token");
             // 2.只调用UserInfo接口，同步UserInfo数据
-            String userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
+             userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
             if (StringUtility.isNullOrEmpty(userInfo)) {
                 return null;
             }
             // 解析json数组
             logger.info("获取userInfo");
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
+            logger.info("需要解析的数组为%s",String.format(dingUserList.toString()));
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error("请求的地址为%s,获取的token为%,调用的结果为%s,需要解析的数组为%s",String.format(USER_INFO_ADDRESS,accessToken,userInfo,dingUserList.toString()), e.getMessage());
         }
         return dingUserList;
     }
