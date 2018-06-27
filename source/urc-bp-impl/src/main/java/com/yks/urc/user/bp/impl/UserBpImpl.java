@@ -98,12 +98,15 @@ public class UserBpImpl implements IUserBp {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO SynUserFromUserInfo(String username) {
         if (lock.tryLock()) {
-            List<UserInfo> userInfoList = this.getUserInfo();
-            if (userInfoList == null || userInfoList.size() ==0){
-                throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
-            }
-            List<UserDO> userDoList = new ArrayList<>();
             try {
+                List<UserInfo> userInfoList = this.getUserInfo();
+                if (userInfoList == null || userInfoList.size() == 0) {
+                    logger.info("请求userInfo 接口异常");
+                    operationBp.addLog(this.getClass().getName(), "请求userInfo 接口异常", null);
+                    throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
+                }
+                List<UserDO> userDoList = new ArrayList<>();
+
                 // 先清理数据表
                 userMapper.deleteUrcUser();
                 logger.info("清理完成,开始同步");
@@ -137,11 +140,11 @@ public class UserBpImpl implements IUserBp {
                     userMapper.insertBatchUser(userDoList);
                 }
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"同步userInfo数据成功..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
             } catch (Exception e) {
                 operationBp.addLog(this.getClass().getName(), "同步userInfo数据出错..", e);
                 e.printStackTrace();
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"同步userInfo数据出错..");
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..");
             } finally {
                 lock.unlock();
             }
@@ -150,11 +153,11 @@ public class UserBpImpl implements IUserBp {
             if (!"system".equals(username)) {
                 // 手动触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"手动触发正在执行..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "手动触发正在执行..");
             } else {
                 // 定时任务触发正在执行..记录日志
                 operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"定时任务正在执行..");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "定时任务正在执行..");
             }
         }
 
@@ -186,19 +189,19 @@ public class UserBpImpl implements IUserBp {
         }
         // 1.首先查询出所有数据  分页
         Query query = new Query(null, pageNumber, pageData);
-        List<UserVO> userVOS = userMapper.getUsersByUserInfo(query,strings);
-        List<UserVO> userVOList =new ArrayList<>();
-        if (userVOS.size() == 0){
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
+        List<UserVO> userVOS = userMapper.getUsersByUserInfo(query, strings);
+        List<UserVO> userVOList = new ArrayList<>();
+        if (userVOS.size() == 0) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "查询结果为空");
         }
         // 2.将拿到的用户名再分别去获取角色名称
-       // List<String> userNames =new ArrayList<>();
+        // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
-            userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime,"yyyy-MM-dd HH:mm:ss");
+            userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime, "yyyy-MM-dd HH:mm:ss");
             // 查询角色
             List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
-            if (roleNameList.size() == 0){
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"查询结果为空");
+            if (roleNameList.size() == 0) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "查询结果为空");
             }
             //组装角色
             List<RoleVO> roleVOS = new ArrayList();
@@ -207,12 +210,12 @@ public class UserBpImpl implements IUserBp {
                 roleVO.roleName = roleName;
                 roleVOS.add(roleVO);
             }
-            userVO1.roles =roleVOS;
+            userVO1.roles = roleVOS;
             // 4.组装userVo
             userVOList.add(userVO1);
         }
         // 获取总条数
-        long total = userMapper.getUsersByUserInfoCount(query,strings);
+        long total = userMapper.getUsersByUserInfoCount(query, strings);
         PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
         return VoHelper.getSuccessResult(pageResultVO);
     }
@@ -253,7 +256,7 @@ public class UserBpImpl implements IUserBp {
         object.put("password", password);
         try {
             String accessToken = HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
-            if (StringUtility.isNullOrEmpty(accessToken)){
+            if (StringUtility.isNullOrEmpty(accessToken)) {
                 return null;
             }
             logger.info("获取token");
@@ -262,7 +265,7 @@ public class UserBpImpl implements IUserBp {
             String token = jsonToken.getString("token");
             // 2.只调用UserInfo接口，同步UserInfo数据
             String userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
-            if (StringUtility.isNullOrEmpty(userInfo)){
+            if (StringUtility.isNullOrEmpty(userInfo)) {
                 return null;
             }
             // 解析json数组
@@ -273,7 +276,6 @@ public class UserBpImpl implements IUserBp {
         }
         return dingUserList;
     }
-
 
 
     @Override
@@ -301,13 +303,12 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = authUser.ip;
                 cacheBp.insertUser(u);
-				return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
+                return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
+            } else {
+                return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
             }
-            else {
-				return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");	
-            }            
         } catch (Exception ex) {
-			return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
+            return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
         }
     }
 
@@ -321,7 +322,7 @@ public class UserBpImpl implements IUserBp {
      * @date 2018年6月6日 下午2:20:46
      */
     private void insertLoginLog(UserLoginLogDO loginLog) {
-    	logger.info(StringUtility.toJSONString_NoException(StringUtility.toJSONString_NoException(loginLog)));
+        logger.info(StringUtility.toJSONString_NoException(StringUtility.toJSONString_NoException(loginLog)));
 //        fixedThreadPool.execute(new Runnable() {
 //
 //            @Override
@@ -359,17 +360,18 @@ public class UserBpImpl implements IUserBp {
         String ticket = jo.getString(StringConstant.ticket);
         String ip = jo.getString(StringConstant.ip);
         UserVO u = cacheBp.getUser(strOperator);
-        if (u==null || !StringUtils.equalsIgnoreCase(u.ticket, ticket) || !StringUtils.equalsIgnoreCase(u.ip, ip)){
+        if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket) || !StringUtils.equalsIgnoreCase(u.ip, ip)) {
             throw new URCBizException(ErrorCode.E_100002);
         }
         cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
     }
+
     public static void main(String[] args) {
-       List list =new ArrayList();
-       list.add("linwanxian");
-       list.add("panyun");
-       String str =list.toString();
-        System.out.println("======================"+str);
+        List list = new ArrayList();
+        list.add("linwanxian");
+        list.add("panyun");
+        String str = list.toString();
+        System.out.println("======================" + str);
     }
 }
