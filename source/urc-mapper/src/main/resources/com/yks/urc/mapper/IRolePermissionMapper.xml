@@ -201,25 +201,16 @@
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </update>
 
-    <!--超级管理员获取所有的sys_key-->
-    <select id="getAllSysKey" resultType="java.lang.String">
+    <!--业务管理员通过用户名获取角色对应的sys_key-->
+    <select id="getSysKetByRoleAndUserName" resultType="java.lang.String">
         select DISTINCT(up.sys_key)
         FROM urc_user_role ur
         INNER JOIN urc_role r on ur.role_id =r.role_id
         inner JOIN urc_role_permission up on ur.role_id =up.role_id
-    </select>
-    <!--通过用户名获取角色对应的sys_key-->
-    <select id="getSysKetByRoleAndUserName" resultType="java.lang.String">
-       select DISTINCT(up.sys_key)
-        FROM urc_user_role ur
-        INNER JOIN urc_role r on ur.role_id =r.role_id
-        inner JOIN urc_role_permission up on ur.role_id =up.role_id
-        <where>
-            <if test="userName !=null and userName !=''">
-               ur.user_name =#{userName}
-            </if>
-        </where>
-
+        WHERE r.is_active=1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
+        <if test="userName !=null and userName !=''">
+         AND   ur.user_name =#{userName}
+        </if>
     </select>
     <!--更新角色的功能权限-->
     <update id="updateUserRoleByRoleId">
@@ -237,7 +228,7 @@
             <if test="rolePermissionDO.createBy != null and rolePermissionDO.createBy != ''">
                 create_by = #{rolePermissionDO.createBy,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.createTime != null and rolePermissionDO.createTime != ''" >
+            <if test="rolePermissionDO.createTime != null and rolePermissionDO.createTime != ''">
                 create_time = #{rolePermissionDO.createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="rolePermissionDO.modifiedBy != null and rolePermissionDO.modifiedBy != ''">

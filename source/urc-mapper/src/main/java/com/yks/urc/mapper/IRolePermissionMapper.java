@@ -80,12 +80,5 @@ public interface IRolePermissionMapper {
      * @Date 2018/6/20 9:45
      */
     int updateUserRoleByRoleId(@Param("rolePermissionDO") RolePermissionDO rolePermissionDO);
-    /**
-     * 超级管理员获取所有的系统key
-     * @param
-     * @return
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/25 16:18
-     */
-    List<String> getAllSysKey();
+
 }

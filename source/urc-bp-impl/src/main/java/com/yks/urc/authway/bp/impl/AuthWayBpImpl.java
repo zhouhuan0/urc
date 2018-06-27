@@ -9,6 +9,7 @@
 package com.yks.urc.authway.bp.impl;
 
 import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.*;
@@ -29,6 +30,8 @@ public class AuthWayBpImpl implements AuthWayBp {
     private IRolePermissionMapper rolePermissionMapper;
     @Autowired
     private AuthWayMapper authWayMapper;
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     /**
      * 1. 首先通过用户判断是否是管理员 2. 通过管理员拿到对应的system_key,若是超管, 获取所有的sys_key , 3. sys_key 拿到对应的业务系统实体
@@ -40,15 +43,20 @@ public class AuthWayBpImpl implements AuthWayBp {
     public List<SysAuthWayVO> getMyAuthWay(String operator) {
         boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         List<SysAuthWayVO> lstAuthWayVOS = new ArrayList<>();
-        //1.首先通过用户判断是否是超级管理员 还是业务管理员,超级管理员拿到所有的业务系统key
-        if (isSuperAdmin == true){
-            List<String> getSysKey = rolePermissionMapper.getAllSysKey();
+        //1.首先通过用户判断是否是超级管理员 还是业务管理员,超级管理员拿到所有的业务系统key, 只需要拿定义表的数据即可
+        if (isSuperAdmin == true) {
+            List<PermissionDO> permissionDOS = permissionMapper.getAllSysKey();
+            List<String> getSysKey = new ArrayList<>();
+            //组装所有的key
+            for (PermissionDO permissionDO : permissionDOS) {
+                getSysKey.add(permissionDO.getSysKey());
+            }
             //组装sysAuthWayVO
             lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
-        }else {
+        } else {
             boolean isAdmin = roleMapper.isAdminAccount(operator);
             if (isAdmin == true) {
-                //2. 通过管理员拿到sys_key
+                //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色
                 List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
                 //组装sysAuthWayVO
                 lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
@@ -68,13 +76,13 @@ public class AuthWayBpImpl implements AuthWayBp {
      * @Date 2018/6/14 17:14
      */
     public List<SysAuthWayVO> AssembleSysAuthWay(List<String> getSysKey) {
-        List<SysAuthWayVO> sysAuthWayVOList =new ArrayList<>();
+        List<SysAuthWayVO> sysAuthWayVOList = new ArrayList<>();
         //3. sys_key 拿到对应的业务系统实体
         for (String sysKey : getSysKey) {
             SysAuthWayVO sysAuthWayVO = new SysAuthWayVO();
             //获取最终结果 , 一个系统对应的多个授权方式
             List<AuthWayVO> authWayVOS = authWayMapper.getAuthWayVoBySysKey(sysKey);
-            if (authWayVOS.size() == 0){
+            if (authWayVOS.size() == 0) {
                 continue;
             }
             for (AuthWayVO authWayVO : authWayVOS) {

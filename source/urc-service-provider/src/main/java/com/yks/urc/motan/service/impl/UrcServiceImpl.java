@@ -8,6 +8,7 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
+import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.*;
@@ -49,8 +50,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log(value = "同步数据",level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
-        JSONObject jsonObject = StringUtility.parseString(json);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         return userService.syncUserInfo(operator);
     }
 
@@ -107,7 +107,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "用户管理/搜索用户",level = LogLevel.INFO)
     public ResultVO<PageResultVO> getUsersByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         String pageNumber=jsonObject.getString("pageNumber");
         String pageData=jsonObject.getString("pageData");
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"),UserVO.class);
@@ -165,7 +165,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "获取所有平台",level = LogLevel.INFO)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         return userService.getPlatformList(operator);
     }
 
@@ -173,7 +173,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "获取指定平台的店铺和站点",level = LogLevel.INFO)
     public ResultVO<List<OmsShopVO>> getShopList(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         String platform = jsonObject.getString("platform");
         return userService.getShopList(operator, platform);
     }
@@ -306,7 +306,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO<List<UserVO>> getUserByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         UserVO userVO = StringUtility.parseObject(jsonObject.getString("user"), UserVO.class);
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
@@ -317,8 +317,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log(value = "获取应用系统及其授权方式",level = LogLevel.INFO)
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String jsonStr) {
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.get("operator").toString();
+        String operator = MotanSession.getRequest().getOperator();
         if (StringUtility.isNullOrEmpty(operator)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "operator为空");
         }
@@ -354,7 +353,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log(value = "更新多个角色的功能权限",level = LogLevel.INFO)
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
         if (lstRole == null){
                 return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
