@@ -9,6 +9,7 @@ import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.IUserPermitStatMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,28 +41,30 @@ public class PermissionServiceImpl implements IPermissionService {
 
 	@Autowired
 	PermissionMapper permissionMapper;
-	
+
 	@Autowired
 	private IUserRoleMapper userRoleMapper;
-	
+
 	@Autowired
 	IRoleMapper roleMapper;
-	
+
 	@Autowired
 	IRolePermissionMapper rolePermissionMapper;
 
 	@Autowired
 	private IUserPermitStatMapper userPermitStatMapper;
-	
+
 	@Autowired
 	IOperationBp operationBp;
 
 	@Autowired
 	ICacheBp cacheBp;
-	
+
 	private IUserPermissionCacheMapper permissionCacheMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
+	@Autowired
+	private ISessionBp sessionBp;
 
 	@Transactional
 	@Override
@@ -91,24 +94,35 @@ public class PermissionServiceImpl implements IPermissionService {
 					p.setSysKey(root.system.key);
 					p.setSysContext(StringUtility.toJSONString_NoException(root));
 					p.setCreateTime(new Date());
+					p.setModifiedBy(sessionBp.getOperator());
+					p.setModifiedBy(sessionBp.getOperator());
 					lstPermit.add(p);
 				}
-				permissionMapper.deleteSyspermitDefine(lstPermit);
-				permissionMapper.insertSysPermitDefine(lstPermit);
-				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
+//				permissionMapper.deleteSyspermitDefine(lstPermit);
+//				permissionMapper.insertSysPermitDefine(lstPermit);
 
 				// 更新缓存
 				for (PermissionDO p : lstPermit) {
+					PermissionDO pFromDb = permissionMapper.getPermission(p.getSysKey());
+					if(pFromDb==null){
+						// insert
+						permissionMapper.insertSysPermitDefine(Arrays.asList(p));
+					}
+					else{
+						// update
+						permissionMapper.updateSysContextBySysKey(p);
+					}
 					cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
 				}
+				operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
 				rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
 			} else {
 				rslt.state = CommonMessageCodeEnum.FAIL.getCode();
 				rslt.msg = "没有 data";
 			}
 		} catch (Exception ex) {
-			rslt.state = CommonMessageCodeEnum.FAIL.getCode();
-			rslt.msg = ex.getMessage();
+			logger.error(String.format("importSysPermit:%s", jsonStr), ex);
+			throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
 		}
 		return rslt;
 	}

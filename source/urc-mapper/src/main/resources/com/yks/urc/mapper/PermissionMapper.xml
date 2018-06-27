@@ -112,5 +112,10 @@
     <select id="getAllSysKey" resultType="com.yks.urc.entity.PermissionDO">
 		SELECT sys_key, sys_context FROM  urc_permission 
     </select>
-    
+
+    <update id="updateSysContextBySysKey">
+        update urc_permission
+        set sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3)
+        where sys_key=#{sysKey}
+    </update>
 </mapper>

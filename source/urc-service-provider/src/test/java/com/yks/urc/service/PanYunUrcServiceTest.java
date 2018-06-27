@@ -196,6 +196,13 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
 
+    @Test
+    public void importSysPermit_Test() throws IOException {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+
+        permissionService.importSysPermit(strJson1);
+    }
+
     // @Test
     public void testCache() {
         List<String> lstFromDb = new ArrayList<>();

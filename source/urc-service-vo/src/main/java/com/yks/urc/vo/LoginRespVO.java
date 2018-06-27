@@ -32,5 +32,5 @@ public class LoginRespVO implements Serializable {
 	public String userName;
 	
 	public String ip;
-    public String personName;
+	public String personName;
 }

@@ -71,4 +71,10 @@ public interface PermissionMapper {
      * @return
      */
     List<PermissionDO> getAllSysKey();
+
+    /**
+     * 根据sys_key更新sys_context
+     * @param p
+     */
+    int updateSysContextBySysKey(PermissionDO p);
 }
