@@ -3,7 +3,7 @@
 <mapper namespace="com.yks.urc.mapper.IUserRoleMapper">
     <resultMap id="BaseResultMap2" type="com.yks.urc.entity.UserRoleDO">
         <id column="id" jdbcType="TINYINT" property="id"/>
-        <result column="role_id" jdbcType="TINYINT" property="roleId"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -14,7 +14,7 @@
 
     <resultMap id="BaseResultMap" type="com.yks.urc.entity.UserRoleDO">
         <id column="id" jdbcType="TINYINT" property="id"/>
-        <result column="role_id" jdbcType="TINYINT" property="roleId"/>
+        <result column="role_id" jdbcType="INTEGER" property="roleId"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
@@ -23,7 +23,7 @@
         <!--用户角色关系表 与角色表一对多-->
         <collection property="roleDOS" ofType="com.yks.urc.entity.RoleDO">
             <id column="id" jdbcType="TINYINT" property="id"/>
-            <result column="role_id" jdbcType="TINYINT" property="roleId"/>
+            <result column="role_id" jdbcType="INTEGER" property="roleId"/>
             <result column="role_name" jdbcType="VARCHAR" property="roleName"/>
             <result column="is_active" jdbcType="TINYINT" property="isActive"/>
             <result column="is_authorizable" jdbcType="TINYINT" property="isAuthorizable"/>
