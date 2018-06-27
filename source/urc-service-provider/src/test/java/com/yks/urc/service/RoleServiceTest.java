@@ -64,7 +64,7 @@ public class RoleServiceTest extends BaseServiceTest {
         JSONObject jsonObject = new JSONObject();
         RoleVO roleVO = new RoleVO();
 //        roleVO.setRoleId(1529746076695000006L);
-        roleVO.setRoleName("admin-update");
+        roleVO.setRoleName("admin-update222");
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.TRUE);
         roleVO.setForever(Boolean.FALSE);
@@ -89,7 +89,7 @@ public class RoleServiceTest extends BaseServiceTest {
         roleVO.setLstUserName(lstUserName);
 
         jsonObject.put("role", roleVO);
-        jsonObject.put("operator", "lvchangrong");
+        jsonObject.put("operator", "lvchangrong2");
         String jsonStr = jsonObject.toString();
         ResultVO resultVO = roleService.addOrUpdateRoleInfo(jsonStr);
 
