@@ -201,13 +201,13 @@
     where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
   </update>
 
-    <!--业务管理员通过用户名获取角色对应的sys_key-->
+    <!--业务管理员通过用户名获取角色对应的sys_key 1代表是业务管理员-->
     <select id="getSysKetByRoleAndUserName" resultType="java.lang.String">
         select DISTINCT(up.sys_key)
         FROM urc_user_role ur
         INNER JOIN urc_role r on ur.role_id =r.role_id
         inner JOIN urc_role_permission up on ur.role_id =up.role_id
-        WHERE r.is_active=1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)  
+        WHERE r.is_active=1 AND r.is_authorizable = 1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
         <if test="userName !=null and userName !=''">
          AND   ur.user_name =#{userName}
         </if>
