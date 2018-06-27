@@ -54,7 +54,7 @@ public class UserServiceImpl implements IUserService {
         try {
             resultVO=userBp.SynUserFromUserInfo(operator);
         } catch (Exception e) {
-           logger.info("同步任务异常" + e.getMessage());
+           logger.error("同步任务异常" + e.getMessage());
             return VoHelper.getErrorResult();
         } finally {
             return resultVO;

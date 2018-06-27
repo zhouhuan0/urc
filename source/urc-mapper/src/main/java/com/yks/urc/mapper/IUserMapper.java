@@ -128,4 +128,6 @@ public interface IUserMapper {
      * @return
      */
 	int fuzzySearchUsersByUserNameCount(Query query);
+
+    String getPersonNameByUserName(@Param("userName") String userName);
 }
