@@ -562,6 +562,9 @@ public class RoleServiceImpl implements IRoleService {
             dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
         logger.info(String.format("获取的角色id为%s",lstRoleId));
+        if (lstRoleId.size() == 0 ){
+            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"roleID 的集合为空");
+        }
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
             logger.info(String.format("获取的用户名为%s",userNames));
         /*4、更新用户操作权限冗余表和缓存*/
