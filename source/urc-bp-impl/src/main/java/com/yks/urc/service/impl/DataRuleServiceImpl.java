@@ -515,7 +515,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 for (ExpressionVO subExpressionVO : subExpressions) {
                     ExpressionDO subExpressionDO = new ExpressionDO();
                     BeanUtils.copyProperties(subExpressionVO, subExpressionDO);
-                    if(!StringUtility.isNullOrEmpty(subExpressionVO.getOperValues())){
+                    List<String> operValuesArrList = subExpressionVO.getOperValuesArr();
+                    if(operValuesArrList!=null && !operValuesArrList.isEmpty()){
                         subExpressionDO.setOperValues(StringUtility.toJSONString(subExpressionVO.getOperValuesArr()));
                     }
                     subExpressionDO.setDataRuleSysId(dataRuleSysId);
@@ -557,6 +558,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
         BeanUtils.copyProperties(templVO, dataRuleTemplDO);
         Long templId = seqBp.getNextDataRuleTemplId();
+        templVO.setTemplId(templId.toString());
         dataRuleTemplDO.setTemplId(templId);
         dataRuleTemplDO.setCreateBy(operator);
         dataRuleTemplDO.setCreateTime(new Date());
@@ -785,6 +787,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
 	            		ExpressionVO expressionVO = new ExpressionVO();
 	            		expressionVO.setSubWhereClause(expressionVOList);
+	            		expressionVO.setIsAnd(1);
 	            		dataRuleSysVO.sysKey = syskeyList.get(j).getSysKey();
 	            		dataRuleSysVO.col = dataRuleColVOList;
 	            		dataRuleSysVO.row = expressionVO;

@@ -11,6 +11,7 @@ import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
@@ -310,7 +311,8 @@ public class UserBpImpl implements IUserBp {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
             }
         } catch (Exception ex) {
-            return VoHelper.getResultVO(ErrorCode.E_000000, "unknown login error");
+            logger.error(String.format("login ERROR:%s", StringUtility.toJSONString_NoException(authUser)), ex);
+            throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
     }
 
