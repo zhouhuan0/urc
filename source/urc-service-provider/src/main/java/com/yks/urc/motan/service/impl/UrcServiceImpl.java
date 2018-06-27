@@ -163,7 +163,6 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log(value = "获取所有平台",level = LogLevel.INFO)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String jsonStr) {
-        JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator = MotanSession.getRequest().getOperator();
         return userService.getPlatformList(operator);
     }

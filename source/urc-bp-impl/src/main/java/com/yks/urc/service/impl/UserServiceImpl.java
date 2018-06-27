@@ -10,6 +10,7 @@ import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,7 +110,8 @@ public class UserServiceImpl implements IUserService {
             rslt.msg = "Success " + operator;
             rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
-            rslt = VoHelper.getErrorResult();
+            logger.error("未知异常",e);
+            throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
         } finally {
             return rslt;
         }
@@ -119,7 +121,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<OmsShopVO>> getShopList(String operator, String platform) {
-
         ResultVO<List<OmsShopVO>> rslt = new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
@@ -134,7 +135,8 @@ public class UserServiceImpl implements IUserService {
                 return rslt;
             }
         } catch (Exception e) {
-            rslt = VoHelper.getErrorResult();
+            logger.error("未知异常",e);
+            throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
         } finally {
             return rslt;
         }
@@ -150,14 +152,15 @@ public class UserServiceImpl implements IUserService {
             }
             rslt.data = authWayBp.getMyAuthWay(operator);
             if (rslt.data == null) {
-                rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限哦";
+                rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限";
                 rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.msg = "成功, " + operator;
             rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
-          throw  new URCBizException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常");
+            logger.error("未知异常",e);
+          throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
         } finally {
             return rslt;
         }
@@ -203,6 +206,9 @@ public class UserServiceImpl implements IUserService {
         List<UserVO> userVOS = new ArrayList<>();
         UserVO userVO1 = new UserVO();
         UserDO userDO = userMapper.getUserByUserName(userVO);
+        if (StringUtility.isNullOrEmpty(userDO.getUserName())){
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"用户不存在");
+        }
         userVO1.userName = userDO.getUserName();
         userVOS.add(userVO1);
         return VoHelper.getSuccessResult(userVOS);

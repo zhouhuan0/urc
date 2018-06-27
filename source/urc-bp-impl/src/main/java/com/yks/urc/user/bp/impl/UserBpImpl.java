@@ -101,7 +101,7 @@ public class UserBpImpl implements IUserBp {
             try {
                 List<UserInfo> userInfoList = this.getUserInfo();
                 if (userInfoList == null || userInfoList.size() == 0) {
-                    logger.info("请求userInfo 接口异常");
+                    logger.error(String.format("请求userInfo 接口异常"));
                     operationBp.addLog(this.getClass().getName(), "请求userInfo 接口异常", null);
                     throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
                 }
@@ -257,6 +257,7 @@ public class UserBpImpl implements IUserBp {
         try {
             accessToken=  HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
             if (StringUtility.isNullOrEmpty(accessToken)) {
+                logger.error(String.format("获取token失败, 请求参数为: %s ",StringUtility.toJSONString(object)),object);
                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
             }
             logger.info("获取token");
@@ -266,14 +267,14 @@ public class UserBpImpl implements IUserBp {
             // 2.只调用UserInfo接口，同步UserInfo数据
              userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
             if (StringUtility.isNullOrEmpty(userInfo)) {
+                logger.error(String.format("获取userInfo失败, 请求参数为: %s token为: %s",USER_INFO_ADDRESS ,accessToken),userInfo);
                 throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取userInfo失败,userInfo返回数据为空");
             }
             // 解析json数组
-            logger.info("获取userInfo");
+            logger.info(String.format("获取userInfo",userInfo));
             dingUserList = StringUtility.jsonToList(userInfo, UserInfo.class);
-            logger.info("需要解析的数组为%s",String.format(String.valueOf(dingUserList)));
         } catch (Exception e) {
-            logger.error(String.format("获取的token为: %s, 调用的结果为: %s",accessToken,userInfo),e);
+            logger.error(String.format("请求地址为: %s %s ,请求参数为: %s,获取的token为: %s, 调用的结果为: %s",GET_TOKEN,USER_INFO_ADDRESS,StringUtility.toJSONString(object),accessToken,userInfo),e);
         }
         return dingUserList;
     }
