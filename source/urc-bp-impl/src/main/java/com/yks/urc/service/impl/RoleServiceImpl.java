@@ -187,9 +187,13 @@ public class RoleServiceImpl implements IRoleService {
         /*获取角色现在关联的用户userName*/
         List<String> newRelationUsers = roleVO.getLstUserName();
         /*添加角色原来关联的用户列表*/
-        lstUserName.addAll(oldRelationUsers);
+        if(oldRelationUsers!=null && !oldRelationUsers.isEmpty()){
+            lstUserName.addAll(oldRelationUsers);
+        }
         /*添加角色现在关联的用户列表*/
-        lstUserName.addAll(newRelationUsers);
+        if(newRelationUsers!=null || !newRelationUsers.isEmpty()) {
+            lstUserName.addAll(newRelationUsers);
+        }
         if (lstUserName != null && !lstUserName.isEmpty()) {
             /*去重*/
             lstUserName = removeDuplicate(lstUserName);
