@@ -1,3 +1,4 @@
+
 package com.yks.urc.service.impl;
 
 import java.util.ArrayList;
@@ -113,18 +114,28 @@ public class PersonServiceImpl implements IPersonService {
 							List<Person> personList=initInfo.get("person");
 							List<PersonOrg> personOrgList=initInfo.get("personOrg");
 							
-							//dingUserId + phoneNum作为维度去重Person
-					        Set<Person> setData = new HashSet<Person>();  
-					        setData.addAll(personList);  
-					        personList.clear();
-					        personList = new ArrayList<>(setData);
+	
 							
-							//插入部门表
-							organizationMapper.insertBatchOrg(orgList);
-							//插入人员表
-							personMapper.insertBatchPerson(personList);
-							//插入部门人员表
-							personOrgMapper.insertBatchPersonOrg(personOrgList);
+					        if(orgList!=null&&orgList.size()>0){
+					        	//插入部门表
+					        	organizationMapper.insertBatchOrg(orgList);
+					        }
+					        
+					        if(personList!=null&&personList.size()>0){
+								//dingUserId + phoneNum作为维度去重Person
+						        Set<Person> setData = new HashSet<Person>();  
+						        setData.addAll(personList);  
+						        personList.clear();
+						        personList = new ArrayList<>(setData);
+								//插入人员表
+								personMapper.insertBatchPerson(personList);
+					        }
+					        
+					        if(personOrgList!=null&&personOrgList.size()>0){
+								//插入部门人员表
+								personOrgMapper.insertBatchPersonOrg(personOrgList);
+					        }
+
 							operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
 						} catch (Exception e) {
 							logger.error("同步钉钉数据出错，message={}",e.getMessage());
