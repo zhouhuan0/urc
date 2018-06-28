@@ -497,27 +497,31 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-                RoleVO roleVO = new RoleVO();
-                RolePermissionDO permissionDO = new RolePermissionDO();
-                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                if (!roleMapper.isSuperAdminAccount(operator)) {
-                    permissionDO.setCreateBy(operator);
-                }
-                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
-                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
-                for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-                    PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                    String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
-                    PermissionVO permissionVO = new PermissionVO();
-                    permissionVO.setSysKey(rolePermissionDO.getSysKey());
-                    permissionVO.setSysContext(SelectedContext);
-                    permissionVOs.add(permissionVO);
-                }
-                RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-                roleVO.roleId = lstRoleId.get(i);
-                roleVO.roleName = roleDo.getRoleName();
-                roleVO.selectedContext = permissionVOs;
-                roleVoList.add(roleVO);
+            	RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+            	if(roleDo!=null){
+	                RolePermissionDO permissionDO = new RolePermissionDO();
+	                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+	                if (!roleMapper.isSuperAdminAccount(operator)) {
+	                    permissionDO.setCreateBy(operator);
+	                }
+	                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
+	                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
+	                if(rolePermissionList!=null&&rolePermissionList.size()>0){
+	                	for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+	                		PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+	                		String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+	                		PermissionVO permissionVO = new PermissionVO();
+	                		permissionVO.setSysKey(rolePermissionDO.getSysKey());
+	                		permissionVO.setSysContext(SelectedContext);
+	                		permissionVOs.add(permissionVO);
+	                	}
+	                	RoleVO roleVO = new RoleVO();
+	                	roleVO.roleId = lstRoleId.get(i);
+	                	roleVO.roleName = roleDo.getRoleName();
+	                	roleVO.selectedContext = permissionVOs;
+	                	roleVoList.add(roleVO);
+	                }
+            	}
             }
         }
         return VoHelper.getSuccessResult(roleVoList);
