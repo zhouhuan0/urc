@@ -191,7 +191,7 @@ public class RoleServiceImpl implements IRoleService {
             lstUserName.addAll(oldRelationUsers);
         }
         /*添加角色现在关联的用户列表*/
-        if(newRelationUsers!=null || !newRelationUsers.isEmpty()) {
+        if(newRelationUsers!=null && !newRelationUsers.isEmpty()) {
             lstUserName.addAll(newRelationUsers);
         }
         if (lstUserName != null && !lstUserName.isEmpty()) {
