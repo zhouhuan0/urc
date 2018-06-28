@@ -526,6 +526,11 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleVO jumpRoleVO : lstRole) {
             List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
             for (PermissionVO jumpPermissionVO : jumpPermissionVOS){
+                //若是没有sys_key , 则返回给前端
+                if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey()) ){
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"传入的sys_key不能为空");
+                }
+                //判断传过来的json数据是否能转成SystemRootVO
                if(StringUtility.parseObject(jumpPermissionVO.getSysContext(),SystemRootVO.class) == null){
                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"传入的数据结构非法");
                }

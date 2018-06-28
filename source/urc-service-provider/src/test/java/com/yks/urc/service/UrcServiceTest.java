@@ -275,13 +275,116 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void updateRolePermission(){
 		Map map =new HashMap();
-		map.put("operator","linwanxian");
+		map.put("operator","panyun");
 		List<RoleVO> lstRole =new ArrayList<>();
 		RoleVO roleVO =new RoleVO();
 		roleVO.roleId = "1529746076695000006";
 		List<PermissionVO> selectedContext =new ArrayList<>();
 		PermissionVO permissionVO =new PermissionVO();
-		String sysCOntext="{[\"查看\",\"查看详情\",\"批量审核\",\"批量撤单\",\"审核/撤单\"]}";
+		permissionVO.setSysKey("004");
+		String sysCOntext="{\n" +
+				"\t\"menu\": [{\n" +
+				"\t\t\"key\": \"004-000001\",\n" +
+				"\t\t\"module\": [{\n" +
+				"\t\t\t\"function\": [],\n" +
+				"\t\t\t\"key\": \"004-000001-000001\",\n" +
+				"\t\t\t\"module\": [],\n" +
+				"\t\t\t\"name\": \"组织架构\",\n" +
+				"\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\"show\": 1,\n" +
+				"\t\t\t\"url\": \"/user/organization/\"\n" +
+				"\t\t},\n" +
+				"\t\t{\n" +
+				"\t\t\t\"function\": [],\n" +
+				"\t\t\t\"key\": \"004-000001-000002\",\n" +
+				"\t\t\t\"module\": [{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000002-000001\",\n" +
+				"\t\t\t\t\"module\": [{\n" +
+				"\t\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\t\"key\": \"004-000001-000002-000001-000001\",\n" +
+				"\t\t\t\t\t\"name\": \"查看方案\",\n" +
+				"\t\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\t\"show\": 0,\n" +
+				"\t\t\t\t\t\"url\": \"/user/usermanagementlist/datapermissiontempl/viewplan/\"\n" +
+				"\t\t\t\t},\n" +
+				"\t\t\t\t{\n" +
+				"\t\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\t\"key\": \"004-000001-000002-000001-000002\",\n" +
+				"\t\t\t\t\t\"name\": \"新增/编辑方案\",\n" +
+				"\t\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\t\"show\": 0,\n" +
+				"\t\t\t\t\t\"url\": \"/user/usermanagementlist/datapermissiontempl/compileplan/\"\n" +
+				"\t\t\t\t}],\n" +
+				"\t\t\t\t\"name\": \"数据权限模板\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 1,\n" +
+				"\t\t\t\t\"url\": \"/user/usermanagementlist/datapermissiontempl/\"\n" +
+				"\t\t\t},\n" +
+				"\t\t\t{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000002-000002\",\n" +
+				"\t\t\t\t\"module\": [],\n" +
+				"\t\t\t\t\"name\": \"数据授权\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 1,\n" +
+				"\t\t\t\t\"url\": \"/user/usermanagementlist/datapauthorization/\"\n" +
+				"\t\t\t},\n" +
+				"\t\t\t{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000002-000003\",\n" +
+				"\t\t\t\t\"module\": [],\n" +
+				"\t\t\t\t\"name\": \"操作权限列表\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 1,\n" +
+				"\t\t\t\t\"url\": \"/user/usermanagementlist/functionalpermissionlist/\"\n" +
+				"\t\t\t}],\n" +
+				"\t\t\t\"name\": \"用户管理\",\n" +
+				"\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\"show\": 1,\n" +
+				"\t\t\t\"url\": \"/user/usermanagementlist/\"\n" +
+				"\t\t},\n" +
+				"\t\t{\n" +
+				"\t\t\t\"function\": [],\n" +
+				"\t\t\t\"key\": \"004-000001-000003\",\n" +
+				"\t\t\t\"module\": [{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000003-000001\",\n" +
+				"\t\t\t\t\"name\": \"新增修改界面\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 0,\n" +
+				"\t\t\t\t\"url\": \"/user/rolemanagement/addupdaterole/\"\n" +
+				"\t\t\t},\n" +
+				"\t\t\t{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000003-000002\",\n" +
+				"\t\t\t\t\"name\": \"角色授权界面\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 0,\n" +
+				"\t\t\t\t\"url\": \"/user/rolemanagement/operatingAuthorization/\"\n" +
+				"\t\t\t},\n" +
+				"\t\t\t{\n" +
+				"\t\t\t\t\"function\": [],\n" +
+				"\t\t\t\t\"key\": \"004-000001-000003-000003\",\n" +
+				"\t\t\t\t\"name\": \"分配用户界面\",\n" +
+				"\t\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\t\"show\": 0,\n" +
+				"\t\t\t\t\"url\": \"/user/rolemanagement/allocUser/\"\n" +
+				"\t\t\t}],\n" +
+				"\t\t\t\"name\": \"角色管理\",\n" +
+				"\t\t\t\"pageFullPathName\": \"\",\n" +
+				"\t\t\t\"show\": 1,\n" +
+				"\t\t\t\"url\": \"/user/rolemanagement/\"\n" +
+				"\t\t}],\n" +
+				"\t\t\"name\": \"应用中心\",\n" +
+				"\t\t\"url\": \"/user/\"\n" +
+				"\t}],\n" +
+				"\t\"system\": {\n" +
+				"\t\t\"key\": \"004\",\n" +
+				"\t\t\"name\": \"应用中心\",\n" +
+				"\t\t\"url\": \"/user/\"\n" +
+				"\t}\n" +
+				"}";
 		permissionVO.setSysContext(sysCOntext);
 		selectedContext.add(permissionVO);
 		roleVO.selectedContext=selectedContext;
