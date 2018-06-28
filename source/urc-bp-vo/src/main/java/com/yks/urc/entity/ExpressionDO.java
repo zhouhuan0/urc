@@ -32,6 +32,9 @@ public class ExpressionDO {
 
     private List<ExpressionDO> expressionDOList;
 
+    private String entityName;
+    private String fieldName;
+
     public List<ExpressionDO> getExpressionDOList() {
         return expressionDOList;
     }
@@ -142,5 +145,21 @@ public class ExpressionDO {
 
     public void setOperValues(String operValues) {
         this.operValues = operValues;
+    }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 }

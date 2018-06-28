@@ -33,6 +33,8 @@
             <result column="oper" jdbcType="VARCHAR" property="oper"/>
             <result column="parent_expression_id" jdbcType="BIGINT" property="parentExpressionId"/>
             <result column="oper_values" jdbcType="LONGVARCHAR" property="operValues"/>
+            <result column="entity_name" jdbcType="VARCHAR" property="entityName"/>
+            <result column="field_name" jdbcType="VARCHAR" property="fieldName"/>
         </collection>
     </resultMap>
 
@@ -107,11 +109,15 @@
         ue.entity_code AS eentity_code,
         ue.oper,
         ue.parent_expression_id,
-        ue.oper_values
+        ue.oper_values,
+        uet.entity_name,
+        uf.field_name
         from urc_data_rule_sys us
         left join urc_permission up on us.sys_key = up.sys_key
         left join urc_data_rule_col ud on us.data_rule_sys_id = ud.data_rule_sys_id
         left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        left join urc_entity uet on ue.entity_code = uet.entity_code
+        left join urc_field uf on ue.field_code = uf.field_code
         where us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
     </select>
 
@@ -148,25 +154,24 @@
         left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
         where us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
     </select>
-    
-    
-        <!--根据用户名得到sys_id-->
+
+
+    <!--根据用户名得到sys_id-->
     <select id="getDataRuleSysByUserName" parameterType="com.yks.urc.entity.UserDO" resultMap="BaseResultMap">
         select
         udrs.data_rule_sys_id,
         udrs.data_rule_id,
-        udrs.sys_key 
+        udrs.sys_key
         from
-        urc_data_rule_sys udrs 
+        urc_data_rule_sys udrs
         LEFT JOIN urc_data_rule udr ON udrs.data_rule_id = udr.data_rule_id
-		<where>
-			<if test=" userName !=null and userName != '' ">
-			     udr.user_name = #{userName} 
-			</if>
-		</where>
-	
+        <where>
+            <if test=" userName !=null and userName != '' ">
+                udr.user_name = #{userName}
+            </if>
+        </where>
+
     </select>
-    
 
 
 </mapper>
