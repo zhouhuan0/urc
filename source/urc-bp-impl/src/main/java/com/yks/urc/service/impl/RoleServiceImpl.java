@@ -426,11 +426,15 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     public ResultVO getUserByRoleId(String operator, String roleId) {
+        RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
+        if(roleDO==null){
+            throw new URCBizException("角色不存在role=" + roleId, ErrorCode.E_000003);
+        }
+        if (!roleMapper.isSuperAdminAccount(operator)&&roleDO.getCreateBy().equals(operator)) {
+            throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + roleId, ErrorCode.E_000003);
+        }
         UserRoleDO userRole = new UserRoleDO();
         userRole.setRoleId(Long.parseLong(roleId));
-        if (!roleMapper.isSuperAdminAccount(operator)) {
-            userRole.setCreateBy(operator);
-        }
         List<UserDO> userList = userMapper.getUserByRoleId(userRole);
         return VoHelper.getSuccessResult(userList);
     }
@@ -493,27 +497,31 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-                RoleVO roleVO = new RoleVO();
-                RolePermissionDO permissionDO = new RolePermissionDO();
-                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                if (!roleMapper.isSuperAdminAccount(operator)) {
-                    permissionDO.setCreateBy(operator);
-                }
-                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
-                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
-                for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-                    PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                    String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
-                    PermissionVO permissionVO = new PermissionVO();
-                    permissionVO.setSysKey(rolePermissionDO.getSysKey());
-                    permissionVO.setSysContext(SelectedContext);
-                    permissionVOs.add(permissionVO);
-                }
-                RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-                roleVO.roleId = lstRoleId.get(i);
-                roleVO.roleName = roleDo.getRoleName();
-                roleVO.selectedContext = permissionVOs;
-                roleVoList.add(roleVO);
+            	RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+            	if(roleDo!=null){
+	                RolePermissionDO permissionDO = new RolePermissionDO();
+	                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+	                if (!roleMapper.isSuperAdminAccount(operator)) {
+	                    permissionDO.setCreateBy(operator);
+	                }
+	                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
+	                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
+	                if(rolePermissionList!=null&&rolePermissionList.size()>0){
+	                	for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+	                		PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+	                		String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+	                		PermissionVO permissionVO = new PermissionVO();
+	                		permissionVO.setSysKey(rolePermissionDO.getSysKey());
+	                		permissionVO.setSysContext(SelectedContext);
+	                		permissionVOs.add(permissionVO);
+	                	}
+	                	RoleVO roleVO = new RoleVO();
+	                	roleVO.roleId = lstRoleId.get(i);
+	                	roleVO.roleName = roleDo.getRoleName();
+	                	roleVO.selectedContext = permissionVOs;
+	                	roleVoList.add(roleVO);
+	                }
+            	}
             }
         }
         return VoHelper.getSuccessResult(roleVoList);
@@ -615,16 +623,16 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleList = new ArrayList<>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-                RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+            	RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
                 if (roleDO != null) {
+                	if(!roleMapper.isAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
+                		break;
+                	}
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
                     roleVO.setRoleId(roleDO.getRoleId().toString());
                     UserRoleDO userRoleDO = new UserRoleDO();
                     userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                    if (!roleMapper.isSuperAdminAccount(operator)) {
-                        userRoleDO.setCreateBy(operator);
-                    }
                     List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
                     roleVO.setLstUserName(lstUserName);
                     roleList.add(roleVO);

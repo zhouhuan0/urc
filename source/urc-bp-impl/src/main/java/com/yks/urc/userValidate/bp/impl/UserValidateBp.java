@@ -3,6 +3,8 @@ package com.yks.urc.userValidate.bp.impl;
 import java.io.IOException;
 import java.util.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -28,6 +30,8 @@ import com.yks.urc.vo.helper.VoHelper;
 
 @Component
 public class UserValidateBp implements IUserValidateBp {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
+
 	@Autowired
 	IRoleMapper roleMapper;
 	@Autowired
@@ -476,7 +480,7 @@ public class UserValidateBp implements IUserValidateBp {
 
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
-		operationBp.addLog(UserValidateBp.class.getName(), StringUtility.toJSONString_NoException(map), null);
+		logger.info(String.format("funcPermitValidate:%s",StringUtility.toJSONString_NoException(map)));
 		String apiUrl = map.get("apiUrl");
 		String moduleUrl = map.get("moduleUrl");
 		String operator = map.get(StringConstant.operator);
