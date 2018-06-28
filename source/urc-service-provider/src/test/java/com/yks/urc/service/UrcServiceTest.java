@@ -281,7 +281,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		roleVO.roleId = "1529746076695000006";
 		List<PermissionVO> selectedContext =new ArrayList<>();
 		PermissionVO permissionVO =new PermissionVO();
-		String sysCOntext="{bbbbbb}";
+		String sysCOntext="{[\"查看\",\"查看详情\",\"批量审核\",\"批量撤单\",\"审核/撤单\"]}";
 		permissionVO.setSysContext(sysCOntext);
 		selectedContext.add(permissionVO);
 		roleVO.selectedContext=selectedContext;
