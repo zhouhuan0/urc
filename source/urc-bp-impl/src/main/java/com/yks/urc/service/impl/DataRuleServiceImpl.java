@@ -294,13 +294,21 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*5、删除用户原有的数据权限关系数据 包括行权限 列权限*/
         dataRuleMapper.delBatchByUserNames(lstUserName);
         /*6 批量添加用户数据权限关系数据*/
-        dataRuleMapper.insertBatch(dataRuleDOSCache);
+        if(dataRuleDOSCache!=null && !dataRuleDOSCache.isEmpty()){
+            dataRuleMapper.insertBatch(dataRuleDOSCache);
+        }
         /*7 批量添加数据权限系统数据*/
-        dataRuleSysMapper.insertBatch(dataRuleSysDOSCache);
+        if(dataRuleSysDOSCache!=null && !dataRuleSysDOSCache.isEmpty()) {
+            dataRuleSysMapper.insertBatch(dataRuleSysDOSCache);
+        }
         /*批量添加对应的行权限数据*/
-        dataRuleColMapper.insertBatch(dataRuleColDOSCache);
+        if(dataRuleColDOSCache!=null && !dataRuleColDOSCache.isEmpty()) {
+            dataRuleColMapper.insertBatch(dataRuleColDOSCache);
+        }
         /*批量添加对应的列权限数据*/
-        expressionMapper.insertBatch(expressionDOSCache);
+        if(expressionDOSCache!=null && !expressionDOSCache.isEmpty()) {
+            expressionMapper.insertBatch(expressionDOSCache);
+        }
         /*8、发送消息到kafka*/
         sendToMq(dataRuleSysDOS, lstUserName);
         return VoHelper.getSuccessResult();
