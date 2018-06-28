@@ -626,55 +626,57 @@ public class RoleServiceImpl implements IRoleService {
             for (int i = 0; i < lstRole.size(); i++) {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(Long.valueOf(roleVO.getRoleId()));
-                UserRoleDO userRole = new UserRoleDO();
-                List<UserRoleDO> userRoleDOS = new ArrayList<>();
-                List<String> userNameList = roleVO.getLstUserName();
-                userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                List<UserDO> userList = userMapper.getUserByRoleId(userRole);
-                if (roleMapper.isSuperAdminAccount(operator)) {
-                    userRoleMapper.deleteUserRole(userRole);
-                    if (userList != null && userList.size() > 0) {
-                        for (int q = 0; q < userList.size(); q++) {
-                            permitStatBp.updateUserPermitCache(userList.get(i).getUserName());
-                        }
-                    }
-                    for (int j = 0; j < userNameList.size(); j++) {
-                        UserRoleDO userRoleDO = new UserRoleDO();
-                        userRoleDO.setUserName(userNameList.get(i));
-                        userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                        userRoleDO.setCreateBy(operator);
-                        userRoleDO.setCreateTime(new Date());
-                        userRoleDO.setModifiedBy(operator);
-                        userRoleDO.setModifiedTime(new Date());
-                        userRoleDOS.add(userRoleDO);
-                    }
-                } else {
-                    if (roleDO.getCreateBy().equals(operator)) {
-                        userRole.setCreateBy(operator);
-                        userRoleMapper.deleteUserRole(userRole);
-                        if (userList != null && userList.size() > 0) {
-                            for (int q = 0; q < userList.size(); q++) {
-                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
-                            }
-                        }
-                        for (int j = 0; j < userNameList.size(); j++) {
-                            UserRoleDO userRoleDO = new UserRoleDO();
-                            userRoleDO.setUserName(userNameList.get(i));
-                            userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                            userRoleDO.setCreateBy(operator);
-                            userRoleDO.setCreateTime(new Date());
-                            userRoleDO.setModifiedBy(operator);
-                            userRoleDO.setModifiedTime(new Date());
-                            userRoleDOS.add(userRoleDO);
-                        }
-                    }
-                }
-                if (userRoleDOS != null && userRoleDOS.size() > 0) {
-                    userRoleMapper.insertBatch(userRoleDOS);
-                    for (int j = 0; j < userRoleDOS.size(); j++) {
-                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
-                    }
-
+                if(roleDO!=null){
+                	UserRoleDO userRole = new UserRoleDO();
+                	List<UserRoleDO> userRoleDOS = new ArrayList<>();
+                	List<String> userNameList = roleVO.getLstUserName();
+                	userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                	List<UserDO> userList = userMapper.getUserByRoleId(userRole);
+                	if (roleMapper.isSuperAdminAccount(operator)) {
+                		userRoleMapper.deleteUserRole(userRole);
+                		if (userList != null && userList.size() > 0) {
+                			for (int q = 0; q < userList.size(); q++) {
+                				permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                			}
+                		}
+                		for (int j = 0; j < userNameList.size(); j++) {
+                			UserRoleDO userRoleDO = new UserRoleDO();
+                			userRoleDO.setUserName(userNameList.get(j));
+                			userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                			userRoleDO.setCreateBy(operator);
+                			userRoleDO.setCreateTime(new Date());
+                			userRoleDO.setModifiedBy(operator);
+                			userRoleDO.setModifiedTime(new Date());
+                			userRoleDOS.add(userRoleDO);
+                		}
+                	} else {
+                		if (roleDO.getCreateBy().equals(operator)) {
+                			userRole.setCreateBy(operator);
+                			userRoleMapper.deleteUserRole(userRole);
+                			if (userList != null && userList.size() > 0) {
+                				for (int q = 0; q < userList.size(); q++) {
+                					permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                				}
+                			}
+                			for (int j = 0; j < userNameList.size(); j++) {
+                				UserRoleDO userRoleDO = new UserRoleDO();
+                				userRoleDO.setUserName(userNameList.get(j));
+                				userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                				userRoleDO.setCreateBy(operator);
+                				userRoleDO.setCreateTime(new Date());
+                				userRoleDO.setModifiedBy(operator);
+                				userRoleDO.setModifiedTime(new Date());
+                				userRoleDOS.add(userRoleDO);
+                			}
+                		}
+                	}
+                	if (userRoleDOS != null && userRoleDOS.size() > 0) {
+                		userRoleMapper.insertBatch(userRoleDOS);
+                		for (int j = 0; j < userRoleDOS.size(); j++) {
+                			permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+                		}
+                		
+                	}
                 }
             }
 
