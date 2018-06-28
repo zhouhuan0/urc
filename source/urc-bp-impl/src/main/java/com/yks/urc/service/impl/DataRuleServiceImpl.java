@@ -570,6 +570,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         dataRuleTemplDO.setTemplId(templId);
         dataRuleTemplDO.setCreateBy(operator);
         dataRuleTemplDO.setCreateTime(new Date());
+        dataRuleTemplDO.setModifiedTime(new Date());
+        dataRuleTemplDO.setModifiedBy(operator);
         dataRuleTemplMapper.insert(dataRuleTemplDO);
         /*2、新增数据权限sys urc_data_rule_sys */
         /*数据权限Sys列表*/
@@ -797,6 +799,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		expressionVO.setSubWhereClause(expressionVOList);
 	            		expressionVO.setIsAnd(1);
 	            		dataRuleSysVO.sysKey = syskeyList.get(j).getSysKey();
+	            		dataRuleSysVO.sysName=syskeyList.get(j).getSysName();
 	            		dataRuleSysVO.col = dataRuleColVOList;
 	            		dataRuleSysVO.row = expressionVO;
 	            		lstDataRuleSys.add(dataRuleSysVO);
