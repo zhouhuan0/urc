@@ -161,7 +161,7 @@ public class RoleServiceImpl implements IRoleService {
             throw new URCBizException("parameter role is null", ErrorCode.E_000002);
         }
         String roleIdStr = roleVO.getRoleId();
-        Long roleId = StringUtil.isEmpty(roleIdStr)?null:Long.valueOf(roleVO.getRoleId());
+        Long roleId = StringUtil.isEmpty(roleIdStr) ? null : Long.valueOf(roleVO.getRoleId());
           /*获取角色原关联的用户userName*/
         UserRoleDO userRoleDO = new UserRoleDO();
         userRoleDO.setRoleId(roleId);
@@ -187,11 +187,11 @@ public class RoleServiceImpl implements IRoleService {
         /*获取角色现在关联的用户userName*/
         List<String> newRelationUsers = roleVO.getLstUserName();
         /*添加角色原来关联的用户列表*/
-        if(oldRelationUsers!=null && !oldRelationUsers.isEmpty()){
+        if (oldRelationUsers != null && !oldRelationUsers.isEmpty()) {
             lstUserName.addAll(oldRelationUsers);
         }
         /*添加角色现在关联的用户列表*/
-        if(newRelationUsers!=null && !newRelationUsers.isEmpty()) {
+        if (newRelationUsers != null && !newRelationUsers.isEmpty()) {
             lstUserName.addAll(newRelationUsers);
         }
         if (lstUserName != null && !lstUserName.isEmpty()) {
@@ -344,7 +344,7 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO<RoleVO> getRoleByRoleId(String jsonStr) {
         /* 1、将json字符串转为Json对象 */
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
-		/* 2、获取参数并校验 */
+        /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
@@ -525,15 +525,20 @@ public class RoleServiceImpl implements IRoleService {
         //校验传过来的书架上是否是合法的
         for (RoleVO jumpRoleVO : lstRole) {
             List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
-            for (PermissionVO jumpPermissionVO : jumpPermissionVOS){
+            for (PermissionVO jumpPermissionVO : jumpPermissionVOS) {
                 //若是没有sys_key , 则返回给前端
-                if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey()) ){
-                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"传入的sys_key不能为空");
+                if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey())) {
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的sys_key不能为空");
+                }
+                //若传入的roleID 为空
+                List<RoleDO> roleDOs = roleMapper.selectRoleByRoleId(jumpRoleVO.roleId);
+                if (StringUtility.isNullOrEmpty(jumpRoleVO.roleId) || roleDOs.size() ==0) {
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的roleId不存在");
                 }
                 //判断传过来的json数据是否能转成SystemRootVO
-               if(StringUtility.parseObject(jumpPermissionVO.getSysContext(),SystemRootVO.class) == null){
-                   return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"传入的数据结构非法");
-               }
+                if (StringUtility.parseObject(jumpPermissionVO.getSysContext(), SystemRootVO.class) == null) {
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的数据结构非法");
+                }
             }
         }
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
@@ -584,7 +589,7 @@ public class RoleServiceImpl implements IRoleService {
         logger.info(String.format("获取的角色id为%s", lstRoleId));
         if (lstRoleId.size() == 0) {
             logger.info("roleID 的集合为空");
-           return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有任何数据可以更新");
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有任何数据可以更新");
         }
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
@@ -645,58 +650,58 @@ public class RoleServiceImpl implements IRoleService {
             for (int i = 0; i < lstRole.size(); i++) {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
-                if(roleDO!=null){
-                	
-                	UserRoleDO userRole = new UserRoleDO();
-                	List<UserRoleDO> userRoleDOS = new ArrayList<>();
-                	List<String> userNameList = roleVO.getLstUserName();
-                	userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                	List<UserDO> userList = userMapper.getUserByRoleId(userRole);
-                	if (roleMapper.isSuperAdminAccount(operator)) {
-                		userRoleMapper.deleteUserRole(userRole);
-                		if (userList != null && userList.size() > 0) {
-                			for (int q = 0; q < userList.size(); q++) {
-                				permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
-                			}
-                		}
-                		for (int j = 0; j < userNameList.size(); j++) {
-                			UserRoleDO userRoleDO = new UserRoleDO();
-                			userRoleDO.setUserName(userNameList.get(j));
-                			userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                			userRoleDO.setCreateBy(operator);
-                			userRoleDO.setCreateTime(new Date());
-                			userRoleDO.setModifiedBy(operator);
-                			userRoleDO.setModifiedTime(new Date());
-                			userRoleDOS.add(userRoleDO);
-                		}
-                	} else {
-                		if (roleDO.getCreateBy().equals(operator)) {
-                			userRole.setCreateBy(operator);
-                			userRoleMapper.deleteUserRole(userRole);
-                			if (userList != null && userList.size() > 0) {
-                				for (int q = 0; q < userList.size(); q++) {
-                					permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
-                				}
-                			}
-                			for (int j = 0; j < userNameList.size(); j++) {
-                				UserRoleDO userRoleDO = new UserRoleDO();
-                				userRoleDO.setUserName(userNameList.get(j));
-                				userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
-                				userRoleDO.setCreateBy(operator);
-                				userRoleDO.setCreateTime(new Date());
-                				userRoleDO.setModifiedBy(operator);
-                				userRoleDO.setModifiedTime(new Date());
-                				userRoleDOS.add(userRoleDO);
-                			}
-                		}
-                	}
-                	if (userRoleDOS != null && userRoleDOS.size() > 0) {
-                		userRoleMapper.insertBatch(userRoleDOS);
-                		for (int j = 0; j < userRoleDOS.size(); j++) {
-                			permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
-                		}
-                		
-                	}
+                if (roleDO != null) {
+
+                    UserRoleDO userRole = new UserRoleDO();
+                    List<UserRoleDO> userRoleDOS = new ArrayList<>();
+                    List<String> userNameList = roleVO.getLstUserName();
+                    userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                    List<UserDO> userList = userMapper.getUserByRoleId(userRole);
+                    if (roleMapper.isSuperAdminAccount(operator)) {
+                        userRoleMapper.deleteUserRole(userRole);
+                        if (userList != null && userList.size() > 0) {
+                            for (int q = 0; q < userList.size(); q++) {
+                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                            }
+                        }
+                        for (int j = 0; j < userNameList.size(); j++) {
+                            UserRoleDO userRoleDO = new UserRoleDO();
+                            userRoleDO.setUserName(userNameList.get(j));
+                            userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                            userRoleDO.setCreateBy(operator);
+                            userRoleDO.setCreateTime(new Date());
+                            userRoleDO.setModifiedBy(operator);
+                            userRoleDO.setModifiedTime(new Date());
+                            userRoleDOS.add(userRoleDO);
+                        }
+                    } else {
+                        if (roleDO.getCreateBy().equals(operator)) {
+                            userRole.setCreateBy(operator);
+                            userRoleMapper.deleteUserRole(userRole);
+                            if (userList != null && userList.size() > 0) {
+                                for (int q = 0; q < userList.size(); q++) {
+                                    permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                                }
+                            }
+                            for (int j = 0; j < userNameList.size(); j++) {
+                                UserRoleDO userRoleDO = new UserRoleDO();
+                                userRoleDO.setUserName(userNameList.get(j));
+                                userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                                userRoleDO.setCreateBy(operator);
+                                userRoleDO.setCreateTime(new Date());
+                                userRoleDO.setModifiedBy(operator);
+                                userRoleDO.setModifiedTime(new Date());
+                                userRoleDOS.add(userRoleDO);
+                            }
+                        }
+                    }
+                    if (userRoleDOS != null && userRoleDOS.size() > 0) {
+                        userRoleMapper.insertBatch(userRoleDOS);
+                        for (int j = 0; j < userRoleDOS.size(); j++) {
+                            permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+                        }
+
+                    }
                 }
             }
 
