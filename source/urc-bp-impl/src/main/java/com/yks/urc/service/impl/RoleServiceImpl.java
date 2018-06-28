@@ -518,8 +518,16 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
+        //校验传过来的书架上是否是合法的
+        for (RoleVO jumpRoleVO : lstRole) {
+            List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
+            for (PermissionVO jumpPermissionVO : jumpPermissionVOS){
+               if(StringUtility.parseObject(jumpPermissionVO.getSysContext(),SystemRootVO.class) == null){
+                   return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"传入的数据结构非法");
+               }
+            }
+        }
         //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
-        RolePermissionDO rolePermissionDO = new RolePermissionDO();
         Map dataMap = new HashMap();
         //判断用户是否是普通用户
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
@@ -542,8 +550,10 @@ public class RoleServiceImpl implements IRoleService {
             List<Long> roleIds = new ArrayList<>();
             List<RolePermissionDO> permissionDOS = new ArrayList<>();
             for (PermissionVO permissionVO : permissionVOS) {
+                RolePermissionDO rolePermissionDO = new RolePermissionDO();
                 //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
                 rolePermissionDO.setRoleId(userRole.getRoleId());
+                rolePermissionDO.setSysKey(permissionVO.getSysKey());
                 rolePermissionDO.setModifiedBy(operator);
                 rolePermissionDO.setCreateBy(operator);
                 rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
