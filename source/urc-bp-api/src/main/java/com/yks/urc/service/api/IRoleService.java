@@ -24,7 +24,6 @@ public interface IRoleService {
 
     ResultVO deleteRoles(String jsonStr);
 
-    List<SystemRootVO> getUserAuthorizablePermission(String userName);
 
     ResultVO getRolePermission(String operator,List<String> lstRoleId);
     /**
@@ -42,7 +41,7 @@ public interface IRoleService {
 
     ResultVO updateUsersOfRole(List<RoleVO> lstRole,String operator);
 
-    void copyRole(String operator,String newRoleName,String sourceRoleId);
+    ResultVO copyRole(String operator,String newRoleName,String sourceRoleId);
 
     /**
      * 检查角色名是否重复

@@ -187,13 +187,13 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("复制角色")
     public ResultVO copyRole(String jsonStr) {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
-        String operator = jsonObject.getString("operator");
+        String operator = MotanSession.getRequest().getOperator();
         String newRoleName = jsonObject.getString("newRoleName");
         String sourceRoleId = jsonObject.getString("sourceRoleId");
-        roleService.copyRole(operator,newRoleName,sourceRoleId);
-        return VoHelper.getSuccessResult();
+        return  roleService.copyRole(operator,newRoleName,sourceRoleId);
     }
 
     @Override

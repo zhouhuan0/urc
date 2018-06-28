@@ -722,12 +722,12 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void copyRole(final String operator, String newRoleName, String sourceRoleId) {
+    public ResultVO copyRole(final String operator, String newRoleName, String sourceRoleId) {
         if (StringUtils.isBlank(newRoleName)) {
-            throw new URCBizException(ErrorCode.E_000002);
+           return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"角色名为空");
         }
         if (StringUtils.isBlank(sourceRoleId)) {
-            throw new URCBizException(ErrorCode.E_000002);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"roleId为空");
         }
 		/* 非admin用户只能管理自己创建的角色 */
         long roleId = 0;
@@ -753,7 +753,7 @@ public class RoleServiceImpl implements IRoleService {
         List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
         //如果权限列表为空，则不新增权限列表
         if (CollectionUtils.isEmpty(rolePermissions)) {
-            return;
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"该角色的权限列表为空");
         }
         //保存角色的功能权限
         List<RolePermissionDO> records = new ArrayList<>();
@@ -769,6 +769,7 @@ public class RoleServiceImpl implements IRoleService {
             records.add(record);
         });
         rolePermissionMapper.insertBatch(records);
+        return VoHelper.getSuccessResult();
     }
 
     /**
@@ -852,10 +853,6 @@ public class RoleServiceImpl implements IRoleService {
         }
     }
 
-    @Override
-    public List<SystemRootVO> getUserAuthorizablePermission(String userName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
 
 }
