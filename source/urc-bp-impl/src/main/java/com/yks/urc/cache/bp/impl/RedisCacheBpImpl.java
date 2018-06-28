@@ -318,7 +318,7 @@ public class RedisCacheBpImpl implements ICacheBp {
 		try {
 			if (StringUtility.isNullOrEmpty(userName))
 				return;
-			delKey(userName);
+			delKey(getCacheKey_UserLogin(userName));
 		} catch (Exception ex) {
 			logger.error(String.format("removeUser:%s", userName), ex);
 		}

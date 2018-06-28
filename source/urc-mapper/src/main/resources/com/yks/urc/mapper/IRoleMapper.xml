@@ -305,4 +305,10 @@
         AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
         WHERE ur.user_name = #{userName}
     </select>
+
+    <!--通过roleId查询角色-->
+    <select id="selectRoleByRoleId"  resultMap="BaseResultMap">
+        SELECT  <include refid="Base_Column_List" /> FROM  urc_role WHERE  role_id =#{roleId}
+    </select>
+
 </mapper>

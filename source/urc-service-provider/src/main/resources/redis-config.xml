@@ -13,7 +13,7 @@
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
         <!--新版是maxTotal，旧版是maxActive-->
         <property name="maxTotal">
-            <value>200</value>
+            <value>1000</value>
         </property>
         <property name="maxIdle">
             <value>50</value>
