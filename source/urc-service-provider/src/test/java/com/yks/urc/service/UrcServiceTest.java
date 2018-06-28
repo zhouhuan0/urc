@@ -187,21 +187,8 @@ public class UrcServiceTest extends BaseServiceTest {
     }
 	@Test
 	public void searchUser(){
-		String json ="{\n" +
-				"\t\"operator\":\"test3\",\n" +
-				"\t\"pageNumber\":0,\n" +
-				"\t\"pageData\":30,\n" +
-				"\t\"user\":{\n" +
-				"\t\t\"userName\":\"panyun,chenglifu\"\n" +
-				"\t}\n" +
-				"}";
-		String json1 ="{\n" +
-				"\t\"operator\":\"test3\",\n" +
-				"\t\"pageNumber\":0,\n" +
-				"\t\"pageData\":32\n" +
-				"}";
 		Map map =new HashMap();
-		map.put("operator","linwanxian");
+		map.put("operator","test");
 		map.put("pageNumber",0);
 		map.put("pageData",50);
 		String mapStr =StringUtility.toJSONString(map);

@@ -84,6 +84,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
+        //首先要判断该用户是否是超级管理员或业务管理员
+        if (!roleMapper.isAdminOrSuperAdmin(operator)){
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"非管理员无法查看此数据");
+        }
         return userBp.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
 
