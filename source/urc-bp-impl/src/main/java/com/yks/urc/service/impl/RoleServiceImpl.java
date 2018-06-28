@@ -426,11 +426,15 @@ public class RoleServiceImpl implements IRoleService {
      */
     @Override
     public ResultVO getUserByRoleId(String operator, String roleId) {
+        RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
+        if(roleDO==null){
+            throw new URCBizException("角色不存在role=" + roleId, ErrorCode.E_000003);
+        }
+        if (!roleMapper.isSuperAdminAccount(operator)&&roleDO.getCreateBy().equals(operator)) {
+            throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + roleId, ErrorCode.E_000003);
+        }
         UserRoleDO userRole = new UserRoleDO();
         userRole.setRoleId(Long.parseLong(roleId));
-        if (!roleMapper.isSuperAdminAccount(operator)) {
-            userRole.setCreateBy(operator);
-        }
         List<UserDO> userList = userMapper.getUserByRoleId(userRole);
         return VoHelper.getSuccessResult(userList);
     }
