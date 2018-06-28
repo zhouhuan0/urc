@@ -259,7 +259,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
     @Test
     public void mybatis_log_Test() {
         Long roleId = 1529649147479000001L;
-        RoleDO role = roleMapper.getRoleByRoleId(roleId);
+        RoleDO role = roleMapper.getRoleByRoleId(String.valueOf(roleId));
         System.out.println(StringUtility.toJSONString_NoException(role));
     }
 

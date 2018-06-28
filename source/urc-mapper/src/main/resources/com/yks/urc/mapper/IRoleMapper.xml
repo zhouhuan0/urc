@@ -125,7 +125,7 @@
     </delete>
 
     <!--根据角色Id获取角色信息-->
-    <select id="getRoleByRoleId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="getRoleByRoleId" parameterType="java.lang.String" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_role
