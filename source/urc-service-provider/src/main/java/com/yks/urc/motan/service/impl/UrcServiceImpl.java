@@ -54,7 +54,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log(value = "login", level = LogLevel.ERROR)
+    @Log(value = "login", level = LogLevel.INFO)
     public ResultVO<LoginRespVO> login(Map<String, String> map) {
         UserVO authUser = new UserVO();
         authUser.userName = map.get("userName");
@@ -202,6 +202,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log(value = "funcPermitValidate", level = LogLevel.INFO)
     public ResultVO funcPermitValidate(Map<String, String> map) {
         return userService.funcPermitValidate(map);
     }
