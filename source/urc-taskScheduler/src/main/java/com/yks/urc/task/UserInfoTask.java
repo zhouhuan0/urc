@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 
 import com.yks.urc.user.bp.impl.UserBpImpl;
 
-//@Component
+@Component
 public class UserInfoTask {
     private static Logger logger = LoggerFactory.getLogger(UserInfoTask.class);
 
