@@ -615,16 +615,16 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleList = new ArrayList<>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-                RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+            	RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
                 if (roleDO != null) {
+                	if(!roleMapper.isAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
+                		break;
+                	}
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
                     roleVO.setRoleId(roleDO.getRoleId().toString());
                     UserRoleDO userRoleDO = new UserRoleDO();
                     userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                    if (!roleMapper.isSuperAdminAccount(operator)) {
-                        userRoleDO.setCreateBy(operator);
-                    }
                     List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
                     roleVO.setLstUserName(lstUserName);
                     roleList.add(roleVO);
