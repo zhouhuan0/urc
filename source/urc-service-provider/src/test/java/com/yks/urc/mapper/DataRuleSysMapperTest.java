@@ -29,7 +29,7 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
 
     @Test
     public void listByDataRuleId() {
-        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.getDataRuleSysDatas(1L);
+        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.getDataRuleSysDatas(1530152966230000043L);
         Assert.assertNotNull(dataRuleSysDOs);
     }
 

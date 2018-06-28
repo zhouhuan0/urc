@@ -40,7 +40,7 @@ public class DataRuleColMapperTest extends BaseMapperTest {
     @Test
     public void insertBatch() {
         List<DataRuleColDO> dataRuleColDOS = new ArrayList<>();
-        DataRuleColDO dataRuleColDO = new DataRuleColDO();
+        /*DataRuleColDO dataRuleColDO = new DataRuleColDO();
         dataRuleColDO.setDataRuleSysId(1L);
         dataRuleColDO.setColJson("asas");
         dataRuleColDO.setEntityCode("aaa");
@@ -62,7 +62,7 @@ public class DataRuleColMapperTest extends BaseMapperTest {
         dataRuleColDO3.setEntityCode("aaa");
         dataRuleColDO3.setCreateBy("admin");
         dataRuleColDO3.setCreateTime(new Date());
-        dataRuleColDOS.add(dataRuleColDO3);
+        dataRuleColDOS.add(dataRuleColDO3);*/
         int rtn = dataRuleColMapper.insertBatch(dataRuleColDOS);
         Assert.assertEquals(3,rtn);
     }

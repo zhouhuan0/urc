@@ -52,8 +52,9 @@ public class ExpressionVO implements Serializable {
      * 父级ID
      */
     private Long parentExpressionId;
-    
-    
+
+    private String entityName;
+    private String fieldName;
 
 
     public List<String> getOperValuesArr() {
@@ -127,4 +128,21 @@ public class ExpressionVO implements Serializable {
     public void setParentExpressionId(Long parentExpressionId) {
         this.parentExpressionId = parentExpressionId;
     }
+
+    public String getEntityName() {
+        return entityName;
+    }
+
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
 }
+
