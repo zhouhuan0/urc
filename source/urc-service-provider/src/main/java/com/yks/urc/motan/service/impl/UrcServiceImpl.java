@@ -359,6 +359,7 @@ public class UrcServiceImpl implements IUrcService {
         return roleService.updateRolePermission(operator, lstRole);
     }
     @Override
+    @Log(value = "logout", level = LogLevel.INFO)
     public ResultVO logout(String jsonStr) {
         return userService.logout(jsonStr);
     }

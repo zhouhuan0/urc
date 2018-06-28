@@ -362,9 +362,8 @@ public class UserBpImpl implements IUserBp {
         JSONObject jo = StringUtility.parseString(jsonStr);
         String strOperator = jo.getString(StringConstant.operator);
         String ticket = jo.getString(StringConstant.ticket);
-        String ip = jo.getString(StringConstant.ip);
         UserVO u = cacheBp.getUser(strOperator);
-        if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket) || !StringUtils.equalsIgnoreCase(u.ip, ip)) {
+        if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
             throw new URCBizException(ErrorCode.E_100002);
         }
         cacheBp.removeUser(strOperator);
