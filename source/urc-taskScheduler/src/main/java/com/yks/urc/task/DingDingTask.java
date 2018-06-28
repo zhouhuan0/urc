@@ -10,7 +10,7 @@ import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.service.impl.PersonServiceImpl;
 
-//@Component
+@Component
 public class DingDingTask {
 	private static final Logger logger = LoggerFactory.getLogger(DingDingTask.class);
 	

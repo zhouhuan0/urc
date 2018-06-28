@@ -39,7 +39,7 @@ public class RoleExpiredTask {
 	}
 	
 
-	@Scheduled(cron = "0/20 * * * * ?")
+	@Scheduled(cron = "0/59 * * * * ?")
 	public void testTask() {
 		logger.info("testTask");
 	}
