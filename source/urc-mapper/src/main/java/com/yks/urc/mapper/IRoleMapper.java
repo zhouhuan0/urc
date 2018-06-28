@@ -191,13 +191,6 @@ public interface IRoleMapper {
 
     
 	List<String> getBizAdminFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
-    /**
-     *  通过roleId 查找角色
-     * @param  roleId
-     * @return
-     * @Author linwanxian@youkeshu.com
-     * @Date 2018/6/28 15:09
-     */
-	List<RoleDO> selectRoleByRoleId(@Param("roleId") String roleId);
+
 
 }
