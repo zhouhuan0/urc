@@ -1,10 +1,7 @@
 package com.yks.urc.userValidate.bp.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -474,6 +471,9 @@ public class UserValidateBp implements IUserValidateBp {
 		return sys1;
 	}
 
+	private List<String> lstWhiteApiUrl = Arrays.asList("/urc/motan/service/api/IUrcService/getAllFuncPermit",
+			"/urc/motan/service/api/IUrcService/logout");
+
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
 		operationBp.addLog(UserValidateBp.class.getName(), StringUtility.toJSONString_NoException(map), null);
@@ -493,7 +493,7 @@ public class UserValidateBp implements IUserValidateBp {
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
 
-		if (StringUtility.stringEqualsIgnoreCase("/urc/motan/service/api/IUrcService/getAllFuncPermit", apiUrl)) {
+		if (lstWhiteApiUrl.contains(apiUrl)) {
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 		}
 
