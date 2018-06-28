@@ -528,16 +528,16 @@ public class RoleServiceImpl implements IRoleService {
             for (PermissionVO jumpPermissionVO : jumpPermissionVOS) {
                 //若是没有sys_key , 则返回给前端
                 if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey())) {
-                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的sys_key不能为空");
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "sys_key不能为空");
                 }
                 //若传入的roleID 为空
                 List<RoleDO> roleDOs = roleMapper.selectRoleByRoleId(jumpRoleVO.roleId);
                 if (StringUtility.isNullOrEmpty(jumpRoleVO.roleId) || roleDOs.size() ==0) {
-                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的roleId不存在");
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "roleId不存在");
                 }
                 //判断传过来的json数据是否能转成SystemRootVO
                 if (StringUtility.parseObject(jumpPermissionVO.getSysContext(), SystemRootVO.class) == null) {
-                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "传入的数据结构非法");
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "数据结构非法");
                 }
             }
         }
