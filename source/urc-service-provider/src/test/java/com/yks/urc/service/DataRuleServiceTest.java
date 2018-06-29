@@ -33,11 +33,11 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void assignDataRuleTempl2User(){
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operator","admin");
+        jsonObject.put("operator","lvchangrong");
         jsonObject.put("templId",1529404283335L);
         List<String>  lstUserName = new ArrayList<>();
-        lstUserName.add("admin21");
-        lstUserName.add("admin22");
+        lstUserName.add("admin212");
+        lstUserName.add("admin222");
        /*   lstUserName.add("admin23");
         lstUserName.add("admin24");*/
         jsonObject.put("lstUserName",lstUserName);

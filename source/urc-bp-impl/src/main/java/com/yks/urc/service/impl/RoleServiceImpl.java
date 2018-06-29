@@ -160,6 +160,9 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             throw new URCBizException("parameter role is null", ErrorCode.E_000002);
         }
+        if(StringUtil.isEmpty(roleVO.getRoleName())){
+            throw new URCBizException("parameter roleName is null", ErrorCode.E_000002);
+        }
         String roleIdStr = roleVO.getRoleId();
         Long roleId = StringUtil.isEmpty(roleIdStr) ? null : Long.valueOf(roleVO.getRoleId());
           /*获取角色原关联的用户userName*/
@@ -370,7 +373,9 @@ public class RoleServiceImpl implements IRoleService {
         /*5、获取该角色对应的系统的可用功能权限数据*/
         Map<String, PermissionDO> systemPermissionDos = permissionMapper.getSysContextByRoleId(roleId);
         /*6、将角色已赋权的权限数据与角色对应系统最新的权限数据做对比，筛选并组装角色可用的权限数据*/
-        filterRolePermissionDOS(rolePermissionDOS, systemPermissionDos);
+        if(rolePermissionDOS!=null && !rolePermissionDOS.isEmpty()){
+            filterRolePermissionDOS(rolePermissionDOS, systemPermissionDos);
+        }
         /*7、组装roleVO里的selectedContext*/
         List<PermissionVO> permissionVOS = new ArrayList<>();
         convertPermissionDOToVO(rolePermissionDOS, permissionVOS);

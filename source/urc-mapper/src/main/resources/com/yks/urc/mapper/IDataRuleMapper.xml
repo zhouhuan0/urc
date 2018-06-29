@@ -24,8 +24,24 @@
         </foreach>
     </insert>
 
-    <!--根据userName列表批量删除  包括用户-数据权限数据   数据权限Sys数据  行权限数据  列权限数据-->
+    <!--根据userName获取dataRuleIds列表-->
+    <select id="getDataRuleIdsByUserName" resultType="java.lang.Long">
+       select data_rule_id from urc_data_rule
+        where user_name in
+        <foreach collection="userNames" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>
+    </select>
+
+    <!--根据userName列表批量删除 -->
     <delete id="delBatchByUserNames" parameterType="java.util.List">
+        delete from urc_data_rule
+        where user_name in
+        <foreach collection="list" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>
+    </delete>
+  <!--  <delete id="delBatchByUserNames" parameterType="java.util.List">
         delete ut,us,uc,ue
         from
         urc_data_rule ut
@@ -36,91 +52,7 @@
         <foreach collection="list" item="userName" open="(" separator="," close=")">
             #{userName}
         </foreach>
-    </delete>
+    </delete>-->
 
 
-    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_data_rule
-        where id = #{id,jdbcType=BIGINT}
-    </select>
-    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from urc_data_rule
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-
-    <insert id="insertSelective" parameterType="com.yks.urc.entity.DataRuleDO">
-        insert into urc_data_rule
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="userName != null">
-                user_name,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="createBy != null">
-                create_by,
-            </if>
-            <if test="modifiedTime != null">
-                modified_time,
-            </if>
-            <if test="modifiedBy != null">
-                modified_by,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
-            <if test="userName != null">
-                #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createBy != null">
-                #{createBy,jdbcType=VARCHAR},
-            </if>
-            <if test="modifiedTime != null">
-                #{modifiedTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modifiedBy != null">
-                #{modifiedBy,jdbcType=VARCHAR},
-            </if>
-        </trim>
-    </insert>
-    <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.DataRuleDO">
-        update urc_data_rule
-        <set>
-            <if test="userName != null">
-                user_name = #{userName,jdbcType=VARCHAR},
-            </if>
-            <if test="createTime != null">
-                create_time = #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="createBy != null">
-                create_by = #{createBy,jdbcType=VARCHAR},
-            </if>
-            <if test="modifiedTime != null">
-                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="modifiedBy != null">
-                modified_by = #{modifiedBy,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT}
-    </update>
-    <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.DataRuleDO">
-    update urc_data_rule
-    set user_name = #{userName,jdbcType=VARCHAR},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=VARCHAR},
-      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
-      modified_by = #{modifiedBy,jdbcType=VARCHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 </mapper>

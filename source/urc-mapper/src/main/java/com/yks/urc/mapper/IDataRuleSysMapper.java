@@ -68,10 +68,11 @@ public interface IDataRuleSysMapper {
 
     /**
      * 根据用户名查询sys-id
+     *
      * @param userDO
      * @return
      */
-	List<DataRuleSysDO> getDataRuleSysByUserName(UserDO userDO);
+    List<DataRuleSysDO> getDataRuleSysByUserName(UserDO userDO);
 
 
     /**
@@ -84,4 +85,15 @@ public interface IDataRuleSysMapper {
      * @see
      */
     Integer deldataRuleSysDatasById(@Param("dataRuleId") Long dataRuleId);
+
+    /**
+     * Description: 根据dataRuleID列表删除 权限数据Sys、行权限、列权限
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/29 14:56
+     * @see
+     */
+    Integer delRuleSysDatasByIdsAndCreatBy(@Param("dataRuleIds") List<Long> dataRuleIds, @Param("createBy") String createBy);
 }
