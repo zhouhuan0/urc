@@ -26,9 +26,8 @@ import com.yks.urc.vo.UserVO;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPool;
 
-@Component
 public class RedisCacheBpImpl implements ICacheBp {
-	private static Logger logger = LoggerFactory.getLogger(UserBpImpl.class);
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	@Autowired
 	private ShardedJedisPool shardedJedisPool;

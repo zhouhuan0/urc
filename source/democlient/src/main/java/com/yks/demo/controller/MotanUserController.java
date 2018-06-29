@@ -35,7 +35,7 @@ public class MotanUserController {
             throws Exception {
         System.out.println(body);
         System.out.println(method);
-        System.out.println(method);
+//        System.out.println(method);
 
         ResultVO rslt = null;
         if (StringUtility.stringEqualsIgnoreCase("login", method)) {
