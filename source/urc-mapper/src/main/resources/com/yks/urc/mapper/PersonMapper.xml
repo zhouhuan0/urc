@@ -31,7 +31,9 @@
     <result column="ding_id" jdbcType="VARCHAR" property="dingId" />
     <result column="ding_unionid" jdbcType="VARCHAR" property="dingUnionid" />
     <result column="birthday" jdbcType="DATE" property="birthday" />
+    <result column="birthday_str" jdbcType="VARCHAR" property="birthdayStr" />
     <result column="join_date" jdbcType="DATE" property="joinDate" />
+    <result column="join_date_str" jdbcType="VARCHAR" property="joinDateStr" />
     <result column="leave_date" jdbcType="DATE" property="leaveDate" />
     <result column="job_number" jdbcType="VARCHAR" property="jobNumber" />
     <result column="email" jdbcType="VARCHAR" property="email" />
@@ -45,14 +47,14 @@
   
   
   <sql id="Base_Column_List">
-    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, 
-    up.join_date, up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
+    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday,
+    up.join_date,up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
     up.modified_by
   </sql>
   
     <sql id="Base_User_Column_List">
-    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, 
-    up.join_date, up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
+    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, date_format(up.birthday,'%Y-%m-%d') as birthday_str,
+    up.join_date,date_format(up.join_date,'%Y-%m-%d')  as join_date_str , up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
     up.modified_by,uu.user_name
   </sql>
   

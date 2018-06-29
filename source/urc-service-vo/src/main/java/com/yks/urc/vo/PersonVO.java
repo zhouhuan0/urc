@@ -28,8 +28,12 @@ public class PersonVO implements Serializable {
     private String dingUnionid;
 
     private Date birthday;
+    
+    private String birthdayStr;
 
     private Date joinDate;
+    
+    private String joinDateStr;
 
     private Date leaveDate;
 
@@ -56,6 +60,22 @@ public class PersonVO implements Serializable {
     
     
 
+
+	public String getBirthdayStr() {
+		return birthdayStr;
+	}
+
+	public void setBirthdayStr(String birthdayStr) {
+		this.birthdayStr = birthdayStr;
+	}
+
+	public String getJoinDateStr() {
+		return joinDateStr;
+	}
+
+	public void setJoinDateStr(String joinDateStr) {
+		this.joinDateStr = joinDateStr;
+	}
 
 	public String getDingOrgId() {
 		return dingOrgId;
