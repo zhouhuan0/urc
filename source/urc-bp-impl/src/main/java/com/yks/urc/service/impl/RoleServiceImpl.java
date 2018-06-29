@@ -373,7 +373,9 @@ public class RoleServiceImpl implements IRoleService {
         /*5、获取该角色对应的系统的可用功能权限数据*/
         Map<String, PermissionDO> systemPermissionDos = permissionMapper.getSysContextByRoleId(roleId);
         /*6、将角色已赋权的权限数据与角色对应系统最新的权限数据做对比，筛选并组装角色可用的权限数据*/
-        filterRolePermissionDOS(rolePermissionDOS, systemPermissionDos);
+        if(rolePermissionDOS!=null && !rolePermissionDOS.isEmpty()){
+            filterRolePermissionDOS(rolePermissionDOS, systemPermissionDos);
+        }
         /*7、组装roleVO里的selectedContext*/
         List<PermissionVO> permissionVOS = new ArrayList<>();
         convertPermissionDOToVO(rolePermissionDOS, permissionVOS);
