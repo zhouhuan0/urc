@@ -160,6 +160,9 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             throw new URCBizException("parameter role is null", ErrorCode.E_000002);
         }
+        if(StringUtil.isEmpty(roleVO.getRoleName())){
+            throw new URCBizException("parameter roleName is null", ErrorCode.E_000002);
+        }
         String roleIdStr = roleVO.getRoleId();
         Long roleId = StringUtil.isEmpty(roleIdStr) ? null : Long.valueOf(roleVO.getRoleId());
           /*获取角色原关联的用户userName*/

@@ -78,14 +78,6 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
     }
 
     @Test
-    public void delTemplDatasByIds(){
-        List<Long> ids = new ArrayList<>();
-        ids.add(1529031119283L);
-        int rtn = dataRuleTemplMapper.delTemplDatasByIds(ids);
-        System.out.println(rtn);
-    }
-
-    @Test
     public void updateDataRuleTemplById(){
         DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
         dataRuleTemplDO.setTemplId(3L);
@@ -94,6 +86,14 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
         dataRuleTemplDO.setModifiedBy("admin12");
         dataRuleTemplDO.setModifiedTime(new Date());
         dataRuleTemplMapper.updateDataRuleTemplById(dataRuleTemplDO);
+    }
+
+    @Test
+    public void delTemplByIdsAndCreatBy(){
+        List<Long> lstTemplId = new ArrayList<>();
+        lstTemplId.add(5L);
+        String operator="lvchangrong";
+        dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId,operator);
     }
 
 

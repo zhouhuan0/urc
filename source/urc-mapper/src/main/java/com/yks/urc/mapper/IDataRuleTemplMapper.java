@@ -66,17 +66,6 @@ public interface IDataRuleTemplMapper {
     Integer deleteByTemplId(@Param("templId") Long templId);
 
     /**
-     * Description: 根据templId删除 权限模板数据、权限数据Sys、行权限、列权限
-     *
-     * @param : templId
-     * @return: Integer
-     * @auther: lvcr
-     * @date: 2018/6/14 17:26
-     * @see
-     */
-    Integer delTemplDatasById(@Param("templId") Long templId);
-
-    /**
      * 获取用户可选择的所有数据授权方案
      *
      * @param query
@@ -92,29 +81,6 @@ public interface IDataRuleTemplMapper {
      */
     int getMyDataRuleTemplCount(Query query);
 
-
-    /**
-     * Description: 根据templId删除 权限模板数据、权限数据Sys、行权限、列权限
-     *
-     * @param : templId
-     * @return: Integer
-     * @auther: lvcr
-     * @date: 2018/6/14 17:26
-     * @see
-     */
-    Integer delTemplDatasByIds(List<Long> templId);
-
-    /**
-     * Description: 根据templId和创建人删除 权限模板数据、权限数据Sys、行权限、列权限
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/16 22:08
-     * @see
-     */
-    Integer delTemplDatasByIdsAndCreatBy(@Param("templIds") List<Long> templIds, @Param("createBy") String createBy);
-
     /**
      * Description:
      *
@@ -125,6 +91,17 @@ public interface IDataRuleTemplMapper {
      * @see
      */
     Integer updateDataRuleTemplById(DataRuleTemplDO dataRuleTemplDO);
+
+    /**
+     * Description: 根据templId列表和creatBy删除 权限模板数据
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/29 14:33
+     * @see
+     */
+    Integer delTemplByIdsAndCreatBy(@Param("templIds") List<Long> templIds, @Param("createBy") String createBy);
 
 
 }

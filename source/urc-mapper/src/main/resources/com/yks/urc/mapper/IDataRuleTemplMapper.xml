@@ -100,45 +100,19 @@
         delete from urc_data_rule_templ
         where templ_id = #{templId,jdbcType=BIGINT}
     </delete>
-    <!--根据templId删除 权限模板数据、权限数据Sys、行权限、列权限-->
-    <delete id="delTemplDatasById" parameterType="java.lang.Long">
-       delete  ut,us,uc,ue
-      from
-	  urc_data_rule_templ ut
-      left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
-      left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
-      left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-        where ut.templ_id = #{templId,jdbcType=BIGINT}
-    </delete>
 
-    <!--根据templId列表删除 权限模板数据、权限数据Sys、行权限、列权限-->
-    <delete id="delTemplDatasByIds" parameterType="java.util.List">
-        delete ut,us,uc,ue
-        from
-        urc_data_rule_templ ut
-        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
-        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
-        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-        where ut.templ_id in
-        <foreach collection="list" item="templId" open="(" separator="," close=")">
-            #{templId}
-        </foreach>
-    </delete>
-
-    <!--根据templId列表删除 权限模板数据、权限数据Sys、行权限、列权限-->
-    <delete id="delTemplDatasByIdsAndCreatBy">
-        delete ut,us,uc,ue
-        from
-        urc_data_rule_templ ut
-        left join urc_data_rule_sys us on ut.templ_id = us.data_rule_id
-        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
-        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-        where ut.templ_id in
+    <!--根据templId列表和createBy删除 权限模板数据-->
+    <delete id="delTemplByIdsAndCreatBy">
+        delete from urc_data_rule_templ
+        where templ_id in
         <foreach collection="templIds" item="templId" open="(" separator="," close=")">
             #{templId}
         </foreach>
-        and ut.create_by = #{createBy,jdbcType=VARCHAR}
+        <if test="createBy != null and createBy!=''">
+            and create_by = #{createBy,jdbcType=VARCHAR}
+        </if>
     </delete>
+
     <!--根据tempId 修改方案模板信息-->
     <update id="updateDataRuleTemplById" parameterType="com.yks.urc.entity.DataRuleTemplDO">
         update urc_data_rule_templ
@@ -155,7 +129,7 @@
             <if test="modifiedTime != null">
                 modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="modifiedBy != null">
+            <if test="modifiedBy != null and modifiedBy!=''">
                 modified_by = #{modifiedBy,jdbcType=VARCHAR},
             </if>
         </set>

@@ -54,7 +54,14 @@ public class DataRuleMapperTest extends BaseMapperTest {
         System.out.println(rtn);
     }
 
-
+   @Test
+    public void getDataRuleIdsByUserName(){
+        List<String> userNames = new ArrayList<>();
+        userNames.add("admin22");
+        userNames.add("admin");
+        List<Long> ids = dataRuleMapper.getDataRuleIdsByUserName(userNames);
+       System.out.println(ids);
+   }
 
 
 }

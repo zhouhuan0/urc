@@ -159,14 +159,14 @@
     <!--根据用户名得到sys_id-->
     <select id="getDataRuleSysByUserName" parameterType="com.yks.urc.entity.UserDO" resultMap="BaseResultMap">
         select
-        udrs.data_rule_sys_id, 
-        udrs.data_rule_id, 
-        udrs.sys_key, 
+        udrs.data_rule_sys_id,
+        udrs.data_rule_id,
+        udrs.sys_key,
         up.sys_name
         from
         urc_data_rule_sys udrs
-        LEFT JOIN urc_data_rule udr ON udrs.data_rule_id = udr.data_rule_id 
-        LEFT JOIN urc_permission up ON udrs.sys_key=up.sys_key 
+        LEFT JOIN urc_data_rule udr ON udrs.data_rule_id = udr.data_rule_id
+        LEFT JOIN urc_permission up ON udrs.sys_key=up.sys_key
         <where>
             <if test=" userName !=null and userName != '' ">
                 udr.user_name = #{userName}
@@ -186,6 +186,19 @@
         where  us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
     </delete>
 
-
-
+    <!--根据dataRuleID列表删除 权限数据Sys、行权限、列权限-->
+    <delete id="delRuleSysDatasByIdsAndCreatBy">
+        delete us,uc,ue
+        from
+        urc_data_rule_sys us
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        where us.data_rule_id in
+        <foreach collection="dataRuleIds" item="dataRuleId" open="(" separator="," close=")">
+            #{dataRuleId}
+        </foreach>
+        <if test="createBy != null and createBy!=''">
+            and us.create_by = #{createBy,jdbcType=VARCHAR}
+        </if>
+    </delete>
 </mapper>

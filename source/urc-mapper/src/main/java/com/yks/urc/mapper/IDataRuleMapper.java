@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleDO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -26,5 +27,16 @@ public interface IDataRuleMapper {
      * @see
      */
     Integer delBatchByUserNames(List<String> lstUserName);
+
+    /**
+     * Description: 根据userName获取dataRuleIds列表
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/29 15:35
+     * @see
+     */
+    List<Long> getDataRuleIdsByUserName(@Param("userNames") List<String> userNames);
 
 }

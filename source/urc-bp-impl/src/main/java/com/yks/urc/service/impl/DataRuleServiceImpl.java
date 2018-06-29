@@ -288,8 +288,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<ExpressionDO> expressionDOSCache = new ArrayList<>();
        /*4、组装数据  并放入待入库列表*/
         assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, createBy, dataRuleSysDOS);
-        /*5、删除用户原有的数据权限关系数据 包括行权限 列权限*/
+        /*5.1、删除用户原有的数据权限关系数据 包括行权限 列权限*/
         dataRuleMapper.delBatchByUserNames(lstUserName);
+        List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
+        /*5.2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
+        dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds,null);
         /*6 批量添加用户数据权限关系数据*/
         if(dataRuleDOSCache!=null && !dataRuleDOSCache.isEmpty()){
             dataRuleMapper.insertBatch(dataRuleDOSCache);
@@ -678,10 +681,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (isAdmin) {
              /*4.1、根据templId列表批量删除数据权限方案模板*/
-            dataRuleTemplMapper.delTemplDatasByIds(lstTemplId);
+            //dataRuleTemplMapper.delTemplDatasByIds(lstTemplId);
+            dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId,null);
+            dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId,null);
         } else {
              /*4.2、根据templId列表和创建人批量删除数据权限方案模板*/
-            dataRuleTemplMapper.delTemplDatasByIdsAndCreatBy(lstTemplId, operator);
+            //dataRuleTemplMapper.delTemplDatasByIdsAndCreatBy(lstTemplId, operator);
+            dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId,operator);
+            dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId,operator);
         }
         return VoHelper.getSuccessResult();
     }
@@ -716,8 +723,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleVO dataRuleVO : dataRuleVOS) {
             lstUserName.add(dataRuleVO.getUserName());
         }
-        /*1、删除用户列表对应的数据权限 包括数据权限Sys   行权限  列权限*/
+        /*1、删除用户列表对应的数据权限 */
         dataRuleMapper.delBatchByUserNames(lstUserName);
+        List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
+        /*2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
+        dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds,null);
+
         List<DataRuleDO> dataRuleDOSCache = new ArrayList<>();
          /*数据权限Sys列表*/
         List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();

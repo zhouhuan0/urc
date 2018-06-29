@@ -98,4 +98,12 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
         System.out.println(dataRuleSysDOS);
     }
 
+
+    @Test
+    public void delRuleSysDatasByIdsAndCreatBy(){
+        List<Long> lstIds = new ArrayList<>();
+        lstIds.add(1529748564925000043L);
+        String operator = "lvchangrong";
+        dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstIds,operator);
+    }
 }
