@@ -190,7 +190,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
 
     @Override
     public String getFuncVersion(String userName) {
-        String strRslt = StringUtility.addEmptyString(getCache(getCacheKey_UserFuncVersion()).get(userName));
+        Object rslt = getCache(getCacheKey_UserFuncVersion()).get(userName);
+        if (rslt == null) return null;
+        String strRslt = StringUtility.addEmptyString(rslt);
         if (StringUtility.stringEqualsIgnoreCase(NA, strRslt))
             return StringUtility.Empty;
         return strRslt;
@@ -203,7 +205,12 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     @Override
     public String getSysContext(String sysKey) {
         try {
-            return StringUtility.addEmptyString(getCache(getCacheKey_SysContext()).get(sysKey));
+            Object rslt = getCache(getCacheKey_SysContext()).get(sysKey);
+            if (rslt == null) return null;
+
+            String strRslt = StringUtility.addEmptyString(rslt);
+            if (StringUtility.stringEqualsIgnoreCase(strRslt, NA)) return StringUtility.Empty;
+            return strRslt;
         } catch (Exception ex) {
             logger.error(String.format("getSysContext:%s", sysKey), ex);
             return StringUtility.Empty;
@@ -219,6 +226,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     public void insertSysContext(String sysKey, String sysContext) {
         if (StringUtility.isNullOrEmpty(sysKey))
             return;
+        if (StringUtility.isNullOrEmpty(sysContext)) sysContext = NA;
         getCache(getCacheKey_SysContext()).put(sysKey, sysContext);
     }
 

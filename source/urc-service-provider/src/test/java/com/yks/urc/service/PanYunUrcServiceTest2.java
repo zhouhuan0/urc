@@ -128,7 +128,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
         map.put(StringConstant.operator, "panyun");
-        map.put(StringConstant.ticket, "050db52afd7faf406c5212927744b570");
+        map.put(StringConstant.ticket, "b29e6a04ca90b74e33630a844315de5e");
         map.put(StringConstant.ip, "192.168.201.62");
         map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");
         // map.put(StringConstant.sysKey, "001");
@@ -300,12 +300,12 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         }
     }
 
-    // @Test
-    public void testSeq() {
+    @Test
+    public void seq_Test() {
         RoleDO roleDO = new RoleDO();
         roleDO.setRoleId(seqBp.getNextRoleId());
         roleDO.setRoleName("py");
-        roleMapper.insert(roleDO);
+//        roleMapper.insert(roleDO);
         System.out.println(StringUtility.toJSONString_NoException(roleDO));
         // System.out.println(seqBp.getNextSeq("roleId"));
     }
