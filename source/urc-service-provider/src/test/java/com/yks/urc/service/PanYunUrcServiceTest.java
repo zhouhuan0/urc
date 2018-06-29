@@ -10,7 +10,6 @@ package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.distributed.cache.core.Cache;
-import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
@@ -234,19 +233,19 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 
     @Test
     public void testCache() {
-        DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
+       // DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
 
-        Cache cacheForever = b.cacheName("forever1").build();
+       // Cache cacheForever = b.cacheName("forever1").build();
 //        Cache cacheTest = b.cacheName("cache").expire(50).build();
 //        cacheTest.put("kobe", "bryant");
 
-        Map<String, String> map = new HashMap<>();
+/*        Map<String, String> map = new HashMap<>();
         map.put("001", "URC");
         map.put("002", "OMS");
         String strKey = "sys_api_url_prefix";
         cacheForever.put("a", "b");
-        cacheForever.put("a1", "b1");
-        cacheForever.clear();
+        cacheForever.put("a1", "b1");*/
+        //cacheForever.clear();
 //        System.out.println("---->" + cacheForever.get(strKey));
     }
 
