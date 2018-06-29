@@ -626,7 +626,7 @@ public class RoleServiceImpl implements IRoleService {
             	RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
                 if (roleDO != null) {
                 	if(!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
-                		break;
+                		continue;
                 	}
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
