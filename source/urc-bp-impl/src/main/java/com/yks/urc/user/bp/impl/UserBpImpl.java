@@ -349,6 +349,13 @@ public class UserBpImpl implements IUserBp {
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
+            if (permitCache.lstUserSysVO != null && permitCache.lstUserSysVO.size() > 0) {
+                permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
+                for (UserSysVO us : permitCache.lstUserSysVO) {
+                    permitCache.lstSysRoot.add(us.context);
+                }
+                permitCache.lstUserSysVO = null;
+            }
         }
         if (permitCache != null) {
             permitCache.lstUserSysVO = null;
