@@ -9,6 +9,8 @@
 package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.distributed.cache.core.Cache;
+import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
@@ -40,10 +42,7 @@ import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.UserVO;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.junit.Test;
@@ -140,12 +139,11 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
     @Test
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
-        map.put("apiUrl", "/urc1/motan/service/api/IUrcService/getAllOrgTree");
-        // map.put("moduleUrl", "/");
+        map.put("apiUrl", "/urc/motan/service/api/IUrcService/logout");
         map.put(StringConstant.operator, "panyun");
-        map.put(StringConstant.ticket, "6fae714a8e5f8ebdec4cb8e405091c83");
+        map.put(StringConstant.ticket, "b59ea6299ffec94100aa7d29b0d507d0");
         map.put(StringConstant.ip, "192.168.201.62");
-        map.put(StringConstant.funcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
+//        map.put(StringConstant.funcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
         // map.put(StringConstant.sysKey, "001");
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
     }
@@ -157,6 +155,18 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         authUser.pwd = "ASDFGhjkl;12345";
         authUser.ip = "pyIP";
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
+    }
+
+    @Test
+    public void logout_Test() {
+        Map<String, String> map = new HashMap<>();
+        map.put("apiUrl", "/urc/motan/service/api/IUrcService/logout");
+        map.put(StringConstant.operator, "panyun");
+        map.put(StringConstant.ticket, "4146d43e2f587666f47b1bfdfbcd9c0a");
+        map.put(StringConstant.ip, "192.168.201.62");
+        map.put(StringConstant.funcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        System.out.println(StringUtility.toJSONString_NoException(service.logout(jsonStr)));
     }
 
     @Autowired
@@ -207,6 +217,9 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         lstUserName.add("huangpeiqin");
         lstUserName.add("houyunfeng");
         lstUserName.add("panxi");
+
+        lstUserName.clear();
+        lstUserName.add("panyun");
         permitStatBp.updateUserPermitCache(lstUserName);
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
@@ -218,14 +231,32 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         permissionService.importSysPermit(strJson1);
     }
 
-    // @Test
+
+    @Test
     public void testCache() {
-        List<String> lstFromDb = new ArrayList<>();
-        lstFromDb.add("110");
-        // cacheBp.insertUserSysKey("py", lstFromDb);
-        // List<String> lst = cacheBp.getUserSysKey("py");
-        // System.out.println("----------------SysKey:" +
-        // StringUtility.toJSONString_NoException(lst));
+        DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
+
+        Cache cacheForever = b.cacheName("forever1").build();
+//        Cache cacheTest = b.cacheName("cache").expire(50).build();
+//        cacheTest.put("kobe", "bryant");
+
+        Map<String, String> map = new HashMap<>();
+        map.put("001", "URC");
+        map.put("002", "OMS");
+        String strKey = "sys_api_url_prefix";
+        cacheForever.put("a", "b");
+        cacheForever.put("a1", "b1");
+        cacheForever.clear();
+//        System.out.println("---->" + cacheForever.get(strKey));
+    }
+
+    private void put(Cache cacheForever, String strKey, Map<String, String> map) {
+        if (map == null) return;
+        Iterator<String> it = map.keySet().iterator();
+        while (it.hasNext()) {
+            String key = it.next();
+            cacheForever.put(String.format("%s:%s", strKey, key), map.get(key));
+        }
     }
 
     // @Test

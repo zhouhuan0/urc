@@ -105,6 +105,14 @@ public class MotanUserServiceTest {
 		logger.info(strJson1);
 		System.out.println(StringUtility.toJSONString_NoException(urcService.importSysPermit(strJson1)));
 	}
+
+	@Test
+	public void updateRolePermission_Test(){
+		Map<String,Object> mapArg=new HashMap<>();
+
+		String jsonStr;
+//		urcService.updateRolePermission(jsonStr);
+	}
 	
 	public void testLogin() {
 		// 登陆+获取功能权限版本号+鉴权
