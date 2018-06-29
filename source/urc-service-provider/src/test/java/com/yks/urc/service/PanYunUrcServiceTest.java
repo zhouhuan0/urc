@@ -95,7 +95,7 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
 
             @Override
             public void call(String arg0, String arg1) {
-                System.out.println(String.format("-----------------MessageCallBack:%s %s", arg0, arg1));
+                System.out.println(String.format("-----------------接收到消息:%s %s", arg0, arg1));
             }
         };
         new MQConsumerClient().subscribe(topic, callBack);

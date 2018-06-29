@@ -7,6 +7,7 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
 
 import java.lang.reflect.Method;
+import java.net.URLDecoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,8 @@ public class MotanUserController {
     private IUrcService urcService;
 
     @RequestMapping("/urc/motan/service/api/IUrcService/{method}")
-    public String urcService(@RequestBody String body, @PathVariable("method") String method, HttpServletRequest request) {
+    public String urcService(@RequestBody String body, @PathVariable("method") String method, HttpServletRequest request)
+            throws Exception {
         System.out.println(body);
         System.out.println(method);
         System.out.println(method);
@@ -38,7 +40,7 @@ public class MotanUserController {
         ResultVO rslt = null;
         if (StringUtility.stringEqualsIgnoreCase("login", method)) {
             Map<String, String> mapArg = new HashMap<>();
-            String[] arrKeyValue = body.split("&");
+            String[] arrKeyValue = URLDecoder.decode(body, "utf-8").split("&");
             for (String kv : arrKeyValue) {
                 String[] arrKv = kv.split("=");
                 mapArg.put(arrKv[0], arrKv[1]);
