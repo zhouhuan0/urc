@@ -22,8 +22,20 @@ public class DataRuleColVO implements Serializable {
     private String colJson;
 
     private String entityCode;
+    
+    private String entityName;
+    
+    
 
-    public Long getId() {
+    public String getEntityName() {
+		return entityName;
+	}
+
+	public void setEntityName(String entityName) {
+		this.entityName = entityName;
+	}
+
+	public Long getId() {
         return id;
     }
 

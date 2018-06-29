@@ -793,6 +793,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
 	            		for (DataRuleColDO colDO : dataRuleColList) {
 	            			DataRuleColVO dataRuleColVO = new DataRuleColVO();
+	            			if (!StringUtility.isNullOrEmpty(colDO.getEntityCode())) {
+	            				Entity entity=entityMapper.selectEntityByCode(colDO.getEntityCode());
+	            				if(entity!=null){
+	            					dataRuleColVO.setEntityName(entity.getEntityName());
+	            				}
+	            			}
+	            			
 	            			BeanUtils.copyProperties(colDO, dataRuleColVO);
 	            			dataRuleColVOList.add(dataRuleColVO);
 	            		}
