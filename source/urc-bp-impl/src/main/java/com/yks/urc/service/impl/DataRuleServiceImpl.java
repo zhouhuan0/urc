@@ -48,6 +48,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private IUserRoleMapper userRoleMapper;
+    
+    @Autowired
+    private EntityMapper entityMapper;
 
     @Autowired
     private IRoleMapper roleMapper;
@@ -801,24 +804,44 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	            		List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
 	            		for (DataRuleColDO colDO : dataRuleColList) {
 	            			DataRuleColVO dataRuleColVO = new DataRuleColVO();
+	            			if (!StringUtility.isNullOrEmpty(colDO.getEntityCode())) {
+	            				Entity entity=entityMapper.selectEntityByCode(colDO.getEntityCode());
+	            				if(entity!=null){
+	            					dataRuleColVO.setEntityName(entity.getEntityName());
+	            				}
+	            			}
+	            			
 	            			BeanUtils.copyProperties(colDO, dataRuleColVO);
 	            			dataRuleColVOList.add(dataRuleColVO);
 	            		}
+	            		
 	            		List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
+	            		ExpressionVO expressionVO = new ExpressionVO();
 	            		for (ExpressionDO expressionDO : expressionList) {
-	            			ExpressionVO expressionVO = new ExpressionVO();
+	            			if(expressionDO.getParentExpressionId()==null){
+	            				expressionVO.setIsAnd(1);
+	            				continue;
+	            			}
+	            			ExpressionVO expression = new ExpressionVO();
 	            			if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
 	            				String operValues = expressionDO.getOperValues();
 	            				List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
-	            				expressionVO.setOperValuesArr(operValuesArr);
+	            				expression.setOperValuesArr(operValuesArr);
 	            			}
-	            			BeanUtils.copyProperties(expressionDO, expressionVO);
-	            			expressionVOList.add(expressionVO);
+	            			if (!StringUtility.isNullOrEmpty(expressionDO.getEntityCode())) {
+	            				Entity entity=entityMapper.selectEntityByCode(expressionDO.getEntityCode());
+	            				if(entity!=null){
+	            					expressionDO.setEntityName(entity.getEntityName());
+	            				}
+	            			}
+	            			
+	            			BeanUtils.copyProperties(expressionDO, expression);
+	            			expressionVOList.add(expression);
 	            		}
+	            		
 	            		DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-	            		ExpressionVO expressionVO = new ExpressionVO();
+	            		
 	            		expressionVO.setSubWhereClause(expressionVOList);
-	            		expressionVO.setIsAnd(1);
 	            		dataRuleSysVO.sysKey = syskeyList.get(j).getSysKey();
 	            		dataRuleSysVO.sysName=syskeyList.get(j).getSysName();
 	            		dataRuleSysVO.col = dataRuleColVOList;

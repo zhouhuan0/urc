@@ -10,22 +10,20 @@ package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.distributed.cache.core.Cache;
+import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
-import com.yks.urc.entity.*;
+import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IRolePermissionMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
-import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
-import com.yks.urc.motan.service.impl.UrcServiceImpl;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
@@ -33,26 +31,16 @@ import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.DataRuleSysVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.ExpressionVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.*;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.transaction.annotation.Transactional;
-
 //@Component
-public class PanYunUrcServiceTest extends BaseServiceTest {
+public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Autowired
     private IUrcService service;
     @Autowired
@@ -230,23 +218,77 @@ public class PanYunUrcServiceTest extends BaseServiceTest {
         permissionService.importSysPermit(strJson1);
     }
 
+    @Test
+    public void cacheBp_Test() {
+        UserVO u = new UserVO();
+        u.ip = "ip";
+        u.userName = "py";
+        u.ticket = "ticket";
+        cacheBp.insertUser(u);
+        UserVO uFromCache = cacheBp.getUser(u.userName);
+        System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(uFromCache)));
+
+        cacheBp.insertSysContext("110", "sysContext");
+        System.out.println(String.format("---------%s", cacheBp.getSysContext("110")));
+
+        GetAllFuncPermitRespVO permitCache = new GetAllFuncPermitRespVO();
+        permitCache.funcVersion = "funcVersion";
+        permitCache.lstUserSysVO = new ArrayList<>();
+        UserSysVO e = new UserSysVO();
+        e.sysKey = "110";
+        e.context = "110 context";
+//        permitCache.lstUserSysVO.add(e);
+        cacheBp.insertUserFunc(u.userName, permitCache);
+        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName);
+        System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
+
+        cacheBp.removeUser(u.userName);
+        cacheBp.setDingAccessToken("dingAccessToken", "test");
+        List<PermissionDO> lst = new ArrayList<>();
+        PermissionDO pDO = new PermissionDO();
+        pDO.setSysKey("111");
+        pDO.setApiUrlPrefixJson("apiUrlPrefixJson");
+        lst.add(pDO);
+        cacheBp.setSysApiUrlPrefix(lst);
+
+        System.out.println("------------ testRoleId: " + cacheBp.getNextSeq("testRoleId"));
+    }
 
     @Test
-    public void testCache() {
-       // DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
+    public void cache_Test() {
+        DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
 
-       // Cache cacheForever = b.cacheName("forever1").build();
-//        Cache cacheTest = b.cacheName("cache").expire(50).build();
+        Cache cacheTest = b.cacheName("cache").expire(50).build();
 //        cacheTest.put("kobe", "bryant");
 
-/*        Map<String, String> map = new HashMap<>();
-        map.put("001", "URC");
-        map.put("002", "OMS");
+        Cache cacheForever = b.cacheName("forever").build();
+//        Map<String, String> allCacheItem = cacheForever.getAll();
+
+//        Map<String, String> map = new HashMap<>();
+//        map.put("001", "URC");
+//        map.put("002", "OMS");
         String strKey = "sys_api_url_prefix";
-        cacheForever.put("a", "b");
-        cacheForever.put("a1", "b1");*/
-        //cacheForever.clear();
-//        System.out.println("---->" + cacheForever.get(strKey));
+        cacheForever.put("a", "panyun");
+        cacheForever.put("a1", "b1");
+//        cacheForever.remove("a1");
+//        cacheForever.batchPut();
+//        cacheForever.clear();
+        Map<String, String> map = cacheForever.getAll();
+        System.out.println(String.format("----> %s",
+                StringUtility.toJSONString_NoException(map)));
+        while (true) {
+            try {
+                System.out.println(String.format("----> %s %s", StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date())
+                        , cacheForever.get("a")));
+
+                System.out.println(String.format("roleId=%s", cacheForever.incrSequence("roleId")));
+
+                Thread.sleep(2000L);
+                break;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void put(Cache cacheForever, String strKey, Map<String, String> map) {
