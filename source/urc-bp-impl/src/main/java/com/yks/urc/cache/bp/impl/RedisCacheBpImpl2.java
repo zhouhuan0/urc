@@ -146,7 +146,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     public List<PermissionDO> getSysApiUrlPrefix() {
         try {
             Map<String, String> map = getCache(getCacheKey_SysApiUrlPrefix()).getAll();
-            if (map == null)
+            if (map == null || map.size() == 0)
                 return null;
             List<PermissionDO> lstRslt = new ArrayList<>();
             Iterator<String> it = map.keySet().iterator();
