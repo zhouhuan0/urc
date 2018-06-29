@@ -19,26 +19,26 @@
     <select id="getMyDataRuleTempl" parameterType="com.yks.urc.entity.DataRuleTemplDO" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        	from urc_data_rule_templ  
-        	<where> 
-        		<if test="createBy !=null and createBy != '' ">
-        			 create_by=#{createBy} 
-        		</if>
-        	</where>
-        	
+        from urc_data_rule_templ
+        <where>
+            <if test="createBy !=null and createBy != '' ">
+                create_by=#{createBy}
+            </if>
+        </where>
+
         order by create_time desc
         limit #{offset},#{limit}
     </select>
-    
-    <select id="getMyDataRuleTemplCount" parameterType="com.yks.urc.entity.DataRuleTemplDO" resultType="java.lang.Integer"   >
-        select count(1) from urc_data_rule_templ 
-        	<where> 
-        		<if test="createBy !=null and createBy != '' ">
-        			 create_by=#{createBy} 
-        		</if>
-        	</where>
+
+    <select id="getMyDataRuleTemplCount" parameterType="com.yks.urc.entity.DataRuleTemplDO"
+            resultType="java.lang.Integer">
+        select count(1) from urc_data_rule_templ
+        <where>
+            <if test="createBy !=null and createBy != '' ">
+                create_by=#{createBy}
+            </if>
+        </where>
     </select>
-    
 
 
     <!--根据模板Id获取数据-->
@@ -126,7 +126,7 @@
     </delete>
 
     <!--根据templId列表删除 权限模板数据、权限数据Sys、行权限、列权限-->
-    <delete id="delTemplDatasByIdsAndCreatBy" >
+    <delete id="delTemplDatasByIdsAndCreatBy">
         delete ut,us,uc,ue
         from
         urc_data_rule_templ ut
@@ -139,5 +139,27 @@
         </foreach>
         and ut.create_by = #{createBy,jdbcType=VARCHAR}
     </delete>
+    <!--根据tempId 修改方案模板信息-->
+    <update id="updateDataRuleTemplById" parameterType="com.yks.urc.entity.DataRuleTemplDO">
+        update urc_data_rule_templ
+        <set>
+            <if test="templName != null and templName!=''">
+                templ_name = #{templName,jdbcType=VARCHAR},
+            </if>
+            <if test="userName != null and userName!=''">
+                user_name = #{userName,jdbcType=VARCHAR},
+            </if>
+            <if test="remark != null and remark!=''">
+                remark = #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="modifiedTime != null">
+                modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="modifiedBy != null">
+                modified_by = #{modifiedBy,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where templ_id = #{templId,jdbcType=BIGINT}
+    </update>
 
 </mapper>

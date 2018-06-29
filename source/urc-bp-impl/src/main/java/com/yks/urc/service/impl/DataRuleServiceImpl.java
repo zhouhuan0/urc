@@ -2,7 +2,6 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
@@ -16,9 +15,7 @@ import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.h2.engine.User;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -448,21 +445,23 @@ public class DataRuleServiceImpl implements IDataRuleService {
          *  1)、当temp方案存在 2)、当前用户非管理员  3)、temp方案不属于当前用户
          */
         String tempIdStr = templVO.getTemplId();
+        DataRuleTemplDO dataRuleTemplDO = null;
         if (!StringUtil.isEmpty(tempIdStr)) {
             Long currentTemplId = Long.valueOf(tempIdStr);
             /*判断是否为超级管理员*/
             Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+            dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, null);
             if(!isAdmin) {
-                DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(currentTemplId, operator);
-                if (dataRuleTemplDO == null) {
+                if (dataRuleTemplDO == null || !operator.equals(dataRuleTemplDO.getCreateBy())) {
                     throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
                 }
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
-            dataRuleTemplMapper.delTemplDatasById(currentTemplId);
+           // dataRuleTemplMapper.delTemplDatasById(currentTemplId);
+            dataRuleSysMapper.deldataRuleSysDatasById(currentTemplId);
         }
         /*5、新增该方案对应的数据（包括对应的数据权限Sys、行权限、列权限）*/
-        insertDataRuleTemlDatas(templVO, operator);
+        insertOrUpdateTemlDatas(templVO, operator,dataRuleTemplDO);
         return VoHelper.getSuccessResult(templVO);
     }
 
@@ -561,18 +560,29 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/15 16:43
      * @see
      */
-    private void insertDataRuleTemlDatas(DataRuleTemplVO templVO, String operator) {
+    private void insertOrUpdateTemlDatas(DataRuleTemplVO templVO, String operator,DataRuleTemplDO orgDataRuleTemplDO) {
         /*1、新增数据权限模板 urc_data_rule_templ*/
-        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
-        BeanUtils.copyProperties(templVO, dataRuleTemplDO);
-        Long templId = seqBp.getNextDataRuleTemplId();
-        templVO.setTemplId(templId.toString());
-        dataRuleTemplDO.setTemplId(templId);
-        dataRuleTemplDO.setCreateBy(operator);
-        dataRuleTemplDO.setCreateTime(new Date());
-        dataRuleTemplDO.setModifiedTime(new Date());
-        dataRuleTemplDO.setModifiedBy(operator);
-        dataRuleTemplMapper.insert(dataRuleTemplDO);
+        Long templId = null;
+        if(orgDataRuleTemplDO==null){
+            DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+            BeanUtils.copyProperties(templVO, dataRuleTemplDO);
+            templId = seqBp.getNextDataRuleTemplId();
+            templVO.setTemplId(templId.toString());
+            dataRuleTemplDO.setTemplId(templId);
+            dataRuleTemplDO.setCreateBy(operator);
+            dataRuleTemplDO.setCreateTime(new Date());
+            dataRuleTemplDO.setModifiedTime(new Date());
+            dataRuleTemplDO.setModifiedBy(operator);
+            dataRuleTemplMapper.insert(dataRuleTemplDO);
+        }else {
+            templId = orgDataRuleTemplDO.getTemplId();
+            BeanUtils.copyProperties(templVO, orgDataRuleTemplDO);
+            orgDataRuleTemplDO.setCreateTime(new Date());
+            orgDataRuleTemplDO.setCreateBy(operator);
+            dataRuleTemplMapper.updateDataRuleTemplById(orgDataRuleTemplDO);
+
+        }
+
         /*2、新增数据权限sys urc_data_rule_sys */
         /*数据权限Sys列表*/
         List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();

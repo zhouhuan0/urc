@@ -176,4 +176,16 @@
     </select>
 
 
+    <!--根据dataRuleID删除 权限数据Sys、行权限、列权限-->
+    <delete id="deldataRuleSysDatasById" parameterType="java.lang.Long">
+        delete  us,uc,ue
+        from
+        urc_data_rule_sys us
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        where  us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
+    </delete>
+
+
+
 </mapper>

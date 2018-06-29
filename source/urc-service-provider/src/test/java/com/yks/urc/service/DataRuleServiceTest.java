@@ -24,8 +24,8 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void getDataRuleTemplByTemplId() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operator","admin");
-        jsonObject.put("templId",1529375579688L);
+        jsonObject.put("operator","wujianghui");
+        jsonObject.put("templId",1530238656922000073L);
         ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
         System.out.println(resultVO);
     }
@@ -113,13 +113,13 @@ public class DataRuleServiceTest extends BaseServiceTest {
         subWhereClause1.setFiledCode("fieldPlatform");
         subWhereClause1.setEntityCode("platform");
         subWhereClause1.setOper("in");
-        subWhereClause1.setOperValues("[\"eBay\"，\"WISH\"]");
+        subWhereClause1.setOperValues("[\"eBay\",\"WISH\"]");
         subWhereClause.add(subWhereClause1);
 
         ExpressionVO  subWhereClause2= new ExpressionVO();
         subWhereClause2.setFiledCode("fieldSite");
         subWhereClause2.setOper("in");
-        subWhereClause2.setOperValues("[\"美国\"，\"英国\"]");
+        subWhereClause2.setOperValues("[\"美国\",\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
         ExpressionVO  subWhereClause3= new ExpressionVO();
@@ -138,14 +138,14 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
-//        dataRuleTemplVO.setTemplName("采购一部3C产品组方案2");
+        dataRuleTemplVO.setTemplName("采购一部3C产品组方案204");
         dataRuleTemplVO.setRemark("给xxxx的方案");
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
-//        dataRuleTemplVO.setTemplId("1529030029337");
+//        dataRuleTemplVO.setTemplId("3");
 
         JSONObject json = new JSONObject();
 
-        json.put("operator","admin");
+        json.put("operator","wujianghui");
         json.put("templ",dataRuleTemplVO);
 
         ResultVO resultVO = dataRuleService.addOrUpdateDataRuleTempl(json.toString());

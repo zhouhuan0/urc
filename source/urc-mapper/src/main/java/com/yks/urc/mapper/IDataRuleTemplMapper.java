@@ -83,13 +83,14 @@ public interface IDataRuleTemplMapper {
      * @return
      */
     List<DataRuleTemplDO> getMyDataRuleTempl(Query query);
-    
+
     /**
-     *  获取用户可选择的所有数据授权方案总数
+     * 获取用户可选择的所有数据授权方案总数
+     *
      * @param query
      * @return
      */
-	int getMyDataRuleTemplCount(Query query);
+    int getMyDataRuleTemplCount(Query query);
 
 
     /**
@@ -112,7 +113,18 @@ public interface IDataRuleTemplMapper {
      * @date: 2018/6/16 22:08
      * @see
      */
-    Integer delTemplDatasByIdsAndCreatBy(@Param("templIds") List<Long> templIds,@Param("createBy") String createBy);
+    Integer delTemplDatasByIdsAndCreatBy(@Param("templIds") List<Long> templIds, @Param("createBy") String createBy);
+
+    /**
+     * Description:
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/29 9:14
+     * @see
+     */
+    Integer updateDataRuleTemplById(DataRuleTemplDO dataRuleTemplDO);
 
 
 }

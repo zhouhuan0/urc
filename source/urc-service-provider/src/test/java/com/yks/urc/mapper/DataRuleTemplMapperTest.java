@@ -85,5 +85,16 @@ public class DataRuleTemplMapperTest extends BaseMapperTest {
         System.out.println(rtn);
     }
 
+    @Test
+    public void updateDataRuleTemplById(){
+        DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
+        dataRuleTemplDO.setTemplId(3L);
+        dataRuleTemplDO.setTemplName("数据权限模3");
+        dataRuleTemplDO.setRemark("备注信息");
+        dataRuleTemplDO.setModifiedBy("admin12");
+        dataRuleTemplDO.setModifiedTime(new Date());
+        dataRuleTemplMapper.updateDataRuleTemplById(dataRuleTemplDO);
+    }
+
 
 }

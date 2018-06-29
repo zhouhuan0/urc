@@ -10,8 +10,6 @@ import java.util.List;
 
 public interface IDataRuleSysMapper {
 
-    int deleteByPrimaryKey(Long id);
-
     /**
      * Description: 新增
      *
@@ -74,4 +72,16 @@ public interface IDataRuleSysMapper {
      * @return
      */
 	List<DataRuleSysDO> getDataRuleSysByUserName(UserDO userDO);
+
+
+    /**
+     * Description: 根据dataRuleId删除 权限数据Sys、行权限、列权限
+     *
+     * @param : dataRuleId
+     * @return: Integer
+     * @auther: lvcr
+     * @date: 2018/6/14 17:26
+     * @see
+     */
+    Integer deldataRuleSysDatasById(@Param("dataRuleId") Long dataRuleId);
 }
