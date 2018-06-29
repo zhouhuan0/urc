@@ -126,11 +126,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
-        map.put("apiUrl", "/urc/motan/service/api/IUrcService/logout");
+        map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
         map.put(StringConstant.operator, "panyun");
-        map.put(StringConstant.ticket, "b59ea6299ffec94100aa7d29b0d507d0");
+        map.put(StringConstant.ticket, "050db52afd7faf406c5212927744b570");
         map.put(StringConstant.ip, "192.168.201.62");
-//        map.put(StringConstant.funcVersion, "e76eab4b2d46b91dc1a009292106b1f4");
+        map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");
         // map.put(StringConstant.sysKey, "001");
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
     }
@@ -310,12 +310,12 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         // System.out.println(seqBp.getNextSeq("roleId"));
     }
 
+    @Test
     public void getAllFuc_Test() {
         Map<String, Object> map = new HashMap<>();
-        map.put(StringConstant.operator, "linwanxian");
+        map.put(StringConstant.operator, "panyun");
         String jsonStr = StringUtility.toJSONString_NoException(map);
-
-        service.getAllFuncPermit(jsonStr);
+        System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
     }
 
     public void createRole_Test() {

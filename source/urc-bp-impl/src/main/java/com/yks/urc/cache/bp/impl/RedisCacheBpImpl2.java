@@ -127,7 +127,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
 
     public GetAllFuncPermitRespVO getUserFunc(String userName) {
         Map<String, String> map = getCache(getCacheKey_UserSysFunc(userName)).getAll();
-        if (map != null) {
+        if (map != null && map.size() > 0) {
             GetAllFuncPermitRespVO rslt = new GetAllFuncPermitRespVO();
             rslt.lstSysRoot = new ArrayList<>();
             Iterator<String> it = map.keySet().iterator();
