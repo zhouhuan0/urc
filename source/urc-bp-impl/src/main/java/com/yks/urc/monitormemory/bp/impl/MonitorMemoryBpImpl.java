@@ -21,7 +21,7 @@ import java.util.concurrent.Executors;
 @Component
 public class MonitorMemoryBpImpl implements MonitorMemoryBp {
 
-    private static Logger logger =Logger.getLogger(MonitorMemoryBpImpl.class);
+    private static Logger logger = Logger.getLogger(MonitorMemoryBpImpl.class);
     @Autowired
     private IOperationBp operationBp;
 
@@ -46,8 +46,8 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
                     try {
                         getMemory();
                         Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+                    } catch (Exception e) {
+                        logger.error("startMonitor.run", e);
                     }
                 }
             }
@@ -60,6 +60,8 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
         threadSate = false;
     }
 
+    private String Space = " ";
+
     /**
      * 显示JVM总内存，JVM最大内存和总空闲内存
      */
@@ -71,7 +73,7 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
         long maxMem = Runtime.getRuntime().maxMemory();
         //空闲内存
         long freeMem = Runtime.getRuntime().freeMemory();
-        String message = String.valueOf(totalMem + " " + maxMem + " " + freeMem);
-        operationBp.addLog(this.getClass().getName(), message, null);
+        StringBuilder sbMsg = new StringBuilder().append(totalMem).append(Space).append(maxMem).append(Space).append(freeMem);
+        operationBp.addLog(MonitorMemoryBpImpl.class.getName(), sbMsg.toString(), null);
     }
 }
