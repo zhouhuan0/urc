@@ -42,6 +42,7 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
             @Override
             public void run() {
                 logger.info("内存监控开始");
+                threadSate = true;
                 while (threadSate == true) {
                     try {
                         getMemory();
@@ -61,6 +62,7 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
     }
 
     private String Space = " ";
+    private long M_1024 = 1024 * 1024L;
 
     /**
      * 显示JVM总内存，JVM最大内存和总空闲内存
@@ -68,11 +70,11 @@ public class MonitorMemoryBpImpl implements MonitorMemoryBp {
 
     public void getMemory() {
         //显示jvm总内存
-        long totalMem = Runtime.getRuntime().totalMemory();
+        long totalMem = Runtime.getRuntime().totalMemory() / M_1024;
         //显示JVM尝试使用的最大内存
-        long maxMem = Runtime.getRuntime().maxMemory();
+        long maxMem = Runtime.getRuntime().maxMemory() / M_1024;
         //空闲内存
-        long freeMem = Runtime.getRuntime().freeMemory();
+        long freeMem = Runtime.getRuntime().freeMemory() / M_1024;
         StringBuilder sbMsg = new StringBuilder().append(totalMem).append(Space).append(maxMem).append(Space).append(freeMem);
         operationBp.addLog(MonitorMemoryBpImpl.class.getName(), sbMsg.toString(), null);
     }
