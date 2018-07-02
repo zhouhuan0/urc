@@ -373,7 +373,8 @@ public class RoleServiceImpl implements IRoleService {
         }
         /*3、将roleDO转为roleVO*/
         RoleVO roleVO = new RoleVO();
-        BeanUtils.copyProperties(roleDO, roleVO);
+        convertRoleDo2VO(roleDO,roleVO);
+
         /*4、获取该角色已赋权的功能权限数据*/
         List<RolePermissionDO> rolePermissionDOS = roleDO.getPermissionDOList();
         /*5、获取该角色对应的系统的可用功能权限数据*/
@@ -395,6 +396,14 @@ public class RoleServiceImpl implements IRoleService {
         roleVO.setLstUserName(lstUserName);
 
         return VoHelper.getSuccessResult(roleVO);
+    }
+
+    private void convertRoleDo2VO(RoleDO roleDO, RoleVO roleVO) {
+        BeanUtils.copyProperties(roleDO, roleVO);
+        roleVO.setCreateTimeStr(roleDO.getCreateTime() != null ? DateUtil.formatDate(roleDO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null);
+        roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
+        roleVO.setExpireTimeStr(roleDO.getExpireTime() != null ? DateUtil.formatDate(roleDO.getExpireTime(), "yyyy-MM-dd HH:mm:ss") : null);
+        roleVO.setEffectiveTimeStr(roleDO.getEffectiveTime() != null ? DateUtil.formatDate(roleDO.getEffectiveTime(), "yyyy-MM-dd HH:mm:ss") : null);
     }
 
     private void setSysName(List<RolePermissionDO> rolePermissionDOS, Map<String, PermissionDO> permissionDOMap) {
