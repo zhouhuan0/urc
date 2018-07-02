@@ -2,6 +2,8 @@
 package com.yks.urc.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,9 +189,13 @@ public class PersonServiceImpl implements IPersonService {
 				org.setCreateBy(userName);
 				org.setCreateTime(new Date());
 				org.setDingOrgId(String.valueOf(dept.id));
-				org.setFullIdPath(array.toJSONString().replace(",","/").replace("[", "").replace("]", "").replace("\"", ""));
+				List<String> listFullIdPath=Arrays.asList(array.toJSONString().replace("[", "").replace("]", "").split(","));
+				Collections.sort(listFullIdPath);
+				org.setFullIdPath(StringUtils.join(listFullIdPath.toArray(), "/"));
 				JSONArray fullNamePath=getfullNamePath(dingAllDept,array);
-				org.setFullNamePath(fullNamePath.toJSONString().replace(",", "/").replace("[", "").replace("]", "").replace("\"", ""));
+				List<String> listFullNamePath=Arrays.asList(fullNamePath.toJSONString().replace("[", "").replace("]", "").replace("\"", "").split(","));
+				Collections.sort(listFullNamePath);
+				org.setFullNamePath(StringUtils.join(listFullIdPath.toArray(), "/"));
 				org.setModifiedBy(userName);
 				org.setModifiedTime(new Date());
 				org.setOrgLevel(array.size());
