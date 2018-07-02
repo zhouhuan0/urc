@@ -8,7 +8,8 @@ import java.util.Map;
 public interface IUserService {
 	ResultVO syncUserInfo(String curUser);
 
-	ResultVO login(UserVO authUser);
+	ResultVO login(Map<String, String> map);
+
 	ResultVO logout(String jsonStr);
 
 /*	*//**

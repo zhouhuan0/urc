@@ -56,14 +56,7 @@ public class StringFilter implements Filter {
         decodeSession(request);
 
         Response response = caller.call(request);
-        long startTime = System.currentTimeMillis();
-        //返回值类型不是字符串对象
-        boolean isStringResult = isStringResult(request);
-        log.error("String序列化Filter方法isStringResult耗时："+(System.currentTimeMillis()-startTime)+" ms");
-        if (!isStringResult){
-            doDecorateResponse(caller,response);
-        }
-        log.error("String序列化Filter耗时："+(System.currentTimeMillis()-startTime)+" ms");
+        doDecorateResponse(caller,response);
         return response;
     }
 

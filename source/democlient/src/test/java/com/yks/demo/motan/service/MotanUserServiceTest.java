@@ -113,14 +113,15 @@ public class MotanUserServiceTest {
 		String jsonStr;
 //		urcService.updateRolePermission(jsonStr);
 	}
-	
-	public void testLogin() {
+
+	@Test
+	public void login_Test() {
 		// 登陆+获取功能权限版本号+鉴权
 		String ip = "192.168.201.62";
 		Map<String, String> map = new HashMap<>();
 		UserVO authUser = new UserVO();
 		map.put("userName", "panyun");
-		map.put("pwd", "yYKS1234");
+		map.put("pwd", "ASDFGhjkl;12345");
 		map.put("ip", ip);
 		ResultVO<LoginRespVO> loginResp = urcService.login(map);
 
