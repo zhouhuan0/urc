@@ -435,7 +435,7 @@ public class RoleServiceImpl implements IRoleService {
         if(roleDO==null){
             throw new URCBizException("角色不存在role=" + roleId, ErrorCode.E_000003);
         }
-        if (!roleMapper.isSuperAdminAccount(operator)&&roleDO.getCreateBy().equals(operator)) {
+        if (!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)) {
             throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + roleId, ErrorCode.E_000003);
         }
         UserRoleDO userRole = new UserRoleDO();
@@ -505,7 +505,7 @@ public class RoleServiceImpl implements IRoleService {
             	RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
             	if(roleDo!=null){
 	                if (!roleMapper.isSuperAdminAccount(operator)&&!roleDo.getCreateBy().equals(operator)) {
-	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_100007);
+	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
 	                }
 	                RolePermissionDO permissionDO = new RolePermissionDO();
 	                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
@@ -634,7 +634,7 @@ public class RoleServiceImpl implements IRoleService {
             	RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
                 if (roleDO != null) {
                 	if(!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
-                		continue;
+	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
                 	}
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
@@ -669,7 +669,9 @@ public class RoleServiceImpl implements IRoleService {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
                 if (roleDO != null) {
-
+                	if(!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
+	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRole.get(i), ErrorCode.E_000003);
+                	}
                     UserRoleDO userRole = new UserRoleDO();
                     List<UserRoleDO> userRoleDOS = new ArrayList<>();
                     List<String> userNameList = roleVO.getLstUserName();
