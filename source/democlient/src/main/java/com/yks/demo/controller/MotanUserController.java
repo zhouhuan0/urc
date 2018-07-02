@@ -1,7 +1,10 @@
 package com.yks.demo.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
+import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.UserVO;
@@ -29,8 +32,9 @@ public class MotanUserController {
 
     @MotanReferer
     private IUrcService urcService;
+    private static final String ApiUrlPrefix = "/urc/motan/service/api/IUrcService/";
 
-    @RequestMapping("/urc/motan/service/api/IUrcService/{method}")
+    @RequestMapping(ApiUrlPrefix + "{method}")
     public String urcService(@RequestBody String body, @PathVariable("method") String method, HttpServletRequest request)
             throws Exception {
         System.out.println(body);
@@ -39,6 +43,7 @@ public class MotanUserController {
 
         ResultVO rslt = null;
         if (StringUtility.stringEqualsIgnoreCase("login", method)) {
+            // login接口，直接调用login rpc
             Map<String, String> mapArg = new HashMap<>();
             String[] arrKeyValue = URLDecoder.decode(body, "utf-8").split("&");
             for (String kv : arrKeyValue) {
@@ -48,10 +53,26 @@ public class MotanUserController {
             mapArg.put("ip", IpUtils.getIpAddr(request));
             rslt = urcService.login(mapArg);
         } else {
-            try {
-                rslt = (ResultVO) ReflectionTestUtils.invokeMethod(urcService, method, body);
-            } catch (Exception ex) {
-                rslt = (ResultVO) ReflectionTestUtils.invokeMethod(urcService, method);
+            // 先调 funcPermitValidate 校验权限
+            JSONObject jBody = StringUtility.parseString(body);
+            Map<String, String> mapArg = new HashMap<>();
+            mapArg.put(StringConstant.ticket, jBody.getString(StringConstant.ticket));
+            mapArg.put(StringConstant.operator, jBody.getString(StringConstant.operator));
+            mapArg.put(StringConstant.funcVersion, jBody.getString(StringConstant.funcVersion));
+            mapArg.put(StringConstant.ip, jBody.getString(StringConstant.ip));
+            mapArg.put(StringConstant.apiUrl, String.format("%s%s", ApiUrlPrefix, method));
+
+            rslt = urcService.funcPermitValidate(mapArg);
+            if (rslt != null && StringUtility.stringEqualsIgnoreCase(ErrorCode.E_100006.getState(),
+                    rslt.state)) {
+                // 权限ok
+                try {
+                    rslt = (ResultVO) ReflectionTestUtils.invokeMethod(urcService, method, body);
+                } catch (Exception ex) {
+                    rslt = (ResultVO) ReflectionTestUtils.invokeMethod(urcService, method);
+                }
+            } else {
+                // 权限不ok
             }
         }
         return StringUtility.toJSONString_NoException(rslt);

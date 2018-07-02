@@ -487,9 +487,7 @@ public class UserValidateBp implements IUserValidateBp {
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
 		String urcVersion = map.get(StringConstant.funcVersion);
-		if (StringUtility.isNullOrEmpty(urcVersion)) {
-			urcVersion = map.get("urcVersion");
-		}
+
 		UserVO u = cacheBp.getUser(operator);
 		// 校验ticket
 		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
