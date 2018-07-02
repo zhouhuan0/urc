@@ -1,11 +1,1 @@
 /.project
-/source/ykslog/
-ykslog/
-logs/
-democlient/*
-.idea/
-*/target/
-*.iml
-/.gitignore
-.gitignore
-*.gitignore
