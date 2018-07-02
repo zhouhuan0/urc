@@ -12,13 +12,6 @@
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
     </resultMap>
 
-    <resultMap id="DataRuleSysMap" type="com.yks.urc.entity.DataRuleSysDO">
-        <result column="data_rule_id" jdbcType="BIGINT" property="dataRuleId"/>
-        <result column="data_rule_sys_id" jdbcType="BIGINT" property="dataRuleSysId"/>
-        <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
-        <result column="sys_name" jdbcType="VARCHAR" property="sysName"/>
-    </resultMap>
-
     <resultMap id="DataRuleSyAndOperMap" type="com.yks.urc.entity.DataRuleSysDO">
         <id column="sid" jdbcType="BIGINT" property="id"/>
         <result column="data_rule_sys_id" jdbcType="BIGINT" property="dataRuleSysId"/>

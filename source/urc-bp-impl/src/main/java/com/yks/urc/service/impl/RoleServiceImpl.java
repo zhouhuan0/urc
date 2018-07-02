@@ -160,7 +160,7 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVO == null) {
             throw new URCBizException("parameter role is null", ErrorCode.E_000002);
         }
-        if(StringUtil.isEmpty(roleVO.getRoleName())){
+        if (StringUtil.isEmpty(roleVO.getRoleName())) {
             throw new URCBizException("parameter roleName is null", ErrorCode.E_000002);
         }
         String roleIdStr = roleVO.getRoleId();
@@ -273,11 +273,12 @@ public class RoleServiceImpl implements IRoleService {
                 roleDO.setActive(Boolean.FALSE);
             }
             Date nowTime = new Date();
-            if (effectiveTime.after(nowTime) || expireTime.before(nowTime)) {
+            if (nowTime.before(effectiveTime) || nowTime.after(expireTime)){
                 roleDO.setActive(Boolean.FALSE);
-            }
         }
     }
+
+}
 
     /**
      * Description: 批量新增用户-角色关系数据
@@ -362,9 +363,9 @@ public class RoleServiceImpl implements IRoleService {
         if (roleDO == null) {
             throw new URCBizException("role data is null where roleId is:" + roleIdStr, ErrorCode.E_000003);
         }
-        Map<String,PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
+        Map<String, PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
         List<RolePermissionDO> rolePermissionS = roleDO.getPermissionDOList();
-        setSysName(rolePermissionS,permissionDOMap);
+        setSysName(rolePermissionS, permissionDOMap);
 
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
@@ -378,7 +379,7 @@ public class RoleServiceImpl implements IRoleService {
         /*5、获取该角色对应的系统的可用功能权限数据*/
         Map<String, PermissionDO> systemPermissionDos = permissionMapper.getSysContextByRoleId(roleId);
         /*6、将角色已赋权的权限数据与角色对应系统最新的权限数据做对比，筛选并组装角色可用的权限数据*/
-        if(rolePermissionDOS!=null && !rolePermissionDOS.isEmpty()){
+        if (rolePermissionDOS != null && !rolePermissionDOS.isEmpty()) {
             filterRolePermissionDOS(rolePermissionDOS, systemPermissionDos);
         }
         /*7、组装roleVO里的selectedContext*/
@@ -397,8 +398,8 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     private void setSysName(List<RolePermissionDO> rolePermissionDOS, Map<String, PermissionDO> permissionDOMap) {
-        for(RolePermissionDO rolePermissionDO:rolePermissionDOS){
-            rolePermissionDO.setSysName(permissionDOMap.get(rolePermissionDO.getSysKey())==null?null:permissionDOMap.get(rolePermissionDO.getSysKey()).getSysName());
+        for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
+            rolePermissionDO.setSysName(permissionDOMap.get(rolePermissionDO.getSysKey()) == null ? null : permissionDOMap.get(rolePermissionDO.getSysKey()).getSysName());
         }
     }
 
@@ -443,10 +444,10 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public ResultVO getUserByRoleId(String operator, String roleId) {
         RoleDO roleDO = roleMapper.getRoleByRoleId(roleId);
-        if(roleDO==null){
+        if (roleDO == null) {
             throw new URCBizException("角色不存在role=" + roleId, ErrorCode.E_000003);
         }
-        if (!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)) {
+        if (!roleMapper.isSuperAdminAccount(operator) && !roleDO.getCreateBy().equals(operator)) {
             throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + roleId, ErrorCode.E_000003);
         }
         UserRoleDO userRole = new UserRoleDO();
@@ -478,7 +479,7 @@ public class RoleServiceImpl implements IRoleService {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
         List<Long> lstRoleId = StringUtility.jsonToList(lstRoleIdStr, Long.class);
-		/* 非管理员用户只能管理自己创建的角色 */
+        /* 非管理员用户只能管理自己创建的角色 */
         Map dataMap = new HashMap();
         if (roleMapper.isSuperAdminAccount(operator)) {
             dataMap.put("createBy", "");
@@ -513,34 +514,34 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-            	RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-            	if(roleDo!=null){
-	                if (!roleMapper.isSuperAdminAccount(operator)&&!roleDo.getCreateBy().equals(operator)) {
-	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
-	                }
-	                RolePermissionDO permissionDO = new RolePermissionDO();
-	                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-	                if (!roleMapper.isSuperAdminAccount(operator)) {
-	                    permissionDO.setCreateBy(operator);
-	                }
-	                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
-	                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
-	                if(rolePermissionList!=null&&rolePermissionList.size()>0){
-	                	for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-	                		PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-	                		String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
-	                		PermissionVO permissionVO = new PermissionVO();
-	                		permissionVO.setSysKey(rolePermissionDO.getSysKey());
-	                		permissionVO.setSysContext(SelectedContext);
-	                		permissionVOs.add(permissionVO);
-	                	}
-	                }
-	                RoleVO roleVO = new RoleVO();
-	                roleVO.roleId = lstRoleId.get(i);
-	                roleVO.roleName = roleDo.getRoleName();
-	                roleVO.selectedContext = permissionVOs;
-	                roleVoList.add(roleVO);
-            	}
+                RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+                if (roleDo != null) {
+                    if (!roleMapper.isSuperAdminAccount(operator) && !roleDo.getCreateBy().equals(operator)) {
+                        throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
+                    }
+                    RolePermissionDO permissionDO = new RolePermissionDO();
+                    permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+                    if (!roleMapper.isSuperAdminAccount(operator)) {
+                        permissionDO.setCreateBy(operator);
+                    }
+                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
+                    List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
+                    if (rolePermissionList != null && rolePermissionList.size() > 0) {
+                        for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+                            PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+                            String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+                            PermissionVO permissionVO = new PermissionVO();
+                            permissionVO.setSysKey(rolePermissionDO.getSysKey());
+                            permissionVO.setSysContext(SelectedContext);
+                            permissionVOs.add(permissionVO);
+                        }
+                    }
+                    RoleVO roleVO = new RoleVO();
+                    roleVO.roleId = lstRoleId.get(i);
+                    roleVO.roleName = roleDo.getRoleName();
+                    roleVO.selectedContext = permissionVOs;
+                    roleVoList.add(roleVO);
+                }
             }
         }
         return VoHelper.getSuccessResult(roleVoList);
@@ -550,7 +551,7 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
         //校验传过来的书架上是否是合法的
-        if (lstRole != null && lstRole.size() >0) {
+        if (lstRole != null && lstRole.size() > 0) {
             for (RoleVO jumpRoleVO : lstRole) {
                 List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
                 for (PermissionVO jumpPermissionVO : jumpPermissionVOS) {
@@ -642,11 +643,11 @@ public class RoleServiceImpl implements IRoleService {
         List<RoleVO> roleList = new ArrayList<>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
-            	RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
+                RoleDO roleDO = roleMapper.getRoleByRoleId(lstRoleId.get(i));
                 if (roleDO != null) {
-                	if(!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
-	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
-                	}
+                    if (!roleMapper.isSuperAdminAccount(operator) && !roleDO.getCreateBy().equals(operator)) {
+                        throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_000003);
+                    }
                     RoleVO roleVO = new RoleVO();
                     roleVO.setRoleName(roleDO.getRoleName());
                     roleVO.setRoleId(roleDO.getRoleId().toString());
@@ -680,9 +681,9 @@ public class RoleServiceImpl implements IRoleService {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
                 if (roleDO != null) {
-                	if(!roleMapper.isSuperAdminAccount(operator)&&!roleDO.getCreateBy().equals(operator)){
-	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRole.get(i), ErrorCode.E_000003);
-                	}
+                    if (!roleMapper.isSuperAdminAccount(operator) && !roleDO.getCreateBy().equals(operator)) {
+                        throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRole.get(i), ErrorCode.E_000003);
+                    }
                     UserRoleDO userRole = new UserRoleDO();
                     List<UserRoleDO> userRoleDOS = new ArrayList<>();
                     List<String> userNameList = roleVO.getLstUserName();
@@ -743,6 +744,7 @@ public class RoleServiceImpl implements IRoleService {
     /**
      * Description: 1、复制角色 复制角色将创建一个新的角色，并将原角色的权限自动授予给新角色
      * 角色名全局唯一
+     *
      * @param :
      * @return:
      * @auther: lvcr
@@ -753,10 +755,10 @@ public class RoleServiceImpl implements IRoleService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO copyRole(final String operator, String newRoleName, String sourceRoleId) {
         if (StringUtils.isBlank(newRoleName)) {
-           return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"角色名为空");
+            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "角色名为空");
         }
         if (StringUtils.isBlank(sourceRoleId)) {
-            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"roleId为空");
+            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "roleId为空");
         }
 		/* 非admin用户只能管理自己创建的角色 */
         long roleId = 0;
@@ -782,7 +784,7 @@ public class RoleServiceImpl implements IRoleService {
         List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
         //如果权限列表为空，则不新增权限列表
         if (CollectionUtils.isEmpty(rolePermissions)) {
-            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"该角色的权限列表为空");
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "该角色的权限列表为空");
         }
         //保存角色的功能权限
         List<RolePermissionDO> records = new ArrayList<>();
@@ -881,7 +883,6 @@ public class RoleServiceImpl implements IRoleService {
             operationBp.addLog(logger.getName(), "处理过期角色ERROR", ex);
         }
     }
-
 
 
 }

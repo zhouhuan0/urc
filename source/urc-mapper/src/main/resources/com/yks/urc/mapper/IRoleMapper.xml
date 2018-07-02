@@ -34,14 +34,14 @@
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
         <collection property="permissionDOList" ofType="com.yks.urc.entity.RolePermissionDO">
             <id column="pid" jdbcType="BIGINT" property="id"/>
-            <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+            <result column="prole_id" jdbcType="BIGINT" property="roleId"/>
             <result column="sys_key" jdbcType="CHAR" property="sysKey"/>
             <result column="sys_name" jdbcType="VARCHAR" property="sysName"/>
             <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext"/>
         </collection>
         <collection property="userRoleDOS" ofType="com.yks.urc.entity.UserRoleDO">
             <id column="uid" jdbcType="BIGINT" property="id"/>
-            <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+            <result column="rrole_id" jdbcType="BIGINT" property="roleId"/>
             <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         </collection>
     </resultMap>
@@ -148,10 +148,10 @@
         ur.modified_by,
         ur.modified_time,
         uur.id as uid,
-        uur.role_id,
+        uur.role_id as rrole_id,
         uur.user_name,
         urp.id as pid,
-        urp.role_id,
+        urp.role_id as prole_id,
         urp.sys_key,
         urp.selected_context
       from
