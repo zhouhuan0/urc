@@ -28,6 +28,8 @@ public class DataRuleColDO {
 
     private String colJson;
 
+    private String entityName;
+
     public Long getId() {
         return id;
     }
@@ -91,4 +93,12 @@ public class DataRuleColDO {
     public void setColJson(String colJson) {
         this.colJson = colJson == null ? null : colJson.trim();
     }
-}
+
+     public String getEntityName() {
+         return entityName;
+     }
+
+     public void setEntityName(String entityName) {
+         this.entityName = entityName;
+     }
+ }

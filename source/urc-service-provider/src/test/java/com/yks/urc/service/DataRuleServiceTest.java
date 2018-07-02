@@ -36,8 +36,8 @@ public class DataRuleServiceTest extends BaseServiceTest {
         jsonObject.put("operator","lvchangrong");
         jsonObject.put("templId",1529404283335L);
         List<String>  lstUserName = new ArrayList<>();
-        lstUserName.add("admin212");
-        lstUserName.add("admin222");
+        lstUserName.add("admin2122");
+        lstUserName.add("admin2222");
        /*   lstUserName.add("admin23");
         lstUserName.add("admin24");*/
         jsonObject.put("lstUserName",lstUserName);

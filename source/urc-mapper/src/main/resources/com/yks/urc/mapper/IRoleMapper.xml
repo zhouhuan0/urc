@@ -153,13 +153,11 @@
         urp.id as pid,
         urp.role_id,
         urp.sys_key,
-        urp.selected_context,
-        up.sys_name
+        urp.selected_context
       from
 	    urc_role ur
         left join urc_user_role uur on ur.role_id = uur.role_id
         left join urc_role_permission urp on ur.role_id = urp.role_id
-        left join urc_permission up on urp.sys_key = up.sys_key
         where ur.role_id = #{roleId,jdbcType=BIGINT}
     </select>
     <!--根据username/syskey获取角色功能权限-->

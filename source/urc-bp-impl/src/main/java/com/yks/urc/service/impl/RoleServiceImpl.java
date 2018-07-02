@@ -358,9 +358,14 @@ public class RoleServiceImpl implements IRoleService {
         }
         Long roleId = Long.valueOf(roleIdStr);
         RoleDO roleDO = roleMapper.getRoleDatasByRoleId(roleId);
+        /*获取系统集合*/
         if (roleDO == null) {
             throw new URCBizException("role data is null where roleId is:" + roleIdStr, ErrorCode.E_000003);
         }
+        Map<String,PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
+        List<RolePermissionDO> rolePermissionS = roleDO.getPermissionDOList();
+        setSysName(rolePermissionS,permissionDOMap);
+
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (!isAdmin && !operator.equals(roleDO.getCreateBy())) {
             throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + roleIdStr, ErrorCode.E_000003);
@@ -389,6 +394,12 @@ public class RoleServiceImpl implements IRoleService {
         roleVO.setLstUserName(lstUserName);
 
         return VoHelper.getSuccessResult(roleVO);
+    }
+
+    private void setSysName(List<RolePermissionDO> rolePermissionDOS, Map<String, PermissionDO> permissionDOMap) {
+        for(RolePermissionDO rolePermissionDO:rolePermissionDOS){
+            rolePermissionDO.setSysName(permissionDOMap.get(rolePermissionDO.getSysKey())==null?null:permissionDOMap.get(rolePermissionDO.getSysKey()).getSysName());
+        }
     }
 
     /**

@@ -221,7 +221,7 @@ public class RoleMapperTest extends BaseMapperTest {
 
     @Test
     public void getRoleDatasByRoleId(){
-        RoleDO role =  roleMapper.getRoleDatasByRoleId(1L);
+        RoleDO role =  roleMapper.getRoleDatasByRoleId(1529550145551000001L);
         System.out.println(role);
     }
 

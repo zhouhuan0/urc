@@ -1,17 +1,15 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.Field;
+import org.apache.ibatis.annotations.MapKey;
+
+import java.util.Map;
 
 public interface FieldMapper {
-    int deleteByPrimaryKey(Long id);
 
     int insert(Field record);
 
-    int insertSelective(Field record);
+    @MapKey("fieldCode")
+    Map<String,Field> getFieldMap();
 
-    Field selectByPrimaryKey(Long id);
-
-    int updateByPrimaryKeySelective(Field record);
-
-    int updateByPrimaryKey(Field record);
 }

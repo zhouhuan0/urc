@@ -1,8 +1,6 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.DataRuleSysDO;
-import com.yks.urc.entity.DataRuleTemplDO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉
@@ -27,11 +26,6 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
     private IDataRuleSysMapper dataRuleSysMapper;
 
 
-    @Test
-    public void listByDataRuleId() {
-        List<DataRuleSysDO> dataRuleSysDOs = dataRuleSysMapper.getDataRuleSysDatas(1530152966230000043L);
-        Assert.assertNotNull(dataRuleSysDOs);
-    }
 
 
     @Test
@@ -78,26 +72,6 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
     }
 
 
-    @Test
-    public void getDataRuleSysColDatas(){
-        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysColDatas(1529375579688L);
-        System.out.println(dataRuleSysDOS);
-    }
-
-
-
-    @Test
-    public void getDataRuleSysRowDatas(){
-        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysRowDatas(1529375579688L);
-        System.out.println(dataRuleSysDOS);
-    }
-
-    @Test
-    public void getDataRuleSysDatas(){
-        List<DataRuleSysDO> dataRuleSysDOS =  dataRuleSysMapper.getDataRuleSysDatas(1529375579688L);
-        System.out.println(dataRuleSysDOS);
-    }
-
 
     @Test
     public void delRuleSysDatasByIdsAndCreatBy(){
@@ -105,5 +79,13 @@ public class DataRuleSysMapperTest extends BaseMapperTest {
         lstIds.add(1529748564925000043L);
         String operator = "lvchangrong";
         dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstIds,operator);
+    }
+
+
+
+    @Test
+    public void getDataRuleSyAndOpers(){
+        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSyAndOpersById(1530265147529000007L);
+        System.out.println(dataRuleSysDOS);
     }
 }

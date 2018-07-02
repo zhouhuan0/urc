@@ -62,6 +62,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private IDataRuleColMapper dataRuleColMapper;
 
     @Autowired
+    private FieldMapper fieldMapper;
+
+    @Autowired
+    private PermissionMapper permissionMapper;
+
+    @Autowired
     private IMqBp mqBp;
 
     @Autowired
@@ -105,13 +111,26 @@ public class DataRuleServiceImpl implements IDataRuleService {
         dataRuleTemplVO.setTemplId(String.valueOf(dataRuleTemplDO.getTemplId()));
 
         /**
-         *3、获取数据权限Sys  行权限数据 列权限数据
+         *3、获取数据权限Sys  行权限数据 列权限数据 实体定义名称 字段定义名称
          */
-        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
+        //List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
+//        List<DataRuleSysDO> dataRuleSysDOS = new ArrayList<>();
+        /*获取系统对应的名称*/
+        Map<String, PermissionDO> sysNameMap = permissionMapper.perMissionMap();
+        /*获取数据权限Sys  行权限数据 列权限数据*/
+        List<DataRuleSysDO> dataRuleSyAndOpers = dataRuleSysMapper.getDataRuleSyAndOpersById(templId);
+        setName(dataRuleSyAndOpers, sysNameMap);
+        /*获取实体定义*/
+        Map<String,Entity> entityMap = entityMapper.getEntityMap();
+        /*获取字段定义*/
+        Map<String,Field> fieldMap = fieldMapper.getFieldMap();
+        /*设置实体名称名称和字段定义名称*/
+        setEntityNameAndFieldName(dataRuleSyAndOpers,entityMap,fieldMap);
+
         /**
          * 4、重新组装行权限数据
          */
-        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSyAndOpers) {
             List<ExpressionDO> expressionDOS = dataRuleSysDO.getExpressionDOS();
             /*获取父级行权限*/
             ExpressionDO parentExpressionDO = null;
@@ -136,7 +155,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
          */
 
         List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
-        for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSyAndOpers) {
             DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
             BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
             /*列权限DO 转 VO*/
@@ -171,6 +190,27 @@ public class DataRuleServiceImpl implements IDataRuleService {
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS);
 
         return VoHelper.getSuccessResult(dataRuleTemplVO);
+    }
+
+    private void setEntityNameAndFieldName(List<DataRuleSysDO> dataRuleSyAndOpers, Map<String, Entity> entityMap, Map<String,Field> fieldMap) {
+        for (DataRuleSysDO dataRuleSysDO:dataRuleSyAndOpers){
+            List<DataRuleColDO> dataRuleColDOS = dataRuleSysDO.getDataRuleColDOS();
+            for(DataRuleColDO dataRuleColDO:dataRuleColDOS){
+                dataRuleColDO.setEntityName(entityMap.get(dataRuleColDO.getEntityCode())==null?null:entityMap.get(dataRuleColDO.getEntityCode()).getEntityName());
+            }
+
+            List<ExpressionDO> expressionDOS = dataRuleSysDO.getExpressionDOS();
+            for(ExpressionDO expressionDO:expressionDOS){
+                expressionDO.setEntityName((entityMap.get(expressionDO.getEntityCode()))==null?null:entityMap.get(expressionDO.getEntityCode()).getEntityName());
+                    expressionDO.setFieldName((fieldMap.get(expressionDO.getFieldCode()))==null?null:fieldMap.get(expressionDO.getFieldCode()).getFieldName());
+            }
+        }
+    }
+
+    private void setName(List<DataRuleSysDO> dataRuleSyAndOpers, Map<String, PermissionDO> sysNameMap) {
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSyAndOpers) {
+            dataRuleSysDO.setSysName(sysNameMap.get(dataRuleSysDO.getSysKey()).getSysName());
+        }
     }
 
 
@@ -277,8 +317,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
         /*3、获取该模板对应的数据权限对应系统数据*/
-        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
-        if (dataRuleSysDOS == null || dataRuleSysDOS.isEmpty()) {
+//        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
+          /*获取系统对应的名称*/
+        Map<String, PermissionDO> sysNameMap = permissionMapper.perMissionMap();
+        /*获取数据权限Sys  行权限数据 列权限数据*/
+        List<DataRuleSysDO> dataRuleSyAndOpers = dataRuleSysMapper.getDataRuleSyAndOpersById(templId);
+        setName(dataRuleSyAndOpers, sysNameMap);
+        /*获取实体定义*/
+        Map<String,Entity> entityMap = entityMapper.getEntityMap();
+        /*获取字段定义*/
+        Map<String,Field> fieldMap = fieldMapper.getFieldMap();
+        /*设置实体名称名称和字段定义名称*/
+        setEntityNameAndFieldName(dataRuleSyAndOpers,entityMap,fieldMap);
+        if (dataRuleSyAndOpers == null || dataRuleSyAndOpers.isEmpty()) {
             throw new URCBizException("get urc_data_rule_sys is null where templId is:" + templId, ErrorCode.E_000003);
         }
         /*数据权限对应系统缓存列表 */
@@ -290,7 +341,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
          /*行权限数据缓存列表*/
         List<ExpressionDO> expressionDOSCache = new ArrayList<>();
        /*4、组装数据  并放入待入库列表*/
-        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, createBy, dataRuleSysDOS);
+        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, createBy, dataRuleSyAndOpers);
         /*5.1、删除用户原有的数据权限关系数据 包括行权限 列权限*/
         List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
         dataRuleMapper.delBatchByUserNames(lstUserName);
@@ -315,7 +366,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             expressionMapper.insertBatch(expressionDOSCache);
         }
         /*8、发送消息到kafka*/
-        sendToMq(dataRuleSysDOS, lstUserName);
+        sendToMq(dataRuleSyAndOpers, lstUserName);
         return VoHelper.getSuccessResult();
     }
 
