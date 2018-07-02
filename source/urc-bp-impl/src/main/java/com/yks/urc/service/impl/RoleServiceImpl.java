@@ -504,6 +504,9 @@ public class RoleServiceImpl implements IRoleService {
             for (int i = 0; i < lstRoleId.size(); i++) {
             	RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
             	if(roleDo!=null){
+	                if (!roleMapper.isSuperAdminAccount(operator)&&!roleDo.getCreateBy().equals(operator)) {
+	                    throw new URCBizException("当前用户不是超级管理员，并且角色不是当前用户创建" + lstRoleId.get(i), ErrorCode.E_100007);
+	                }
 	                RolePermissionDO permissionDO = new RolePermissionDO();
 	                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
 	                if (!roleMapper.isSuperAdminAccount(operator)) {
@@ -520,12 +523,12 @@ public class RoleServiceImpl implements IRoleService {
 	                		permissionVO.setSysContext(SelectedContext);
 	                		permissionVOs.add(permissionVO);
 	                	}
-	                	RoleVO roleVO = new RoleVO();
-	                	roleVO.roleId = lstRoleId.get(i);
-	                	roleVO.roleName = roleDo.getRoleName();
-	                	roleVO.selectedContext = permissionVOs;
-	                	roleVoList.add(roleVO);
 	                }
+	                RoleVO roleVO = new RoleVO();
+	                roleVO.roleId = lstRoleId.get(i);
+	                roleVO.roleName = roleDo.getRoleName();
+	                roleVO.selectedContext = permissionVOs;
+	                roleVoList.add(roleVO);
             	}
             }
         }
