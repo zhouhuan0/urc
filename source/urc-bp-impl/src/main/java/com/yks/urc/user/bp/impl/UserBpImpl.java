@@ -37,10 +37,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -281,29 +278,33 @@ public class UserBpImpl implements IUserBp {
 
 
     @Override
-    public ResultVO login(UserVO authUser) {
+    public ResultVO login(Map<String, String> map) {
+        return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip));
+    }
+
+    public ResultVO login(String userName,String pwd,String ip) {
         try {
             LoginRespVO resp = new LoginRespVO();
             long startTime = System.currentTimeMillis();
-            boolean blnOk = ldapBpImpl.validateUser(authUser.userName, authUser.pwd);
+            boolean blnOk = ldapBpImpl.validateUser(userName, pwd);
             long endTime = System.currentTimeMillis();
 
             UserLoginLogDO loginLog = new UserLoginLogDO();
-            loginLog.userName = authUser.userName;
-            loginLog.ip = authUser.ip;
+            loginLog.userName = userName;
+            loginLog.ip = ip;
             loginLog.ldapCost = endTime - startTime;
             loginLog.loginSuccess = blnOk ? 1 : 0;
-            loginLog.remark = String.format("PWD:%s", authUser.pwd);
+            loginLog.remark = String.format("PWD:%s", pwd);
             loginLog.loginTime = new Date();
             this.insertLoginLog(loginLog);
-            resp.userName = authUser.userName;
+            resp.userName = userName;
             if (blnOk) {
-                resp.ticket = userValidateBp.createTicket(authUser.userName, authUser.ip);
+                resp.ticket = userValidateBp.createTicket(userName, ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
-                u.userName = authUser.userName;
+                u.userName = userName;
                 u.ticket = resp.ticket;
-                u.ip = authUser.ip;
+                u.ip = ip;
                 cacheBp.insertUser(u);
                 resp.personName = userMapper.getPersonNameByUserName(u.userName);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
@@ -311,12 +312,12 @@ public class UserBpImpl implements IUserBp {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
             }
         } catch (Exception ex) {
-            logger.error(String.format("login ERROR:%s", StringUtility.toJSONString_NoException(authUser)), ex);
+            logger.error(String.format("login ERROR:%s %s %s", userName, pwd, ip), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
     }
 
-    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+//    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
     /**
      * 登录日志入库

@@ -137,11 +137,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void login_Test() {
-        UserVO authUser = new UserVO();
-        authUser.userName = "panyun";
-        authUser.pwd = "ASDFGhjkl;12345";
-        authUser.ip = "pyIP";
-        System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
+        Map map = new HashMap();
+        map.put(StringConstant.userName, "panyun");
+        map.put(StringConstant.pwd, "ASDFGhjkl;12345");
+        map.put(StringConstant.ip, "pyIP");
+        System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }
 
     @Test

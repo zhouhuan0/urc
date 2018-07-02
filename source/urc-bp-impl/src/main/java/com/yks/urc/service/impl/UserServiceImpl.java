@@ -59,8 +59,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultVO login(UserVO authUser) {
-        return userBp.login(authUser);
+    public ResultVO login(Map<String, String> map) {
+        return userBp.login(map);
     }
 
     @Override
