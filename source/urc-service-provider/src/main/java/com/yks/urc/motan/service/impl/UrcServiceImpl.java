@@ -46,6 +46,8 @@ public class UrcServiceImpl implements IUrcService {
     @Autowired
     private IOperationBp operationBp;
 
+    @Autowired
+    private MonitorMemoryService memoryService;
     @Override
     @Log(value = "同步数据",level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
@@ -480,4 +482,17 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO assignAllPermit2Role(String jsonStr) {
         return roleService.assignAllPermit2Role();
     }
+
+    @Override
+    @Log("开启内存监控")
+    public ResultVO startMonitorMemory(String jsonStr) {
+        return memoryService.startMonitor();
+    }
+
+    @Override
+    @Log("结束内存监控")
+    public ResultVO endMonitorMemory(String jsonStr) {
+        return memoryService.endMonitor();
+    }
+
 }

@@ -24,6 +24,7 @@ import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.service.api.MonitorMemoryService;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -71,7 +72,6 @@ public class UrcServiceTest extends BaseServiceTest {
 
 	@Value("${importSysPermit.aesPwd}")
 	private String aesPwd;
-
 	public void testIPermissionService() throws Exception {
 		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
 		String strEncrypt = EncryptHelper.encryptAes_Base64(strJson1, aesPwd);
@@ -172,7 +172,9 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void testSync() {
 		String json="{\n" +
 				"\t\"operator\":\"linwanxian\"\n" +
-				"}";ResultVO resultVO=service.syncUserInfo(json);
+				"}";
+		MotanSession.initialSession(json);
+		ResultVO resultVO=service.syncUserInfo(json);
 		System.out.println("=====================");
 		System.out.println(resultVO.msg);
 	}
@@ -401,6 +403,17 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println("**************************");
 		System.out.println("程序运行时间：" + (endTime - startTime) + "ms");    //输出程序运行时
 
-
 	}
+
+	@Test
+	public void testMonitor(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		ResultVO resultVO =service.startMonitorMemory(json);
+		System.out.println("====================");
+		System.out.println(resultVO.msg);
+	}
+
 }

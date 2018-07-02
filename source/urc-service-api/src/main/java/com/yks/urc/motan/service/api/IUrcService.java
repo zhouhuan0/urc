@@ -342,4 +342,21 @@ public interface IUrcService {
      * @return
      */
     ResultVO assignAllPermit2Role(String jsonStr);
+    /**
+     *  开启监控内存
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/2 17:05
+     */
+    ResultVO startMonitorMemory(String jsonStr);
+
+    /**
+     *  开启监控内存
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/2 17:05
+     */
+    ResultVO endMonitorMemory(String jsonStr);
 }

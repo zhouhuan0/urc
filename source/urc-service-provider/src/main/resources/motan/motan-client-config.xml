@@ -16,8 +16,8 @@
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
     <motan:basicReferer requestTimeout="200" accessLog="false"
-                        retries="2" group="urc-client-provider-dev" module="urc-client-provider-dev"
-                        application="urc-client-provider-dev" protocol="motan2" registry="zkRegistry"
+                        retries="2" group="urc-client-provider-lwx" module="urc-client-provider-lwx"
+                        application="urc-client-provider-lwx" protocol="motan2" registry="zkRegistry"
                         id="motanClientBasicConfig" throwException="true" check="true"/>
 
     <!-- 具体referer配置。使用方通过beanid使用服务接口类 -->
