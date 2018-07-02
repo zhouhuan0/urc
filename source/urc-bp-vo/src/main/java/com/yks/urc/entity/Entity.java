@@ -19,6 +19,7 @@ public class Entity {
 
     private String modifiedBy;
 
+
     public Long getId() {
         return id;
     }
@@ -31,8 +32,8 @@ public class Entity {
         return entityCode;
     }
 
-    public void setEntityCode(String entityCode) {
-        this.entityCode = entityCode == null ? null : entityCode.trim();
+    public void setEntityCode(String entity_code) {
+        this.entityCode = entity_code;
     }
 
     public String getEntityName() {
@@ -40,7 +41,7 @@ public class Entity {
     }
 
     public void setEntityName(String entityName) {
-        this.entityName = entityName == null ? null : entityName.trim();
+        this.entityName = entityName;
     }
 
     public String getRemark() {
@@ -48,7 +49,7 @@ public class Entity {
     }
 
     public void setRemark(String remark) {
-        this.remark = remark == null ? null : remark.trim();
+        this.remark = remark;
     }
 
     public Date getCreateTime() {
@@ -64,7 +65,7 @@ public class Entity {
     }
 
     public void setCreateBy(String createBy) {
-        this.createBy = createBy == null ? null : createBy.trim();
+        this.createBy = createBy;
     }
 
     public Date getModifiedTime() {
@@ -80,6 +81,6 @@ public class Entity {
     }
 
     public void setModifiedBy(String modifiedBy) {
-        this.modifiedBy = modifiedBy == null ? null : modifiedBy.trim();
+        this.modifiedBy = modifiedBy;
     }
 }

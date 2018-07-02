@@ -127,7 +127,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		authUser.userName = "dcadmin";
 		authUser.pwd = "Ldap_test";
 		authUser.ip = "pyIP";
-		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
+//		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(authUser)));
 	}
 
 	@Test

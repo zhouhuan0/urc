@@ -1,6 +1,7 @@
 package com.yks.urc.user.bp.api;
 
 import java.util.List;
+import java.util.Map;
 
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.PageResultVO;
@@ -12,7 +13,7 @@ public interface IUserBp {
 
 	ResultVO SynUserFromUserInfo(String userName);
 
-	ResultVO login(UserVO authUser);
+	ResultVO login(Map<String, String> map);
 	
 	
 	/**

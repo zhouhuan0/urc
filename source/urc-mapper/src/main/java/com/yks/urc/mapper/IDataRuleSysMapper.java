@@ -1,12 +1,13 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.DataRuleColDO;
 import com.yks.urc.entity.DataRuleSysDO;
 import com.yks.urc.entity.UserDO;
 
+import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IDataRuleSysMapper {
 
@@ -31,28 +32,6 @@ public interface IDataRuleSysMapper {
      * @see
      */
     int insertBatch(List<DataRuleSysDO> dataRuleSysDOS);
-
-    /**
-     * Description: 根据dataRuleIds 获取数据权限Sys  包括对应的列权限
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/15 17:43
-     * @see
-     */
-    List<DataRuleSysDO> getDataRuleSysColDatas(@Param("dataRuleId") Long dataRuleId);
-
-    /**
-     * Description: 根据dataRuleIds 获取数据权限Sys  包括对应的行权限
-     *
-     * @param :
-     * @return:
-     * @auther: lvcr
-     * @date: 2018/6/15 17:43
-     * @see
-     */
-    List<DataRuleSysDO> getDataRuleSysRowDatas(@Param("dataRuleId") Long dataRuleId);
 
 
     /**
@@ -96,4 +75,16 @@ public interface IDataRuleSysMapper {
      * @see
      */
     Integer delRuleSysDatasByIdsAndCreatBy(@Param("dataRuleIds") List<Long> dataRuleIds, @Param("createBy") String createBy);
+
+
+    /**
+     * Description: 根据dataRuleId 获取数据权限Sys 包含行权限、列权限
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/6/29 18:38
+     * @see
+     */
+    List<DataRuleSysDO> getDataRuleSyAndOpersById(@Param("dataRuleId") Long dataRuleId);
 }

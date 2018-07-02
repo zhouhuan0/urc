@@ -74,9 +74,22 @@ public interface PermissionMapper {
 
     /**
      * 根据sys_key更新sys_context
+     *
      * @param p
      */
     int updateSysContextBySysKey(PermissionDO p);
 
     List<PermissionDO> getAllSysPermit();
+
+    /**
+     * Description: 获取系统功能权限Map集合
+     *
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/7/2 11:44
+     * @see
+     */
+    @MapKey("sysKey")
+    Map<String, PermissionDO> perMissionMap();
 }
