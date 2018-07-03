@@ -265,7 +265,7 @@ public class UrcServiceImpl implements IUrcService {
         }
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
 
-        return dataRuleService.getDataRuleByUser(lstUserName);
+        return dataRuleService.getDataRuleByUser(lstUserName,operator);
     }
 
 
