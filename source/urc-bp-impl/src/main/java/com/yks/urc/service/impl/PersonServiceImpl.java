@@ -192,10 +192,8 @@ public class PersonServiceImpl implements IPersonService {
 				List<String> listFullIdPath=Arrays.asList(array.toJSONString().replace("[", "").replace("]", "").split(","));
 				Collections.sort(listFullIdPath);
 				org.setFullIdPath(StringUtils.join(listFullIdPath.toArray(), "/"));
-				JSONArray fullNamePath=getfullNamePath(dingAllDept,array);
-				List<String> listFullNamePath=Arrays.asList(fullNamePath.toJSONString().replace("[", "").replace("]", "").replace("\"", "").split(","));
-				Collections.sort(listFullNamePath);
-				org.setFullNamePath(StringUtils.join(listFullIdPath.toArray(), "/"));
+				JSONArray fullNamePath=getfullNamePath(dingAllDept,listFullIdPath);
+				org.setFullNamePath(fullNamePath.toJSONString().replace("[", "").replace("]", "").replace("\"", "").replace(",", "/"));
 				org.setModifiedBy(userName);
 				org.setModifiedTime(new Date());
 				org.setOrgLevel(array.size());
@@ -257,10 +255,10 @@ public class PersonServiceImpl implements IPersonService {
 	}
 
 
-	private JSONArray getfullNamePath(List<DingDeptVO> dingAllDept, JSONArray array) {
+	private JSONArray getfullNamePath(List<DingDeptVO> dingAllDept, List<String> array) {
 		JSONArray arrayName=new JSONArray();
 		for (int i = 0; i < array.size(); i++) {
-			long dingId=array.getLongValue(i);
+			long dingId=Long.parseLong(array.get(i));
 			for (int j = 0; j < dingAllDept.size(); j++) {
 				DingDeptVO dep=dingAllDept.get(j);
 				if(dingId==dep.id){
