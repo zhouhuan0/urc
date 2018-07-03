@@ -636,8 +636,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         } else {
             templId = orgDataRuleTemplDO.getTemplId();
             BeanUtils.copyProperties(templVO, orgDataRuleTemplDO);
-            orgDataRuleTemplDO.setCreateTime(new Date());
-            orgDataRuleTemplDO.setCreateBy(operator);
+            orgDataRuleTemplDO.setModifiedTime(new Date());
+            orgDataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.updateDataRuleTemplById(orgDataRuleTemplDO);
 
         }
