@@ -199,12 +199,12 @@ public class RoleMapperTest extends BaseMapperTest {
         int currPage = 1;
         int pageSize = 3;
         RoleDO roleDO = new RoleDO();
-        roleDO.setRoleName("admin");
-        roleDO.setRemark("hehe");
+//        roleDO.setRoleName("admin");
+//        roleDO.setRemark("hehe");
 
         Map<String, Object> map = new HashMap<>();
-        map.put("createBy", "admin");
-        map.put("roleDO", roleDO);
+        map.put("createBy", "huangpeiqin");
+//        map.put("roleDO", roleDO);
         map.put("currIndex", (currPage - 1) * pageSize);
         map.put("pageSize", pageSize);
 
