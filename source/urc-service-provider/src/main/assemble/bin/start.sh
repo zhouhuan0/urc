@@ -11,7 +11,7 @@ BASE_HOME=../
 
 #==============================================================================
 #set JAVA_OPTS
-JAVA_OPTS="-server -Xms2048m -Xmx2048m -Xmn1024m -Xss256k"
+JAVA_OPTS="-server -Xms2048m -Xmx6144m -Xmn4096m -Xss256k"
 
 #performance Options
 JAVA_OPTS="$JAVA_OPTS -XX:+AggressiveOpts"
