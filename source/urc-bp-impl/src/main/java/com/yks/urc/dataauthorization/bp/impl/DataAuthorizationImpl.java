@@ -93,8 +93,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
             long number = 10000;
             for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
+
                 OmsShopVO omsShopVO = new OmsShopVO();
                 omsShopVO.shopId = shopAndSiteResp.sellerid;
+                //给唐峰造的数据
+                if ("乐天".equals(shopAndSiteResp.platform_code)){
+                    omsShopVO.shopId =shopAndSiteResp.shop;
+                    omsShopVO.shopName=shopAndSiteResp.site_name;
+                }
                 // 如果id 为空,则不装载数据
                 if (StringUtility.isNullOrEmpty(omsShopVO.shopId)) {
                     continue;
@@ -104,19 +110,24 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 if (StringUtility.isNullOrEmpty(omsShopVO.shopName)) {
                     omsShopVO.shopName = omsShopVO.shopId;
                 }
-
                 // 如果获取的site_code 为空,则不装载数
                /* if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code)) {
                     omsShopVO.lstSite = null;
                 } else {*/
                     OmsSiteVO omsSiteVO = new OmsSiteVO();
-
                     omsSiteVO.siteId = String.valueOf(number++);
                     omsSiteVO.siteName = shopAndSiteResp.site_name;
+
                     // name 没有 将id  赋值给name
                     if (StringUtility.isNullOrEmpty(omsSiteVO.siteName)) {
                         omsSiteVO.siteName = omsSiteVO.siteId;
                     }
+                // 给唐峰造乐天的数据
+                if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code) && "乐天".equals(shopAndSiteResp.platform_code)) {
+                    omsSiteVO.siteId =null;
+                    omsSiteVO.siteName=null;
+                    omsShopVO.lstSite=null;
+                }
                     omsShopVO.lstSite = new ArrayList<>();
                     omsShopVO.lstSite.add(omsSiteVO);
                 //}

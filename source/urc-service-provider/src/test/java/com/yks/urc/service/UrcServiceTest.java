@@ -206,7 +206,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void getShopList(){
 		String json ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
-				"\t\"platform\":\"eBay\"\n" +
+				"\t\"platform\":\"乐天\"\n" +
 				"}";
 		MotanSession.initialSession(json);
 		ResultVO resultVO =service.getShopList(json);
