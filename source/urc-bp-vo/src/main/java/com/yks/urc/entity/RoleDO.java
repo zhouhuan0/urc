@@ -1,59 +1,83 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class RoleDO {
 
+    private Long id;
     /**
-     *
+     * 角色Id
      */
-    public String roleId;
+    private Long roleId;
     /**
-     * 角色名
+     * 角色名称
      */
-    public String roleName;
+    private String roleName;
     /**
-     *  是否存活
+     * 是否启用
      */
-    public boolean isActive;
+    private boolean isActive;
     /**
-     *  是否通过验证
+     * 是否管理员角色
      */
-    public boolean isAuthorizable;
+    private boolean isAuthorizable;
     /**
-     * 是否永久保存
+     * 是否永久有效
      */
-    public boolean isForever;
+    private boolean isForever;
     /**
-     *
+     * 有效开始时间
      */
-    public Date effectiveTime;
+    private Date effectiveTime;
     /**
-     *
+     * 有效结束时间
      */
-    public Date expireTime;
+    private Date expireTime;
     /**
-     *
+     * 创建时间
      */
-    public Date createdTime;
-    /**
-     *
-     */
-    public String createdBy;
-    /**
-     *
-     */
-    public Date updatedTime;
-    /**
-     *
-     */
-    public String updatedBy;
+    private Date createTime;
 
-    public String getRoleId() {
+    /**
+     * 创建人
+     */
+    private String createBy;
+    /**
+     * 更新时间
+     */
+    private Date modifiedTime;
+    /**
+     * 更新人
+     */
+    private String modifiedBy;
+    /**
+     * 备注
+     */
+    private String remark;
+
+    /**
+     *   角色-功能权限关系表
+     */
+    private RolePermissionDO permissionDO;
+
+    private List<RolePermissionDO> permissionDOList;
+
+    private List<UserRoleDO> userRoleDOS;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(String roleId) {
+    public void setRoleId(Long roleId) {
         this.roleId = roleId;
     }
 
@@ -105,35 +129,67 @@ public class RoleDO {
         this.expireTime = expireTime;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public Date getCreateTime() {
+        return createTime;
     }
 
-    public void setCreatedTime(Date createdTime) {
-        this.createdTime = createdTime;
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCreateBy() {
+        return createBy;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
+    public Date getModifiedTime() {
+        return modifiedTime;
     }
 
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
+    public void setModifiedTime(Date modifiedTime) {
+        this.modifiedTime = modifiedTime;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public String getModifiedBy() {
+        return modifiedBy;
     }
 
-    public void setUpdatedBy(String updatedBy) {
-        this.updatedBy = updatedBy;
+    public void setModifiedBy(String modifiedBy) {
+        this.modifiedBy = modifiedBy;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
+    public RolePermissionDO getPermissionDO() {
+        return permissionDO;
+    }
+
+    public void setPermissionDO(RolePermissionDO permissionDO) {
+        this.permissionDO = permissionDO;
+    }
+
+    public List<RolePermissionDO> getPermissionDOList() {
+        return permissionDOList;
+    }
+
+    public void setPermissionDOList(List<RolePermissionDO> permissionDOList) {
+        this.permissionDOList = permissionDOList;
+    }
+
+    public List<UserRoleDO> getUserRoleDOS() {
+        return userRoleDOS;
+    }
+
+    public void setUserRoleDOS(List<UserRoleDO> userRoleDOS) {
+        this.userRoleDOS = userRoleDOS;
     }
 }

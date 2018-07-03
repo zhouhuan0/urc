@@ -1,31 +1,80 @@
 package com.yks.urc.fw;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-import java.util.UUID;
-import java.util.logging.FileHandler;
+import java.util.*;
 import java.util.regex.Pattern;
 
-import javax.sound.sampled.AudioFormat.Encoding;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializeConfig;
+import com.alibaba.fastjson.util.IOUtils;
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 public class StringUtility {
+	private static Logger logger = LoggerFactory.getLogger(StringUtility.class);
+
+	public static byte[] base64Decode(byte[] arrSrc) {
+		return new org.apache.commons.codec.binary.Base64().decode(arrSrc);
+	}
+
+	public static byte[] base64Decode(String strEncode) throws UnsupportedEncodingException {
+		if (StringUtility.isNullOrEmpty(strEncode)) {
+			return new byte[0];
+		}
+		return base64Decode(strEncode.getBytes("utf-8"));
+	}
+
+	/**
+	 * Base64加密
+	 * 
+	 * @param strSrc
+	 * @return
+	 */
+	public static String Base64Encode(String strSrc) {
+		byte[] b = StringUtility.string2Byte(strSrc);
+		return Base64Encode(b);
+	}
+
+	public static String Base64Encode(byte[] b) {
+		try {
+			org.apache.commons.codec.binary.Base64 base64 = new org.apache.commons.codec.binary.Base64();
+			b = base64.encode(b);
+			return StringUtility.byteToStringUTF8(b);
+		} catch (Exception ex) {
+			logger.error(String.format("%s %s", "Base64Encode", Arrays.toString(b)), ex);
+		}
+		return StringUtility.Empty;
+	}
+
+	/**
+	 * Base64解密
+	 * 
+	 * @param encodeStr
+	 * @return
+	 */
+	public static String Base64EncodeDecode(String encodeStr) {
+		byte[] b = encodeStr.getBytes();
+		org.apache.commons.codec.binary.Base64 base64 = new org.apache.commons.codec.binary.Base64();
+		b = base64.decode(b);
+		return new String(b);
+	}
+
 	public static String convertStreamToString(InputStream is) {
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -65,10 +114,13 @@ public class StringUtility {
 	}
 
 	public static String inputStream2String(InputStream in) throws IOException {
+		List<String> lstStr = org.apache.commons.io.IOUtils.readLines(in, java.nio.charset.Charset.forName("utf-8"));
 		StringBuffer out = new StringBuffer();
-		byte[] b = new byte[4096];
-		for (int n; (n = in.read(b)) != -1;) {
-			out.append(new String(b, 0, n, "utf-8"));
+		if (lstStr != null) {
+			for (String mem : lstStr) {
+				out.append(mem);
+				out.append(StringUtility.NewLine());
+			}
 		}
 		return out.toString();
 	}
@@ -81,7 +133,7 @@ public class StringUtility {
 
 	/**
 	 * 获取小写形式的guid
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getGuidLowercase() {
@@ -91,7 +143,7 @@ public class StringUtility {
 
 	/**
 	 * 获取当前时间
-	 * 
+	 *
 	 * @return
 	 */
 	public static Date getDateTimeNow() {
@@ -100,7 +152,7 @@ public class StringUtility {
 
 	/**
 	 * 获取当前时间 yyyy-MM-dd HH:mm:ss SSS
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getDateTimeNow_yyyyMMddHHmmssSSS() {
@@ -109,7 +161,7 @@ public class StringUtility {
 
 	/**
 	 * 将时间转换为 yyyy-MM-dd HH:mm:ss SSS
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -122,7 +174,7 @@ public class StringUtility {
 
 	/**
 	 * 转换为 HH:mm 格式
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 * @author PanYun 2016年1月5日 下午3:08:03
@@ -134,9 +186,16 @@ public class StringUtility {
 		return df.format(dt);
 	}
 
+	public static String dt2Str(Date dt, String fmt) {
+		if (dt == null)
+			return Empty;
+		SimpleDateFormat df = new SimpleDateFormat(fmt);// 设置日期格式
+		return df.format(dt);
+	}
+
 	/**
 	 * 将时间转换为 yyyy-MM-dd HH:mm:ss
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -149,7 +208,7 @@ public class StringUtility {
 
 	/**
 	 * 将时间转换为 MM-dd HH:mm:ss
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -164,7 +223,7 @@ public class StringUtility {
 		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss 'GMT'", Locale.US);
 		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return sdf.format(lMillSencod);// new Date().getTime() + lCacheSeconds *
-										// 1000);
+		// 1000);
 	}
 
 	public static String dt2Str_yyyyMM(Date dt) {
@@ -176,7 +235,7 @@ public class StringUtility {
 
 	/**
 	 * 将时间转换为 yyyy-MM-dd
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -189,7 +248,7 @@ public class StringUtility {
 
 	/**
 	 * 转换为无减号日期格式：yyyyMMddHHmmssSSS
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -202,7 +261,7 @@ public class StringUtility {
 
 	/**
 	 * 转换为无减号日期格式：yyyyMMddHHmmss
-	 * 
+	 *
 	 * @param dt
 	 * @return
 	 */
@@ -221,14 +280,14 @@ public class StringUtility {
 	public static final String DtFormatString_yyyyMMddHHmmss = "yyyyMMddHHmmss";
 	/**
 	 * HH:mm
-	 * 
+	 *
 	 * @author PanYun 2016年1月5日 下午3:07:46
 	 */
 	public static final String DtFormatString_HH_mm = "HH:mm";
 
 	/**
 	 * 获取日期最小值
-	 * 
+	 *
 	 * @return
 	 */
 	public static Date getDateMinValue() {
@@ -237,7 +296,7 @@ public class StringUtility {
 
 	/**
 	 * 字符串(yyyy-MM-dd HH:mm:ss SSS)转Date
-	 * 
+	 *
 	 * @param strDt
 	 * @return
 	 * @throws ParseException
@@ -249,7 +308,7 @@ public class StringUtility {
 
 	/**
 	 * 字符串(yyyyMMddHHmmss)转Date
-	 * 
+	 *
 	 * @param strDt
 	 * @return
 	 * @throws ParseException
@@ -274,7 +333,7 @@ public class StringUtility {
 
 	/**
 	 * 转化为字符串，空对象返回 String.Empy
-	 * 
+	 *
 	 * @param obj
 	 * @return
 	 */
@@ -377,13 +436,12 @@ public class StringUtility {
 
 	/**
 	 * 长度为0的字符串
-	 * 
 	 */
 	public static final String Empty = "";
 
 	/**
 	 * 是否为null或空字符串
-	 * 
+	 *
 	 * @param strSrc
 	 * @return
 	 */
@@ -412,7 +470,7 @@ public class StringUtility {
 
 	/**
 	 * 对象序列化为JSON字符串
-	 * 
+	 *
 	 * @param objSrc
 	 * @return
 	 */
@@ -422,9 +480,11 @@ public class StringUtility {
 
 	public static String toJSONString_NoException(Object objSrc) {
 		try {
+			if (objSrc == null) return Empty;
 			return JSON.toJSONString(objSrc, mapping);
 		} catch (Exception ex) {
-			return ex.getMessage();
+			logger.error("toJSONString_NoException", ex);
+			return Empty;
 		}
 	}
 
@@ -440,7 +500,7 @@ public class StringUtility {
 
 	/**
 	 * 追加空字符串，因为 null+""=="null"，所以重写
-	 * 
+	 *
 	 * @param str1
 	 * @return
 	 */
@@ -458,7 +518,7 @@ public class StringUtility {
 
 	/**
 	 * 不区分大小写相等判断
-	 * 
+	 *
 	 * @param str1
 	 * @param str2
 	 * @return
@@ -473,7 +533,7 @@ public class StringUtility {
 
 	/**
 	 * 获取系统换行符
-	 * 
+	 *
 	 * @return
 	 */
 	public static String NewLine() {
@@ -482,7 +542,7 @@ public class StringUtility {
 
 	/**
 	 * 拼接路径，左下斜杠，并删除前后斜杠
-	 * 
+	 *
 	 * @param arrPath
 	 * @return
 	 */
@@ -498,7 +558,7 @@ public class StringUtility {
 
 	/**
 	 * 拼接路径，左下斜杠，仅删除末尾斜杠
-	 * 
+	 *
 	 * @param arrPath
 	 * @return
 	 * @author PanYun 2015年10月15日 上午10:11:59
@@ -521,7 +581,7 @@ public class StringUtility {
 
 	/**
 	 * 检测是否有新版本 app
-	 * 
+	 *
 	 * @param str1
 	 * @param str2
 	 * @return
@@ -534,7 +594,7 @@ public class StringUtility {
 
 	/**
 	 * trim 前后指定字符
-	 * 
+	 *
 	 * @param strSrc
 	 * @param strPattern
 	 * @return
@@ -549,7 +609,7 @@ public class StringUtility {
 
 	/**
 	 * trim 末尾指定字符
-	 * 
+	 *
 	 * @param strSrc
 	 * @param strPattern
 	 * @return
@@ -565,7 +625,7 @@ public class StringUtility {
 
 	/**
 	 * 添加字符串后再添加换行
-	 * 
+	 *
 	 * @param sb
 	 * @param obj
 	 */
@@ -581,7 +641,7 @@ public class StringUtility {
 
 	/**
 	 * 获取全小写的日期规则的guid
-	 * 
+	 *
 	 * @return
 	 */
 	public static String getGuidLowercase_Dt() {
@@ -607,7 +667,7 @@ public class StringUtility {
 
 	/**
 	 * 把byte转化成2进制字符串
-	 * 
+	 *
 	 * @param b
 	 * @return
 	 */
@@ -641,7 +701,7 @@ public class StringUtility {
 
 	/**
 	 * byte转成2进制字符串后，再异或
-	 * 
+	 *
 	 * @param arrB
 	 * @author PanYun 2016年1月21日 下午6:50:23
 	 */
@@ -659,7 +719,7 @@ public class StringUtility {
 
 	/**
 	 * 转int后异或
-	 * 
+	 *
 	 * @param arrB
 	 * @author PanYun 2016年1月21日 下午6:43:20
 	 */
@@ -670,7 +730,7 @@ public class StringUtility {
 
 	/**
 	 * 前一字节与后一字节异或的结果再与后一字节异或
-	 * 
+	 *
 	 * @param arrB
 	 * @param idxStart
 	 * @param idxEnd
@@ -690,7 +750,7 @@ public class StringUtility {
 
 	/**
 	 * SHA1加密
-	 * 
+	 *
 	 * @param strSrc
 	 * @return
 	 */
@@ -716,7 +776,7 @@ public class StringUtility {
 
 	/**
 	 * 是否GUID
-	 * 
+	 *
 	 * @param strSrc
 	 * @return
 	 */
@@ -738,7 +798,7 @@ public class StringUtility {
 
 	/**
 	 * 从0开始，截取指定长度
-	 * 
+	 *
 	 * @param strSrc
 	 * @param iLenth
 	 * @return
@@ -755,7 +815,7 @@ public class StringUtility {
 
 	/**
 	 * 从末尾开始，截取指定长度
-	 * 
+	 *
 	 * @param strSrc
 	 * @param iLength
 	 * @return
@@ -780,7 +840,7 @@ public class StringUtility {
 
 	/**
 	 * 报错，则原样返回
-	 * 
+	 *
 	 * @param encryptStr
 	 * @return
 	 * @author panyun 2017年3月7日 下午9:10:40
@@ -789,7 +849,7 @@ public class StringUtility {
 		try {
 			return md5(encryptStr);
 		} catch (Exception ex) {
-			return encryptStr;
+			return Empty;
 		}
 	}
 
@@ -862,7 +922,7 @@ public class StringUtility {
 
 	/**
 	 * 32个十六进制字符转成byte数组，每两个字符换算成一个byte
-	 * 
+	 *
 	 * @param s
 	 * @return
 	 */
@@ -877,7 +937,7 @@ public class StringUtility {
 
 	/**
 	 * byte转16进制
-	 * 
+	 *
 	 * @param bytes
 	 * @return
 	 * @author PanYun 2016年1月21日 上午11:05:30
@@ -906,7 +966,7 @@ public class StringUtility {
 
 	/**
 	 * 各个char转换为byte
-	 * 
+	 *
 	 * @param strUUID
 	 * @return
 	 * @author PanYun 2015年8月15日 下午4:41:57
@@ -922,7 +982,7 @@ public class StringUtility {
 
 	/**
 	 * 各个byte转换为char
-	 * 
+	 *
 	 * @param arrByte
 	 * @return
 	 * @author PanYun 2015年8月15日 下午4:48:54
@@ -948,7 +1008,7 @@ public class StringUtility {
 
 	/**
 	 * Guid转换为UUID,只是简单地去掉减号
-	 * 
+	 *
 	 * @param strGuid
 	 * @return
 	 * @author PanYun 2015年8月17日 上午11:02:26
@@ -961,7 +1021,7 @@ public class StringUtility {
 
 	/**
 	 * UUID转guid,只是简单地增加减号
-	 * 
+	 *
 	 * @param strUUId
 	 * @return
 	 * @author PanYun 2015年12月28日 下午2:37:06
@@ -976,7 +1036,7 @@ public class StringUtility {
 
 	/**
 	 * 验证字符是否手机号
-	 * 
+	 *
 	 * @param strCellphone
 	 * @return
 	 * @author PanYun 2015年8月27日 上午10:39:40
@@ -992,7 +1052,7 @@ public class StringUtility {
 
 	/**
 	 * 是否全是数字
-	 * 
+	 *
 	 * @param strCellphone
 	 * @return panyun 2016年7月19日下午2:11:15
 	 */
@@ -1005,7 +1065,7 @@ public class StringUtility {
 
 	/**
 	 * 是否手表设备ID,15位数字
-	 * 
+	 *
 	 * @param strDeviceId
 	 * @return
 	 * @author PanYun 2015年12月24日 上午10:19:09
@@ -1021,7 +1081,7 @@ public class StringUtility {
 
 	/**
 	 * 是否机器人设备ID,12位字符
-	 * 
+	 *
 	 * @param strDeviceId
 	 * @return
 	 * @author PanYun 2015年12月24日 上午10:19:09
@@ -1037,7 +1097,7 @@ public class StringUtility {
 
 	/**
 	 * 清除非数字字符，小数点除外
-	 * 
+	 *
 	 * @param strSrc
 	 * @return
 	 * @author PanYun 2015年11月28日 下午6:29:31
@@ -1089,7 +1149,7 @@ public class StringUtility {
 
 	/**
 	 * 获取星期
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @author PanYun 2016年1月5日 下午3:03:16
@@ -1111,7 +1171,7 @@ public class StringUtility {
 
 	/**
 	 * 数组加入分隔符
-	 * 
+	 *
 	 * @param userIds
 	 * @param strSplit
 	 * @return panyun 2017年3月7日下午8:09:22
@@ -1143,4 +1203,74 @@ public class StringUtility {
 			d = 0.00;
 		return roundingNum(d.doubleValue(), i);
 	}
+
+	/**
+	 * string 转json
+	 *
+	 * @param json
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/9 9:13
+	 */
+	public static JSONObject parseString(String json) {
+		return JSONObject.parseObject(json);
+	}
+
+	/**
+	 * json数组转list
+	 *
+	 * @param json
+	 * @param classzz
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/9 9:13
+	 */
+	public static List jsonToList(String json, Class classzz) {
+		List jsonList = JSON.parseArray(json, classzz);
+		return jsonList;
+	}
+
+	/**
+	 * stirng 转date
+	 * 
+	 * @param strDate
+	 * @param dateFormat
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/6/9 17:25
+	 */
+	public static Date stringToDate(String strDate, String dateFormat) throws ParseException {
+		Date date = null;
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+		date = simpleDateFormat.parse(strDate);
+		return date;
+	}
+
+	public static Map ConvertObjToMap(Object obj) {
+		Map<String, Object> reMap = new HashMap<String, Object>();
+		if (obj == null)
+			return null;
+		Field[] fields = obj.getClass().getDeclaredFields();
+		try {
+			for (int i = 0; i < fields.length; i++) {
+				try {
+					Field f = obj.getClass().getDeclaredField(fields[i].getName());
+					f.setAccessible(true);
+					Object o = f.get(obj);
+					reMap.put(fields[i].getName(), o);
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return reMap;
+	}
+
 }

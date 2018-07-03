@@ -7,26 +7,36 @@ import java.io.PrintWriter;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class HttpUtility {
 
 	private static Logger LOG = LoggerFactory.getLogger(HttpUtility.class);
 
 	public static String httpGet(String url) {
+		CloseableHttpClient httpCilent = HttpClients.createDefault();// Creates CloseableHttpClient instance with default configuration.
+		HttpGet httpGet = new HttpGet(url);
 		try {
-			OkHttpClient httpClient = new OkHttpClient();
-			Request request = new Request.Builder().url(url).build();
-			Response response = httpClient.newCall(request).execute();
-			return response.body().string(); // 返回的是string 类型，json的mapper可以直接处理
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			HttpResponse httpResponse = httpCilent.execute(httpGet);
+			return EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+		} catch (IOException e) {
+			LOG.error(String.format("httpGet:%s", httpGet), e);
+		} finally {
+			try {
+				httpCilent.close();// 释放资源
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return "";
 	}
@@ -42,50 +52,7 @@ public class HttpUtility {
 	 * @throws Exception
 	 */
 	public static String sendPost(String url, String param) throws Exception {
-		PrintWriter out = null;
-		BufferedReader in = null;
-		String result = "";
-		try {
-			URL realUrl = new URL(url);
-			// 打开和URL之间的连接
-			URLConnection conn = realUrl.openConnection();
-			// 设置通用的请求属性
-			conn.setRequestProperty("accept", "*/*");
-			conn.setRequestProperty("connection", "Keep-Alive");
-			// 发送POST请求必须设置如下两行
-			conn.setDoOutput(true);
-			conn.setDoInput(true);
-			// 获取URLConnection对象对应的输出流
-			out = new PrintWriter(conn.getOutputStream());
-			// 发送请求参数
-			out.print(param);
-			// flush输出流的缓冲
-			out.flush();
-			// 定义BufferedReader输入流来读取URL的响应
-			in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-			String line;
-			while ((line = in.readLine()) != null) {
-				result += line;
-			}
-		} catch (Exception e) {
-			LOG.error("发送post请求出错,message={}", e.getMessage());
-			throw new Exception(e.getMessage());
-		}
-		// 使用finally块来关闭输出流、输入流
-		finally {
-			try {
-				if (out != null) {
-					out.close();
-				}
-				if (in != null) {
-					in.close();
-				}
-			} catch (IOException ex) {
-				LOG.error("关闭流出错,message={}", ex.getMessage());
-				throw new Exception(ex.getMessage());
-			}
-		}
-		return result;
+		return doPost(url, param, "utf-8");
 	}
 
 	/**
@@ -133,17 +100,30 @@ public class HttpUtility {
 		}
 		return result;
 	}
-//
-//	public static void main(String[] args) {
-//		String strUrl = "https://oapi.dingtalk.com/gettoken";
-//		String ddd = "corpid=dinge8d7141acdb006a135c2f4657eb6378f&corpsecret=1Tf9YqLFKPNF0xJumHQWmZYGt9HdpPjlWT68P1NJu3yWYM1r9hJAajlFbXaZeuis";
-//		try {
-//			String strResp=sendGet(strUrl, ddd);
-//			DingApiRespVO resp = StringUtility.parseObject(strResp, DingApiRespVO.class);
-//			System.out.println(resp.access_token+","+resp.sub_dept_id_list+","+resp.expires_in);
-//		} catch (Exception e) {
-//
-//		}
-//	}
+
+	public static String doPost(String url, String paramBody, String charset) {
+		HttpClient httpClient = null;
+		HttpPost httpPost = null;
+		String result = null;
+		try {
+			httpClient = new SSLClient();
+			httpPost = new HttpPost(url);
+			// 设置参数
+
+			StringEntity se = new StringEntity(paramBody);
+			httpPost.setEntity(se);
+
+			HttpResponse response = httpClient.execute(httpPost);
+			if (response != null) {
+				HttpEntity resEntity = response.getEntity();
+				if (resEntity != null) {
+					result = EntityUtils.toString(resEntity, charset);
+				}
+			}
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return result;
+	}
 
 }

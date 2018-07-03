@@ -21,6 +21,10 @@ public class AuthWayVO implements Serializable {
      *
      */
     public String sysKey;
+    public String sysName;
+    public String sortIdx;
+    public String entityCode;
+    public String entityName;
     /**
      *
      */

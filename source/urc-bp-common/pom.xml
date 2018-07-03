@@ -29,9 +29,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.yks.urc</groupId>
-			<artifactId>urc-mapper</artifactId>
-			<version>${urc.version}</version>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>RELEASE</version>
 		</dependency>
 	</dependencies>
 </project>

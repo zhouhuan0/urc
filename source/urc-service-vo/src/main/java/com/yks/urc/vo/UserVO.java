@@ -10,6 +10,7 @@ package com.yks.urc.vo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 public class UserVO implements Serializable {
     private static final long serialVersionUID = -7653119695391553598L;
@@ -18,17 +19,25 @@ public class UserVO implements Serializable {
      */
     public String userId;
     /**
-     * 用户名称
+     * 域账号
      */
     public String userName;
     /**
-     * 是否存活
+     * 姓名
      */
-    public boolean isActive;
+    public String personName;
     /**
-     *
+     * 是否启用
      */
-    public String name;
+    public boolean  isActive;
+    /**
+     *  启用时间
+     */
+    public Date activeTime;
+    /**
+     *  启用时间 (前端)
+     */
+    public String activeTimeStr;
     /**
      * 性别
      */
@@ -37,12 +46,18 @@ public class UserVO implements Serializable {
      *   电话号码
      */
     public String phoneNum;
+    
     /**
-     *
+     *  创建人
+     */
+    public String createBy;
+    
+    /**
+     * 钉钉号在当前企业中的userId
      */
     public String dingUserId;
     /**
-     *
+     * 钉钉号Id
      */
     public String dingId;
     /**
@@ -54,11 +69,19 @@ public class UserVO implements Serializable {
      */
     public Date joinDate;
     /**
-     *
+     * 离职日期
      */
     public Date leaveDate;
     /**
-     *
+     *  加入集团时间 (前端)
+     */
+    public String joinDateStr;
+    /**
+     * 离职日期 (前端)
+     */
+    public String leaveDateStr;
+    /**
+     * 工号
      */
     public String jobNumber;
     /**
@@ -85,5 +108,9 @@ public class UserVO implements Serializable {
      *  票据
      */
     public String ticket;
+    /**
+     *  角色
+     */
+    public List<RoleVO> roles;
 
 }

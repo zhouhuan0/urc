@@ -11,23 +11,12 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
-public class MenuVO  implements Serializable{
-    private static final long serialVersionUID = 3255833331085343110L;
-    /**
-     *
-     */
-    public String name;
-    /**
-     *
-     */
-    public String key;
-    /**
-     *
-     */
-    public String url;
-    /**
-     *
-     */
-    public List<PageVO> page;
+public class MenuVO implements Serializable {
+	private static final long serialVersionUID = 3255833331085343110L;
+
+	public String name;
+	public String key;
+	public String url;
+	public List<ModuleVO> module;
 
 }

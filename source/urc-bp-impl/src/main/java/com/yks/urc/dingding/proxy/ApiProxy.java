@@ -4,6 +4,9 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
+import com.yks.urc.dingding.client.DingApiProxy;
+import com.yks.urc.dingding.client.DingApiProxyImpl;
+
 /**
  * @Author: wujianghui@youkeshu.com
  * @Date: 2018/6/6 8:59
