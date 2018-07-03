@@ -44,7 +44,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
 
     }
 
-    @Log(value = "insertUser", level = LogLevel.ERROR)
+    @Log(value = "insertUser", level = LogLevel.INFO)
     public void insertUser(UserVO u) {
         if (u == null || StringUtility.isNullOrEmpty(u.ip) || StringUtility.isNullOrEmpty(u.ticket) ||
                 StringUtility.isNullOrEmpty(u.userName)) return;

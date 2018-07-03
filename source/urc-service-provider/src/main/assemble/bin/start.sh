@@ -11,7 +11,7 @@ BASE_HOME=../
 
 #==============================================================================
 #set JAVA_OPTS
-JAVA_OPTS="-server -Xms2048m -Xmx2048m -Xmn1024m -Xss256k"
+JAVA_OPTS="-server -Xms2048m -Xmx6144m -Xmn4096m -Xss256k"
 
 #performance Options
 JAVA_OPTS="$JAVA_OPTS -XX:+AggressiveOpts"
@@ -26,9 +26,10 @@ JAVA_OPTS="$JAVA_OPTS -XX:+UseCMSInitiatingOccupancyOnly"
 JAVA_OPTS="$JAVA_OPTS -XX:CMSInitiatingOccupancyFraction=75"
 
 #GC Log Options
-#JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCApplicationStoppedTime"
-#JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCTimeStamps"
-#JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCApplicationStoppedTime"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps"
+JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails"
+JAVA_OPTS="$JAVA_OPTS -Xloggc:/applogs/urc/serviceProvider/serviceProvider_gc.log"
 #debug Options
 JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8065,server=y,suspend=n"
 #==============================================================================
