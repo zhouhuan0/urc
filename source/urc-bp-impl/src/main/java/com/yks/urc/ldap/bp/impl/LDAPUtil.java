@@ -2,6 +2,7 @@ package com.yks.urc.ldap.bp.impl;
 
 import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.logging.Logger;
 
 import javax.naming.Context;
 import javax.naming.NamingException;
@@ -15,6 +16,8 @@ import javax.naming.ldap.Control;
 import javax.naming.ldap.InitialLdapContext;
 import javax.naming.ldap.LdapContext;
 
+import com.yks.urc.user.bp.impl.UserBpImpl;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -70,26 +73,33 @@ public class LDAPUtil {
 		return HashEnv;
 	}
 
+	private org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 	/** connect to ldap */
 	public boolean connect(boolean isAdmin, String username, String password, String protocol) {
 
 		LdapContext ctx = null;
-		String user = null;
 		try {
 			ctx = new InitialLdapContext(getEnv(false, username, password, null), connCtls);
-
+			String user = null;
 			if (isAdmin) {
 				user = ADMIN_USER;
 			} else {
 				user = username;
 			}
-			System.out.println(user + " <<<:[connect success]:>>>" + protocol);
+			logger.info(String.format("%s connect success", user));
 			return true;
 		} catch (NamingException e) {
-			// TODO Auto-generated catch block
-			System.out.println(user + " <<<:[connect fail]:>>>" + protocol);
+			logger.error(String.format("connect:%s %s", username, password), e);
 		}
-
+		finally {
+			try {
+				if(ctx!=null) {
+					ctx.close();
+				}
+			} catch (Exception e) {
+				logger.error("LdapContext close ERROR",e);
+			}
+		}
 		return false;
 	}
 
