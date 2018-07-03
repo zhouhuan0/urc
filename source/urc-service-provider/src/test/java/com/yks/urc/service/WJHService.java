@@ -75,8 +75,8 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void getDataRuleByUser() throws Exception{
     	List<String> userName=new ArrayList<>();
-    	userName.add("wujianghui");
-    	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName);
+    	userName.add("panyun");
+    	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName,"panyun");
     	System.out.println(StringUtility.toJSONString(dataVO));
     }
     
@@ -127,7 +127,7 @@ public class WJHService extends BaseServiceTest {
     	lstUserName.add("程立夫");
     	
     	
-    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName)));
+    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"sdfd")));
     	
     }
     

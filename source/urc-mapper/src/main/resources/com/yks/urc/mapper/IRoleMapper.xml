@@ -265,6 +265,7 @@
                     #{item}
                 </foreach>
             </if>
+            and is_authorizable != 2
         </where>
     </select>
     <!--根据用户名 获取角色名称-->

@@ -2,6 +2,8 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleSysDO;
 import com.yks.urc.entity.UserDO;
+import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.helper.Query;
 
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
@@ -51,7 +53,7 @@ public interface IDataRuleSysMapper {
      * @param userDO
      * @return
      */
-    List<DataRuleSysDO> getDataRuleSysByUserName(UserDO userDO);
+    List<DataRuleSysDO> getDataRuleSysByUserName(@Param("userDO") UserDO userDO,@Param("list") List sysKeys );
 
 
     /**

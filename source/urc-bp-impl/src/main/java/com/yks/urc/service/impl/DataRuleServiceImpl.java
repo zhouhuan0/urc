@@ -840,14 +840,21 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getDataRuleByUser(List<String> lstUserName) {
+    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator) {
+        if(!roleMapper.isAdminOrSuperAdmin(operator)){
+            throw new URCBizException("既不是超级管理员也不是业务管理员", ErrorCode.E_100003);
+        }
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         if (lstUserName != null && lstUserName.size() > 0) {
             for (int i = 0; i < lstUserName.size(); i++) {
                 UserDO userDO = new UserDO();
                 userDO.setUserName(lstUserName.get(i));
-                //通过用户名得到sys_key
-                List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO);
+                List<String> sysKeys = null;
+                if(roleMapper.isAdminAccount(operator)){
+                   	 sysKeys=userRoleMapper.getSysKeyByUser(operator);
+                }
+                //通过用户名得到DataRuleSysId\SysKey\SysName
+                List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO,sysKeys);
                 List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
                 if (syskeyList != null && syskeyList.size() > 0) {
                     for (int j = 0; j < syskeyList.size(); j++) {
