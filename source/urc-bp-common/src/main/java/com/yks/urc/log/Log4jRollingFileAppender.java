@@ -3,10 +3,9 @@ package com.yks.urc.log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.log4j.RollingFileAppender;
- 
+import org.apache.log4j.DailyRollingFileAppender;
 
-public class Log4jRollingFileAppender extends RollingFileAppender {
+public class Log4jRollingFileAppender extends DailyRollingFileAppender {
  
 	public void setFile(String file) {
 	    String val = file.trim();
