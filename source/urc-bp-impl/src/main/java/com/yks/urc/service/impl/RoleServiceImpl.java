@@ -271,10 +271,11 @@ public class RoleServiceImpl implements IRoleService {
             Date expireTime = roleDO.getExpireTime();
             if (effectiveTime == null || expireTime == null) {
                 roleDO.setActive(Boolean.FALSE);
+            }else{
+                Date nowTime = new Date();
+                if (nowTime.before(effectiveTime) || nowTime.after(expireTime)){
+                    roleDO.setActive(Boolean.FALSE);
             }
-            Date nowTime = new Date();
-            if (nowTime.before(effectiveTime) || nowTime.after(expireTime)){
-                roleDO.setActive(Boolean.FALSE);
         }
     }
 
