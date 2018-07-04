@@ -101,6 +101,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             if (StringUtility.isNullOrEmpty(permitCache.funcVersion))
                 permitCache.funcVersion = NA;
             // 缓存用户的所有系统功能权限
+            getCache(getCacheKey_UserSysFunc(userName)).clear();
             getCache(getCacheKey_UserSysFunc(userName)).batchPut(map);
             // 缓存用户功能权限版本号
             getCache(getCacheKey_UserFuncVersion()).put(userName, permitCache.funcVersion);
