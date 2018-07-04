@@ -190,7 +190,7 @@ public class PersonServiceImpl implements IPersonService {
 				org.setCreateTime(new Date());
 				org.setDingOrgId(String.valueOf(dept.id));
 				List<String> listFullIdPath=Arrays.asList(array.toJSONString().replace("[", "").replace("]", "").split(","));
-				Collections.sort(listFullIdPath);
+				Collections.reverse(listFullIdPath);
 				org.setFullIdPath(StringUtils.join(listFullIdPath.toArray(), "/"));
 				JSONArray fullNamePath=getfullNamePath(dingAllDept,listFullIdPath);
 				org.setFullNamePath(fullNamePath.toJSONString().replace("[", "").replace("]", "").replace("\"", "").replace(",", "/"));
