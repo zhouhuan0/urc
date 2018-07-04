@@ -209,17 +209,19 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     private void checkActive(RoleVO roleVO) {
-        if (!roleVO.isForever() && roleVO.isActive()) {
+        if (!roleVO.isForever()) {
             Date effectiveTime = roleVO.getEffectiveTime();
             Date expireTime = roleVO.getExpireTime();
             if (effectiveTime == null || expireTime == null) {
-                throw new URCBizException(ErrorCode.E_000003.getState(), "有效期未设置，不能设置为启用");
-            } else {
+                throw new URCBizException("effectiveTime or expireTime is null",ErrorCode.E_000002);
+            }
+            if(roleVO.isActive()){
                 Date nowTime = new Date();
                 if (nowTime.before(effectiveTime) || nowTime.after(expireTime)) {
                     throw new URCBizException(ErrorCode.E_000003.getState(), "有效期设置有误，不能设置为启用");
                 }
             }
+
         }
     }
 
@@ -812,7 +814,8 @@ public class RoleServiceImpl implements IRoleService {
         List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
         //如果权限列表为空，则不新增权限列表
         if (CollectionUtils.isEmpty(rolePermissions)) {
-            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "该角色的权限列表为空");
+           // return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "该角色的权限列表为空");
+            return VoHelper.getSuccessResult();
         }
         //保存角色的功能权限
         List<RolePermissionDO> records = new ArrayList<>();

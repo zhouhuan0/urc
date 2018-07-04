@@ -101,16 +101,21 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /**
          * 2、获取权限模板信息
          */
-        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+        Boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
         String valFlag = jsonObject.getString("valFlag");
-        if (!isAdmin && "1".equals(valFlag)) {
-            checkSysPermission(operator, templId);
+        if (!isSuperAdmin && "1".equals(valFlag)) {
+            Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
+            if (isBizAdmin) {
+                checkSysPermission(operator, templId);
+            } else {
+                throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能选择该方案", operator));
+            }
         }
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
 
         DataRuleTemplDO dataRuleTemplDO = null;
-        if (isAdmin) {
+        if (isSuperAdmin) {
             dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, null);
         } else {
             dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, operator);
@@ -203,7 +208,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
         return VoHelper.getSuccessResult(dataRuleTemplVO);
     }
-
+    /**
+     * Description: 判断当前用户对应权限的系统是否包含 方案对应的系统
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/7/4 17:38
+     * @see
+     */
     private void checkSysPermission(String operator, Long templId) {
         /*获取方案对应的数据权限系统*/
         List<String> templOwnSyss = new ArrayList<>();
@@ -332,8 +344,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数并校验*/
-        String createBy = jsonObject.getString("operator");
-        if (StringUtil.isEmpty(createBy)) {
+        String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
@@ -349,10 +361,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (lstUserName == null || lstUserName.isEmpty()) {
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
-        Boolean isAdmin = roleMapper.isSuperAdminAccount(createBy);
+        Boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
-        if (!isAdmin) {
-            checkSysPermission(createBy, templId);
+        if (!isSuperAdmin) {
+            Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
+            if (isBizAdmin) {
+                checkSysPermission(operator, templId);
+            } else {
+                throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能操作该方案", operator));
+            }
         }
 
 
@@ -381,7 +398,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
          /*行权限数据缓存列表*/
         List<ExpressionDO> expressionDOSCache = new ArrayList<>();
        /*4、组装数据  并放入待入库列表*/
-        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, createBy, dataRuleSyAndOpers);
+        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, operator, dataRuleSyAndOpers);
         /*5.1、删除用户原有的数据权限关系数据 包括行权限 列权限*/
         List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
         dataRuleMapper.delBatchByUserNames(lstUserName);
@@ -554,8 +571,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 if (dataRuleTemplDO == null || !operator.equals(dataRuleTemplDO.getCreateBy())) {
                     throw new URCBizException(String.format("该方案不属于该用户，不能操作 where templId is: %s and operator is: %s", currentTemplId, operator), ErrorCode.E_000003);
                 }
-               /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
-                checkSysPermission(operator, dataRuleTemplDO.getTemplId());
             }
              /*4、删除该方案对应的数据(包括对应的数据权限Sys、行权限、列权限)*/
             // dataRuleTemplMapper.delTemplDatasById(currentTemplId);
