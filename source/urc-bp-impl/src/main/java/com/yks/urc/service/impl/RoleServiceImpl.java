@@ -163,6 +163,9 @@ public class RoleServiceImpl implements IRoleService {
         if (StringUtil.isEmpty(roleVO.getRoleName())) {
             throw new URCBizException("parameter roleName is null", ErrorCode.E_000002);
         }
+        /*校验有效期和可用状态*/
+        checkActive(roleVO);
+
         String roleIdStr = roleVO.getRoleId();
         Long roleId = StringUtil.isEmpty(roleIdStr) ? null : Long.valueOf(roleVO.getRoleId());
           /*获取角色原关联的用户userName*/
@@ -203,6 +206,21 @@ public class RoleServiceImpl implements IRoleService {
             permitStatBp.updateUserPermitCache(lstUserName);
         }
         return VoHelper.getSuccessResult();
+    }
+
+    private void checkActive(RoleVO roleVO) {
+        if (!roleVO.isForever() && roleVO.isActive()) {
+            Date effectiveTime = roleVO.getEffectiveTime();
+            Date expireTime = roleVO.getExpireTime();
+            if (effectiveTime == null || expireTime == null) {
+                throw new URCBizException(ErrorCode.E_000003.getState(), "有效期未设置，不能设置为启用");
+            } else {
+                Date nowTime = new Date();
+                if (nowTime.before(effectiveTime) || nowTime.after(expireTime)) {
+                    throw new URCBizException(ErrorCode.E_000003.getState(), "有效期设置有误，不能设置为启用");
+                }
+            }
+        }
     }
 
     private List<String> removeDuplicate(List<String> lstUserName) {
