@@ -875,7 +875,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public void handleExpiredRole() {
+    public ResultVO handleExpiredRole() {
         try {
             // 获取所有过期的角色关联的用户
             List<String> lstUserName = roleMapper.getUsersOfAllExpiredRole();
@@ -886,11 +886,15 @@ public class RoleServiceImpl implements IRoleService {
 
                 // 更新用户的权限：冗余表、缓存
                 permitStatBp.updateUserPermitCache(lstUserName);
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"处理完成");
             } else {
                 operationBp.addLog(logger.getName(), "没有角色过期", null);
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),"没有角色过期");
             }
+
         } catch (Exception ex) {
             operationBp.addLog(logger.getName(), "处理过期角色ERROR", ex);
+            return VoHelper.getErrorResult();
         }
     }
 
