@@ -122,15 +122,15 @@ public class DataAuthorizationImpl implements DataAuthorization {
                     if (StringUtility.isNullOrEmpty(omsSiteVO.siteName)) {
                         omsSiteVO.siteName = omsSiteVO.siteId;
                     }
-                // 给唐峰造乐天的数据
+                // 给唐峰造乐天的数据 ,若没有站点,则给空数据
                 if (StringUtility.isNullOrEmpty(shopAndSiteResp.site_code) && "乐天".equals(shopAndSiteResp.platform_code)) {
                     omsSiteVO.siteId =null;
                     omsSiteVO.siteName=null;
                     omsShopVO.lstSite=null;
-                }
+                }else {
                     omsShopVO.lstSite = new ArrayList<>();
                     omsShopVO.lstSite.add(omsSiteVO);
-                //}
+                }
                 omsShopVoList.add(omsShopVO);
             }
         }

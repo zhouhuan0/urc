@@ -209,7 +209,8 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\"platform\":\"乐天\"\n" +
 				"}";
 		MotanSession.initialSession(json);
-		ResultVO resultVO =service.getShopList(json);
+		ResultVO resultVO =new ResultVO();
+		 resultVO.data=service.getShopList(json);
 		System.out.println("==================");
 		System.out.println(resultVO.msg);
 	}
