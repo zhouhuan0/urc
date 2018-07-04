@@ -360,6 +360,8 @@ public class UserBpImpl implements IUserBp {
         }
         if (permitCache != null) {
             permitCache.lstUserSysVO = null;
+            if (permitCache.lstSysRoot == null) permitCache.lstSysRoot = new ArrayList<>();
+            if (permitCache.funcVersion == null) permitCache.funcVersion = StringUtility.Empty;
             return VoHelper.getSuccessResult(permitCache);
         }
         return VoHelper.getSuccessResult(null);

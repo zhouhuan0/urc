@@ -206,7 +206,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void getShopList(){
 		String json ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
-				"\t\"platform\":\"乐天\"\n" +
+				"\t\"platform\":\"速卖通\"\n" +
 				"}";
 		MotanSession.initialSession(json);
 		ResultVO resultVO =new ResultVO();
@@ -414,6 +414,21 @@ public class UrcServiceTest extends BaseServiceTest {
 		MotanSession.initialSession(json);
 		ResultVO resultVO =service.startMonitorMemory(json);
 		System.out.println("====================");
+		System.out.println(resultVO.msg);
+	}
+	@Test
+	public void  testUpdateUserPermitCache(){
+		List<String> lstUser =new ArrayList<>();
+		lstUser.add("panyun");
+		lstUser.add("linwanxian");
+		Map map =new HashMap();
+		map.put("oper","linwanxian");
+		map.put("lstUser",lstUser);
+		String json =StringUtility.toJSONString_NoException(map);
+		MotanSession.initialSession(json);
+		System.out.println("====================");
+		System.out.println(json);
+		ResultVO resultVO=service.updateUserPermitCache(json);
 		System.out.println(resultVO.msg);
 	}
 
