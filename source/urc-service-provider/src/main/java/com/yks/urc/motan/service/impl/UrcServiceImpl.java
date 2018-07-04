@@ -11,6 +11,7 @@ import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
 
@@ -494,6 +495,17 @@ public class UrcServiceImpl implements IUrcService {
     @Log("处理过期角色")
     public ResultVO handleExpiredRole(String jsonStr) {
         return roleService.handleExpiredRole();
+    }
+
+    @Autowired
+    private IPermitStatBp permitStatBp;
+    @Override
+    @Log("更新用户缓存")
+    public ResultVO updateUserPermitCache(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        List<String> lstUser =StringUtility.parseObject(jsonObject.getString("lstUser"),List.class);
+        permitStatBp.updateUserPermitCache(lstUser);
+        return VoHelper.getSuccessResult();
     }
 
 }
