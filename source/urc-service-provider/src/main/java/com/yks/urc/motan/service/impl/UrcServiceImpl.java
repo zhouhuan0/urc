@@ -490,4 +490,10 @@ public class UrcServiceImpl implements IUrcService {
         return memoryService.endMonitor();
     }
 
+    @Override
+    @Log("处理过期角色")
+    public ResultVO handleExpiredRole(String jsonStr) {
+        return roleService.handleExpiredRole();
+    }
+
 }

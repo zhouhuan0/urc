@@ -309,6 +309,7 @@
              </foreach>
         </if>
         </where>
+        ORDER BY u.user_name ASC
         limit #{query.offset},#{query.limit}
     </select>
 
