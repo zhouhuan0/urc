@@ -58,7 +58,7 @@ public interface IRoleService {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月15日 上午11:32:09
 	 */
-	void handleExpiredRole();
+	ResultVO handleExpiredRole();
 
     ResultVO assignAllPermit2Role();
 }
