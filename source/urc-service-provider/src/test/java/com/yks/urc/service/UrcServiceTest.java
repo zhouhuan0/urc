@@ -206,7 +206,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void getShopList(){
 		String json ="{\n" +
 				"\t\"operator\":\"test3\",\n" +
-				"\t\"platform\":\"速卖通\"\n" +
+				"\t\"platform\":\"eBay\"\n" +
 				"}";
 		MotanSession.initialSession(json);
 		ResultVO resultVO =new ResultVO();
@@ -376,9 +376,12 @@ public class UrcServiceTest extends BaseServiceTest {
 				"\t\t\"url\": \"/user/\"\n" +
 				"\t}\n" +
 				"}";
+		//若为空
+
 		permissionVO.setSysContext(sysCOntext);
 		selectedContext.add(permissionVO);
 		roleVO.selectedContext=selectedContext;
+		//roleVO.selectedContext = null;
 		lstRole.add(roleVO);
 		map.put("lstRole",lstRole);
 		String json =StringUtility.toJSONString(map);
