@@ -163,8 +163,9 @@ public class RoleServiceImpl implements IRoleService {
         if (StringUtil.isEmpty(roleVO.getRoleName())) {
             throw new URCBizException("parameter roleName is null", ErrorCode.E_000002);
         }
+        Boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         /*校验有效期和可用状态*/
-        checkActive(roleVO);
+        checkParam(roleVO,isSuperAdmin,operator);
 
         String roleIdStr = roleVO.getRoleId();
         Long roleId = StringUtil.isEmpty(roleIdStr) ? null : Long.valueOf(roleVO.getRoleId());
@@ -173,9 +174,8 @@ public class RoleServiceImpl implements IRoleService {
         userRoleDO.setRoleId(roleId);
         List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
           /* 3.判断当前用户是否是管理员——管理员管理员可以直接进行操作 */
-        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         RoleDO opRoleDO = roleMapper.getRoleByRoleId(String.valueOf(roleId));
-        if (isAdmin) {
+        if (isSuperAdmin) {
             insertOrUpdateRole(operator, roleVO, opRoleDO);
         } else {
             /* 4.1 非管理员———该角色存在但是创建人不是当前用户 */
@@ -208,7 +208,12 @@ public class RoleServiceImpl implements IRoleService {
         return VoHelper.getSuccessResult();
     }
 
-    private void checkActive(RoleVO roleVO) {
+    private void checkParam(RoleVO roleVO,Boolean isSuperAdmin,String operator) {
+        /*非超级管理员不能创建管理员角色*/
+        if(!isSuperAdmin && roleVO.isAuthorizable()){
+            throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]不是超级管理员，不能创建管理员角色",operator));
+        }
+        /*是否可选校验*/
         if (!roleVO.isForever()) {
             Date effectiveTime = roleVO.getEffectiveTime();
             Date expireTime = roleVO.getExpireTime();
