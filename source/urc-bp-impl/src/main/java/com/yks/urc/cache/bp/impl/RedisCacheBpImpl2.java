@@ -125,11 +125,15 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
     public GetAllFuncPermitRespVO getUserFunc(String userName) {
-        Map<String, String> map = getCache(getCacheKey_UserSysFunc(userName)).getAll();
-        if (map != null && map.size() > 0) {
+        Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
+        if (mapHash != null && mapHash.size() > 0) {
+            // 按sysKeyr排序，前端顶部导航栏依赖此顺序
+            TreeMap<String,String> map=new TreeMap<>();
+            map.putAll(mapHash);
             GetAllFuncPermitRespVO rslt = new GetAllFuncPermitRespVO();
             rslt.lstSysRoot = new ArrayList<>();
             Iterator<String> it = map.keySet().iterator();
+
             while (it.hasNext()) {
                 String key = it.next();
                 if (StringUtility.stringEqualsIgnoreCase("NA", key))
