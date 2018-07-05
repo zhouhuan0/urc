@@ -192,5 +192,13 @@ public interface IRoleMapper {
     
 	List<String> getBizAdminFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
 
-
+    /**
+     * 判断当前用户是否为该系统的业务管理员用户
+     *
+     * @param userName
+     * @return true-是 false-否
+     * @Author oujie
+     * @Date 2018/6/13 17:27
+     */
+    boolean isSysAdminAccount(@Param("userName") String userName,@Param("sysKey") String sysKey);
 }

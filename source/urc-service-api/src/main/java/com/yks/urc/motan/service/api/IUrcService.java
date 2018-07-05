@@ -359,4 +359,20 @@ public interface IUrcService {
      * @Date 2018/7/2 17:05
      */
     ResultVO endMonitorMemory(String jsonStr);
+    /**
+     * 手动触发角色过期方法
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/4 9:22
+     */
+    ResultVO handleExpiredRole(String jsonStr);
+    /**
+     * 更新用户缓存
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/4 16:06
+     */
+    ResultVO updateUserPermitCache(String jsonStr);
 }

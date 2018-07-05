@@ -242,4 +242,10 @@ public class RoleMapperTest extends BaseMapperTest {
        boolean flag= roleMapper.isAdminOrSuperAdmin(str);
         System.out.println(flag);
     }
+
+    @Test
+    public void isSysAdminAccount(){
+        Boolean flag = roleMapper.isSysAdminAccount("houyunfeng","004");
+        System.out.println(flag);
+    }
 }

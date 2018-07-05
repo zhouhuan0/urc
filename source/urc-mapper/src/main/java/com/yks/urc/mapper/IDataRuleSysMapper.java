@@ -89,4 +89,22 @@ public interface IDataRuleSysMapper {
      * @see
      */
     List<DataRuleSysDO> getDataRuleSyAndOpersById(@Param("dataRuleId") Long dataRuleId);
+    /**
+     * Description: 获取dataRuleId所拥有的系统
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/7/4 12:45
+     * @see
+     */
+    List<String> getTemplOwnSysByDataRuleId(@Param("dataRuleId") Long dataRuleId);
+    /**
+     * Description: 获取userName所拥有的系统
+     * @param :
+     * @return:
+     * @auther: lvcr
+     * @date: 2018/7/4 12:45
+     * @see
+     */
+    List<String> getUserOwnSysByUserName(@Param("userName") String userName);
 }

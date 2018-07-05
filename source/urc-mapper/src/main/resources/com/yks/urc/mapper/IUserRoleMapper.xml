@@ -184,6 +184,7 @@
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
 		AND p.sys_key is not null
+		order by p.sys_key
     </select>
 
     <select id="getUserNameByRoleId" resultType="java.lang.String" parameterType="com.yks.urc.entity.UserRoleDO">
@@ -207,6 +208,14 @@
                 and create_by=#{createBy}
             </if>
         </where>
+    </select>
+
+
+    <select id="getUserOwnSysByUserName" resultType="java.lang.String">
+        select sys_key from urc_user_role uur
+        left join urc_role ur on uur.role_id=ur.role_id
+        left join urc_role_permission urp on uur.role_id = urp.role_id
+        where uur.user_name= #{userName,jdbcType=VARCHAR}
     </select>
 
 

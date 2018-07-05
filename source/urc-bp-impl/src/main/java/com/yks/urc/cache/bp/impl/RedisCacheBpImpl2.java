@@ -98,12 +98,11 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             if (map.size() == 0) {
                 map.put(NA, NA);
             }
-            if (StringUtility.isNullOrEmpty(permitCache.funcVersion))
-                permitCache.funcVersion = NA;
             // 缓存用户的所有系统功能权限
+            getCache(getCacheKey_UserSysFunc(userName)).clear();
             getCache(getCacheKey_UserSysFunc(userName)).batchPut(map);
             // 缓存用户功能权限版本号
-            getCache(getCacheKey_UserFuncVersion()).put(userName, permitCache.funcVersion);
+            getCache(getCacheKey_UserFuncVersion()).put(userName, StringUtility.isNullOrEmpty(permitCache.funcVersion) ? NA : permitCache.funcVersion);
         } catch (Exception ex) {
             logger.error(String.format("insertUserFunc:%s %s", userName, StringUtility.toJSONString_NoException(permitCache)), ex);
         }
@@ -126,11 +125,15 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
     public GetAllFuncPermitRespVO getUserFunc(String userName) {
-        Map<String, String> map = getCache(getCacheKey_UserSysFunc(userName)).getAll();
-        if (map != null && map.size() > 0) {
+        Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
+        if (mapHash != null && mapHash.size() > 0) {
+            // 按sysKeyr排序，前端顶部导航栏依赖此顺序
+            TreeMap<String,String> map=new TreeMap<>();
+            map.putAll(mapHash);
             GetAllFuncPermitRespVO rslt = new GetAllFuncPermitRespVO();
             rslt.lstSysRoot = new ArrayList<>();
             Iterator<String> it = map.keySet().iterator();
+
             while (it.hasNext()) {
                 String key = it.next();
                 if (StringUtility.stringEqualsIgnoreCase("NA", key))

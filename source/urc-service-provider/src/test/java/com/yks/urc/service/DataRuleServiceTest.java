@@ -24,8 +24,9 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void getDataRuleTemplByTemplId() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operator","wujianghui");
-        jsonObject.put("templId",1530238656922000073L);
+        jsonObject.put("operator","houyunfeng");
+        jsonObject.put("templId",1530675623060000018L);
+        jsonObject.put("valFlag",1);
         ResultVO<DataRuleTemplVO> resultVO = dataRuleService.getDataRuleTemplByTemplId(jsonObject.toString());
         System.out.println(resultVO);
     }

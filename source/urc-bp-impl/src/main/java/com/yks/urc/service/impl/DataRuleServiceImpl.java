@@ -98,11 +98,28 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("parameter templId is null", ErrorCode.E_000002);
         }
         Long templId = Long.valueOf(templIdStr);
-        DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
         /**
          * 2、获取权限模板信息
          */
-        DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, operator);
+        Boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
+        /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
+        String valFlag = jsonObject.getString("valFlag");
+        if (!isSuperAdmin && "1".equals(valFlag)) {
+            Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
+            if (isBizAdmin) {
+                checkSysPermission(operator, templId);
+            } else {
+                throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能选择该方案", operator));
+            }
+        }
+        DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
+
+        DataRuleTemplDO dataRuleTemplDO = null;
+        if (isSuperAdmin) {
+            dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, null);
+        } else {
+            dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(templId, operator);
+        }
         if (dataRuleTemplDO == null) {
             return VoHelper.getSuccessResult();
             //throw new URCBizException(String.format("urc_data_rule_templ is null where templId is: %s and operator is: %s",templId,operator),ErrorCode.E_000002);
@@ -121,11 +138,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleSysDO> dataRuleSyAndOpers = dataRuleSysMapper.getDataRuleSyAndOpersById(templId);
         setName(dataRuleSyAndOpers, sysNameMap);
         /*获取实体定义*/
-        Map<String,Entity> entityMap = entityMapper.getEntityMap();
+        Map<String, Entity> entityMap = entityMapper.getEntityMap();
         /*获取字段定义*/
-        Map<String,Field> fieldMap = fieldMapper.getFieldMap();
+        Map<String, Field> fieldMap = fieldMapper.getFieldMap();
         /*设置实体名称名称和字段定义名称*/
-        setEntityNameAndFieldName(dataRuleSyAndOpers,entityMap,fieldMap);
+        setEntityNameAndFieldName(dataRuleSyAndOpers, entityMap, fieldMap);
 
         /**
          * 4、重新组装行权限数据
@@ -191,18 +208,55 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
         return VoHelper.getSuccessResult(dataRuleTemplVO);
     }
+    /**
+     * Description: 判断当前用户对应权限的系统是否包含 方案对应的系统
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/7/4 17:38
+     * @see
+     */
+    private void checkSysPermission(String operator, Long templId) {
+        /*获取方案对应的数据权限系统*/
+        List<String> templOwnSyss = new ArrayList<>();
+        templOwnSyss = dataRuleSysMapper.getTemplOwnSysByDataRuleId(templId);
+        /*获取用户对应的数据权限系统*/
+        List<String> operatorOwnSyss = new ArrayList<>();
+        operatorOwnSyss = userRoleMapper.getUserOwnSysByUserName(operator);
+        Map<String, PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
+        if (!operatorOwnSyss.containsAll(templOwnSyss)) {
+            StringBuilder diffSyss = new StringBuilder();
+            for (String templOwnSys : templOwnSyss) {
+                if (!operatorOwnSyss.contains(templOwnSys)) {
+                    if (permissionDOMap.get(templOwnSys) != null) {
+                        diffSyss.append(permissionDOMap.get(templOwnSys).getSysName()).append(",");
+                    }
+                }
+            }
+            throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]没有该方案对应系统权限，例如[%s]", operator, diffSyss.toString().substring(0, diffSyss.toString().length() - 1)));
+        }else{
+            for (String templOwnSys : templOwnSyss) {
+                Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator,templOwnSys);
+                if(!isSysAdmin){
+                    throw new URCBizException(ErrorCode.E_000003.getState(),String.format("用户[%s]不是系统[%s]的业务管理员，不能操作该方案",operator,permissionDOMap.get(templOwnSys).getSysName()));
+                }
+            }
 
-    private void setEntityNameAndFieldName(List<DataRuleSysDO> dataRuleSyAndOpers, Map<String, Entity> entityMap, Map<String,Field> fieldMap) {
-        for (DataRuleSysDO dataRuleSysDO:dataRuleSyAndOpers){
+
+        }
+    }
+
+    private void setEntityNameAndFieldName(List<DataRuleSysDO> dataRuleSyAndOpers, Map<String, Entity> entityMap, Map<String, Field> fieldMap) {
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSyAndOpers) {
             List<DataRuleColDO> dataRuleColDOS = dataRuleSysDO.getDataRuleColDOS();
-            for(DataRuleColDO dataRuleColDO:dataRuleColDOS){
-                dataRuleColDO.setEntityName(entityMap.get(dataRuleColDO.getEntityCode())==null?null:entityMap.get(dataRuleColDO.getEntityCode()).getEntityName());
+            for (DataRuleColDO dataRuleColDO : dataRuleColDOS) {
+                dataRuleColDO.setEntityName(entityMap.get(dataRuleColDO.getEntityCode()) == null ? null : entityMap.get(dataRuleColDO.getEntityCode()).getEntityName());
             }
 
             List<ExpressionDO> expressionDOS = dataRuleSysDO.getExpressionDOS();
-            for(ExpressionDO expressionDO:expressionDOS){
-                expressionDO.setEntityName((entityMap.get(expressionDO.getEntityCode()))==null?null:entityMap.get(expressionDO.getEntityCode()).getEntityName());
-                    expressionDO.setFieldName((fieldMap.get(expressionDO.getFieldCode()))==null?null:fieldMap.get(expressionDO.getFieldCode()).getFieldName());
+            for (ExpressionDO expressionDO : expressionDOS) {
+                expressionDO.setEntityName((entityMap.get(expressionDO.getEntityCode())) == null ? null : entityMap.get(expressionDO.getEntityCode()).getEntityName());
+                expressionDO.setFieldName((fieldMap.get(expressionDO.getFieldCode())) == null ? null : fieldMap.get(expressionDO.getFieldCode()).getFieldName());
             }
         }
     }
@@ -299,8 +353,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数并校验*/
-        String createBy = jsonObject.getString("operator");
-        if (StringUtil.isEmpty(createBy)) {
+        String operator = jsonObject.getString("operator");
+        if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
         String templIdStr = jsonObject.getString("templId");
@@ -316,6 +370,18 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (lstUserName == null || lstUserName.isEmpty()) {
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
+        Boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
+        /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
+        if (!isSuperAdmin) {
+            Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
+            if (isBizAdmin) {
+                checkSysPermission(operator, templId);
+            } else {
+                throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能操作该方案", operator));
+            }
+        }
+
+
         /*3、获取该模板对应的数据权限对应系统数据*/
 //        List<DataRuleSysDO> dataRuleSysDOS = dataRuleSysMapper.getDataRuleSysDatas(templId);
           /*获取系统对应的名称*/
@@ -324,11 +390,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleSysDO> dataRuleSyAndOpers = dataRuleSysMapper.getDataRuleSyAndOpersById(templId);
         setName(dataRuleSyAndOpers, sysNameMap);
         /*获取实体定义*/
-        Map<String,Entity> entityMap = entityMapper.getEntityMap();
+        Map<String, Entity> entityMap = entityMapper.getEntityMap();
         /*获取字段定义*/
-        Map<String,Field> fieldMap = fieldMapper.getFieldMap();
+        Map<String, Field> fieldMap = fieldMapper.getFieldMap();
         /*设置实体名称名称和字段定义名称*/
-        setEntityNameAndFieldName(dataRuleSyAndOpers,entityMap,fieldMap);
+        setEntityNameAndFieldName(dataRuleSyAndOpers, entityMap, fieldMap);
         if (dataRuleSyAndOpers == null || dataRuleSyAndOpers.isEmpty()) {
             throw new URCBizException("get urc_data_rule_sys is null where templId is:" + templId, ErrorCode.E_000003);
         }
@@ -341,7 +407,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
          /*行权限数据缓存列表*/
         List<ExpressionDO> expressionDOSCache = new ArrayList<>();
        /*4、组装数据  并放入待入库列表*/
-        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, createBy, dataRuleSyAndOpers);
+        assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, operator, dataRuleSyAndOpers);
         /*5.1、删除用户原有的数据权限关系数据 包括行权限 列权限*/
         List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
         dataRuleMapper.delBatchByUserNames(lstUserName);
@@ -840,8 +906,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator) {
-        if(!roleMapper.isAdminOrSuperAdmin(operator)){
+    public ResultVO getDataRuleByUser(List<String> lstUserName, String operator) {
+        if (!roleMapper.isAdminOrSuperAdmin(operator)) {
             throw new URCBizException("既不是超级管理员也不是业务管理员", ErrorCode.E_100003);
         }
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
@@ -850,11 +916,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 UserDO userDO = new UserDO();
                 userDO.setUserName(lstUserName.get(i));
                 List<String> sysKeys = null;
-                if(roleMapper.isAdminAccount(operator)){
-                   	 sysKeys=userRoleMapper.getSysKeyByUser(operator);
+                if (roleMapper.isAdminAccount(operator)) {
+                    sysKeys = userRoleMapper.getSysKeyByUser(operator);
                 }
                 //通过用户名得到DataRuleSysId\SysKey\SysName
-                List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO,sysKeys);
+                List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO, sysKeys);
                 List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
                 if (syskeyList != null && syskeyList.size() > 0) {
                     for (int j = 0; j < syskeyList.size(); j++) {
