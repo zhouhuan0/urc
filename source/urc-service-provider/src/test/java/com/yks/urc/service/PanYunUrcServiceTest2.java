@@ -119,8 +119,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString_NoException(lstRole));
     }
 
-    public void testGetAllFuncPermit() {
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
+    @Test
+    public void getAllFuncPermit_Test() {
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun2")));
     }
 
     @Test
@@ -206,7 +207,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         lstUserName.add("panxi");
 
         lstUserName.clear();
-        lstUserName.add("panyun");
+        lstUserName.add("chenglifu1");
         permitStatBp.updateUserPermitCache(lstUserName);
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
@@ -258,37 +259,37 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void cache_Test() {
         DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
 
-        Cache cacheTest = b.cacheName("cache").expire(50).build();
+//        Cache cacheTest = b.cacheName("cache").expire(50).build();
 //        cacheTest.put("kobe", "bryant");
 
-        Cache cacheForever = b.cacheName("forever").build();
+        Cache cacheForever = b.cacheName("user_sys_func_panyun1").build();
 //        Map<String, String> allCacheItem = cacheForever.getAll();
 
 //        Map<String, String> map = new HashMap<>();
 //        map.put("001", "URC");
 //        map.put("002", "OMS");
         String strKey = "sys_api_url_prefix";
-        cacheForever.put("a", "panyun");
-        cacheForever.put("a1", "b1");
+//        cacheForever.put("a", "panyun");
+//        cacheForever.put("a1", "b1");
 //        cacheForever.remove("a1");
 //        cacheForever.batchPut();
 //        cacheForever.clear();
         Map<String, String> map = cacheForever.getAll();
         System.out.println(String.format("----> %s",
                 StringUtility.toJSONString_NoException(map)));
-        while (true) {
-            try {
-                System.out.println(String.format("----> %s %s", StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date())
-                        , cacheForever.get("a")));
-
-                System.out.println(String.format("roleId=%s", cacheForever.incrSequence("roleId")));
-
-                Thread.sleep(2000L);
-                break;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        while (true) {
+//            try {
+//                System.out.println(String.format("----> %s %s", StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date())
+//                        , cacheForever.get("a")));
+//
+//                System.out.println(String.format("roleId=%s", cacheForever.incrSequence("roleId")));
+//
+//                Thread.sleep(2000L);
+//                break;
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private void put(Cache cacheForever, String strKey, Map<String, String> map) {
@@ -313,7 +314,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void getAllFuc_Test() {
         Map<String, Object> map = new HashMap<>();
-        map.put(StringConstant.operator, "panyun");
+        map.put(StringConstant.operator, "hanhanzhou");
         String jsonStr = StringUtility.toJSONString_NoException(map);
         System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
     }

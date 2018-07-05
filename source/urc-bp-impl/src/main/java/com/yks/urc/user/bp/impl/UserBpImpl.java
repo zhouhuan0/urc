@@ -5,6 +5,7 @@ import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.comparator.impl.UserSysVOComparator;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
@@ -343,6 +344,7 @@ public class UserBpImpl implements IUserBp {
 //        });
     }
 
+    UserSysVOComparator myUserSysVOComparator = new UserSysVOComparator();
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator) {
         // 先从缓存取
@@ -352,6 +354,7 @@ public class UserBpImpl implements IUserBp {
             permitCache = permitStatBp.updateUserPermitCache(operator);
             if (permitCache.lstUserSysVO != null && permitCache.lstUserSysVO.size() > 0) {
                 permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
+                Collections.sort(permitCache.lstUserSysVO, myUserSysVOComparator);
                 for (UserSysVO us : permitCache.lstUserSysVO) {
                     permitCache.lstSysRoot.add(us.context);
                 }
