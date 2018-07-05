@@ -234,6 +234,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
             throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]没有该方案对应系统权限，例如[%s]", operator, diffSyss.toString().substring(0, diffSyss.toString().length() - 1)));
+        }else{
+            for (String templOwnSys : templOwnSyss) {
+                Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator,templOwnSys);
+                if(!isSysAdmin){
+                    throw new URCBizException(ErrorCode.E_000003.getState(),String.format("用户[%s]不是系统[%s]的业务管理员，不能操作该方案",operator,permissionDOMap.get(templOwnSys).getSysName()));
+                }
+            }
+
+
         }
     }
 
