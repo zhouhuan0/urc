@@ -213,7 +213,7 @@ public class RoleServiceImpl implements IRoleService {
             Date effectiveTime = roleVO.getEffectiveTime();
             Date expireTime = roleVO.getExpireTime();
             if (effectiveTime == null || expireTime == null) {
-                throw new URCBizException("effectiveTime or expireTime is null",ErrorCode.E_000002);
+                throw new URCBizException(ErrorCode.E_000002.getState(),"有效期&永久有效有一项必填");
             }
             if(roleVO.isActive()){
                 Date nowTime = new Date();
