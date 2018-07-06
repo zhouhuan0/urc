@@ -516,4 +516,15 @@ public class UrcServiceImpl implements IUrcService {
         return VoHelper.getSuccessResult();
     }
 
+    @Override
+    public ResultVO operIsSuperAdmin(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        if (StringUtility.isNullOrEmpty(operator)) {
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
+        }
+        return roleService.operIsSuperAdmin(operator);
+
+    }
+
 }

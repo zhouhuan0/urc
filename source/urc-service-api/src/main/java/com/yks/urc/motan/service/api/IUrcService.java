@@ -380,4 +380,16 @@ public interface IUrcService {
      * @Date 2018/7/4 16:06
      */
     ResultVO updateUserPermitCache(String jsonStr);
+
+    /**
+     * 查看用户是否是超级管理员
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/4 16:06
+     */
+    ResultVO operIsSuperAdmin(String jsonStr);
+
+
+
 }

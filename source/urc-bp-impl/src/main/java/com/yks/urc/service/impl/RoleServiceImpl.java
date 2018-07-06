@@ -900,6 +900,11 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
+    public ResultVO operIsSuperAdmin(String operator) {
+        return  VoHelper.getSuccessResult(roleMapper.isSuperAdminAccount(operator));
+    }
+
+    @Override
     public ResultVO handleExpiredRole() {
         try {
             // 获取所有过期的角色关联的用户
