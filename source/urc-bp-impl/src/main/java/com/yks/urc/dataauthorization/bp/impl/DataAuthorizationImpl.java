@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,10 +83,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsShopVO> getShopList(String operator, String platform) {
         List<OmsShopVO> omsShopVoList = new ArrayList<>();
-        String url = GET_SHOP_AND_SITE + "&platform=" + platform;
+        // 将平台进行转码
+        String platforms = URLEncoder.encode(platform);
+        String url = GET_SHOP_AND_SITE + "&platform=" + platforms;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
-            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息异常");
+            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息为空");
         }
         JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
         if (shopObject.getInteger("state") == 200) {
