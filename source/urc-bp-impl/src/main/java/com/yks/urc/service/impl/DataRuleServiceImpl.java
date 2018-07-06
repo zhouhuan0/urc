@@ -984,6 +984,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         return VoHelper.getSuccessResult(dataRuel);
     }
+    @Override
+    public ResultVO<Integer> checkDuplicateTemplName(String operator, String newTemplName, String templId) {
+        return VoHelper.getSuccessResult(dataRuleTemplMapper.checkDuplicateTemplName(newTemplName, templId) ? 1 : 0);
 
+    }
 
 }

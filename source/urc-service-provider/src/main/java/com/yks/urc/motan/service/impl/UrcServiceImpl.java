@@ -34,7 +34,6 @@ public class UrcServiceImpl implements IUrcService {
     @Autowired
     private IDataRuleTemplMapper dataRuleTemplMapper;
 
-
     @Autowired
     private IOrganizationService organizationService;
 
@@ -396,6 +395,15 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.deleteDataRuleTempl(jsonStr);
     }
 
+    @Override
+    @Log("方案名判重")
+    public ResultVO<Integer> checkDuplicateTemplName(String jsonStr){
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        String newTemplName = jsonObject.getString("newTemplName");
+        String templId = jsonObject.getString("templId");
+        return dataRuleService.checkDuplicateTemplName(operator,newTemplName,templId);
+    }
     /**
      * Description: 查看用户的功能权限列表
      *

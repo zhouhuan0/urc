@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
@@ -254,5 +255,15 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
         ResultVO resultVO = dataRuleService.deleteDataRuleTempl(jsonObject.toString());
         System.out.println(resultVO);
+    }
+    @Test
+    public void checkDuplicateTemplName(){
+        System.out.println(StringUtility.toJSONString(
+                dataRuleService.checkDuplicateTemplName(
+                        "ddd","数据权限模板6","ddd")));
+        System.out.println(StringUtility.toJSONString(
+                dataRuleService.checkDuplicateTemplName(
+                        "sss","数据权限模11板6","sss")
+        ));
     }
 }

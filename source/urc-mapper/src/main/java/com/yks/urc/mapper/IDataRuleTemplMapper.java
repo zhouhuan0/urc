@@ -103,5 +103,10 @@ public interface IDataRuleTemplMapper {
      */
     Integer delTemplByIdsAndCreatBy(@Param("templIds") List<Long> templIds, @Param("createBy") String createBy);
 
+    /**
+     * Description: 给定方案名是否重复
+     */
+    boolean checkDuplicateTemplName(@Param("newTemplName") String newTemplName, @Param("templId") String tmplId);
+
 
 }
