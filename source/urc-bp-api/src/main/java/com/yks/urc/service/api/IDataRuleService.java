@@ -55,4 +55,11 @@ public interface IDataRuleService {
      * @see
      */
     ResultVO addOrUpdateDataRule(String jsonStr);
+
+    /**
+     * Description: 检查给定方案名是否重复
+     *
+     */
+    ResultVO checkDuplicateTemplName(String operator, String newTemplName, String templId);
+
 }

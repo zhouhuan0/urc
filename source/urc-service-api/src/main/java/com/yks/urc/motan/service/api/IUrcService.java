@@ -271,6 +271,11 @@ public interface IUrcService {
     ResultVO deleteDataRuleTempl(String jsonStr);
 
     /**
+     * Description: 方案名判重
+     */
+    ResultVO<Integer> checkDuplicateTemplName(String jsonStr);
+
+    /**
      * Description: 查看用户的功能权限列表
      *
      * @param :
