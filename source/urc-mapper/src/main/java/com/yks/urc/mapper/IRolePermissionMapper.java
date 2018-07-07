@@ -81,4 +81,13 @@ public interface IRolePermissionMapper {
      */
     int updateUserRoleByRoleId(@Param("rolePermissionDO") RolePermissionDO rolePermissionDO);
 
+    /**
+     * 删除指定角色下的sys_key权限
+     * @param roleId
+     * @param roleSysKey
+     * @return
+     */
+    Integer deleteByRoleIdInSysKey( @Param("roleId") String roleId, @Param("roleSysKey") List<String> roleSysKey);
+
+
 }
