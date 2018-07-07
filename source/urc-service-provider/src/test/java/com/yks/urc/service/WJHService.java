@@ -103,7 +103,7 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void getRoleUser() throws Exception{
     	
-    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\"],\"operator\":\"linwanxain\"}";
+    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\",\"1529743116993000004\"],\"operator\":\"panyun\"}";
     			 
     			 
     	JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -181,7 +181,8 @@ public class WJHService extends BaseServiceTest {
 			System.out.println(userList.get(i));
 		}
     	System.out.println(StringUtility.toJSONString(roleService.updateUsersOfRole(lstRole, operator)));
-    	
+
+
     }
     
     

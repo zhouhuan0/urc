@@ -688,6 +688,9 @@ public class RoleServiceImpl implements IRoleService {
                     UserRoleDO userRoleDO = new UserRoleDO();
                     userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
                     List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+                    if(lstRoleId.size()>1){
+                        lstUserName.clear();
+                    }
                     roleVO.setLstUserName(lstUserName);
                     roleList.add(roleVO);
                 }
@@ -721,10 +724,18 @@ public class RoleServiceImpl implements IRoleService {
                     UserRoleDO userRole = new UserRoleDO();
                     List<UserRoleDO> userRoleDOS = new ArrayList<>();
                     List<String> userNameList = roleVO.getLstUserName();
+                    if(userNameList==null||userNameList.size()<=0&&lstRole.size()>1){
+                        throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
+                    }
+
                     userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
                     List<UserDO> userList = userMapper.getUserByRoleId(userRole);
                     if (roleMapper.isSuperAdminAccount(operator)) {
-                        userRoleMapper.deleteUserRole(userRole);
+                        if(lstRole.size()>1){
+                            userRoleMapper.deleteUserRoleInUserName(userRole,userNameList);
+                        }else{
+                            userRoleMapper.deleteUserRole(userRole);
+                        }
                         if (userList != null && userList.size() > 0) {
                             for (int q = 0; q < userList.size(); q++) {
                                 permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
@@ -743,7 +754,11 @@ public class RoleServiceImpl implements IRoleService {
                     } else {
                         if (roleDO.getCreateBy().equals(operator)) {
                             userRole.setCreateBy(operator);
-                            userRoleMapper.deleteUserRole(userRole);
+                            if(lstRole.size()>1){
+                                userRoleMapper.deleteUserRoleInUserName(userRole,userNameList);
+                            }else{
+                                userRoleMapper.deleteUserRole(userRole);
+                            }
                             if (userList != null && userList.size() > 0) {
                                 for (int q = 0; q < userList.size(); q++) {
                                     permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
@@ -823,7 +838,7 @@ public class RoleServiceImpl implements IRoleService {
         }
         //保存角色的功能权限
         List<RolePermissionDO> records = new ArrayList<>();
-        rolePermissions.stream().forEach(rpDO -> {
+        for(RolePermissionDO rpDO : rolePermissions){
             RolePermissionDO record = new RolePermissionDO();
             record.setRoleId(roleDO.getRoleId());
             record.setSysKey(rpDO.getSysKey());
@@ -833,7 +848,7 @@ public class RoleServiceImpl implements IRoleService {
             record.setModifiedBy(operator);
             record.setModifiedTime(StringUtility.getDateTimeNow());
             records.add(record);
-        });
+        }
         rolePermissionMapper.insertBatch(records);
         return VoHelper.getSuccessResult();
     }
