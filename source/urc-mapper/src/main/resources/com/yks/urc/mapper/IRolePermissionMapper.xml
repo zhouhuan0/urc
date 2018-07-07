@@ -80,7 +80,6 @@
             </if>
             <if test=" createBy != null and createBy != '' ">
                 and create_by=#{createBy}
-                and sys_key != '004'
             </if>
         </where>
     </select>
