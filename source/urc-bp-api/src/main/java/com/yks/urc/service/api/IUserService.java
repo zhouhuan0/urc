@@ -81,4 +81,16 @@ public interface IUserService {
 	 * @Date 2018/6/25 14:46
 	 */
 	ResultVO<List<UserVO>> getUserByUserName(String operator, UserVO userVO);
+	/**
+	 *   获取所有平台账号站点数据
+	 * @param
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/7/7 14:45
+	 */
+	ResultVO<List<OmsPlatformVO>> getPlatformShopSite(String operator);
+
+	ResultVO syncPlatform(String operator);
+
+	ResultVO syncShopSite(String operator);
 }

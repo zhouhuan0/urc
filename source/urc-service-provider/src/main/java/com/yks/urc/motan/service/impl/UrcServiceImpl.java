@@ -527,4 +527,25 @@ public class UrcServiceImpl implements IUrcService {
 
     }
 
+    @Override
+    @Log("获取平台账号站点数据")
+    public ResultVO getPlatformShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.getPlatformShopSite(operator);
+    }
+
+    @Override
+    @Log("同步平台数据")
+    public ResultVO syncPlatform(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncPlatform(operator);
+    }
+
+    @Override
+    @Log("同步账号站点数据")
+    public ResultVO syncShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncShopSite(operator);
+    }
+
 }

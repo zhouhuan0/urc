@@ -389,7 +389,17 @@ public interface IUrcService {
      * @Date 2018/7/4 16:06
      */
     ResultVO operIsSuperAdmin(String jsonStr);
+    /**
+     * 查找所有的平台账号和站点
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/7 14:42
+     */
+    ResultVO getPlatformShopSite(String jsonStr);
 
+    ResultVO syncPlatform(String jsonStr);
 
+    ResultVO syncShopSite(String jsonStr);
 
 }

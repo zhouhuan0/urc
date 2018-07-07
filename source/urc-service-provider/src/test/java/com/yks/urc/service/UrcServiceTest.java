@@ -105,9 +105,9 @@ public class UrcServiceTest extends BaseServiceTest {
 		List<RoleDO> lstRole = roleMapper.updateAllExpiredRole();
 		System.out.println(StringUtility.toJSONString_NoException(lstRole));
 	}
-
+	@Test
 	public void testGetAllFuncPermit() {
-		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun")));
+		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("linwanxian")));
 	}
 
 	public void test_funcPermitValidate() {
@@ -183,6 +183,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		String json="{\n" +
 				"\t\"operator\":\"test3\"\n" +
 				"}";
+		MotanSession.initialSession(json);
 		ResultVO resultVO=service.getPlatformList(json);
 		System.out.println("=====================");
 		System.out.println(resultVO.msg);
@@ -204,15 +205,14 @@ public class UrcServiceTest extends BaseServiceTest {
 	}
 	@Test
 	public void getShopList(){
-		String json ="{\n" +
-				"\t\"operator\":\"test3\",\n" +
-				"\t\"platform\":\"eBay\"\n" +
-				"}";
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		String json =StringUtility.toJSONString_NoException(map);
 		MotanSession.initialSession(json);
 		ResultVO resultVO =new ResultVO();
 		 resultVO.data=service.getShopList(json);
 		System.out.println("==================");
-		System.out.println(resultVO.msg);
+		System.out.println(resultVO);
 	}
 
 	@Test
@@ -432,6 +432,16 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println("====================");
 		System.out.println(json);
 		ResultVO resultVO=service.updateUserPermitCache(json);
+		System.out.println(resultVO.msg);
+	}
+	@Test
+	public void getPlatformShopSite(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		ResultVO resultVO =service.getPlatformShopSite(json);
+		System.out.println("========================");
 		System.out.println(resultVO.msg);
 	}
 

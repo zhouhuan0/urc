@@ -27,11 +27,12 @@ public class UserInfoTask {
 	@Scheduled(cron = "0 0 12 * * ?")
 //    @Scheduled(cron = "0 0 */12 * * ?")
     public void executeGetUserInfo() {
-        logger.info("开始同步数据");
+        logger.info("开始同步用户数据");
         try {
             userBp.SynUserFromUserInfo(SYSTEM);
+            logger.info("用户数据同步完成");
         } catch (Exception e) {
-           logger.error(e.getMessage());
+            logger.error("同步用户数据出错:",e);
         }
     }
 }

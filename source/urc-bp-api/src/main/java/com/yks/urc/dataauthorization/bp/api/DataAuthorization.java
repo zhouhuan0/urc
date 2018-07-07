@@ -10,6 +10,7 @@ package com.yks.urc.dataauthorization.bp.api;
 
 import com.yks.urc.vo.OmsShopVO;
 import com.yks.urc.vo.OmsPlatformVO;
+import com.yks.urc.vo.ResultVO;
 
 import java.util.List;
 
@@ -19,4 +20,7 @@ public interface DataAuthorization {
 
     List<OmsShopVO> getShopList(String operator, String platform);
 
+    ResultVO syncPlatform(String operator);
+
+    ResultVO syncShopSite(String operator);
 }

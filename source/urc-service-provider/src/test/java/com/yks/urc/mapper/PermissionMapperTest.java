@@ -9,6 +9,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.PermissionDO;
+import org.apache.ibatis.annotations.MapKey;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -32,5 +33,13 @@ public class PermissionMapperTest extends BaseMapperTest {
         permissionMapper.getAllSysKey();
     }
 
+    @Test
+    public void perMissionMap(){
+        Map<String,PermissionDO> permissionDOMap= permissionMapper.perMissionMap();
+      for (String key : permissionDOMap.keySet()){
+          PermissionDO permissionDO =permissionDOMap.get(key);
+          System.out.println(permissionDO.getSysName());
+      }
+    }
 
 }
