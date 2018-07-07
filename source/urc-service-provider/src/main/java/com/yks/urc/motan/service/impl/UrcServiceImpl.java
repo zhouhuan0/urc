@@ -350,7 +350,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = MotanSession.getRequest().getOperator();
-        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
+        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
         if (lstRole == null){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
         }
@@ -514,6 +514,38 @@ public class UrcServiceImpl implements IUrcService {
         List<String> lstUser =StringUtility.parseObject(jsonObject.getString("lstUser"),List.class);
         permitStatBp.updateUserPermitCache(lstUser);
         return VoHelper.getSuccessResult();
+    }
+
+    @Override
+    public ResultVO operIsSuperAdmin(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        if (StringUtility.isNullOrEmpty(operator)) {
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
+        }
+        return roleService.operIsSuperAdmin(operator);
+
+    }
+
+    @Override
+    @Log("获取平台账号站点数据")
+    public ResultVO getPlatformShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.getPlatformShopSite(operator);
+    }
+
+    @Override
+    @Log("同步平台数据")
+    public ResultVO syncPlatform(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncPlatform(operator);
+    }
+
+    @Override
+    @Log("同步账号站点数据")
+    public ResultVO syncShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncShopSite(operator);
     }
 
 }

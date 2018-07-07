@@ -255,10 +255,11 @@
                 create_by=#{createBy,jdbcType=VARCHAR}
             </if>
             <if test="roleNames != null and roleNames != ''">
-                and role_name in
-                <foreach item="item" index="index" collection="roleNames" open="(" separator="," close=")">
-                    #{item}
+                and
+                <foreach item="item" index="index" collection="roleNames" open="(" separator="or" close=")">
+                    role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                 </foreach>
+
             </if>
             and is_authorizable != 2
         </where>

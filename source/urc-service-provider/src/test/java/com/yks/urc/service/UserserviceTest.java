@@ -35,4 +35,5 @@ public class UserserviceTest extends BaseServiceTest {
         ResultVO resultVO = userService.getMyAuthWay("panyun");
         System.out.println(resultVO);
     }
+
 }

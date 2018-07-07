@@ -62,6 +62,17 @@ public class WJHService extends BaseServiceTest {
     	//person.setPhoneNum("17771054080");
     	personService.getUserByDingOrgId("1", "0", "10");
     }
+
+
+    @Test
+    public void updateRolePermission() throws Exception{
+
+        List<RoleVO> lstRole = new ArrayList<>();
+        RoleVO roleVO=new RoleVO();
+        roleVO.setRoleId("1530772562805000305");
+        lstRole.add(roleVO);
+        roleService.updateRolePermission("wujianghui", lstRole);
+    }
     
     
 
@@ -79,13 +90,20 @@ public class WJHService extends BaseServiceTest {
     	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName,"panyun");
     	System.out.println(StringUtility.toJSONString(dataVO));
     }
+
+
+    @Test
+    public void roleIsSuperAdmin() throws Exception{
+        ResultVO  dataVO= roleService.operIsSuperAdmin("panyun");
+        System.out.println(StringUtility.toJSONString(dataVO));
+    }
     
     
     
     @Test
     public void getRoleUser() throws Exception{
     	
-    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\"],\"operator\":\"linwanxain\"}";
+    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\",\"1529743116993000004\"],\"operator\":\"panyun\"}";
     			 
     			 
     	JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -163,7 +181,8 @@ public class WJHService extends BaseServiceTest {
 			System.out.println(userList.get(i));
 		}
     	System.out.println(StringUtility.toJSONString(roleService.updateUsersOfRole(lstRole, operator)));
-    	
+
+
     }
     
     

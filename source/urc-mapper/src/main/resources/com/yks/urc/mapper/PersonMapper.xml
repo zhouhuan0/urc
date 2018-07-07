@@ -53,9 +53,8 @@
   </sql>
   
     <sql id="Base_User_Column_List">
-    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, date_format(up.birthday,'%Y-%m-%d') as birthday_str,
-    up.join_date,date_format(up.join_date,'%Y-%m-%d')  as join_date_str , up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
-    up.modified_by,uu.user_name
+    up.person_name, up.phone_num,  date_format(up.birthday,'%Y-%m-%d') as birthday_str,
+    date_format(up.join_date,'%Y-%m-%d')  as join_date_str ,  up.job_number, up.email, up.position,uu.user_name
   </sql>
   
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">

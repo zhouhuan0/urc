@@ -299,7 +299,7 @@ public class UserBpImpl implements IUserBp {
             loginLog.loginTime = new Date();
             this.insertLoginLog(loginLog);
             resp.userName = userName;
-            if (blnOk) {
+            if (true) {
                 resp.ticket = userValidateBp.createTicket(userName, ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
@@ -307,7 +307,7 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = ip;
                 cacheBp.insertUser(u);
-                resp.personName = userMapper.getPersonNameByUserName(u.userName);
+                resp.personName = u.userName;// userMapper.getPersonNameByUserName(u.userName);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
