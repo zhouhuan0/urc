@@ -620,13 +620,18 @@ public class RoleServiceImpl implements IRoleService {
                 }
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
+                if(permissionVOS==null||permissionVOS.size()<=0&&lstRole.size()>1){
+                    throw new URCBizException("批量分配角色权限不允许删除" + roleVO.getRoleId(), ErrorCode.E_000003);
+                }
                 roleIds.add(Long.valueOf(roleVO.roleId));
                 List<RolePermissionDO> permissionDOS = new ArrayList<>();
+                List<String> roleSysKey=new ArrayList<String>();
                 if (permissionVOS != null) {
                     for (PermissionVO permissionVO : permissionVOS) {
                         RolePermissionDO rolePermissionDO = new RolePermissionDO();
                         //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
                         rolePermissionDO.setRoleId(Long.valueOf(roleVO.roleId));
+                        roleSysKey.add(permissionVO.getSysKey());
                         rolePermissionDO.setSysKey(permissionVO.getSysKey());
                         rolePermissionDO.setModifiedBy(operator);
                         rolePermissionDO.setCreateBy(operator);
@@ -636,7 +641,12 @@ public class RoleServiceImpl implements IRoleService {
                         permissionDOS.add(rolePermissionDO);
                     }
                 }
-                    rolePermissionMapper.deleteBatch(roleIds);
+                if(lstRole.size()>1){
+                    rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId,roleSysKey);
+                }else{
+                    rolePermissionMapper.deleteByRoleId(Long.parseLong(roleVO.roleId));
+                }
+               // rolePermissionMapper.deleteBatch(roleIds);
                 logger.info("清理相关的功能权限完成");
                 if (permissionDOS != null && permissionDOS.size() > 0) {
                     rolePermissionMapper.insertBatch(permissionDOS);
@@ -645,7 +655,7 @@ public class RoleServiceImpl implements IRoleService {
             }
             Map dataMap = new HashMap();
             dataMap.put("roleIds", roleIds);
-        /*3、获取roleIds角色对应的用户名*/
+            /*3、获取roleIds角色对应的用户名*/
             logger.info(String.format("获取的角色id为%s", roleIds));
             if (roleIds.size() == 0) {
                 logger.info("roleID 的集合为空");

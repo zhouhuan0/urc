@@ -34,6 +34,17 @@
     </delete>
 
 
+    <!--批量删除-->
+    <delete id="deleteByRoleIdInSysKey"  >
+        delete from urc_role_permission where  role_id = #{roleId,jdbcType=VARCHAR}
+        <if test=" roleSysKey !=null and roleSysKey.size >0 ">
+            AND   sys_key  IN
+            <foreach collection="roleSysKey" index="index" item="sysYey" open="(" separator="," close=")">
+                #{sysYey}
+            </foreach>
+        </if>
+    </delete>
+
     <!--批量操作urc_role_permission 存在的更新，不存在的新增-->
     <update id="insertAndUpdateBatch" parameterType="java.util.List">
         insert into
@@ -80,6 +91,7 @@
             </if>
             <if test=" createBy != null and createBy != '' ">
                 and create_by=#{createBy}
+                and sys_key != '004'
             </if>
         </where>
     </select>
