@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉
@@ -31,6 +33,9 @@ public class UserMapperTest extends BaseMapperTest {
     private IUserMapper userMapper;
     @Autowired
     private  IRolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private  IRoleMapper roleMapper;
 
     /*@Autowired
     UserBp userBp;*/
@@ -84,11 +89,18 @@ public class UserMapperTest extends BaseMapperTest {
     public void testgetUserInfo() {
 		//List<String> lstUserName= userMapper.listAllUsersUserName();
 		
-		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
+/*		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
 
         for (int i = 0; i < lstUserName.size(); i++) {
 			System.out.println(lstUserName.get(i));
-		}
+		}*/
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("currIndex", 0);
+        queryMap.put("pageSize", 200);
+        String[] roleNames = {"admin2","复制"};
+        queryMap.put("roleNames", roleNames);
+        List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
+        System.out.println(roleDOS.size());
     	
 /*        UserVO userVO = new UserVO();
         int pagaNum = 0;

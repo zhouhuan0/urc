@@ -595,7 +595,7 @@ public class UserValidateBp implements IUserValidateBp {
 			return true;
 
 		// apiUrl在A不存在,返回true
-		if (!strSysFuncJson.contains("\"" + apiUrl + "\""))
+		if (!strSysFuncJson.contains(String.format("%s%s%s", "\"", apiUrl, "\"")))
 			return true;
 
 		// 获取用户当前业务系统的funcJson
@@ -604,7 +604,7 @@ public class UserValidateBp implements IUserValidateBp {
 			return false;
 
 		// apiUrl在SubA中存在，返回true
-		if (strCurUserFuncJson.contains("\"" + apiUrl + "\""))
+		if (strCurUserFuncJson.contains(String.format("%s%s%s","\"" , apiUrl , "\"")))
 			return true;
 		return false;
 	}
