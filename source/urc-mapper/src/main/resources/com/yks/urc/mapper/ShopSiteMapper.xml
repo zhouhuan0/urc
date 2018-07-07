@@ -4,8 +4,9 @@
   <resultMap id="BaseResultMap" type="com.yks.urc.entity.ShopSiteDO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="platform_id" jdbcType="VARCHAR" property="platformId" />
-    <result column="shop_id" jdbcType="VARCHAR" property="shopId"/>
-    <result column="shop_name" jdbcType="VARCHAR" property="shopName"/>
+    <result column="shop" jdbcType="VARCHAR" property="shop"/>
+    <result column="shop_system" jdbcType="VARCHAR" property="shopSystem"/>
+    <result column="seller_id" jdbcType="VARCHAR" property="sellerId"/>
     <result column="site_id" jdbcType="VARCHAR" property="siteId" />
     <result column="site_name" jdbcType="VARCHAR" property="siteName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -14,7 +15,7 @@
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, platform_id, shop_id, shop_name, site_id, site_name,create_time,create_by,modified_time,modified_by
+    id, platform_id, shop,shop_system ,seller_id, site_id, site_name,create_time,create_by,modified_time,modified_by
   </sql>
 
   <!--清除表-->
@@ -28,11 +29,14 @@
       <if test="platformId != null">
         platform_id,
       </if>
-      <if test="shopId != null">
-        shop_id,
+      <if test="shop != null">
+        shop,
       </if>
-      <if test="shopName != null">
-        shop_name,
+      <if test="shopSystem != null">
+        shop_system,
+      </if>
+      <if test="sellerId != null">
+        seller_id,
       </if>
       <if test="siteId != null">
         site_id,
@@ -57,11 +61,14 @@
       <if test="platformId != null">
         #{platformId,jdbcType=CHAR},
       </if>
-      <if test="shopId != null">
-        #{shopId,jdbcType=VARCHAR},
+      <if test="shop != null">
+        #{shop,jdbcType=VARCHAR},
       </if>
-      <if test="shopName != null">
-        #{shopName,jdbcType=VARCHAR},
+      <if test="shopSystem != null">
+        #{shopSystem,jdbcType=VARCHAR},
+      </if>
+      <if test="sellerId != null">
+        #{sellerId,jdbcType=VARCHAR},
       </if>
       <if test="siteId != null">
         #{siteId,jdbcType=VARCHAR},
@@ -86,13 +93,14 @@
 
     <insert id="insertBatchShopSite"  parameterType="com.yks.urc.entity.ShopSiteDO">
       insert into urc_shop_site
-      (platform_id,shop_id,shop_name,site_id,site_name,create_time,create_by,modified_time,modified_by)
+      (platform_id,shop,shop_system,seller_id,site_id,site_name,create_time,create_by,modified_time,modified_by)
       values
       <foreach collection="shopSiteDOList" item="item" separator=",">
         (
         #{item.platformId},
-        #{item.shopId},
-        #{item.shopName},
+        #{item.shop},
+        #{item.shopSystem},
+        #{item.sellerId},
         #{item.siteId},
         #{item.siteName},
         #{item.createTime},
@@ -102,9 +110,10 @@
         )
       </foreach>
     </insert>
+  <!--通过id获取账号和站点-->
   <select id="selectShopSiteByPlatformId" resultMap="BaseResultMap">
       SELECT <include refid="Base_Column_List"/>
-     FROM urc_shop_site WHERE  platform_id = #{platformId}  and shop_id != ''
+     FROM urc_shop_site WHERE  platform_id = #{platformId}  and seller_id != ''
   </select>
 
 </mapper>

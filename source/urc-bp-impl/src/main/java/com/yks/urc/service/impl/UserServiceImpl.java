@@ -237,11 +237,12 @@ public class UserServiceImpl implements IUserService {
             if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
               continue;
             } else {
+                //集合都必须先初识化
                 omsPlatformVO.lstShop =new ArrayList<>(shopSiteDOS.size());
                 for (ShopSiteDO shopSiteDO : shopSiteDOS) {
                         OmsShopVO omsShopVO = new OmsShopVO();
-                        omsShopVO.shopId = shopSiteDO.getShopId();
-                        omsShopVO.shopName = shopSiteDO.getShopName();
+                        omsShopVO.shopId = shopSiteDO.getSellerId();
+                        omsShopVO.shopName = shopSiteDO.getShop();
                         //如果站点id为空,则list为空
                         if ("".equals(shopSiteDO.getSiteId())) {
                             omsShopVO.lstSite = null;

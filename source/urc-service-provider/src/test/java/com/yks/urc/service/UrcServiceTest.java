@@ -437,12 +437,36 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void getPlatformShopSite(){
 		Map map =new HashMap();
-		map.put("operator","linwanxian");
+        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
+        System.out.println("START====================");
+        map.put("operator","linwanxian");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 		ResultVO resultVO =service.getPlatformShopSite(json);
 		System.out.println("========================");
-		System.out.println(resultVO.msg);
-	}
+		System.out.println(StringUtility.toJSONString_NoException(resultVO));
+        System.out.println("END====================");
+        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
 
+	}
+	@Test
+    public void syncPlatform(){
+        Map map =new HashMap();
+        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
+        System.out.println("START====================");
+        map.put("operator","linwanxian");
+        String json =StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        ResultVO resultVO =service.syncPlatform(json);
+    }
+    @Test
+    public void syncShopSite(){
+        Map map =new HashMap();
+        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
+        System.out.println("START====================");
+        map.put("operator","linwanxian");
+        String json =StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        ResultVO resultVO =service.syncShopSite(json);
+    }
 }

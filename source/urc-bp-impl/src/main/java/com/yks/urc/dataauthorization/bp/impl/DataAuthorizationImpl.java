@@ -154,8 +154,9 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             ShopSiteDO shopSiteDO = new ShopSiteDO();
                             shopSiteDO.setPlatformId(shopAndSiteResp.platform_code);
-                            shopSiteDO.setShopId(shopAndSiteResp.sellerid);
-                            shopSiteDO.setShopName(shopAndSiteResp.shop_system);
+                            shopSiteDO.setSellerId(shopAndSiteResp.sellerid);
+                            shopSiteDO.setShopSystem(shopAndSiteResp.shop_system);
+                            shopSiteDO.setShop(shopAndSiteResp.shop);
                             shopSiteDO.setSiteId(shopAndSiteResp.site_code);
                             shopSiteDO.setSiteName(shopAndSiteResp.site_name);
                             shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
