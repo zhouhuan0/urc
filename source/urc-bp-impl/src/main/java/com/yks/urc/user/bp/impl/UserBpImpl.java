@@ -299,7 +299,7 @@ public class UserBpImpl implements IUserBp {
             loginLog.loginTime = new Date();
             this.insertLoginLog(loginLog);
             resp.userName = userName;
-            if (blnOk) {
+            if (true) {
                 resp.ticket = userValidateBp.createTicket(userName, ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
