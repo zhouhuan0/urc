@@ -476,9 +476,11 @@ public class UrcServiceTest extends BaseServiceTest {
 		map.put("name","pan");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
-		System.out.println("START====================");
+
 		System.out.println(json);
+		System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
 		ResultVO resultVO =service.fuzzSearchPersonByName(json);
-		System.out.println(resultVO.msg);
+		System.out.println(StringUtility.toJSONString(resultVO));
+		System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
 	}
 }

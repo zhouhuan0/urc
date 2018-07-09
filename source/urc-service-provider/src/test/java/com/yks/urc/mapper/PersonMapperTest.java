@@ -21,10 +21,10 @@ public class PersonMapperTest extends BaseMapperTest {
 
     @Test
     public void fuzzUser(){
-        String name ="潘";
-        List<UserInfoVO> userInfoVOList =personMapper.fuzzSearchPersonByName(name);
+       /* String name ="潘";
+        List<UserInfoVO> userInfoVOList =personMapper.getUserByDingOrgId(name);
         for (UserInfoVO userInfoVO :userInfoVOList){
             System.out.println(userInfoVO.personName);
-        }
+        }*/
     }
 }

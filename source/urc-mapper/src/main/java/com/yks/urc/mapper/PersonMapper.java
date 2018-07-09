@@ -63,6 +63,6 @@ public interface PersonMapper {
 	 */
 	long getUserByDingOrgIdCount(Query query);
 
-	List<UserInfoVO> fuzzSearchPersonByName(@Param("name") String name);
+	UserInfoVO getPersonOrgById(@Param("dingUserId") String dingUserId);
 	
 }

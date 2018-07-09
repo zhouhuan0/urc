@@ -15,6 +15,7 @@ import java.util.concurrent.Executors;
 
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -266,16 +267,32 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     @Override
-    public ResultVO fuzzSearchPersonByName(String operator,String userName) {
-        List<UserInfoVO> infoVOList = personMapper.fuzzSearchPersonByName(userName);
-        for (UserInfoVO userInfoVO : infoVOList) {
-            UserDO userDO = userMapper.getUserInfoByDingUserId(userInfoVO.dingUserId);
-            userInfoVO.userName =userDO.getUserName();
-            if (userDO ==null){
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"dingUserId 找不到用户");
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO fuzzSearchPersonByName(String operator, String userName) {
+        try {
+            List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName(userName);
+            if (infoVOList == null && infoVOList.size() == 0) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "查找的用户不存在");
+            } else {
+                for (UserInfoVO userInfoVO : infoVOList) {
+                    if (!StringUtility.isNullOrEmpty(userInfoVO.dingUserId)) {
+                        UserInfoVO userOrgVO = personMapper.getPersonOrgById(userInfoVO.dingUserId);
+                        if (userOrgVO == null) {
+                            continue;
+                        } else {
+                            userInfoVO.orgName = userOrgVO.orgName;
+                            userInfoVO.parentOrgName = userOrgVO.parentOrgName;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
             }
+            return VoHelper.getSuccessResult(infoVOList);
+        } catch (Exception e) {
+            logger.error("未知错误", e);
+            return VoHelper.getErrorResult();
         }
-        return VoHelper.getSuccessResult(infoVOList);
     }
 
 }

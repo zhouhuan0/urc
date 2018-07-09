@@ -18,5 +18,4 @@ public class UserInfoVO implements Serializable {
     public String dingUserId;
     public String orgName;
     public String parentOrgName;
-
 }
