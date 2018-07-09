@@ -13,7 +13,8 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.yks.urc.fw.HanyuPinyinHelperSingle;
+import com.github.stuxuhai.jpinyin.PinyinFormat;
+import com.github.stuxuhai.jpinyin.PinyinHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -227,7 +228,7 @@ public class PersonServiceImpl implements IPersonService {
 						person.setModifiedBy(userName);
 						person.setModifiedTime(new Date());
 						person.setPersonName(user.name);
-						person.setPersonNameCollage(HanyuPinyinHelperSingle.getHelperSingle().toHanyuPinyin(user.name));
+						person.setPersonNameCollage(PinyinHelper.convertToPinyinString(user.name, "", PinyinFormat.WITHOUT_TONE));
 						person.setPhoneNum(user.mobile);
 						person.setPosition(user.position);
 						initPerson.add(person);
