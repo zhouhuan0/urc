@@ -408,5 +408,5 @@ public interface IUrcService {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/9 10:45
      */
-    ResultVO fuzzySearchPerson(String json);
+    ResultVO fuzzSearchPersonByName(String json);
 }

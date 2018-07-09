@@ -469,4 +469,16 @@ public class UrcServiceTest extends BaseServiceTest {
         MotanSession.initialSession(json);
         ResultVO resultVO =service.syncShopSite(json);
     }
+    @Test
+	public void fuzzSearchPersonByName(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		map.put("name","pan");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		System.out.println("START====================");
+		System.out.println(json);
+		ResultVO resultVO =service.fuzzSearchPersonByName(json);
+		System.out.println(resultVO.msg);
+	}
 }

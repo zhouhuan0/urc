@@ -27,5 +27,13 @@ public interface IPersonService {
 	 * @return
 	 */
 	ResultVO SynPersonOrgFromDing(String userName);
+	/**
+	 * 通过名字模糊搜索用户信息
+	 * @param
+	 * @return
+	 * @Author linwanxian@youkeshu.com
+	 * @Date 2018/7/9 19:25
+	 */
+	ResultVO fuzzSearchPersonByName(String operator,String userName);
 
 }

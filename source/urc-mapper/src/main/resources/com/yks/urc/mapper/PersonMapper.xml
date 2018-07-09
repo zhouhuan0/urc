@@ -365,4 +365,12 @@
       modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--模糊搜索用户-->
+  <select id="fuzzSearchPersonByName" resultType="com.yks.urc.vo.UserInfoVO">
+    select p.person_name AS personName,p.ding_user_id AS dingUserId,  uo.org_name AS orgName,uo.full_name_path AS parentOrgName
+      FROM urc_person p LEFT JOIN urc_person_org ug  ON  p.ding_user_id = ug.ding_user_id
+      LEFT JOIN urc_organization uo ON  ug.ding_org_id =uo.ding_org_id
+      WHERE  p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
+  </select>
+
 </mapper>

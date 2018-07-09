@@ -549,9 +549,12 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log("模糊搜索人员")
-    public ResultVO fuzzySearchPerson(String json) {
-        return null;
+    @Log("通过名字模糊搜索人员")
+    public ResultVO fuzzSearchPersonByName(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator =MotanSession.getRequest().getOperator();
+        String userName =jsonObject.getString("name");
+        return personService.fuzzSearchPersonByName(operator,userName);
     }
 
 }
