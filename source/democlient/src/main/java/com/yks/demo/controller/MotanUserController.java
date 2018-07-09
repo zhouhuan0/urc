@@ -59,7 +59,8 @@ public class MotanUserController {
             mapArg.put(StringConstant.ticket, jBody.getString(StringConstant.ticket));
             mapArg.put(StringConstant.operator, jBody.getString(StringConstant.operator));
             mapArg.put(StringConstant.funcVersion, jBody.getString(StringConstant.funcVersion));
-            mapArg.put(StringConstant.ip, jBody.getString(StringConstant.ip));
+            //mapArg.put(StringConstant.ip, jBody.getString(StringConstant.ip));
+            mapArg.put("ip", IpUtils.getIpAddr(request));
             mapArg.put(StringConstant.apiUrl, String.format("%s%s", ApiUrlPrefix, method));
 
             rslt = urcService.funcPermitValidate(mapArg);
