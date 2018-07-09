@@ -101,13 +101,12 @@
      		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%')) OR up.person_name_collage  LIKE CONCAT(CONCAT('%',#{personName},'%'))
      		 </if>
      </where>
-   	 ORDER BY up.create_time desc 
    	 limit #{offset},#{limit}
   </select>
   
   
    <select id="count"  resultType="java.lang.Long">
-     SELECT count(*)
+     SELECT count(up.id)
      from urc_person up LEFT JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
      <where>
      		 <if test="jobNumber != null and jobNumber != '' ">
