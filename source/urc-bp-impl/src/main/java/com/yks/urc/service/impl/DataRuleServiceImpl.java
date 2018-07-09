@@ -850,13 +850,37 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (DataRuleVO dataRuleVO : dataRuleVOS) {
             lstUserName.add(dataRuleVO.getUserName());
         }
+
+        //分批量操作
+         List<DataRuleDO> dataBatchRuleIds=new ArrayList<DataRuleDO>(dataRuleVOS.size());
+        if(dataRuleVOS!=null&&dataRuleVOS.size()>1){
+            for (DataRuleVO dataRuleVo:dataRuleVOS){
+                DataRuleDO dataRuleDO=new DataRuleDO();
+                dataRuleDO.setUserName(dataRuleVo.getUserName());
+                DataRuleDO dataRule= dataRuleMapper.getDataRule(dataRuleDO);
+                if(dataRule!=null&&dataRule.getDataRuleId()!=null){
+                    List<DataRuleSysVO>  dataRuleSys=dataRuleVo.getLstDataRuleSys();
+                    if(dataRuleSys!=null&&dataRuleSys.size()>0){
+                        List<String> sysKeys=new ArrayList<>();
+                        for (DataRuleSysVO dataRuleSysVo : dataRuleSys){
+                            sysKeys.add(dataRuleSysVo.getSysKey());
+                        }
+                        dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys,dataRule.getDataRuleId());
+                        //记下dataRuleId
+                        dataBatchRuleIds.add(dataRule);
+                    }
+                }
+            }
+        }else{
         /*1、删除用户列表对应的数据权限 */
-        List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
-        dataRuleMapper.delBatchByUserNames(lstUserName);
-        /*2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
-        if (dataRuleIds != null && !dataRuleIds.isEmpty()) {
-            dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
+            List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
+            dataRuleMapper.delBatchByUserNames(lstUserName);
+                    /*2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
+            if (dataRuleIds != null && !dataRuleIds.isEmpty()) {
+                dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
+            }
         }
+
         List<DataRuleDO> dataRuleDOSCache = new ArrayList<>();
          /*数据权限Sys列表*/
         List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
@@ -865,11 +889,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*行权限数据列表*/
         List<ExpressionDO> expressionCache = new ArrayList<>();
         /*2、新增用户-操作权限关系数据 dataRule*/
-        for (DataRuleVO dataRuleVO : dataRuleVOS) {
+        for (int i=0;i<dataRuleVOS.size();i++) {
+            DataRuleVO dataRuleVO=dataRuleVOS.get(i);
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
             dataRuleDO.setCreateTime(new Date());
-            Long dataRuleId = seqBp.getNextDataRuleId();
+            Long dataRuleId=null;
+            if(dataBatchRuleIds.get(i)!=null){
+                dataRuleId=dataBatchRuleIds.get(i).getDataRuleId();
+            }else{
+                dataRuleId = seqBp.getNextDataRuleId();
+            }
             dataRuleDO.setDataRuleId(dataRuleId);
             dataRuleDO.setUserName(dataRuleVO.getUserName());
             dataRuleDOSCache.add(dataRuleDO);

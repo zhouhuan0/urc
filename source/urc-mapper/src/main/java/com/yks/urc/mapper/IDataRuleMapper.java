@@ -39,4 +39,10 @@ public interface IDataRuleMapper {
      */
     List<Long> getDataRuleIdsByUserName(@Param("userNames") List<String> userNames);
 
+    /**
+     * 得到DataRule
+     * @param dataRuleDO
+     * @return
+     */
+    DataRuleDO getDataRule(DataRuleDO dataRuleDO);
 }
