@@ -548,4 +548,10 @@ public class UrcServiceImpl implements IUrcService {
         return userService.syncShopSite(operator);
     }
 
+    @Override
+    @Log("模糊搜索人员")
+    public ResultVO fuzzySearchPerson(String json) {
+        return null;
+    }
+
 }

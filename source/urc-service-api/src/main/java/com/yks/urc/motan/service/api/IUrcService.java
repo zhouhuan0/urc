@@ -401,5 +401,12 @@ public interface IUrcService {
     ResultVO syncPlatform(String jsonStr);
 
     ResultVO syncShopSite(String jsonStr);
-
+    /**
+     * 通过
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/9 10:45
+     */
+    ResultVO fuzzySearchPerson(String json);
 }
