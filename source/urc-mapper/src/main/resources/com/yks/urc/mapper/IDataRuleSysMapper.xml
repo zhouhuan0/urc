@@ -138,6 +138,27 @@
         </if>
     </delete>
 
+
+    <!--根据dataRuleID以及sysKeys列表删除 权限数据Sys、行权限、列权限-->
+    <delete id="delRuleSysDatasByIdsAndSyskey">
+        delete us,uc,ue
+        from
+        urc_data_rule_sys us
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        <where>
+          <if test=" dataRuleId != null ">
+              us.data_rule_id = #{dataRuleId}
+          </if>
+          <if test=" sysKeys != null and sysKeys.size()>0 ">
+              and us.sys_key in
+              <foreach collection="sysKeys" item="sysKey" open="(" separator="," close=")">
+                  #{sysKey}
+              </foreach>
+          </if>
+        </where>
+    </delete>
+
     <select id="getTemplOwnSysByDataRuleId" resultType="java.lang.String">
         select sys_key from urc_data_rule_sys where data_rule_id=  #{dataRuleId,jdbcType=BIGINT}
     </select>
