@@ -78,8 +78,8 @@ public class WJHService extends BaseServiceTest {
 
     @Test
     public void SynPersonOrgFromDing() throws Exception{
-    	//personService.SynPersonOrgFromDing("hand");
-    	personService.getUserByDingOrgId("1", "0", "");
+    	personService.SynPersonOrgFromDing("hand");
+    	//personService.getUserByDingOrgId("1", "0", "");
     }
     
     

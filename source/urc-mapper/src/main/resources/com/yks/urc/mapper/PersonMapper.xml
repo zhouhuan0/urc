@@ -97,9 +97,8 @@
      		 <if test="phoneNum != null and phoneNum != '' ">
      		 	and up.phone_num=#{phoneNum,jdbcType=VARCHAR}
      		 </if>
-     		 
      		<if test="personName != null and personName != '' ">
-     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%')) OR up.person_name_collage  LIKE CONCAT(CONCAT('%',#{personName},'%'))
      		 </if>
      </where>
    	 ORDER BY up.create_time desc 
@@ -154,7 +153,7 @@
   
       <insert id="insertBatchPerson" parameterType="com.yks.urc.entity.Person">
         insert into urc_person 
-        (person_name, gender, 
+        (person_name,person_name_collage, gender,
       phone_num, ding_user_id, ding_id, 
       ding_unionid, birthday, join_date, 
       leave_date, job_number, email, 
@@ -163,6 +162,7 @@
         values
         <foreach collection="list" item="personList" separator=",">
             (#{personList.personName},
+            #{personList.personNameCollage},
             #{personList.gender},
             #{personList.phoneNum},
             #{personList.dingUserId},

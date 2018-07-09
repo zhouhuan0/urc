@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.yks.urc.fw.HanyuPinyinHelperSingle;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -116,14 +117,10 @@ public class PersonServiceImpl implements IPersonService {
 							List<Organization> orgList=initInfo.get("org");
 							List<Person> personList=initInfo.get("person");
 							List<PersonOrg> personOrgList=initInfo.get("personOrg");
-							
-	
-							
 					        if(orgList!=null&&orgList.size()>0){
 					        	//插入部门表
 					        	organizationMapper.insertBatchOrg(orgList);
 					        }
-					        
 					        if(personList!=null&&personList.size()>0){
 								//dingUserId + phoneNum作为维度去重Person
 						        Set<Person> setData = new HashSet<Person>();  
@@ -230,6 +227,7 @@ public class PersonServiceImpl implements IPersonService {
 						person.setModifiedBy(userName);
 						person.setModifiedTime(new Date());
 						person.setPersonName(user.name);
+						person.setPersonNameCollage(HanyuPinyinHelperSingle.getHelperSingle().toHanyuPinyin(user.name));
 						person.setPhoneNum(user.mobile);
 						person.setPosition(user.position);
 						initPerson.add(person);
