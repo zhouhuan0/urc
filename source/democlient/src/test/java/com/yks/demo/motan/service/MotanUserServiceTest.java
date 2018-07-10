@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,118 +31,153 @@ import java.util.Map;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DemoClientApplication.class)
 public class MotanUserServiceTest {
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	@MotanReferer
-	private IUrcService urcService;
+    @MotanReferer
+    private IUrcService urcService;
 
-	// @Test
-	public void testFilter() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("operator", "py");
-		jsonObject.put("newRoleName", "admin2");
-		jsonObject.put("roleId", "");
+    // @Test
+    public void testFilter() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator", "py");
+        jsonObject.put("newRoleName", "admin2");
+        jsonObject.put("roleId", "");
 
-		ResultVO<Integer> rslt = urcService.checkDuplicateRoleName(jsonObject.toJSONString());
-		System.out.println(">>>>>>>>>>>>>>>>>>" + StringUtility.toJSONString_NoException(rslt));
-	}
+        ResultVO<Integer> rslt = urcService.checkDuplicateRoleName(jsonObject.toJSONString());
+        System.out.println(">>>>>>>>>>>>>>>>>>" + StringUtility.toJSONString_NoException(rslt));
+    }
 
-	// @Test
-	public void testSayHello() {
-		try {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("userName", "dcadmin");
-			map.put("pwd", "Ldap_test");
-			map.put("ip", "127.0.0.1");
-			ResultVO<LoginRespVO> rslt = urcService.login(map);
-			System.out.println(StringUtility.toJSONString_NoException(rslt));
+    // @Test
+    public void testSayHello() {
+        try {
+            Map<String, String> map = new HashMap<String, String>();
+            map.put("userName", "dcadmin");
+            map.put("pwd", "Ldap_test");
+            map.put("ip", "127.0.0.1");
+            ResultVO<LoginRespVO> rslt = urcService.login(map);
+            System.out.println(StringUtility.toJSONString_NoException(rslt));
 
-			// for (int i = 0; i < 10; i++) {
-			// authUser.userName = "panyun" + i;
-			// urcService.login(curUser, authUser);
-			// }
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+            // for (int i = 0; i < 10; i++) {
+            // authUser.userName = "panyun" + i;
+            // urcService.login(curUser, authUser);
+            // }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-	}
+    }
 
-	// @Test
-	public void logout_Test() {
-		Map<String, String> map = new HashMap<>();
-		map.put(StringConstant.operator, "test2");
-		String jsonStr = StringUtility.toJSONString_NoException(map);
-		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.logout(jsonStr)));
-	}
+    // @Test
+    public void logout_Test() {
+        Map<String, String> map = new HashMap<>();
+        map.put(StringConstant.operator, "test2");
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.logout(jsonStr)));
+    }
 
-	// @Test
-	public void getAllOrgTree_Test() {
-		System.out.println("----------------------" + StringUtility.toJSONString_NoException((urcService.getAllOrgTree())));
-	}
+    // @Test
+    public void getAllOrgTree_Test() {
+        System.out.println("----------------------" + StringUtility.toJSONString_NoException((urcService.getAllOrgTree())));
+    }
 
-	public void testGetAllFuncPermit() {
-		Map<String, String> map = new HashMap<String, String>();
-		map.put("operator", "dcadmin");
-		String jsonStr = StringUtility.toJSONString_NoException(map);
-		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.getAllFuncPermit(jsonStr)));
-	}
+    @Test
+    public void getUserByUserInfo_Test() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("operator", "panyun");
+        map.put("pageNumber", 1);
+        map.put("pageData", 22);
+        Map<String, String> mapUser = new HashMap<>();
+        mapUser.put("jobNumber", "");
+        mapUser.put("phoneNum", "");
+//        mapUser.put("personName", "潘韵");
+        map.put("user", mapUser);
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        System.out.println("----------------------START " +
+                StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date())
+                + StringUtility.toJSONString_NoException(urcService.getUserByUserInfo(jsonStr)));
 
-	@Test
-	public void test_funcPermitValidate() {
-		Map<String, String> map = new HashMap<>();
-		map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
-		map.put("moduleUrl", "/");
-		map.put(StringConstant.operator, "dcadmin");
-		map.put(StringConstant.ticket, "f57be85c55187292236b0d95ba719a43");
-		map.put(StringConstant.ip, "192.168.201.62");
-		map.put(StringConstant.funcVersion, "007d787e2b15e66fd9451f5adef0d2f5");
-		map.put(StringConstant.sysKey, "004");
-		System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.funcPermitValidate(map)));
-	}
+        System.out.println("----------------------END " +
+                StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
+    }
 
-	@Test
-	public void importPermit_Test() throws IOException {
-		String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
-		logger.info(strJson1);
-		System.out.println(StringUtility.toJSONString_NoException(urcService.importSysPermit(strJson1)));
-	}
+    @Test
+    public void testGetAllFuncPermit() {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("operator", "linwanxian");
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.getAllFuncPermit(jsonStr)));
+    }
 
-	@Test
-	public void updateRolePermission_Test(){
-		Map<String,Object> mapArg=new HashMap<>();
+    @Test
+    public void test_funcPermitValidate() {
+        Map<String, String> map = new HashMap<>();
+        map.put("apiUrl", "/urc/motan/service/api/IUrcService/getAllFuncPermit");
+        map.put("moduleUrl", "/");
+        map.put(StringConstant.operator, "dcadmin");
+        map.put(StringConstant.ticket, "f57be85c55187292236b0d95ba719a43");
+        map.put(StringConstant.ip, "192.168.201.62");
+        map.put(StringConstant.funcVersion, "007d787e2b15e66fd9451f5adef0d2f5");
+        map.put(StringConstant.sysKey, "004");
+        System.out.println("----------------------" + StringUtility.toJSONString_NoException(urcService.funcPermitValidate(map)));
+    }
 
-		String jsonStr;
+    @Test
+    public void importPermit_Test() throws IOException {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+        logger.info(strJson1);
+        System.out.println(StringUtility.toJSONString_NoException(urcService.importSysPermit(strJson1)));
+    }
+
+    @Test
+    public void updateRolePermission_Test() {
+        Map<String, Object> mapArg = new HashMap<>();
+
+        String jsonStr;
 //		urcService.updateRolePermission(jsonStr);
-	}
+    }
 
-	@Test
-	public void login_Test() {
-		// 登陆+获取功能权限版本号+鉴权
-		String ip = "192.168.201.62";
-		Map<String, String> map = new HashMap<>();
-		UserVO authUser = new UserVO();
-		map.put("userName", "panyun");
-		map.put("pwd", "ASDFGhjkl;12345");
-		map.put("ip", ip);
-		ResultVO<LoginRespVO> loginResp = urcService.login(map);
+    @Test
+    public void login_Test() {
+        // 登陆+获取功能权限版本号+鉴权
+        String ip = "192.168.201.62";
+        Map<String, String> map = new HashMap<>();
+        UserVO authUser = new UserVO();
+        map.put("userName", "panyun");
+        map.put("pwd", "ASDFGhjkl;12345");
+        map.put("ip", ip);
+        ResultVO<LoginRespVO> loginResp = urcService.login(map);
 
-		System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(loginResp));
-		// ResultVO<LoginRespVO> loginResp = new ResultVO<LoginRespVO>();
-		// JSONObject loginResp = StringUtility.parseString(strResp);
-		map.put("operator", "dcadmin");
-		String jsonStr = StringUtility.toJSONString_NoException(map);
-		ResultVO<GetAllFuncPermitRespVO> allFuncResp = urcService.getAllFuncPermit(jsonStr);
-		System.out.println("------getAllFuncPermit-----------------" + StringUtility.toJSONString_NoException(allFuncResp));
+        System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(loginResp));
+        // ResultVO<LoginRespVO> loginResp = new ResultVO<LoginRespVO>();
+        // JSONObject loginResp = StringUtility.parseString(strResp);
+        map.put("operator", "dcadmin");
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        ResultVO<GetAllFuncPermitRespVO> allFuncResp = urcService.getAllFuncPermit(jsonStr);
+        System.out.println("------getAllFuncPermit-----------------" + StringUtility.toJSONString_NoException(allFuncResp));
 
-		String strSysKey = "004";
+        String strSysKey = "004";
 
-		map.put("apiUrl", "/api/grab/smt/batchMarking");
-		map.put("moduleUrl", "/");
-		map.put(StringConstant.operator, "dcadmin");
-		map.put(StringConstant.ticket, loginResp.data.ticket);
-		map.put(StringConstant.ip, ip);
-		map.put(StringConstant.funcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
-		map.put(StringConstant.sysKey, strSysKey);
-		System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
-	}
+        map.put("apiUrl", "/api/grab/smt/batchMarking");
+        map.put("moduleUrl", "/");
+        map.put(StringConstant.operator, "dcadmin");
+        map.put(StringConstant.ticket, loginResp.data.ticket);
+        map.put(StringConstant.ip, ip);
+        map.put(StringConstant.funcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
+        map.put(StringConstant.sysKey, strSysKey);
+        System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
+    }
+
+    @Test
+    public void startMonitor_Test() {
+        Map<String, String> map = new HashMap<>();
+        map.put(StringConstant.operator, "panyun");
+        urcService.startMonitorMemory(StringUtility.toJSONString_NoException(map));
+    }
+
+    @Test
+    public void endMonitorMemory_Test() {
+        Map<String, String> map = new HashMap<>();
+        map.put(StringConstant.operator, "panyun");
+        urcService.endMonitorMemory(StringUtility.toJSONString_NoException(map));
+    }
 }

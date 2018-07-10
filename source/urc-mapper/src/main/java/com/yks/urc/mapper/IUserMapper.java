@@ -3,6 +3,7 @@ package com.yks.urc.mapper;
 import com.yks.urc.entity.DataRuleDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.Param;
@@ -130,4 +131,12 @@ public interface IUserMapper {
 	int fuzzySearchUsersByUserNameCount(Query query);
 
     String getPersonNameByUserName(@Param("userName") String userName);
+    /**
+     * 模糊搜索 用户 给第三方
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/9 20:52
+     */
+    List<UserInfoVO> fuzzSearchUserByName(@Param("name") String name);
 }

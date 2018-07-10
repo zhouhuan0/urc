@@ -1,0 +1,1 @@
+alter table urc_person add person_name_collage varchar(255) comment '钉钉姓名拼英'

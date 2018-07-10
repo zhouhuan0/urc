@@ -18,13 +18,18 @@ public class ShopSiteDO {
      */
     private String platformId;
     /**
+     * 账号
+     */
+    private String shopSystem;
+    /**
      * 账号名称
      */
-    private String shopName;
+    private String shop;
+
     /**
      * 账号ID
      */
-    private String shopId;
+    private String sellerId;
     /**
      * 站点名称
      */
@@ -50,28 +55,36 @@ public class ShopSiteDO {
         this.id = id;
     }
 
+    public String getShopSystem() {
+        return shopSystem;
+    }
+
+    public void setShopSystem(String shopSystem) {
+        this.shopSystem = shopSystem;
+    }
+
+    public String getShop() {
+        return shop;
+    }
+
+    public void setShop(String shop) {
+        this.shop = shop;
+    }
+
+    public String getSellerId() {
+        return sellerId;
+    }
+
+    public void setSellerId(String sellerId) {
+        this.sellerId = sellerId;
+    }
+
     public String getPlatformId() {
         return platformId;
     }
 
     public void setPlatformId(String platformId) {
         this.platformId = platformId;
-    }
-
-    public String getShopName() {
-        return shopName;
-    }
-
-    public void setShopName(String shopName) {
-        this.shopName = shopName;
-    }
-
-    public String getShopId() {
-        return shopId;
-    }
-
-    public void setShopId(String shopId) {
-        this.shopId = shopId;
     }
 
     public String getSiteName() {

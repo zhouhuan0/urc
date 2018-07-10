@@ -25,8 +25,9 @@ public class ShopSiteMapperTest extends BaseMapperTest {
     public void testInset(){
         ShopSiteDO shopSiteDO =new ShopSiteDO();
         shopSiteDO.setPlatformId("1");
-        shopSiteDO.setShopId("111");
-        shopSiteDO.setShopName("111");
+        shopSiteDO.setSellerId("111");
+        shopSiteDO.setShop("111");
+        shopSiteDO.setShopSystem("111");
         shopSiteDO.setSiteId("11111");
         shopSiteDO.setSiteName("11111");
         shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -36,8 +37,9 @@ public class ShopSiteMapperTest extends BaseMapperTest {
 
         ShopSiteDO shopSiteDO1 =new ShopSiteDO();
         shopSiteDO1.setPlatformId("2");
-        shopSiteDO1.setShopId("222");
-        shopSiteDO1.setShopName("222");
+        shopSiteDO1.setSellerId("222");
+        shopSiteDO1.setShop("222");
+        shopSiteDO1.setShopSystem("222");
         shopSiteDO1.setSiteId("2222");
         shopSiteDO1.setSiteName("2222");
         shopSiteDO1.setCreateTime(StringUtility.getDateTimeNow());

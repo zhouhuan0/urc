@@ -20,6 +20,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.netty.util.internal.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.ReflectionUtils;
@@ -59,7 +61,8 @@ public class MotanUserController {
             mapArg.put(StringConstant.ticket, jBody.getString(StringConstant.ticket));
             mapArg.put(StringConstant.operator, jBody.getString(StringConstant.operator));
             mapArg.put(StringConstant.funcVersion, jBody.getString(StringConstant.funcVersion));
-            mapArg.put(StringConstant.ip, jBody.getString(StringConstant.ip));
+            //mapArg.put(StringConstant.ip, jBody.getString(StringConstant.ip));
+            mapArg.put("ip", IpUtils.getIpAddr(request));
             mapArg.put(StringConstant.apiUrl, String.format("%s%s", ApiUrlPrefix, method));
 
             rslt = urcService.funcPermitValidate(mapArg);
@@ -125,11 +128,18 @@ public class MotanUserController {
         return rslt;
     }
 
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @RequestMapping("/stopRequest")
     public ResultVO stopRequest() {
         UserLoginRunnable.isStop = true;
         ResultVO rslt = new ResultVO<>();
-        rslt.msg = String.format("%s", UserLoginRunnable.getStatStr());
+        try {
+            rslt.msg = String.format("%s", UserLoginRunnable.getStatStr());
+        } catch (Exception ex) {
+            logger.error("stopRequest", ex);
+            rslt.msg = ex.getMessage();
+        }
         return rslt;
     }
 }

@@ -348,6 +348,11 @@
         		
         	</where>
     </select>
-    
+
+    <select id="fuzzSearchUserByName" resultType="com.yks.urc.vo.UserInfoVO">
+      select u.user_name AS userName,p.person_name AS personName,p.ding_user_id AS dingUserId
+      FROM urc_user u LEFT JOIN urc_person p ON  u.ding_user_id = p.ding_user_id
+      WHERE u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
+    </select>
     
 </mapper>
