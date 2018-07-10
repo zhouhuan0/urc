@@ -597,11 +597,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (StringUtil.isEmpty(templVO.getTemplName())) {
             throw new URCBizException("parameter templName is null", ErrorCode.E_000002);
         }
-        if ((dataRuleTemplMapper.checkDuplicateTemplName(
+/*        if ((dataRuleTemplMapper.checkDuplicateTemplName(
                 templVO.getTemplName(),templVO.getTemplId()))==true)
         {
             throw new URCBizException("parameter templName is Duplicate", ErrorCode.E_000007);
-        }
+        }*/
     }
 
     /**
@@ -829,6 +829,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @see
      */
     @Override
+    @Transactional
     public ResultVO addOrUpdateDataRule(String jsonStr) {
          /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -852,12 +853,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
 
         //分批量操作
-         List<DataRuleDO> dataBatchRuleIds=new ArrayList<DataRuleDO>(dataRuleVOS.size());
+        List<DataRuleDO> dataBatchRuleIds=new ArrayList<DataRuleDO>();
         if(dataRuleVOS!=null&&dataRuleVOS.size()>1){
             for (DataRuleVO dataRuleVo:dataRuleVOS){
                 DataRuleDO dataRuleDO=new DataRuleDO();
                 dataRuleDO.setUserName(dataRuleVo.getUserName());
                 DataRuleDO dataRule= dataRuleMapper.getDataRule(dataRuleDO);
+                //记下dataRuleId
+                dataBatchRuleIds.add(dataRule);
                 if(dataRule!=null&&dataRule.getDataRuleId()!=null){
                     List<DataRuleSysVO>  dataRuleSys=dataRuleVo.getLstDataRuleSys();
                     if(dataRuleSys!=null&&dataRuleSys.size()>0){
@@ -866,10 +869,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
                             sysKeys.add(dataRuleSysVo.getSysKey());
                         }
                         dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys,dataRule.getDataRuleId());
-                        //记下dataRuleId
-                        dataBatchRuleIds.add(dataRule);
                     }
                 }
+
             }
         }else{
         /*1、删除用户列表对应的数据权限 */
@@ -895,14 +897,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleDO.setCreateBy(operator);
             dataRuleDO.setCreateTime(new Date());
             Long dataRuleId=null;
-            if(dataBatchRuleIds.get(i)!=null){
-                dataRuleId=dataBatchRuleIds.get(i).getDataRuleId();
-            }else{
-                dataRuleId = seqBp.getNextDataRuleId();
-            }
-            dataRuleDO.setDataRuleId(dataRuleId);
             dataRuleDO.setUserName(dataRuleVO.getUserName());
-            dataRuleDOSCache.add(dataRuleDO);
+            if(dataBatchRuleIds.isEmpty()||dataBatchRuleIds.get(i)==null){
+                dataRuleId = seqBp.getNextDataRuleId();
+                dataRuleDO.setDataRuleId(dataRuleId);
+                dataRuleDOSCache.add(dataRuleDO);
+            }else{
+                dataRuleId=dataBatchRuleIds.get(i).getDataRuleId();
+
+            }
+
             /*新增urc_data_rule_sys*/
             List<DataRuleSysVO> dataRuleSysVOS = dataRuleVO.getLstDataRuleSys();
             if (dataRuleSysVOS != null) {
@@ -929,6 +933,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         sendToMq(dataRuleSysCache, lstUserName);
         return VoHelper.getSuccessResult();
     }
+
 
     private List<DataRuleVO> convertList(List<JSONObject> sourceDataRuleVOS) {
         List<DataRuleVO> dataRuleVOS = new ArrayList<>();
@@ -1023,6 +1028,26 @@ public class DataRuleServiceImpl implements IDataRuleService {
     public ResultVO<Integer> checkDuplicateTemplName(String operator, String newTemplName, String templId) {
         return VoHelper.getSuccessResult(dataRuleTemplMapper.checkDuplicateTemplName(newTemplName, templId) ? 1 : 0);
 
+    }
+
+    @Override
+    public ResultVO<List<DataRuleVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
+        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize);
+        if(lstDrSysGt!=null&&lstDrSysGt.size()>0){
+            // 查询等于最大时间的记录
+
+            List<DataRuleSysDO> lstDrSysEq= dataRuleSysMapper.getDataRuleSysEqDt(sysKey,lstDrSysGt.get(lstDrSysGt.size()-1).getCreateTime());
+            lstDrSysGt.addAll(lstDrSysEq);
+        }
+        List<DataRuleVO> lstDr = new ArrayList<>(lstDrSysGt.size());
+        for (DataRuleSysDO drSys : lstDrSysGt) {
+            DataRuleVO e = new DataRuleVO();
+//            e.setUserName();
+            // 构造DataRuleVO
+            lstDr.add(e);
+        }
+
+        return VoHelper.getSuccessResult(lstDr);
     }
 
 }

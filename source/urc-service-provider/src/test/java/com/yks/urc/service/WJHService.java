@@ -141,11 +141,11 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void dataRuleService() throws Exception{
     	List<String> lstUserName=new ArrayList<>();
-    	lstUserName.add("潘韵");
-    	lstUserName.add("程立夫");
+    	lstUserName.add("wujianghui1");
+    	lstUserName.add("wujianghui");
     	
     	
-    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"sdfd")));
+    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"panyun")));
     	
     }
     

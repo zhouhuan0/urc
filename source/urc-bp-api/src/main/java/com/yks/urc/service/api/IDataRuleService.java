@@ -1,5 +1,6 @@
 package com.yks.urc.service.api;
 
+import java.util.Date;
 import java.util.List;
 
 import com.yks.urc.vo.DataRuleTemplVO;
@@ -62,4 +63,12 @@ public interface IDataRuleService {
      */
     ResultVO checkDuplicateTemplName(String operator, String newTemplName, String templId);
 
+    /**
+     * 获取指定系统大于某个时间之后有更新的数据权限
+     * @param sysKey
+     * @param dt
+     * @param pageSize
+     * @return
+     */
+    ResultVO<List<DataRuleVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
 }

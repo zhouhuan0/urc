@@ -106,7 +106,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         exp.setIsAnd(1);
         List<ExpressionVO> subWhereClause = new ArrayList<>();
         ExpressionVO subExp = new ExpressionVO();
-        subExp.setFiledCode("F_Platform_Shop_Site");
+        subExp.setFieldCode("F_Platform_Shop_Site");
         subExp.setEntityCode("E_PlatformShopSite");
         subExp.setOper("in");
         List<String> operValuesArr = new ArrayList<>();
@@ -145,7 +145,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void login_Test() {
         Map map = new HashMap();
         map.put(StringConstant.userName, "panyun");
-        map.put(StringConstant.pwd, "ASDFGhjkl;12345");
+        map.put(StringConstant.pwd, "ASDFhjkl1234");
+        map.put(StringConstant.userName, "panyun1");
+        map.put(StringConstant.pwd, "pYKS1234");
         map.put(StringConstant.ip, "pyIP");
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }

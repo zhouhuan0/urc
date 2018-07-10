@@ -27,6 +27,16 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     Map<String, Cache> mapCache = new HashMap<>();
 
+    /**
+     * 获取用户基础信息缓存,2天
+     *
+     * @param userName
+     * @return
+     */
+    private Cache getUserInfoCache(String userName) {
+        return getCache(String.format("u_info_%s", userName), 172800);
+    }
+
     private Cache getCache(String cacheName, int expire) {
         if (!mapCache.containsKey(cacheName)) {
             DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
@@ -128,7 +138,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
         if (mapHash != null && mapHash.size() > 0) {
             // 按sysKeyr排序，前端顶部导航栏依赖此顺序
-            TreeMap<String,String> map=new TreeMap<>();
+            TreeMap<String, String> map = new TreeMap<>();
             map.putAll(mapHash);
             GetAllFuncPermitRespVO rslt = new GetAllFuncPermitRespVO();
             rslt.lstSysRoot = new ArrayList<>();
@@ -258,5 +268,17 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         if (StringUtility.isNullOrEmpty(accessTokeTime))
             return;
         getCache(accessTokeTime).put(accessTokeTime, accessTokeValue);
+    }
+
+    private String KEY_personName = "personName";
+
+    @Override
+    public String getPersonNameByUserName(String userName) {
+        return StringUtility.addEmptyString(getUserInfoCache(userName).get(KEY_personName));
+    }
+
+    @Override
+    public void setPersonNameByUserName(String userName, String personName) {
+        getUserInfoCache(userName).put(KEY_personName, personName);
     }
 }

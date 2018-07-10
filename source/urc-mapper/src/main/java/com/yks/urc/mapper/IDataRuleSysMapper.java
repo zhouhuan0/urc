@@ -8,6 +8,7 @@ import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -115,4 +116,7 @@ public interface IDataRuleSysMapper {
     List<String> getUserOwnSysByUserName(@Param("userName") String userName);
 
 
+    List<DataRuleSysDO> getDataRuleSysGtDt(String sysKey, Date dt, Integer pageSize);
+
+    List<DataRuleSysDO> getDataRuleSysEqDt(String sysKey, Date createTime);
 }
