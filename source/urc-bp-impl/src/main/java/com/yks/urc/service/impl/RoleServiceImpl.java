@@ -94,9 +94,15 @@ public class RoleServiceImpl implements IRoleService {
         queryMap.put("createBy", operator);
         //RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         RoleVO roleVo = jsonObject.getObject("role", RoleVO.class);
+        String isSeparator = System.getProperty("line.separator");
         if (roleVo != null) {
             String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
             queryMap.put("roleNames", roleNames);
+
+            if(roleVo.getRoleName().indexOf(isSeparator)<1)
+            {
+                queryMap.put("roleNames", "");
+            }
         }
         /*管理员角色不需要createBy条件，可以查看所有的角色*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);

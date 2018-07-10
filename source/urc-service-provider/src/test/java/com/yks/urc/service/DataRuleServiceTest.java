@@ -140,10 +140,10 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
-        dataRuleTemplVO.setTemplName("采购一部3C产品组方案204");
+        dataRuleTemplVO.setTemplName("采购一部3C产品组方案22");
         dataRuleTemplVO.setRemark("给xxxx的方案");
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
-//        dataRuleTemplVO.setTemplId("3");
+        //dataRuleTemplVO.setTemplId("3");
 
         JSONObject json = new JSONObject();
 
