@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 角色操作service实现类
@@ -94,12 +96,12 @@ public class RoleServiceImpl implements IRoleService {
         queryMap.put("createBy", operator);
         //RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         RoleVO roleVo = jsonObject.getObject("role", RoleVO.class);
-        String isSeparator = System.getProperty("line.separator");
+        Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
+        Matcher matcher = pattern.matcher(roleVo.getRoleName());
         if (roleVo != null) {
             String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
             queryMap.put("roleNames", roleNames);
-
-            if(roleVo.getRoleName().indexOf(isSeparator)<1)
+            if(!matcher.matches())
             {
                 queryMap.put("roleNames", "");
             }
