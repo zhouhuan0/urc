@@ -527,8 +527,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/15 14:26
      * @see
      */
-    private void sendToMq(List<DataRuleSysDO> dataRuleSysDOS, List<String> lstUserName) {
-        List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
+    private void sendToMq(List<DataRuleVO> dataRuleVOS ) {
+/*        List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
             DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
             BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
@@ -540,7 +540,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVO.userName = userName;
             dataRuleVO.lstDataRuleSys = dataRuleSysVOS;
             dataRuleVOS.add(dataRuleVO);
-        }
+        }*/
         mqBp.send2Mq(dataRuleVOS);
     }
 
