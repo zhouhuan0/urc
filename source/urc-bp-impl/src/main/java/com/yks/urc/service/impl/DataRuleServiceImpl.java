@@ -1025,4 +1025,24 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     }
 
+    @Override
+    public ResultVO<List<DataRuleVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
+        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize);
+        if(lstDrSysGt!=null&&lstDrSysGt.size()>0){
+            // 查询等于最大时间的记录
+
+            List<DataRuleSysDO> lstDrSysEq= dataRuleSysMapper.getDataRuleSysEqDt(sysKey,lstDrSysGt.get(lstDrSysGt.size()-1).getCreateTime());
+            lstDrSysGt.addAll(lstDrSysEq);
+        }
+        List<DataRuleVO> lstDr = new ArrayList<>(lstDrSysGt.size());
+        for (DataRuleSysDO drSys : lstDrSysGt) {
+            DataRuleVO e = new DataRuleVO();
+//            e.setUserName();
+            // 构造DataRuleVO
+            lstDr.add(e);
+        }
+
+        return VoHelper.getSuccessResult(lstDr);
+    }
+
 }

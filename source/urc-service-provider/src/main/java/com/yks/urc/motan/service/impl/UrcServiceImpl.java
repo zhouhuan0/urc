@@ -1,10 +1,12 @@
 package com.yks.urc.motan.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
@@ -15,6 +17,7 @@ import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -555,6 +558,15 @@ public class UrcServiceImpl implements IUrcService {
         String operator =MotanSession.getRequest().getOperator();
         String userName =jsonObject.getString("name");
         return personService.fuzzSearchPersonByName(operator,userName);
+    }
+
+    @Override
+    public ResultVO<List<DataRuleVO>> getDataRuleGtDt(String json) {
+        JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
+        String sysKey = jObj.getString(StringConstant.sysKey);
+        Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);
+        Integer pageSize = jObj.getInteger("pageSize");
+        return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
     }
 
 }
