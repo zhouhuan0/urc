@@ -224,14 +224,14 @@ public class DataRuleServiceTest extends BaseServiceTest {
         dataRuleVO.setLstDataRuleSys(dataRuleSysVOS1);
         lstDataRule.add(dataRuleVO);
 
-        DataRuleVO dataRuleVO1 = new DataRuleVO();
+/*        DataRuleVO dataRuleVO1 = new DataRuleVO();
         dataRuleVO1.setUserName("kb");
         dataRuleVO1.setLstDataRuleSys(dataRuleSysVOS1);
-        lstDataRule.add(dataRuleVO1);
+        lstDataRule.add(dataRuleVO1);*/
 
         JSONObject json = new JSONObject();
 
-        json.put("operator","admin");
+        json.put("operator","panyun");
         json.put("lstDataRule",lstDataRule);
         ResultVO resultVO = dataRuleService.addOrUpdateDataRule(json.toString());
     }
