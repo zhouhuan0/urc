@@ -429,7 +429,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         for (String userName : lstUserName) {
             DataRuleVO dataRuleVO = new DataRuleVO();
             dataRuleVO.userName = userName;
-            dataRuleVO.lstDataRuleSys = dataRuleSysVOS;
+            List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList();
+            dataRuleSysVOS1.addAll(StringUtility.jsonToList(StringUtility.toJSONString_NoException(dataRuleSysVOS),DataRuleSysVO.class));
+            for(DataRuleSysVO mem :dataRuleSysVOS1){
+                mem.setUserName(userName);
+            }
+            dataRuleVO.lstDataRuleSys = dataRuleSysVOS1;
             dataRuleVOS.add(dataRuleVO);
         }
         sendToMq(dataRuleVOS);
