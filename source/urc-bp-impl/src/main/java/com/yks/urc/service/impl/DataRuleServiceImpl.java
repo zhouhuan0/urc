@@ -398,7 +398,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (expressionDOSCache != null && !expressionDOSCache.isEmpty()) {
             expressionMapper.insertBatch(expressionDOSCache);
         }
-
         /*8、发送消息到kafka*/
         /**
          * 重新组装行权限数据
@@ -425,7 +424,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         /**/
-        convertRuleSysDo2Vo(dataRuleSyAndOpers,dataRuleSysVOS);
+        convertRuleSysDo2VoNoName(dataRuleSyAndOpers,dataRuleSysVOS);
         List<DataRuleVO> dataRuleVOS = new ArrayList<>();
         for (String userName : lstUserName) {
             DataRuleVO dataRuleVO = new DataRuleVO();
@@ -462,6 +461,51 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 ExpressionVO subExpressionVO = new ExpressionVO();
                 BeanUtils.copyProperties(subExpressionDO, subExpressionVO);
                 subExpressionVO.setOperValuesArr(JSONArray.parseArray(subExpressionDO.getOperValues(), String.class));
+                subExpressionVOS.add(subExpressionVO);
+            }
+            parentExpressionVO.setSubWhereClause(subExpressionVOS);
+            dataRuleSysVO.setRow(parentExpressionVO);
+
+            dataRuleSysVOS.add(dataRuleSysVO);
+        }
+    }
+
+
+    private void convertRuleSysDo2VoNoName(List<DataRuleSysDO> dataRuleSyAndOpers, List<DataRuleSysVO> dataRuleSysVOS) {
+        for (DataRuleSysDO dataRuleSysDO : dataRuleSyAndOpers) {
+            DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+            BeanUtils.copyProperties(dataRuleSysDO, dataRuleSysVO);
+            dataRuleSysVO.setSysName(null);
+            /*列权限DO 转 VO*/
+            List<DataRuleColVO> dataRuleColVOS = new ArrayList<>();
+            List<DataRuleColDO> dataRuleColDOS = dataRuleSysDO.getDataRuleColDOS();
+            for (DataRuleColDO dataRuleColDO : dataRuleColDOS) {
+                DataRuleColVO dataRuleColVO = new DataRuleColVO();
+                BeanUtils.copyProperties(dataRuleColDO, dataRuleColVO);
+                dataRuleColVO.setEntityName(null);
+                dataRuleColVO.setDataRuleSysId(null);
+                dataRuleColVO.setId(null);
+                dataRuleColVOS.add(dataRuleColVO);
+                dataRuleSysVO.setCol(dataRuleColVOS);
+            }
+            /*行权限 DO 转 VO*/
+            ExpressionDO parentExpressionDO = dataRuleSysDO.getParentExpressionDO();
+            ExpressionVO parentExpressionVO = new ExpressionVO();
+            BeanUtils.copyProperties(parentExpressionDO, parentExpressionVO);
+            parentExpressionVO.setIsAnd(parentExpressionDO.getAnd() ? 1 : 0);
+            parentExpressionVO.setFieldName(null);
+            parentExpressionVO.setExpressionId(null);
+            List<ExpressionDO> subExpressionDOS = parentExpressionDO.getExpressionDOList();
+            List<ExpressionVO> subExpressionVOS = new ArrayList<>();
+            for (ExpressionDO subExpressionDO : subExpressionDOS) {
+                ExpressionVO subExpressionVO = new ExpressionVO();
+                BeanUtils.copyProperties(subExpressionDO, subExpressionVO);
+                subExpressionVO.setOperValuesArr(JSONArray.parseArray(subExpressionDO.getOperValues(), String.class));
+                subExpressionVO.setOperValues(null);
+                subExpressionVO.setEntityName(null);
+                subExpressionVO.setFieldName(null);
+                subExpressionVO.setExpressionId(null);
+                subExpressionVO.setParentExpressionId(null);
                 subExpressionVOS.add(subExpressionVO);
             }
             parentExpressionVO.setSubWhereClause(subExpressionVOS);
