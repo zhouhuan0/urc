@@ -205,7 +205,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
         ExpressionVO  subWhereClause2= new ExpressionVO();
         subWhereClause2.setFiledCode("fieldSite");
         subWhereClause2.setOper("in");
-        subWhereClause2.setOperValues("[\"美国6\",\"英国6\"]");
+        subWhereClause2.setOperValues("[\"美国\",\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
         ExpressionVO  subWhereClause3= new ExpressionVO();
@@ -216,7 +216,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
         expressionVO.setSubWhereClause(subWhereClause);
 
         DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-        dataRuleSysVO.setSysKey("002");
+        dataRuleSysVO.setSysKey("001");
         dataRuleSysVO.setRow(expressionVO);
         dataRuleSysVO.setCol(dataRuleColVOS);
         List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList<>();
