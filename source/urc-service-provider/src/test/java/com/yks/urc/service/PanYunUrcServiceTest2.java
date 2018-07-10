@@ -101,7 +101,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         exp.setIsAnd(1);
         List<ExpressionVO> subWhereClause = new ArrayList<>();
         ExpressionVO subExp = new ExpressionVO();
-        subExp.setFiledCode("F_Platform_Shop_Site");
+        subExp.setFieldCode("F_Platform_Shop_Site");
         subExp.setEntityCode("E_PlatformShopSite");
         subExp.setOper("in");
         List<String> operValuesArr = new ArrayList<>();

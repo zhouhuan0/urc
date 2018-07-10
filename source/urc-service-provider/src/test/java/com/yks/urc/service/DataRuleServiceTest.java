@@ -111,20 +111,20 @@ public class DataRuleServiceTest extends BaseServiceTest {
         expressionVO.setIsAnd(1);
         List<ExpressionVO> subWhereClause = new ArrayList<>();
         ExpressionVO  subWhereClause1= new ExpressionVO();
-        subWhereClause1.setFiledCode("fieldPlatform");
+        subWhereClause1.setFieldCode("fieldPlatform");
         subWhereClause1.setEntityCode("platform");
         subWhereClause1.setOper("in");
         subWhereClause1.setOperValues("[\"eBay\",\"WISH\"]");
         subWhereClause.add(subWhereClause1);
 
         ExpressionVO  subWhereClause2= new ExpressionVO();
-        subWhereClause2.setFiledCode("fieldSite");
+        subWhereClause2.setFieldCode("fieldSite");
         subWhereClause2.setOper("in");
         subWhereClause2.setOperValues("[\"美国\",\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
         ExpressionVO  subWhereClause3= new ExpressionVO();
-        subWhereClause3.setFiledCode("fieldProductSku");
+        subWhereClause3.setFieldCode("fieldProductSku");
         subWhereClause3.setOper("in");
         subWhereClause3.setOperValues("[\"SKU001\"]");
         subWhereClause.add(subWhereClause3);
@@ -191,20 +191,20 @@ public class DataRuleServiceTest extends BaseServiceTest {
         expressionVO.setIsAnd(1);
         List<ExpressionVO> subWhereClause = new ArrayList<>();
         ExpressionVO  subWhereClause1= new ExpressionVO();
-        subWhereClause1.setFiledCode("fieldPlatform");
+        subWhereClause1.setFieldCode("fieldPlatform");
         subWhereClause1.setEntityCode("platform");
         subWhereClause1.setOper("in");
         subWhereClause1.setOperValues("[\"eBay\"，\"WISH\"]");
         subWhereClause.add(subWhereClause1);
 
         ExpressionVO  subWhereClause2= new ExpressionVO();
-        subWhereClause2.setFiledCode("fieldSite");
+        subWhereClause2.setFieldCode("fieldSite");
         subWhereClause2.setOper("in");
         subWhereClause2.setOperValues("[\"美国\"，\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
         ExpressionVO  subWhereClause3= new ExpressionVO();
-        subWhereClause3.setFiledCode("fieldProductSku");
+        subWhereClause3.setFieldCode("fieldProductSku");
         subWhereClause3.setOper("in");
         subWhereClause3.setOperValues("[\"SKU001\"]");
         subWhereClause.add(subWhereClause3);

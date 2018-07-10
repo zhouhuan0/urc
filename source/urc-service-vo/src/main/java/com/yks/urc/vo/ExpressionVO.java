@@ -28,7 +28,7 @@ public class ExpressionVO implements Serializable {
     /**
      *
      */
-    private String filedCode;
+    private String fieldCode;
     /**
      *
      */
@@ -81,12 +81,12 @@ public class ExpressionVO implements Serializable {
         this.isAnd = isAnd;
     }
 
-    public String getFiledCode() {
-        return filedCode;
+    public String getFieldCode() {
+        return fieldCode;
     }
 
-    public void setFiledCode(String filedCode) {
-        this.filedCode = filedCode;
+    public void setFieldCode(String fieldCode) {
+        this.fieldCode = fieldCode;
     }
 
     public String getEntityCode() {
