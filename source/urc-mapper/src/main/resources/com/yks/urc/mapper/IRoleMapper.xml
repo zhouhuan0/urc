@@ -257,7 +257,9 @@
             <if test="roleNames != null and roleNames != ''">
                 and
                 <foreach item="item" index="index" collection="roleNames" open="(" separator="or" close=")">
-                    role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    <if test="item != null and item != ''">
+                        role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
                 </foreach>
 
             </if>
