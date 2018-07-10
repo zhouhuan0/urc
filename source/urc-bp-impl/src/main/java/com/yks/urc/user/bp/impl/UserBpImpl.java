@@ -299,7 +299,7 @@ public class UserBpImpl implements IUserBp {
             loginLog.loginTime = new Date();
             this.insertLoginLog(loginLog);
             resp.userName = userName;
-            if (true) {
+            if (blnOk) {
                 resp.ticket = userValidateBp.createTicket(userName, ip);
                 // 缓存用户信息
                 UserVO u = new UserVO();
@@ -307,7 +307,7 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = ip;
                 cacheBp.insertUser(u);
-                resp.personName = u.userName;// userMapper.getPersonNameByUserName(u.userName);
+                resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
@@ -316,6 +316,24 @@ public class UserBpImpl implements IUserBp {
             logger.error(String.format("login ERROR:%s %s %s", userName, pwd, ip), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
+    }
+
+    /**
+     * 根据userName获取中文姓名
+     * @param userName
+     * @return
+     */
+    private String getPersonNameFromCacheOrDb(String userName) {
+        if (StringUtility.isNullOrEmpty(userName)) return userName;
+        String personName = cacheBp.getPersonNameByUserName(userName);
+        if (StringUtility.isNullOrEmpty(personName)) {
+            personName = userMapper.getPersonNameByUserName(userName);
+            if (StringUtility.isNullOrEmpty(personName)) {
+                personName = userName;
+            }
+            cacheBp.setPersonNameByUserName(userName, personName);
+        }
+        return personName;
     }
 
 //    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
