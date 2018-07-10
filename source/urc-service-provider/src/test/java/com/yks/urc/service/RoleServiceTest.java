@@ -103,10 +103,10 @@ public class RoleServiceTest extends BaseServiceTest {
         /*roleNames.append("admin-hehe").append(System.getProperty("line.separator"))
                 .append("admin-update");
         roleVO.setRoleName(roleNames.toString());*/
-        //roleNames.append("admin");
+        roleNames.append("admin");
         roleNames.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"))
                 .append(System.getProperty("line.separator"));
-        roleNames.append("admin");
+        //roleNames.append("admin");
         //roleVO.setRoleName("line.separator"+"line.separator+"+"line.separator");
         roleVO.setRoleName(roleNames.toString());
         jsonObject.put("operator","lvchangrong");
