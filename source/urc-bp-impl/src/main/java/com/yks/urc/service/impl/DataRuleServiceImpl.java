@@ -1030,23 +1030,71 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     }
 
-    @Override
-    public ResultVO<List<DataRuleVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
-        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize);
-        if(lstDrSysGt!=null&&lstDrSysGt.size()>0){
-            // 查询等于最大时间的记录
+    private List<DataRuleSysVO> getDataRuleVOByDataRuleSys(List<DataRuleSysDO> lstDrSysGt){
+        List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
+        if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
+            for (int j = 0; j < lstDrSysGt.size(); j++) {
+                //通过sysKey得到 行权限
+                List<ExpressionDO> expressionList = expressionMapper.listExpressionDOsBySysKey(lstDrSysGt.get(j).getDataRuleSysId());
+                //通过sysKey得到列权限
+                List<DataRuleColDO> dataRuleColList = dataRuleColMapper.listRuleColBySysKey(lstDrSysGt.get(j).getDataRuleSysId());
+                List<DataRuleColVO> dataRuleColVOList = new ArrayList<DataRuleColVO>();
+                for (DataRuleColDO colDO : dataRuleColList) {
+                    DataRuleColVO dataRuleColVO = new DataRuleColVO();
+                    if (!StringUtility.isNullOrEmpty(colDO.getEntityCode())) {
+                        Entity entity = entityMapper.selectEntityByCode(colDO.getEntityCode());
+                        if (entity != null) {
+                            dataRuleColVO.setEntityName(entity.getEntityName());
+                        }
+                    }
+                    BeanUtils.copyProperties(colDO, dataRuleColVO);
+                    dataRuleColVOList.add(dataRuleColVO);
+                }
+                List<ExpressionVO> expressionVOList = new ArrayList<ExpressionVO>();
+                ExpressionVO expressionVO = new ExpressionVO();
+                for (ExpressionDO expressionDO : expressionList) {
+                    if (expressionDO.getParentExpressionId() == null) {
+                        expressionVO.setIsAnd(1);
+                        continue;
+                    }
+                    ExpressionVO expression = new ExpressionVO();
+                    if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
+                        String operValues = expressionDO.getOperValues();
+                        List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+                        expression.setOperValuesArr(operValuesArr);
+                    }
+                    if (!StringUtility.isNullOrEmpty(expressionDO.getEntityCode())) {
+                        Entity entity = entityMapper.selectEntityByCode(expressionDO.getEntityCode());
+                        if (entity != null) {
+                            expressionDO.setEntityName(entity.getEntityName());
+                        }
+                    }
+                    BeanUtils.copyProperties(expressionDO, expression);
+                    expressionVOList.add(expression);
+                }
+                DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
+                expressionVO.setSubWhereClause(expressionVOList);
+                dataRuleSysVO.createTime=lstDrSysGt.get(j).getCreateTime();
+                dataRuleSysVO.userName=lstDrSysGt.get(j).getUserName();
+                dataRuleSysVO.sysKey = lstDrSysGt.get(j).getSysKey();
+                dataRuleSysVO.col = dataRuleColVOList;
+                dataRuleSysVO.row = expressionVO;
+                lstDataRuleSys.add(dataRuleSysVO);
+            }
+        }
+        return  lstDataRuleSys;
+    }
 
+    @Override
+    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
+        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey,dt,pageSize==null ? 200:pageSize);
+       if(lstDrSysGt!=null&&lstDrSysGt.size()>0){
+            // 查询等于最大时间的记录
             List<DataRuleSysDO> lstDrSysEq= dataRuleSysMapper.getDataRuleSysEqDt(sysKey,lstDrSysGt.get(lstDrSysGt.size()-1).getCreateTime());
+            lstDrSysEq.remove(0);
             lstDrSysGt.addAll(lstDrSysEq);
         }
-        List<DataRuleVO> lstDr = new ArrayList<>(lstDrSysGt.size());
-        for (DataRuleSysDO drSys : lstDrSysGt) {
-            DataRuleVO e = new DataRuleVO();
-//            e.setUserName();
-            // 构造DataRuleVO
-            lstDr.add(e);
-        }
-
+        List<DataRuleSysVO>  lstDr=getDataRuleVOByDataRuleSys(lstDrSysGt);
         return VoHelper.getSuccessResult(lstDr);
     }
 

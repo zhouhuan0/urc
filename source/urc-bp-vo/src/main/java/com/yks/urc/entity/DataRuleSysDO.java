@@ -14,6 +14,8 @@ public class DataRuleSysDO {
 
     private String sysName;
 
+    private String userName;
+
     private Date createTime;
 
     private String createBy;
@@ -69,6 +71,14 @@ public class DataRuleSysDO {
     }
     public String getSysName() {
         return sysName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setSysName(String sysName) {

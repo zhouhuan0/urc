@@ -251,6 +251,11 @@ public class DataRuleServiceTest extends BaseServiceTest {
         dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
     }*/
 
+    @Test
+    public void getDataRuleGtDt(){
+        System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleGtDt("001",null,3)));
+    }
+
 
     @Test
     public void deleteDataRuleTempl(){

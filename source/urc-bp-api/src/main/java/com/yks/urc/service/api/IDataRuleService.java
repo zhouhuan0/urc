@@ -3,10 +3,7 @@ package com.yks.urc.service.api;
 import java.util.Date;
 import java.util.List;
 
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.*;
 
 public interface IDataRuleService {
 
@@ -70,5 +67,5 @@ public interface IDataRuleService {
      * @param pageSize
      * @return
      */
-    ResultVO<List<DataRuleVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
+    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
 }

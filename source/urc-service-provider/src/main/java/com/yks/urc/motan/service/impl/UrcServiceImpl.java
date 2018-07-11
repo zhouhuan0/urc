@@ -561,7 +561,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    public ResultVO<List<DataRuleVO>> getDataRuleGtDt(String json) {
+    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json) {
         JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
         String sysKey = jObj.getString(StringConstant.sysKey);
         Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);

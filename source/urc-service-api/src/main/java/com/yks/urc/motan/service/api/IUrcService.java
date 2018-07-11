@@ -415,5 +415,5 @@ public interface IUrcService {
      * @param json
      * @return
      */
-    ResultVO<List<DataRuleVO>> getDataRuleGtDt(String json);
+    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
 }
