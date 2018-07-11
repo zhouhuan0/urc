@@ -1,8 +1,10 @@
 package com.yks.urc.mq.bp.impl;
 
+import com.yks.urc.service.impl.DataRuleServiceImpl;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.yks.mq.utils.KafkaProducerSingleton;
@@ -40,9 +42,11 @@ public class MqBpImpl implements IMqBp {
             KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
         }
     }
+    private final Logger logger = Logger.getLogger(this.getClass());
 
     @Override
     public void send2Mq(List<DataRuleVO> dataRuleVOList) {
+        logger.info(StringUtility.toJSONString_NoException(dataRuleVOList));
         if (dataRuleVOList == null || dataRuleVOList.isEmpty()) {
             return;
         }
@@ -58,6 +62,7 @@ public class MqBpImpl implements IMqBp {
                 String sysKey = drSys.sysKey;
                 String topic = getDataRuleTopic(sysKey);
                 String value = StringUtility.toJSONString_NoException(drSys);
+                logger.info(String.format("send2Mq:%s %s", topic, value));
                 ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
                 Callback arg1 = new Callback() {
                     @Override
