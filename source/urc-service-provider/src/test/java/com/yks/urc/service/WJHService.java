@@ -24,6 +24,8 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.helper.VoHelper;
 
+import javax.management.relation.Role;
+
 
 public class WJHService extends BaseServiceTest {
 	
@@ -80,6 +82,18 @@ public class WJHService extends BaseServiceTest {
     public void SynPersonOrgFromDing() throws Exception{
     	personService.SynPersonOrgFromDing("hand");
     	//personService.getUserByDingOrgId("1", "0", "");
+    }
+
+    @Test
+    public void getRolesByInfo() throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pageNumber",1);
+        jsonObject.put("pageData",20);
+        jsonObject.put("operator","wujianghui");
+        RoleVO role =new RoleVO();
+        role.setRoleName("wjh");
+        jsonObject.put("role",role);
+        System.out.println(StringUtility.toJSONString( roleService.getRolesByInfo(jsonObject.toString())));
     }
     
     

@@ -96,11 +96,11 @@ public class RoleServiceImpl implements IRoleService {
         queryMap.put("createBy", operator);
         //RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
         RoleVO roleVo = jsonObject.getObject("role", RoleVO.class);
-        Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
-        Matcher matcher = pattern.matcher(roleVo.getRoleName());
         if (roleVo != null) {
             String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
             queryMap.put("roleNames", roleNames);
+            Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
+            Matcher matcher = pattern.matcher(roleVo.getRoleName());
             if(!matcher.matches())
             {
                 queryMap.put("roleNames", "");
