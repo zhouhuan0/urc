@@ -27,9 +27,9 @@ import org.apache.ibatis.session.ResultHandler;
 import org.apache.ibatis.session.defaults.DefaultSqlSession.StrictMap;
 import org.apache.log4j.Logger;
 
-@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
+/*@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
         @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})*/
 public class MybatisInterceptor implements Interceptor {
     private static Logger logger =Logger.getLogger(MybatisInterceptor.class);
 
