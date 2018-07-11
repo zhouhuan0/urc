@@ -266,6 +266,14 @@ public class RoleServiceImpl implements IRoleService {
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         } else {
+
+            RoleDO role= roleMapper.getRoleByRoleId(String.valueOf(roleVO.getRoleId()));
+            if(!role.getRoleName().equals(roleVO.getRoleName())){
+                if(roleMapper.checkDuplicateRoleName(roleVO.getRoleName(),null)){
+                    throw new URCBizException(ErrorCode.E_101001.getState(), "编辑角色名称重复");
+                }
+            }
+
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
             roleDO.setModifiedBy(operator);
