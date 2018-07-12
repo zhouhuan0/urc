@@ -790,8 +790,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.insert(dataRuleTemplDO);
         } else {
-            DataRuleTemplDO dataRuleTemplDO = new DataRuleTemplDO();
-                    dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),operator);
+            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),operator);
                 if(!dataRuleTemplDO.getTemplName().equals(templVO.getTemplName()))
                 {
                     if(dataRuleTemplMapper.checkDuplicateTemplName(templVO.getTemplName(),null))
