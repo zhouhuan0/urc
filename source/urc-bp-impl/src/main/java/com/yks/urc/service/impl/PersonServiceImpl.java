@@ -269,6 +269,7 @@ public class PersonServiceImpl implements IPersonService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO fuzzSearchPersonByName(String operator, String userName) {
+
         try {
             List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName(userName);
             if (infoVOList == null && infoVOList.size() == 0) {

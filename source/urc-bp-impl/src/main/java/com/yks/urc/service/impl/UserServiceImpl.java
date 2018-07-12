@@ -263,6 +263,7 @@ public class UserServiceImpl implements IUserService {
             }
         }
             return VoHelper.getSuccessResult(omsPlatformVOS);
+
     }
 
     @Override

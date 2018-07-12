@@ -535,6 +535,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getPlatformShopSite(String jsonStr) {
         String operator =MotanSession.getRequest().getOperator();
         return userService.getPlatformShopSite(operator);
+
     }
 
     @Override
@@ -542,6 +543,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO syncPlatform(String jsonStr) {
         String operator =MotanSession.getRequest().getOperator();
         return userService.syncPlatform(operator);
+
     }
 
     @Override
@@ -549,6 +551,8 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO syncShopSite(String jsonStr) {
         String operator =MotanSession.getRequest().getOperator();
         return userService.syncShopSite(operator);
+
+
     }
 
     @Override
@@ -558,6 +562,7 @@ public class UrcServiceImpl implements IUrcService {
         String operator =MotanSession.getRequest().getOperator();
         String userName =jsonObject.getString("name");
         return personService.fuzzSearchPersonByName(operator,userName);
+
     }
 
     @Override
@@ -567,6 +572,7 @@ public class UrcServiceImpl implements IUrcService {
         Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);
         Integer pageSize = jObj.getInteger("pageSize");
         return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
+
     }
 
 }

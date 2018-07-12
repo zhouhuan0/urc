@@ -103,6 +103,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 platformLock.unlock();
             }
         } else {
+
             logger.info("同步userInfo数据正在执行...,");
             if (!"system".equals(operator)) {
                 // 手动触发正在执行..记录日志
@@ -182,6 +183,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步账号站点数据出错..", e);
             } finally {
                 shopSiteLock.unlock();
+
             }
         } else {
             logger.info("同步userInfo数据正在执行...,");
