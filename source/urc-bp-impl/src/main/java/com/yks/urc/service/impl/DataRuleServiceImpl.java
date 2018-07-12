@@ -681,11 +681,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (StringUtil.isEmpty(templVO.getTemplName())) {
             throw new URCBizException("parameter templName is null", ErrorCode.E_000002);
         }
-/*        if ((dataRuleTemplMapper.checkDuplicateTemplName(
-                templVO.getTemplName(),templVO.getTemplId()))==true)
-        {
-            throw new URCBizException("parameter templName is Duplicate", ErrorCode.E_000007);
-        }*/
     }
 
     /**
