@@ -26,6 +26,9 @@ import org.springframework.beans.BeanUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -56,7 +59,7 @@ public class StringFilter implements Filter {
         decodeSession(request);
 
         Response response = caller.call(request);
-        doDecorateResponse(caller,response);
+        doDecorateResponse(caller,response,request);
         return response;
     }
 
@@ -80,7 +83,7 @@ public class StringFilter implements Filter {
         return method.getReturnType() == String.class;
     }
 
-    private void doDecorateResponse(Caller<?> caller, Response response){
+    private void doDecorateResponse(Caller<?> caller, Response response,Request request){
         if (!(response instanceof DefaultResponse)){
             return;
         }
@@ -88,16 +91,44 @@ public class StringFilter implements Filter {
         if(caller instanceof Provider){
             doDecorateProvider(resp);
         }else if (caller instanceof Referer){
-            doDecorateReferer(resp);
+            doDecorateReferer(resp,request);
         }
     }
 
     /**
+     * 获取返回值类型
+     * TODO 后续可以考虑对性能优化，进行缓存
+     * @param request
+     * @return
+     */
+    private Type getReturnType(Request request){
+        Method method;
+        try {
+            Class<?> clz = Class.forName(request.getInterfaceName());
+            String[] paramDescs = StringUtils.split(request.getParamtersDesc(), ",");
+            boolean isParamEmpty = ArrayUtils.isEmpty(paramDescs)||"void".equals(paramDescs[0]);
+            Class<?>[] argTypes = new Class<?>[isParamEmpty ? 0 : paramDescs.length];
+            if (!isParamEmpty){
+                for (int i = 0; i < paramDescs.length; i++) {
+                    argTypes[i] = Class.forName(String.valueOf(paramDescs[i]));
+                }
+            }
+            method = BeanUtils.findMethod(clz, request.getMethodName(), argTypes);
+            return method.getAnnotatedReturnType().getType();
+        } catch (ClassNotFoundException e) {
+            return null;
+        }
+    }
+    /**
      * 对motan客户端获取的结果集进行反序列化
      * @param response
      */
-    private void doDecorateReferer(DefaultResponse response) {
+    private void doDecorateReferer(DefaultResponse response,Request request) {
+        Type returnType=getReturnType(request);
+        if(returnType==null) return;
+
         Object value = response.getValue();
+        //如果返回值为motan序列化后的值，则先进行反序列化解析
         if (value instanceof DeserializableObject){
             try {
                 value = ((DeserializableObject) value).deserialize(Object.class);
@@ -105,7 +136,32 @@ public class StringFilter implements Filter {
                 log.error("对象反序列化失败", e);
             }
         }
-        response.setValue(StringUtility.parseObject(value.toString(), ResultVO.class));
+        //如果返回值不为空，则进行JSON反序列化
+        if (null != value){
+            //当前返回值类型为非泛型对象
+            if (returnType instanceof Class<?>){
+                Class<?> typeClz = (Class) returnType;
+                //数组类型返回值
+                if (typeClz.isArray()){
+                    value = JSONObject.parseArray(value.toString(), typeClz);
+                }else{
+                    //对象类型
+                    value = JSONObject.parseObject(value.toString(), typeClz);
+                }
+            }else if (returnType instanceof ParameterizedType){
+                //当前返回值类型为泛型对象
+                //当前返回值类型为集合类型
+                Class<?> type = (Class<?>) ((ParameterizedType) returnType).getRawType();
+                if (Collection.class.isAssignableFrom(type)){
+                    Type[] actualTypes = ((ParameterizedType) returnType).getActualTypeArguments();
+                    value = JSONObject.parseArray(value.toString(), ((Class<?>)actualTypes[0]));
+                }else{
+                    //对象类型
+                    value = JSONObject.parseObject(value.toString(), returnType);
+                }
+            }
+        }
+        response.setValue(value);
     }
 
     /**
