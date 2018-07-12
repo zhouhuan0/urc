@@ -241,6 +241,7 @@ public class UserServiceImpl implements IUserService {
                 omsPlatformVO.lstShop =new ArrayList<>(shopSiteDOS.size());
                 for (ShopSiteDO shopSiteDO : shopSiteDOS) {
                         OmsShopVO omsShopVO = new OmsShopVO();
+                        //针对速卖通的
                         omsShopVO.shopId = shopSiteDO.getSellerId();
                         omsShopVO.shopName = shopSiteDO.getShop();
                         //如果站点id为空,则list为空

@@ -213,6 +213,7 @@ public class UserBpImpl implements IUserBp {
         // 获取总条数
         long total = userMapper.getUsersByUserInfoCount(query, strings);
         PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
