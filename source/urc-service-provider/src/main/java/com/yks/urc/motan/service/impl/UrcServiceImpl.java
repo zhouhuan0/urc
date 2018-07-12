@@ -66,7 +66,8 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO syncDingOrgAndUser() {
-        return personService.SynPersonOrgFromDing("hand");
+        String operator = MotanSession.getRequest().getOperator();
+        return personService.SynPersonOrgFromDing(operator);
     }
 
     @Override
