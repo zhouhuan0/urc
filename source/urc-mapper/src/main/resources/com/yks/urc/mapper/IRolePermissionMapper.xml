@@ -83,7 +83,16 @@
         where role_permission_id = #{rolePermissionId,jdbcType=CHAR}
     </select>
 
-    <select id="getRolePermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
+    <select id="getRoleSuperAdminPermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
+    SELECT sys_key, selected_context FROM urc_role_permission
+    <where>
+        <if test="roleId != null ">
+            role_id=#{roleId}
+        </if>
+    </where>
+</select>
+
+    <select id="getRoleSalePermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
         SELECT sys_key, selected_context FROM urc_role_permission
         <where>
             <if test="roleId != null ">

@@ -567,10 +567,14 @@ public class RoleServiceImpl implements IRoleService {
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+                    List<RolePermissionDO> rolePermissionList=null;
                     if (!roleMapper.isSuperAdminAccount(operator)) {
+                        //非超管
                         permissionDO.setCreateBy(operator);
+                        rolePermissionList = rolePermissionMapper.getRoleSalePermission(permissionDO);
+                    }else{
+                        rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
                     }
-                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
                     List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
                     if (rolePermissionList != null && rolePermissionList.size() > 0) {
                         for (RolePermissionDO rolePermissionDO : rolePermissionList) {
@@ -853,7 +857,7 @@ public class RoleServiceImpl implements IRoleService {
 		/* 复制对应的角色功能权限关系 */
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
         rolePermissionDO.setRoleId(roleId);
-        List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
+        List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRoleSuperAdminPermission(rolePermissionDO);
         //如果权限列表为空，则不新增权限列表
         if (CollectionUtils.isEmpty(rolePermissions)) {
             // return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "该角色的权限列表为空");

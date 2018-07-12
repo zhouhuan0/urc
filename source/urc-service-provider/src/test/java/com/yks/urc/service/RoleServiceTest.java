@@ -105,18 +105,18 @@ public class RoleServiceTest extends BaseServiceTest {
         /*roleNames.append("admin-hehe").append(System.getProperty("line.separator"))
                 .append("admin-update");
         roleVO.setRoleName(roleNames.toString());*/
-        roleNames.append("admin");
-        roleNames.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"))
-                 .append(System.getProperty("line.separator"));
+        roleNames.append("1");
+/*        roleNames.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"))
+                 .append(System.getProperty("line.separator"));*/
         //roleNames.append("admin");
         //roleVO.setRoleName("line.separator"+"line.separator+"+"line.separator");
-        roleVO.setRoleName(roleNames.toString());
-        jsonObject.put("operator","lvchangrong");
+        roleVO.setRoleName("1");
+        jsonObject.put("operator","wujianghui");
         jsonObject.put("pageNumber",1);
-        jsonObject.put("pageData",8);
+        jsonObject.put("pageData",20);
         jsonObject.put("role",roleVO);
         ResultVO resultVO = roleService.getRolesByInfo(jsonObject.toString());
-        System.out.println(resultVO);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
     @Test
     public void test()

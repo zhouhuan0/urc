@@ -58,11 +58,18 @@ public interface IRolePermissionMapper {
 
 
 	/**
-	 * 获取多个角色已有的功能权限
+	 * 获取多个角色已有的功能权限超管
 	 * @param permissionDO
 	 * @return
 	 */
-	List<RolePermissionDO> getRolePermission(RolePermissionDO permissionDO);
+	List<RolePermissionDO> getRoleSuperAdminPermission(RolePermissionDO permissionDO);
+
+    /**
+     * 获取多个角色已有的功能权限业务员
+     * @param permissionDO
+     * @return
+     */
+    List<RolePermissionDO> getRoleSalePermission(RolePermissionDO permissionDO);
 
     /**
      *  通过用户名获取角色对应的sys_key
@@ -88,6 +95,7 @@ public interface IRolePermissionMapper {
      * @return
      */
     Integer deleteByRoleIdInSysKey( @Param("roleId") String roleId, @Param("roleSysKey") List<String> roleSysKey);
+
 
 
 }

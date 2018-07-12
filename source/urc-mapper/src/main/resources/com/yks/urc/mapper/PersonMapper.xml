@@ -119,7 +119,7 @@
      		 </if>
      		 
      		<if test="personName != null and personName != '' ">
-     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+              and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))  OR up.person_name_collage  LIKE CONCAT(CONCAT('%',#{personName},'%'))
      		 </if>
      </where>
      ORDER BY up.job_number desc
