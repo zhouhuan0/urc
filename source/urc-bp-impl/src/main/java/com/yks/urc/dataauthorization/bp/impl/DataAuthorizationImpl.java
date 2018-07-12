@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
      * @Date 2018/6/12 20:52
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO syncPlatform(String operator) {
         if (platformLock.tryLock()) {
             try {
@@ -128,6 +130,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
      * @Date 2018/6/12 21:14
      */
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public ResultVO syncShopSite(String operator) {
         if (shopSiteLock.tryLock()) {
             try {
@@ -139,10 +142,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 logger.info("清理账号站点表完成");
                 for (PlatformDO platformDO : platformDOS) {
                     // 将获取的平台进行转码
-                    String platforms =platformDO.getPlatformId();
-                    if ("JD ID".equals(platformDO.getPlatformId())) {
-                        platforms = URLEncoder.encode(platformDO.getPlatformId());
-                    }
+                    String platforms = URLEncoder.encode(platformDO.getPlatformId(),"utf-8");
                     String url = GET_SHOP_AND_SITE + "&platform=" + platforms;
                     logger.info(String.format("请求的地址为:[%s ]",url));
                     String getShopAndSiteResult = HttpUtility.httpGet(url);

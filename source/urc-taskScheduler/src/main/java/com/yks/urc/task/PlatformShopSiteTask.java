@@ -22,7 +22,7 @@ public class PlatformShopSiteTask {
     private DataAuthorization dataAuthorization;
 
     public static final String SYSTEM = "system";
-    @Scheduled(cron = "0 0 12 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     public void executeGetPlatformShopSite(){
         try {
             logger.info("开始同步平台数据");

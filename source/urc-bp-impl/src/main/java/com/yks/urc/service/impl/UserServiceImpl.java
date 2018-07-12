@@ -266,7 +266,7 @@ public class UserServiceImpl implements IUserService {
            }
            return VoHelper.getSuccessResult(omsPlatformVOS);
        }catch (Exception e){
-           logger.error("未知异常:",e);
+           logger.error("获取数据异常:",e);
            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"未知异常");
        }
     }
