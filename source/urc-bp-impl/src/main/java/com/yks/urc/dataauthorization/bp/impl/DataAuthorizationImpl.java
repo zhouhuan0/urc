@@ -60,7 +60,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
     DistributedReentrantLock platformLock = new DistributedReentrantLock("syncPlatform");
 
     /**
-     * 获取平台信息
+     * 同步平台信息
      *
      * @param operator
      * @return
@@ -119,7 +119,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
 
     DistributedReentrantLock shopSiteLock = new DistributedReentrantLock("syncShopSite");
     /**
-     * 获取平台下的站点和店铺信息
+     * 同步站点和店铺信息
      *
      * @param operator
      * @param operator
@@ -139,7 +139,10 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 logger.info("清理账号站点表完成");
                 for (PlatformDO platformDO : platformDOS) {
                     // 将获取的平台进行转码
-                    String platforms = URLEncoder.encode(platformDO.getPlatformId());
+                    String platforms =platformDO.getPlatformId();
+                    if ("JD ID".equals(platformDO.getPlatformId())) {
+                        platforms = URLEncoder.encode(platformDO.getPlatformId());
+                    }
                     String url = GET_SHOP_AND_SITE + "&platform=" + platforms;
                     logger.info(String.format("请求的地址为:[%s ]",url));
                     String getShopAndSiteResult = HttpUtility.httpGet(url);
