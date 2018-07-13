@@ -200,7 +200,7 @@
         <module>urc-bp-api</module>
         <module>urc-bp-vo</module>
         <module>urc-bp-common</module>
-        <!--<module>democlient</module>-->
+        <module>democlient</module>
     </modules>
 
 
