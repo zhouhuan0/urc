@@ -57,7 +57,7 @@ public class HttpUtility {
 
 	/**
 	 * 向指定 URL 发送GET方法的请求
-	 * 
+	 *
 	 * @param url
 	 *            发送请求的 URL
 	 * @param param
@@ -66,6 +66,23 @@ public class HttpUtility {
 	 * @throws Exception
 	 */
 	public static String sendGet(String url, String param) throws Exception {
+		return sendGetAndHeader(url,param,null);
+	}
+
+
+
+	/**
+	 * 向指定 URL 发送GET方法的请求并且带有请求头
+	 *
+	 * @param url
+	 *            发送请求的 URL
+	 * @param param
+	 * @param header
+	 *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+	 * @return 所代表远程资源的响应结果
+	 * @throws Exception
+	 */
+	public static String sendGetAndHeader(String url, String param,String header) throws Exception {
 		String result = "";
 		BufferedReader in = null;
 		try {
@@ -78,6 +95,13 @@ public class HttpUtility {
 			conn.setRequestProperty("accept", "*/*");// 设置通用的请求属性
 			conn.setRequestProperty("connection", "Keep-Alive");
 			conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
+			if(!"".equals(header)&&header!=null){
+				String headers[]=header.split("&");
+				for (int i=0;i<headers.length;i++){
+					String property[]=headers[i].split("=");
+					conn.setRequestProperty(property[0],property[1]);
+				}
+			}
 			conn.setConnectTimeout(4000);
 			conn.connect();// 建立实际的连接
 			in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));// 定义BufferedReader输入流来读取URL的响应
@@ -100,6 +124,7 @@ public class HttpUtility {
 		}
 		return result;
 	}
+
 
 	public static String doPost(String url, String paramBody, String charset) {
 		HttpClient httpClient = null;
