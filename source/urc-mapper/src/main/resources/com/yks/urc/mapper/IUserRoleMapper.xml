@@ -66,6 +66,29 @@
     </delete>
 
 
+    <delete id="deleteUserRoleInUserName" parameterType="com.yks.urc.entity.UserRoleDO">
+        delete from urc_user_role
+        <where>
+            <if test="userRole.roleId != null ">
+                role_id =#{userRole.roleId}
+            </if>
+            <if test="userRole.createBy != null and userRole.createBy != '' ">
+                and create_by =#{userRole.createBy}
+            </if>
+            <if test=" userNameList !=null and userNameList.size >0 ">
+                AND   user_name  IN
+                <foreach collection="userNameList" index="index" item="userName" open="(" separator="," close=")">
+                    #{userName}
+                </foreach>
+            </if>
+
+
+        </where>
+
+    </delete>
+
+
+
     <!--根据userName删除-->
     <delete id="deleteByUserName" parameterType="java.lang.String">
       delete from urc_user_role where user_name = #{userName,jdbcType=VARCHAR}

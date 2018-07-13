@@ -33,6 +33,18 @@
         </foreach>
     </select>
 
+
+    <select id="getDataRule" parameterType="com.yks.urc.entity.DataRuleDO"   resultMap="BaseResultMap" >
+        select
+        <include refid="Base_Column_List"/>
+         from urc_data_rule
+          <where>
+                <if test=" userName != null and userName != ''  ">
+                    user_name = #{userName}
+                </if>
+          </where>
+    </select>
+
     <!--根据userName列表批量删除 -->
     <delete id="delBatchByUserNames" parameterType="java.util.List">
         delete from urc_data_rule

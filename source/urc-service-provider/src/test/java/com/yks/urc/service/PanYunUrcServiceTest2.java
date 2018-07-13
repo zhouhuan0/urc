@@ -76,7 +76,12 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         System.out.println(permissionService.importSysPermit(strEncrypt));
     }
 
-    public static void main(String[] args) {
+    @Test
+    public void utcTime_Test() {
+        System.out.println(StringUtility.dt2Str(new Date(), "yyyy-MM-dd'T'HH:mm:ssZ"));
+    }
+
+    public void mqConsumer_Test() {
         String topic = String.format("URC_USER_DATARULE_%s", "001");
         MessageCallBack callBack = new MessageCallBack() {
 
@@ -140,7 +145,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void login_Test() {
         Map map = new HashMap();
         map.put(StringConstant.userName, "panyun");
-        map.put(StringConstant.pwd, "ASDFGhjkl;12345");
+        map.put(StringConstant.pwd, "ASDFhjkl1234");
+        map.put(StringConstant.userName, "panyun1");
+        map.put(StringConstant.pwd, "pYKS1234");
         map.put(StringConstant.ip, "pyIP");
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }
@@ -162,6 +169,22 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     public void syncDingOrgAndUser_Test() throws Exception {
         myDingApiProxy.getDingAccessToken();
+    }
+
+    @Test
+    public void getUserByUserInfo_Test() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("operator", "panyun");
+        map.put("pageNumber", 1);
+        map.put("pageData", 22);
+        Map<String, String> mapUser = new HashMap<>();
+        mapUser.put("jobNumber", "");
+        mapUser.put("phoneNum", "");
+//        mapUser.put("personName", "潘韵");
+        map.put("user", mapUser);
+        String jsonStr = StringUtility.toJSONString_NoException(map);
+        System.out.println("----------------------" +
+                StringUtility.toJSONString_NoException(service.getUserByUserInfo(jsonStr)));
     }
 
     public void getUserInfo_Test() throws Exception {
@@ -262,7 +285,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 //        Cache cacheTest = b.cacheName("cache").expire(50).build();
 //        cacheTest.put("kobe", "bryant");
 
-        Cache cacheForever = b.cacheName("user_sys_func_panyun1").build();
+        Cache cacheForever = b.cacheName("user_sys_func_panyun2").build();
 //        Map<String, String> allCacheItem = cacheForever.getAll();
 
 //        Map<String, String> map = new HashMap<>();

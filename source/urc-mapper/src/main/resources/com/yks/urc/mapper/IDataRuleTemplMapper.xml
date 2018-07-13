@@ -135,5 +135,14 @@
         </set>
         where templ_id = #{templId,jdbcType=BIGINT}
     </update>
-
+    <!--判断给定的方案名是否重复-->
+    <select id="checkDuplicateTemplName" resultType="Boolean">
+        SELECT COUNT(id) > 0 FROM urc_data_rule_templ drt
+        <where>
+            drt.templ_name = #{newTemplName}
+            <if test="templId != null">
+                and drt.templ_id != #{templId}
+            </if>
+        </where>
+    </select>
 </mapper>

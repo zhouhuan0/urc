@@ -61,4 +61,11 @@ public interface IRoleService {
 	ResultVO handleExpiredRole();
 
     ResultVO assignAllPermit2Role();
+
+    /**
+     * 判断当前用户是否时超级管理员
+     * @param operator
+     * @return
+     */
+    ResultVO operIsSuperAdmin(String operator);
 }

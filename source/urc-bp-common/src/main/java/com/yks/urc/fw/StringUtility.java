@@ -17,6 +17,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
+import com.alibaba.fastjson.TypeReference;
+import com.yks.urc.vo.ResultVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -486,6 +488,11 @@ public class StringUtility {
 			logger.error("toJSONString_NoException", ex);
 			return Empty;
 		}
+	}
+
+	public static <T> ResultVO<T> parseResultVO(String strSrc, Class<T> t) {
+		return JSON.parseObject(strSrc, new TypeReference<ResultVO<T>>() {
+		});
 	}
 
 	public static <T> T parseObject(String strSrc, Class<T> t) {

@@ -2,14 +2,11 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.DataRuleSysDO;
 import com.yks.urc.entity.UserDO;
-import com.yks.urc.vo.UserVO;
-import com.yks.urc.vo.helper.Query;
 
-import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 public interface IDataRuleSysMapper {
 
@@ -78,6 +75,12 @@ public interface IDataRuleSysMapper {
      */
     Integer delRuleSysDatasByIdsAndCreatBy(@Param("dataRuleIds") List<Long> dataRuleIds, @Param("createBy") String createBy);
 
+    /**
+     * Description: 根据dataRuleID以及sysKeys列表删除 权限数据Sys、行权限、列权限
+     * @param dataRuleId
+     * @param sysKeys
+     */
+    Integer delRuleSysDatasByIdsAndSyskey( @Param("sysKeys") List<String> sysKeys,@Param("dataRuleId") Long dataRuleId);
 
     /**
      * Description: 根据dataRuleId 获取数据权限Sys 包含行权限、列权限
@@ -107,4 +110,9 @@ public interface IDataRuleSysMapper {
      * @see
      */
     List<String> getUserOwnSysByUserName(@Param("userName") String userName);
+
+
+    List<DataRuleSysDO> getDataRuleSysGtDt(@Param("sysKey") String sysKey ,@Param("createTime") Date date,@Param("pageSize") Integer pageSize );
+
+    List<DataRuleSysDO> getDataRuleSysEqDt(@Param("sysKey") String sysKey,@Param("createTime") Date createTime);
 }

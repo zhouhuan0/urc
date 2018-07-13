@@ -35,6 +35,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 角色操作service实现类
@@ -97,6 +99,12 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVo != null) {
             String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
             queryMap.put("roleNames", roleNames);
+            Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
+            Matcher matcher = pattern.matcher(roleVo.getRoleName());
+            if(!matcher.matches())
+            {
+                queryMap.put("roleNames", "");
+            }
         }
         /*管理员角色不需要createBy条件，可以查看所有的角色*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -258,6 +266,14 @@ public class RoleServiceImpl implements IRoleService {
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         } else {
+
+            RoleDO role= roleMapper.getRoleByRoleId(String.valueOf(roleVO.getRoleId()));
+            if(!role.getRoleName().equals(roleVO.getRoleName())){
+                if(roleMapper.checkDuplicateRoleName(roleVO.getRoleName(),null)){
+                    throw new URCBizException(ErrorCode.E_101001.getState(), "编辑角色名称重复");
+                }
+            }
+
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
             roleDO.setModifiedBy(operator);
@@ -551,10 +567,14 @@ public class RoleServiceImpl implements IRoleService {
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+                    List<RolePermissionDO> rolePermissionList=null;
                     if (!roleMapper.isSuperAdminAccount(operator)) {
+                        //非超管
                         permissionDO.setCreateBy(operator);
+                        rolePermissionList = rolePermissionMapper.getRoleSalePermission(permissionDO);
+                    }else{
+                        rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
                     }
-                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRolePermission(permissionDO);
                     List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
                     if (rolePermissionList != null && rolePermissionList.size() > 0) {
                         for (RolePermissionDO rolePermissionDO : rolePermissionList) {
@@ -620,13 +640,18 @@ public class RoleServiceImpl implements IRoleService {
                 }
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
+                if(permissionVOS==null||permissionVOS.size()<=0&&lstRole.size()>1){
+                    throw new URCBizException("批量分配角色权限不允许删除" + roleVO.getRoleId(), ErrorCode.E_000003);
+                }
                 roleIds.add(Long.valueOf(roleVO.roleId));
                 List<RolePermissionDO> permissionDOS = new ArrayList<>();
+                List<String> roleSysKey=new ArrayList<String>();
                 if (permissionVOS != null) {
                     for (PermissionVO permissionVO : permissionVOS) {
                         RolePermissionDO rolePermissionDO = new RolePermissionDO();
                         //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
                         rolePermissionDO.setRoleId(Long.valueOf(roleVO.roleId));
+                        roleSysKey.add(permissionVO.getSysKey());
                         rolePermissionDO.setSysKey(permissionVO.getSysKey());
                         rolePermissionDO.setModifiedBy(operator);
                         rolePermissionDO.setCreateBy(operator);
@@ -636,7 +661,12 @@ public class RoleServiceImpl implements IRoleService {
                         permissionDOS.add(rolePermissionDO);
                     }
                 }
-                    rolePermissionMapper.deleteBatch(roleIds);
+                if(lstRole.size()>1){
+                    rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId,roleSysKey);
+                }else{
+                    rolePermissionMapper.deleteByRoleId(Long.parseLong(roleVO.roleId));
+                }
+               // rolePermissionMapper.deleteBatch(roleIds);
                 logger.info("清理相关的功能权限完成");
                 if (permissionDOS != null && permissionDOS.size() > 0) {
                     rolePermissionMapper.insertBatch(permissionDOS);
@@ -645,7 +675,7 @@ public class RoleServiceImpl implements IRoleService {
             }
             Map dataMap = new HashMap();
             dataMap.put("roleIds", roleIds);
-        /*3、获取roleIds角色对应的用户名*/
+            /*3、获取roleIds角色对应的用户名*/
             logger.info(String.format("获取的角色id为%s", roleIds));
             if (roleIds.size() == 0) {
                 logger.info("roleID 的集合为空");
@@ -721,10 +751,18 @@ public class RoleServiceImpl implements IRoleService {
                     UserRoleDO userRole = new UserRoleDO();
                     List<UserRoleDO> userRoleDOS = new ArrayList<>();
                     List<String> userNameList = roleVO.getLstUserName();
+                    if(userNameList==null||userNameList.size()<=0&&lstRole.size()>1){
+                        throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
+                    }
+
                     userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
                     List<UserDO> userList = userMapper.getUserByRoleId(userRole);
                     if (roleMapper.isSuperAdminAccount(operator)) {
-                        userRoleMapper.deleteUserRole(userRole);
+                        if(lstRole.size()>1){
+                            userRoleMapper.deleteUserRoleInUserName(userRole,userNameList);
+                        }else{
+                            userRoleMapper.deleteUserRole(userRole);
+                        }
                         if (userList != null && userList.size() > 0) {
                             for (int q = 0; q < userList.size(); q++) {
                                 permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
@@ -743,7 +781,11 @@ public class RoleServiceImpl implements IRoleService {
                     } else {
                         if (roleDO.getCreateBy().equals(operator)) {
                             userRole.setCreateBy(operator);
-                            userRoleMapper.deleteUserRole(userRole);
+                            if(lstRole.size()>1){
+                                userRoleMapper.deleteUserRoleInUserName(userRole,userNameList);
+                            }else{
+                                userRoleMapper.deleteUserRole(userRole);
+                            }
                             if (userList != null && userList.size() > 0) {
                                 for (int q = 0; q < userList.size(); q++) {
                                     permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
@@ -815,7 +857,7 @@ public class RoleServiceImpl implements IRoleService {
 		/* 复制对应的角色功能权限关系 */
         RolePermissionDO rolePermissionDO = new RolePermissionDO();
         rolePermissionDO.setRoleId(roleId);
-        List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRolePermission(rolePermissionDO);
+        List<RolePermissionDO> rolePermissions = rolePermissionMapper.getRoleSuperAdminPermission(rolePermissionDO);
         //如果权限列表为空，则不新增权限列表
         if (CollectionUtils.isEmpty(rolePermissions)) {
             // return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "该角色的权限列表为空");
@@ -823,7 +865,7 @@ public class RoleServiceImpl implements IRoleService {
         }
         //保存角色的功能权限
         List<RolePermissionDO> records = new ArrayList<>();
-        rolePermissions.stream().forEach(rpDO -> {
+        for(RolePermissionDO rpDO : rolePermissions){
             RolePermissionDO record = new RolePermissionDO();
             record.setRoleId(roleDO.getRoleId());
             record.setSysKey(rpDO.getSysKey());
@@ -833,7 +875,7 @@ public class RoleServiceImpl implements IRoleService {
             record.setModifiedBy(operator);
             record.setModifiedTime(StringUtility.getDateTimeNow());
             records.add(record);
-        });
+        }
         rolePermissionMapper.insertBatch(records);
         return VoHelper.getSuccessResult();
     }
@@ -897,6 +939,11 @@ public class RoleServiceImpl implements IRoleService {
         List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
         permitStatBp.updateUserPermitCache(lstUserName);
         return VoHelper.getSuccessResult();
+    }
+
+    @Override
+    public ResultVO operIsSuperAdmin(String operator) {
+        return  VoHelper.getSuccessResult(roleMapper.isSuperAdminAccount(operator));
     }
 
     @Override

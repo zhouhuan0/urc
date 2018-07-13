@@ -80,6 +80,14 @@ public interface IUserRoleMapper {
 	 */
 	Integer deleteUserRole(UserRoleDO userRoleDO);
 
+	/**
+	 * 删除userRole中userName关联表
+	 * @param userRole
+	 * @param userNameList
+	 * @return
+	 */
+	Integer deleteUserRoleInUserName(@Param("userRole") UserRoleDO userRole,@Param("userNameList")  List<String> userNameList);
+
     /**
      * Description: 根据roleId列表和创建人查找用户-角色对应的用户名
      *
@@ -100,4 +108,6 @@ public interface IUserRoleMapper {
 	 * @see
 	 */
 	List<String> getUserOwnSysByUserName(@Param("userName") String userName);
+
+
 }

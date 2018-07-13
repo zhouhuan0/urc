@@ -10,7 +10,6 @@
     http://www.springframework.org/schema/task
     http://www.springframework.org/schema/task/spring-task-3.2.xsd ">
 
-    <import resource="classpath:/redis-config.xml"/>
     <import resource="classpath:/spring/*.xml"/>
 
     <!--task任务扫描注解-->

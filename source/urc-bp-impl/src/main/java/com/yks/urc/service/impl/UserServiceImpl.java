@@ -8,8 +8,12 @@ import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.PlatformDO;
+import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
+import com.yks.urc.mapper.PlatformMapper;
+import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,11 +51,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO syncUserInfo(String operator) {
-        ResultVO resultVO= new ResultVO();
+        ResultVO resultVO = new ResultVO();
         try {
-            resultVO=userBp.SynUserFromUserInfo(operator);
+            resultVO = userBp.SynUserFromUserInfo(operator);
         } catch (Exception e) {
-           logger.error("同步任务异常" + e.getMessage());
+            logger.error("同步任务异常" + e.getMessage());
             return VoHelper.getErrorResult();
         } finally {
             return resultVO;
@@ -85,8 +89,8 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         //首先要判断该用户是否是超级管理员或业务管理员
-        if (!roleMapper.isAdminOrSuperAdmin(operator)){
-            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"非管理员无法查看此数据");
+        if (!roleMapper.isAdminOrSuperAdmin(operator)) {
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "非管理员无法查看此数据");
         }
         return userBp.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
@@ -98,20 +102,20 @@ public class UserServiceImpl implements IUserService {
         try {
             if (StringUtility.isNullOrEmpty(operator)) {
                 rslt.msg = "操作人员为空 " + operator;
-                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.data = dataAuthorization.getPlatformList(operator);
-            if (rslt.data == null){
+            if (rslt.data == null) {
                 rslt.msg = "Error,获取的平台为空 " + operator;
-                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.msg = "Success " + operator;
-            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
-            logger.error("未知异常",e);
-            throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
+            logger.error("未知异常", e);
+            throw new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(), "出现未知异常", e);
         } finally {
             return rslt;
         }
@@ -128,15 +132,15 @@ public class UserServiceImpl implements IUserService {
             }
             rslt.data = dataAuthorization.getShopList(operator, platform);
             rslt.msg = "Success " + operator;
-            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
             if (rslt.data == null) {
                 rslt.msg = "Error 无法找到此平台的店铺信息,或者无此平台," + operator;
-                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
         } catch (Exception e) {
-            logger.error("未知异常",e);
-            throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
+            logger.error("未知异常", e);
+            throw new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(), "出现未知异常", e);
         } finally {
             return rslt;
         }
@@ -153,14 +157,14 @@ public class UserServiceImpl implements IUserService {
             rslt.data = authWayBp.getMyAuthWay(operator);
             if (rslt.data == null) {
                 rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限";
-                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
+                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
             rslt.msg = "成功, " + operator;
-            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
-            logger.error("未知异常",e);
-          throw  new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(),"出现未知异常",e);
+            logger.error("未知异常", e);
+            throw new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(), "出现未知异常", e);
         } finally {
             return rslt;
         }
@@ -185,7 +189,6 @@ public class UserServiceImpl implements IUserService {
     }
 
 
-
     @Override
     public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
         UserVO userVO = new UserVO();
@@ -206,11 +209,89 @@ public class UserServiceImpl implements IUserService {
         List<UserVO> userVOS = new ArrayList<>();
         UserVO userVO1 = new UserVO();
         UserDO userDO = userMapper.getUserByUserName(userVO);
-        if (userDO == null){
-            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"用户不存在");
+        if (userDO == null) {
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "用户不存在");
         }
         userVO1.userName = userDO.getUserName();
         userVOS.add(userVO1);
         return VoHelper.getSuccessResult(userVOS);
+    }
+
+    @Autowired
+    private PlatformMapper platformMapper;
+    @Autowired
+    private ShopSiteMapper shopSiteMapper;
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO<List<OmsPlatformVO>> getPlatformShopSite(String operator) {
+       try {
+           List<PlatformDO> platformDOS = platformMapper.selectAll();
+           //装载平台volist
+           List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+           for (PlatformDO platformDO : platformDOS) {
+               OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+               omsPlatformVO.platformId = platformDO.getPlatformId();
+               omsPlatformVO.platformName = platformDO.getPlatformName();
+
+               List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformDO.getPlatformId());
+               if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
+                   continue;
+               } else {
+                   //集合都必须先初识化
+                   omsPlatformVO.lstShop =new ArrayList<>(shopSiteDOS.size());
+                   for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                       OmsShopVO omsShopVO = new OmsShopVO();
+                       //针对速卖通的
+                       omsShopVO.shopId = shopSiteDO.getSellerId();
+                       omsShopVO.shopName = shopSiteDO.getShop();
+                       //如果站点id为空,则list为空
+                       if ("".equals(shopSiteDO.getSiteId())) {
+                           omsShopVO.lstSite = null;
+                       } else {
+                           OmsSiteVO omsSiteVO = new OmsSiteVO();
+                           omsSiteVO.siteId = shopSiteDO.getSiteId();
+                           //如果站点名称为空,则吧站点id赋值给站点名称
+                           if ("".equals(shopSiteDO.getSiteName())) {
+                               omsSiteVO.siteName = omsSiteVO.siteId;
+                           } else {
+                               omsSiteVO.siteName = shopSiteDO.getSiteName();
+                               omsShopVO.lstSite.add(omsSiteVO);
+                           }
+                       }
+                       omsPlatformVO.lstShop.add(omsShopVO);
+                   }
+                   omsPlatformVOS.add(omsPlatformVO);
+               }
+           }
+           return VoHelper.getSuccessResult(omsPlatformVOS);
+       }catch (Exception e){
+           logger.error("获取数据异常:",e);
+           return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"未知异常");
+       }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO syncPlatform(String operator) {
+        try {
+            dataAuthorization.syncPlatform(operator);
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            logger.error("同步平台数据出错", e);
+            return VoHelper.getErrorResult();
+        }
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO syncShopSite(String operator) {
+        try {
+            dataAuthorization.syncShopSite(operator);
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            logger.error("同步账号站点数据出错", e);
+            return VoHelper.getErrorResult();
+        }
     }
 }

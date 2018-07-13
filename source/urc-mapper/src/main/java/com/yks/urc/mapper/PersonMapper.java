@@ -2,7 +2,9 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.Person;
 import com.yks.urc.vo.PersonVO;
+import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.helper.Query;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -61,6 +63,6 @@ public interface PersonMapper {
 	 */
 	long getUserByDingOrgIdCount(Query query);
 
-
+	UserInfoVO getPersonOrgById(@Param("dingUserId") String dingUserId);
 	
 }

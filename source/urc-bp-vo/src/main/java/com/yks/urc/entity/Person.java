@@ -8,6 +8,8 @@ public class Person {
 
     private String personName;
 
+    private String personNameCollage;
+
     private int gender;
 
     private String phoneNum;
@@ -44,6 +46,14 @@ public class Person {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getPersonNameCollage() {
+        return personNameCollage;
+    }
+
+    public void setPersonNameCollage(String personNameCollage) {
+        this.personNameCollage = personNameCollage;
     }
 
     public String getPersonName() {

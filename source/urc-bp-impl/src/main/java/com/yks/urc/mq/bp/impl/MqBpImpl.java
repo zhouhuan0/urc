@@ -6,7 +6,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
-
 import com.yks.mq.utils.KafkaProducerSingleton;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -17,6 +16,7 @@ import java.util.List;
 
 @Component
 public class MqBpImpl implements IMqBp {
+   
 
     private String getDataRuleTopic(String sysKey) {
         return String.format("URC_USER_DATARULE_%s", sysKey);
@@ -33,6 +33,7 @@ public class MqBpImpl implements IMqBp {
             String topic = getDataRuleTopic(sysKey);
             String value = StringUtility.toJSONString_NoException(drSys);
             ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
+
             Callback arg1 = new Callback() {
                 @Override
                 public void onCompletion(RecordMetadata arg0, Exception arg1) {
@@ -63,7 +64,7 @@ public class MqBpImpl implements IMqBp {
                 String topic = getDataRuleTopic(sysKey);
                 String value = StringUtility.toJSONString_NoException(drSys);
                 logger.info(String.format("send2Mq:%s %s", topic, value));
-                ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
+				ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
                 Callback arg1 = new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata arg0, Exception arg1) {

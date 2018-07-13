@@ -53,9 +53,8 @@
   </sql>
   
     <sql id="Base_User_Column_List">
-    up.id, up.person_name,up.gender, up.phone_num, up.ding_user_id, up.ding_id, up.ding_unionid, up.birthday, date_format(up.birthday,'%Y-%m-%d') as birthday_str,
-    up.join_date,date_format(up.join_date,'%Y-%m-%d')  as join_date_str , up.leave_date, up.job_number, up.email, up.position, up.create_time, up.create_by, up.modified_time, 
-    up.modified_by,uu.user_name
+    up.person_name, up.phone_num,  date_format(up.birthday,'%Y-%m-%d') as birthday_str,
+    date_format(up.join_date,'%Y-%m-%d')  as join_date_str ,  up.job_number, up.email, up.position,uu.user_name
   </sql>
   
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
@@ -98,18 +97,17 @@
      		 <if test="phoneNum != null and phoneNum != '' ">
      		 	and up.phone_num=#{phoneNum,jdbcType=VARCHAR}
      		 </if>
-     		 
      		<if test="personName != null and personName != '' ">
-     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%')) OR up.person_name_collage  LIKE CONCAT(CONCAT('%',#{personName},'%'))
      		 </if>
      </where>
-   	 ORDER BY up.create_time desc 
+    ORDER BY up.job_number desc
    	 limit #{offset},#{limit}
   </select>
   
   
    <select id="count"  resultType="java.lang.Long">
-     SELECT count(*)
+     SELECT count(up.id)
      from urc_person up LEFT JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
      <where>
      		 <if test="jobNumber != null and jobNumber != '' ">
@@ -121,10 +119,10 @@
      		 </if>
      		 
      		<if test="personName != null and personName != '' ">
-     		   and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))
+              and up.person_name LIKE CONCAT(CONCAT('%',#{personName},'%'))  OR up.person_name_collage  LIKE CONCAT(CONCAT('%',#{personName},'%'))
      		 </if>
      </where>
-     
+     ORDER BY up.job_number desc
   </select>
   
   
@@ -155,7 +153,7 @@
   
       <insert id="insertBatchPerson" parameterType="com.yks.urc.entity.Person">
         insert into urc_person 
-        (person_name, gender, 
+        (person_name,person_name_collage, gender,
       phone_num, ding_user_id, ding_id, 
       ding_unionid, birthday, join_date, 
       leave_date, job_number, email, 
@@ -164,6 +162,7 @@
         values
         <foreach collection="list" item="personList" separator=",">
             (#{personList.personName},
+            #{personList.personNameCollage},
             #{personList.gender},
             #{personList.phoneNum},
             #{personList.dingUserId},
@@ -367,4 +366,12 @@
       modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <!--拿到用户的组织信息等-->
+  <select id="getPersonOrgById" resultType="com.yks.urc.vo.UserInfoVO">
+    select  uo.org_name AS orgName,uo.full_name_path AS parentOrgName
+      FROM urc_person p LEFT JOIN urc_person_org ug  ON  p.ding_user_id = ug.ding_user_id
+      LEFT JOIN urc_organization uo ON  ug.ding_org_id =uo.ding_org_id
+      WHERE  p.ding_user_id  =#{dingUserId}
+  </select>
+
 </mapper>

@@ -24,6 +24,8 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.helper.VoHelper;
 
+import javax.management.relation.Role;
+
 
 public class WJHService extends BaseServiceTest {
 	
@@ -62,13 +64,36 @@ public class WJHService extends BaseServiceTest {
     	//person.setPhoneNum("17771054080");
     	personService.getUserByDingOrgId("1", "0", "10");
     }
+
+
+    @Test
+    public void updateRolePermission() throws Exception{
+
+        List<RoleVO> lstRole = new ArrayList<>();
+        RoleVO roleVO=new RoleVO();
+        roleVO.setRoleId("1530772562805000305");
+        lstRole.add(roleVO);
+        roleService.updateRolePermission("wujianghui", lstRole);
+    }
     
     
 
     @Test
     public void SynPersonOrgFromDing() throws Exception{
-    	//personService.SynPersonOrgFromDing("hand");
-    	personService.getUserByDingOrgId("1", "0", "");
+    	personService.SynPersonOrgFromDing("hand");
+    	//personService.getUserByDingOrgId("1", "0", "");
+    }
+
+    @Test
+    public void getRolesByInfo() throws Exception{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("pageNumber",1);
+        jsonObject.put("pageData",20);
+        jsonObject.put("operator","wujianghui");
+        RoleVO role =new RoleVO();
+        role.setRoleName("wjh");
+        jsonObject.put("role",role);
+        System.out.println(StringUtility.toJSONString( roleService.getRolesByInfo(jsonObject.toString())));
     }
     
     
@@ -79,13 +104,20 @@ public class WJHService extends BaseServiceTest {
     	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName,"panyun");
     	System.out.println(StringUtility.toJSONString(dataVO));
     }
+
+
+    @Test
+    public void roleIsSuperAdmin() throws Exception{
+        ResultVO  dataVO= roleService.operIsSuperAdmin("panyun");
+        System.out.println(StringUtility.toJSONString(dataVO));
+    }
     
     
     
     @Test
     public void getRoleUser() throws Exception{
     	
-    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\"],\"operator\":\"linwanxain\"}";
+    	String jsonStr= "{\"lstRoleId\":[\"1529649147479000001\",\"1529743116993000004\"],\"operator\":\"panyun\"}";
     			 
     			 
     	JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -123,11 +155,11 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void dataRuleService() throws Exception{
     	List<String> lstUserName=new ArrayList<>();
-    	lstUserName.add("潘韵");
-    	lstUserName.add("程立夫");
+    	lstUserName.add("wujianghui1");
+    	lstUserName.add("wujianghui");
     	
     	
-    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"sdfd")));
+    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"panyun")));
     	
     }
     
@@ -135,9 +167,10 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void getRolePermission() throws Exception{
     	List<String> lstRoleId=new ArrayList<>();
-    	lstRoleId.add("1529746874242000036");
+    	lstRoleId.add("1529746076695000006");
+        lstRoleId.add("1529746076695000007");
     	
-    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("linwanxian", lstRoleId)));
+    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("panyun", lstRoleId)));
     	
     }
     
@@ -154,16 +187,19 @@ public class WJHService extends BaseServiceTest {
     
     @Test
     public void updateUsersOfRole() throws Exception{
-    	String jsonStr="{\"lstRole\":[{\"roleId\":\"162964914747900000000\",\"lstUserName\":[\"wjh3\",\"wjh2\"]},{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh4\",\"wjh5\"]}],\"operator\":\"wujianghui\"}";
+    	//String jsonStr="{\"lstRole\":[{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh3\",\"wjh2\"]},{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh4\",\"wjh5\"]}],\"operator\":\"wujianghui\"}";
+
+        String jsonStr="{\"lstRole\":[{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh3\"]},{\"roleId\":\"1629649147479000001\",\"lstUserName\":[\"wjh3\"]}],\"operator\":\"wujianghui\"}";
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
         List<String> userList=lstRole.get(0).getLstUserName();
-        for (int i = 0; i < userList.size(); i++) {
+/*        for (int i = 0; i < userList.size(); i++) {
 			System.out.println(userList.get(i));
-		}
+		}*/
     	System.out.println(StringUtility.toJSONString(roleService.updateUsersOfRole(lstRole, operator)));
-    	
+
+
     }
     
     

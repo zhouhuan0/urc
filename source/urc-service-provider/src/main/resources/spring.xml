@@ -10,7 +10,6 @@
 	http://www.springframework.org/schema/aop
 	http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <import resource="classpath:/redis-config.xml"/>
     <import resource="classpath:/motan/motan-service-config.xml"/>
     <import resource="classpath:/spring/*.xml"/>
     <!-- 扫描对应包下所有使用注解的类型 -->

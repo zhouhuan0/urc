@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class RoleServiceTest extends BaseServiceTest {
 
@@ -103,15 +105,26 @@ public class RoleServiceTest extends BaseServiceTest {
         /*roleNames.append("admin-hehe").append(System.getProperty("line.separator"))
                 .append("admin-update");
         roleVO.setRoleName(roleNames.toString());*/
-//        roleVO.setRoleName("");
-        jsonObject.put("operator","lvchangrong");
+        roleNames.append("1");
+/*        roleNames.append(System.getProperty("line.separator")).append(System.getProperty("line.separator"))
+                 .append(System.getProperty("line.separator"));*/
+        //roleNames.append("admin");
+        //roleVO.setRoleName("line.separator"+"line.separator+"+"line.separator");
+        roleVO.setRoleName("1");
+        jsonObject.put("operator","wujianghui");
         jsonObject.put("pageNumber",1);
-        jsonObject.put("pageData",4);
-//        jsonObject.put("role",roleVO);
+        jsonObject.put("pageData",20);
+        jsonObject.put("role",roleVO);
         ResultVO resultVO = roleService.getRolesByInfo(jsonObject.toString());
-        System.out.println(resultVO);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
-
+    @Test
+    public void test()
+    {
+        Pattern pattern = Pattern.compile("^[\\u4e00-\\u9fa5_a-zA-Z0-9]+$");
+        Matcher matcher = pattern.matcher("admin");
+        System.out.println(matcher.matches());
+    }
     @Test
     public void copyRole(){
         roleService.copyRole("dcadmin","复制角色","1529550145551000001");

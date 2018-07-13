@@ -60,7 +60,12 @@ public class UserLoginRunnable implements Runnable {
             avgRespTime = totalTime / totalRequest;
         }
 
-        return String.format("并发数:%s 运行总耗时：%s 运行起止时间:【%s - %s】总请求数：%s 成功:%s 出错:%s 总请求耗时：%s 平均响应时间：%s maxTime:%s minTime:%s \r\nErrMsg:\r\n%s", map.size(), endTime - startTime, StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(startTime)), StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(endTime)), totalRequest, totalSuccessRequest, totalFailedRequest, totalTime, avgRespTime, maxTime,
+        return String.format("并发数:%s 运行总耗时：%s tps: %s 运行起止时间:【%s - %s】总请求数：%s 成功:%s 出错:%s 总请求耗时：%s 平均响应时间：%s maxTime:%s minTime:%s \r\nErrMsg:\r\n%s",
+                map.size(), endTime - startTime,
+                (totalTime == 0 ? 0 : totalSuccessRequest / ((endTime - startTime) / 1000.00)),
+                StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(startTime)),
+                StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(endTime)),
+                totalRequest, totalSuccessRequest, totalFailedRequest, totalTime, avgRespTime, maxTime,
                 minTime, sbFailedMsg);
     }
 
@@ -80,7 +85,7 @@ public class UserLoginRunnable implements Runnable {
 
     private ResultVO loginTest(String userName, String pwd) {
         userName = "panyun";
-        pwd = "ASDFGhjkl;12345";
+        pwd = "ASDFhjkl1234";
         Map<String, String> map = new HashMap<String, String>();
         map.put("userName", userName);
         map.put("pwd", pwd);
@@ -114,7 +119,7 @@ public class UserLoginRunnable implements Runnable {
 
                 thd.totalTime += totalTime;
                 thd.successRequest++;
-                Thread.sleep(800);
+                Thread.sleep(300);
             } catch (Exception ex) {
                 thd.failedMsg.append("耗时:");
                 thd.failedMsg.append(System.currentTimeMillis() - startTime);

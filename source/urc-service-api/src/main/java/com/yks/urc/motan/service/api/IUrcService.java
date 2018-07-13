@@ -271,6 +271,11 @@ public interface IUrcService {
     ResultVO deleteDataRuleTempl(String jsonStr);
 
     /**
+     * Description: 方案名判重
+     */
+    ResultVO<Integer> checkDuplicateTemplName(String jsonStr);
+
+    /**
      * Description: 查看用户的功能权限列表
      *
      * @param :
@@ -375,4 +380,40 @@ public interface IUrcService {
      * @Date 2018/7/4 16:06
      */
     ResultVO updateUserPermitCache(String jsonStr);
+
+    /**
+     * 查看用户是否是超级管理员
+     * @param  jsonStr
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/4 16:06
+     */
+    ResultVO operIsSuperAdmin(String jsonStr);
+    /**
+     * 查找所有的平台账号和站点
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/7 14:42
+     */
+    ResultVO getPlatformShopSite(String jsonStr);
+
+    ResultVO syncPlatform(String jsonStr);
+
+    ResultVO syncShopSite(String jsonStr);
+    /**
+     * 通过
+     * @param
+     * @return
+     * @Author linwanxian@youkeshu.com
+     * @Date 2018/7/9 10:45
+     */
+    ResultVO fuzzSearchPersonByName(String json);
+
+    /**
+     * 获取指定系统大于某个时间之后有更新的数据权限
+     * @param json
+     * @return
+     */
+    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
 }

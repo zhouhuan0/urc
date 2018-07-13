@@ -141,16 +141,19 @@ public class PermissionServiceImpl implements IPermissionService {
         } else {
             //业务管理员
             List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
-            for (String sysKey : lstSysKey) {
-                // 获取用户sys的功能权限json
-                List<String> lstFuncJson = roleMapper.getBizAdminFuncJsonByUserAndSysKey(userName, sysKey);
-                if(lstFuncJson!=null&&lstFuncJson.size()>0){
-                    // 合并json树
-                    SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
-                    PermissionVO permissionVO = new PermissionVO();
-                    permissionVO.setSysKey(sysKey);
-                    permissionVO.setSysContext(StringUtility.toJSONString_NoException(rootVO));
-                    permissionVOs.add(permissionVO);
+            if(lstSysKey!=null&&lstSysKey.size()>0){
+                lstSysKey.remove("004");
+                for (String sysKey : lstSysKey) {
+                    // 获取用户sys的功能权限json
+                    List<String> lstFuncJson = roleMapper.getBizAdminFuncJsonByUserAndSysKey(userName, sysKey);
+                    if(lstFuncJson!=null&&lstFuncJson.size()>0){
+                        // 合并json树
+                        SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
+                        PermissionVO permissionVO = new PermissionVO();
+                        permissionVO.setSysKey(sysKey);
+                        permissionVO.setSysContext(StringUtility.toJSONString_NoException(rootVO));
+                        permissionVOs.add(permissionVO);
+                    }
                 }
             }
         }

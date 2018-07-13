@@ -4,6 +4,7 @@ import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.user.bp.impl.UserBpImpl;
+import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
 import org.junit.Assert;
@@ -12,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 〈一句话功能简述〉
@@ -28,6 +31,11 @@ public class UserMapperTest extends BaseMapperTest {
 
     @Autowired
     private IUserMapper userMapper;
+    @Autowired
+    private  IRolePermissionMapper rolePermissionMapper;
+
+    @Autowired
+    private  IRoleMapper roleMapper;
 
     /*@Autowired
     UserBp userBp;*/
@@ -67,19 +75,32 @@ public class UserMapperTest extends BaseMapperTest {
 
     @Test
     public void testInsert() {
-        List<UserDO> users = userMapper.listUsersByRoleId("1");
-        Assert.assertNotNull(users);
+/*        List<UserDO> users = userMapper.listUsersByRoleId("1");
+        Assert.assertNotNull(users);*/
+        RoleVO roleVO=new RoleVO();
+        roleVO.roleId="1529743116993000004";
+        List<String> roleSysKey=new ArrayList<>();
+        roleSysKey.add("001");
+        roleSysKey.add("003");
+        rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId,roleSysKey);
     }
 
     @Test
     public void testgetUserInfo() {
 		//List<String> lstUserName= userMapper.listAllUsersUserName();
 		
-		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
+/*		List<String> lstUserName =userMapper.listUsersUserNameByRoleId(2L);
 
         for (int i = 0; i < lstUserName.size(); i++) {
 			System.out.println(lstUserName.get(i));
-		}
+		}*/
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("currIndex", 0);
+        queryMap.put("pageSize", 200);
+        String[] roleNames = {"admin2","复制"};
+        queryMap.put("roleNames", roleNames);
+        List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
+        System.out.println(roleDOS.size());
     	
 /*        UserVO userVO = new UserVO();
         int pagaNum = 0;

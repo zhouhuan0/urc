@@ -1,8 +1,9 @@
 {
-	"operator":"panyun",
-	"pwd":"com.yks.urc.123456",
-	"ticket":"f96d0e4d01701baf0a1773c0095314de",
-	"data":[
+    "operator":"renmaohua",
+    "pwd":"com.yks.urc.123456",
+    "ticket":"5e6d05873cb202370c9253a52196b57c",
+    "funcVersion":"392964030d111e789b333d6d520d3a65",
+    "data":[
         {
             "system": {
                 "key": "000",
@@ -724,28 +725,44 @@
                             "function": [],
                             "module": [
                                 {
-                                    "key": "004-000001-000002",
+                                    "key": "004-000001-000002-000001",
                                     "name": "数据权限模板",
-                                    "url": "/user/datapermissiontempl/",
+                                    "url": "/user/usermanagementlist/datapermissiontempl/",
                                     "show": 1,
                                     "function": [],
                                     "module": [
                                         {
-                                            "key": "004-000001-000002-000001",
+                                            "key": "004-000001-000002-000001-000001",
                                             "name": "查看方案",
-                                            "url": "/user/datapermissiontempl/viewplan/",
+                                            "url": "/user/usermanagementlist/datapermissiontempl/viewplan/",
                                             "show": 0,
                                             "function": []
                                         },
                                         {
-                                            "key": "004-000001-000002-000002",
+                                            "key": "004-000001-000002-000001-000002",
                                             "name": "新增/编辑方案",
-                                            "url": "/user/datapermissiontempl/compileplan/",
+                                            "url": "/user/usermanagementlist/datapermissiontempl/compileplan/",
                                             "show": 0,
                                             "function": []
                                         }
                                     ]
-                                }
+                                },
+                                {
+                                    "key": "004-000001-000002-000002",
+                                    "name": "数据授权",
+                                    "url": "/user/usermanagementlist/datapauthorization/",
+                                    "show": 1,
+                                    "function": [],
+                                    "module": []
+                                },
+                                {
+                                    "key": "004-000001-000002-000003",
+                                    "name": "操作权限列表",
+                                    "url": "/user/usermanagementlist/functionalpermissionlist/",
+                                    "show": 1,
+                                    "function": [],
+                                    "module": []
+                                },
                             ]
                         },
                         {

@@ -1,11 +1,9 @@
 package com.yks.urc.service.api;
 
+import java.util.Date;
 import java.util.List;
 
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.*;
 
 public interface IDataRuleService {
 
@@ -55,4 +53,19 @@ public interface IDataRuleService {
      * @see
      */
     ResultVO addOrUpdateDataRule(String jsonStr);
+
+    /**
+     * Description: 检查给定方案名是否重复
+     *
+     */
+    ResultVO checkDuplicateTemplName(String operator, String newTemplName, String templId);
+
+    /**
+     * 获取指定系统大于某个时间之后有更新的数据权限
+     * @param sysKey
+     * @param dt
+     * @param pageSize
+     * @return
+     */
+    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
 }

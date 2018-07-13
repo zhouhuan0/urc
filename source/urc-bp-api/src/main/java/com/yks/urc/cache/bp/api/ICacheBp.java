@@ -70,4 +70,18 @@ public interface ICacheBp {
 	String getDingAccessToken(String accessTokeTime);
 	
 	void setDingAccessToken(String accessTokeTime,String accessTokeValue);
+
+	/**
+	 * 获取用户姓名
+	 * @param userName
+	 * @return
+	 */
+    String getPersonNameByUserName(String userName);
+
+	/**
+	 * 设置用户姓名
+	 * @param userName
+	 * @param personName
+	 */
+	void setPersonNameByUserName(String userName, String personName);
 }

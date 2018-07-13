@@ -187,9 +187,9 @@ public class UserBpImpl implements IUserBp {
         Query query = new Query(null, pageNumber, pageData);
         List<UserVO> userVOS = userMapper.getUsersByUserInfo(query, strings);
         List<UserVO> userVOList = new ArrayList<>();
-        if (userVOS.size() == 0) {
+/*        if (userVOS.size() == 0) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "查询结果为空");
-        }
+        }*/
         // 2.将拿到的用户名再分别去获取角色名称
         // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
@@ -213,6 +213,7 @@ public class UserBpImpl implements IUserBp {
         // 获取总条数
         long total = userMapper.getUsersByUserInfoCount(query, strings);
         PageResultVO pageResultVO = new PageResultVO(userVOList, total, pageData);
+
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
@@ -307,7 +308,7 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = ip;
                 cacheBp.insertUser(u);
-                resp.personName = userMapper.getPersonNameByUserName(u.userName);
+                resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
@@ -316,6 +317,24 @@ public class UserBpImpl implements IUserBp {
             logger.error(String.format("login ERROR:%s %s %s", userName, pwd, ip), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
+    }
+
+    /**
+     * 根据userName获取中文姓名
+     * @param userName
+     * @return
+     */
+    private String getPersonNameFromCacheOrDb(String userName) {
+        if (StringUtility.isNullOrEmpty(userName)) return userName;
+        String personName = cacheBp.getPersonNameByUserName(userName);
+        if (StringUtility.isNullOrEmpty(personName)) {
+            personName = userMapper.getPersonNameByUserName(userName);
+            if (StringUtility.isNullOrEmpty(personName)) {
+                personName = userName;
+            }
+            cacheBp.setPersonNameByUserName(userName, personName);
+        }
+        return personName;
     }
 
 //    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);

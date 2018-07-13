@@ -9,6 +9,7 @@
 package com.yks.urc.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import com.alibaba.fastjson.JSONObject;
@@ -23,7 +24,14 @@ public class DataRuleSysVO  implements Serializable{
      *
      */
     public String sysName;
+    public Date createTime;
+    public Date getCreateTime(){
+        return createTime;
+    }
 
+    public void setCreateTime(Date dt){
+        createTime=dt;
+    }
     
     /**
      * 行权限

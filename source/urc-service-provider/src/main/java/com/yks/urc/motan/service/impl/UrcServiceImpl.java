@@ -1,10 +1,12 @@
 package com.yks.urc.motan.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.mapper.IDataRuleTemplMapper;
@@ -15,6 +17,7 @@ import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +36,6 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private IDataRuleTemplMapper dataRuleTemplMapper;
-
 
     @Autowired
     private IOrganizationService organizationService;
@@ -64,7 +66,8 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     public ResultVO syncDingOrgAndUser() {
-        return personService.SynPersonOrgFromDing("hand");
+        String operator = MotanSession.getRequest().getOperator();
+        return personService.SynPersonOrgFromDing(operator);
     }
 
     @Override
@@ -351,7 +354,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO updateRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = MotanSession.getRequest().getOperator();
-        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.get("lstRole").toString(), RoleVO.class);
+        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
         if (lstRole == null){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
         }
@@ -396,6 +399,15 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.deleteDataRuleTempl(jsonStr);
     }
 
+    @Override
+    @Log("方案名判重")
+    public ResultVO<Integer> checkDuplicateTemplName(String jsonStr){
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        String newTemplName = jsonObject.getString("newTemplName");
+        String templId = jsonObject.getString("templId");
+        return dataRuleService.checkDuplicateTemplName(operator,newTemplName,templId);
+    }
     /**
      * Description: 查看用户的功能权限列表
      *
@@ -506,6 +518,62 @@ public class UrcServiceImpl implements IUrcService {
         List<String> lstUser =StringUtility.parseObject(jsonObject.getString("lstUser"),List.class);
         permitStatBp.updateUserPermitCache(lstUser);
         return VoHelper.getSuccessResult();
+    }
+
+    @Override
+    public ResultVO operIsSuperAdmin(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String operator = jsonObject.getString("operator");
+        if (StringUtility.isNullOrEmpty(operator)) {
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
+        }
+        return roleService.operIsSuperAdmin(operator);
+
+    }
+
+    @Override
+    @Log("获取平台账号站点数据")
+    public ResultVO getPlatformShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.getPlatformShopSite(operator);
+
+    }
+
+    @Override
+    @Log("同步平台数据")
+    public ResultVO syncPlatform(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncPlatform(operator);
+
+    }
+
+    @Override
+    @Log("同步账号站点数据")
+    public ResultVO syncShopSite(String jsonStr) {
+        String operator =MotanSession.getRequest().getOperator();
+        return userService.syncShopSite(operator);
+
+
+    }
+
+    @Override
+    @Log("通过名字模糊搜索人员")
+    public ResultVO fuzzSearchPersonByName(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator =MotanSession.getRequest().getOperator();
+        String userName =jsonObject.getString("name");
+        return personService.fuzzSearchPersonByName(operator,userName);
+
+    }
+
+    @Override
+    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json) {
+        JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
+        String sysKey = jObj.getString(StringConstant.sysKey);
+        Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);
+        Integer pageSize = jObj.getInteger("pageSize");
+        return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
+
     }
 
 }

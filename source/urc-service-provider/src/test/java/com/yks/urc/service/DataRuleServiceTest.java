@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
@@ -139,10 +140,10 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleTemplVO  dataRuleTemplVO = new DataRuleTemplVO();
-        dataRuleTemplVO.setTemplName("采购一部3C产品组方案204");
+        dataRuleTemplVO.setTemplName("采购一部3C产品组方案22");
         dataRuleTemplVO.setRemark("给xxxx的方案");
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS1);
-//        dataRuleTemplVO.setTemplId("3");
+        //dataRuleTemplVO.setTemplId("3");
 
         JSONObject json = new JSONObject();
 
@@ -152,6 +153,10 @@ public class DataRuleServiceTest extends BaseServiceTest {
         ResultVO resultVO = dataRuleService.addOrUpdateDataRuleTempl(json.toString());
         System.out.println(resultVO);
     }
+
+
+
+
 
     @Test
     public void  addOrUpdateDataRule(){
@@ -194,13 +199,13 @@ public class DataRuleServiceTest extends BaseServiceTest {
         subWhereClause1.setFieldCode("fieldPlatform");
         subWhereClause1.setEntityCode("platform");
         subWhereClause1.setOper("in");
-        subWhereClause1.setOperValues("[\"eBay\"，\"WISH\"]");
+        subWhereClause1.setOperValues("[\"eBay\",\"WISH\"]");
         subWhereClause.add(subWhereClause1);
 
         ExpressionVO  subWhereClause2= new ExpressionVO();
         subWhereClause2.setFieldCode("fieldSite");
         subWhereClause2.setOper("in");
-        subWhereClause2.setOperValues("[\"美国\"，\"英国\"]");
+        subWhereClause2.setOperValues("[\"美国\",\"英国\"]");
         subWhereClause.add(subWhereClause2);
 
         ExpressionVO  subWhereClause3= new ExpressionVO();
@@ -219,15 +224,19 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         List<DataRuleVO> lstDataRule = new ArrayList<>();
+
+
         DataRuleVO dataRuleVO = new DataRuleVO();
-        dataRuleVO.setUserName("edison");
+        dataRuleVO.setUserName("wujianghui1");
         dataRuleVO.setLstDataRuleSys(dataRuleSysVOS1);
         lstDataRule.add(dataRuleVO);
 
-/*        DataRuleVO dataRuleVO1 = new DataRuleVO();
-        dataRuleVO1.setUserName("kb");
+
+        DataRuleVO dataRuleVO1 = new DataRuleVO();
+        dataRuleVO1.setUserName("wujianghui");
         dataRuleVO1.setLstDataRuleSys(dataRuleSysVOS1);
-        lstDataRule.add(dataRuleVO1);*/
+        lstDataRule.add(dataRuleVO1);
+
 
         JSONObject json = new JSONObject();
 
@@ -242,6 +251,11 @@ public class DataRuleServiceTest extends BaseServiceTest {
         dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
     }*/
 
+    @Test
+    public void getDataRuleGtDt(){
+        System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleGtDt("001",null,3)));
+    }
+
 
     @Test
     public void deleteDataRuleTempl(){
@@ -254,5 +268,15 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
         ResultVO resultVO = dataRuleService.deleteDataRuleTempl(jsonObject.toString());
         System.out.println(resultVO);
+    }
+    @Test
+    public void checkDuplicateTemplName(){
+        System.out.println(StringUtility.toJSONString(
+                dataRuleService.checkDuplicateTemplName(
+                        "ddd","数据权限模板6","ddd")));
+        System.out.println(StringUtility.toJSONString(
+                dataRuleService.checkDuplicateTemplName(
+                        "sss","数据权限模11板6","sss")
+        ));
     }
 }
