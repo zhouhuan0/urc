@@ -143,9 +143,10 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 for (PlatformDO platformDO : platformDOS) {
                     // 将获取的平台进行转码
                     String platforms = URLEncoder.encode(platformDO.getPlatformId(),"utf-8");
-                    String url = GET_SHOP_AND_SITE + "&platform=" + platforms;
+                    StringBuffer url =new StringBuffer();
+                    url.append(GET_SHOP_AND_SITE).append("&platform=").append(platforms);
                     logger.info(String.format("请求的地址为:[%s ]",url));
-                    String getShopAndSiteResult = HttpUtility.httpGet(url);
+                    String getShopAndSiteResult = HttpUtility.httpGet(String.valueOf(url));
                     logger.info(String.format("获取的结果为:[%s ]",getShopAndSiteResult));
                     if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
                         throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "获取账号站点信息为空");

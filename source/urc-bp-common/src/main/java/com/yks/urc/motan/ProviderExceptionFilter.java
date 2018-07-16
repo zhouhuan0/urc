@@ -61,6 +61,7 @@ public class ProviderExceptionFilter implements Filter {
             ex = getURCException((MotanAbstractException) e);
         }else{//系统未知异常
             ex = new URCServiceException(ErrorCode.E_000007, e);
+            log.error("未知异常",ex);
         }
         response.setValue(formatError(ex));
         return response;
@@ -70,6 +71,7 @@ public class ProviderExceptionFilter implements Filter {
         if (cause instanceof AbstractURCException){
             return (AbstractURCException) cause;
         }else{
+            log.error("未知异常",e);
             return new URCServiceException(ErrorCode.E_000007, e);
         }
     }
