@@ -12,14 +12,14 @@
         <dependency>
             <groupId>com.yks.urc</groupId>
             <artifactId>urc-bp-impl</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 
     <parent>
 		<groupId>com.yks.urc</groupId>
 		<artifactId>urc-parent</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>1.0.0</version>
 	</parent>
 	
 	   <profiles>

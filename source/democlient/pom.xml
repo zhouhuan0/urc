@@ -13,7 +13,7 @@
 	 <!--<parent>
         <groupId>com.yks.urc</groupId>
         <artifactId>urc-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>1.0.0</version>
     </parent>-->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -28,7 +28,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<motan.version>1.1.1</motan.version>
-		<urc.version>0.0.1-SNAPSHOT</urc.version>
+		<urc.version>1.0.0</urc.version>
 	</properties>
 
     <distributionManagement>
