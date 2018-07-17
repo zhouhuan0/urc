@@ -416,4 +416,12 @@ public interface IUrcService {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
+    /**
+     *  更新缓存ａｐｉ前缀
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/17 15:34
+     */
+    ResultVO updateApiPrefixCache(String json);
 }

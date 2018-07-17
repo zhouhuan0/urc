@@ -494,6 +494,20 @@ public class UrcServiceTest extends BaseServiceTest {
 		System.out.println(StringUtility.toJSONString(resultVO));
 		System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
 	}
+	@Test
+	public void test_updateApiPrefixCache(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		map.put("name","linwan");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+
+		System.out.println(json);
+		System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+		ResultVO resultVO =service.updateApiPrefixCache(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
+		System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+	}
 
 
 }
