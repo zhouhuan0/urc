@@ -38,5 +38,10 @@ public class MotanClientConfiguration {
         return new BasicRefererConfigBean();
     }
 
-
+    @ConditionalOnProperty(prefix = "motan.client", value = "enabled", havingValue = "true")
+    @Bean(name = "refererConfigOms")
+    @ConfigurationProperties(prefix = "motan.client.refereroms")
+    public RefererConfigBean refererConfigBeanOms() {
+        return new RefererConfigBean();
+    }
 }

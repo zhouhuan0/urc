@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 import com.yks.demo.DemoClientApplication;
 import com.yks.demo.bean.UserInfo;
+import com.yks.oms.api.face.IOmsApiFace;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -35,6 +36,32 @@ public class MotanUserServiceTest {
 
     @MotanReferer
     private IUrcService urcService;
+
+    @MotanReferer
+    private IOmsApiFace omsApiFace;
+
+    @Test
+    public void getStoreAccount_Test() {
+        System.out.println(String.format("getStoreAccount_Test:\r\n%s", omsApiFace.getStoreAccount()));
+    }
+
+    @Test
+    public void getPlatformShopSite_Test() {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator", "py");
+        for (int i = 0; i < 100; i++) {
+            ResultVO rslt = null;
+            rslt = urcService.getPlatformShopSite(StringUtility.toJSONString_NoException(jsonObject));
+//            rslt = urcService.operIsSuperAdmin(StringUtility.toJSONString_NoException(jsonObject));
+            System.out.println("getPlatformShopSite_Test:\r\n" + StringUtility.toJSONString_NoException(rslt));
+
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     // @Test
     public void testFilter() {
@@ -142,29 +169,29 @@ public class MotanUserServiceTest {
         String ip = "192.168.201.62";
         Map<String, String> map = new HashMap<>();
         UserVO authUser = new UserVO();
-        map.put("userName", "panyun");
-        map.put("pwd", "ASDFGhjkl;12345");
+        map.put("userName", "linwanxian");
+        map.put("pwd", "linwx123");
         map.put("ip", ip);
         ResultVO<LoginRespVO> loginResp = urcService.login(map);
 
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(loginResp));
         // ResultVO<LoginRespVO> loginResp = new ResultVO<LoginRespVO>();
         // JSONObject loginResp = StringUtility.parseString(strResp);
-        map.put("operator", "dcadmin");
-        String jsonStr = StringUtility.toJSONString_NoException(map);
-        ResultVO<GetAllFuncPermitRespVO> allFuncResp = urcService.getAllFuncPermit(jsonStr);
-        System.out.println("------getAllFuncPermit-----------------" + StringUtility.toJSONString_NoException(allFuncResp));
-
-        String strSysKey = "004";
-
-        map.put("apiUrl", "/api/grab/smt/batchMarking");
-        map.put("moduleUrl", "/");
-        map.put(StringConstant.operator, "dcadmin");
-        map.put(StringConstant.ticket, loginResp.data.ticket);
-        map.put(StringConstant.ip, ip);
-        map.put(StringConstant.funcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
-        map.put(StringConstant.sysKey, strSysKey);
-        System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
+//        map.put("operator", "dcadmin");
+//        String jsonStr = StringUtility.toJSONString_NoException(map);
+//        ResultVO<GetAllFuncPermitRespVO> allFuncResp = urcService.getAllFuncPermit(jsonStr);
+//        System.out.println("------getAllFuncPermit-----------------" + StringUtility.toJSONString_NoException(allFuncResp));
+//
+//        String strSysKey = "004";
+//
+//        map.put("apiUrl", "/api/grab/smt/batchMarking");
+//        map.put("moduleUrl", "/");
+//        map.put(StringConstant.operator, "dcadmin");
+//        map.put(StringConstant.ticket, loginResp.data.ticket);
+//        map.put(StringConstant.ip, ip);
+//        map.put(StringConstant.funcVersion, allFuncResp.data.funcVersion);// "eb1043692883ef9010cd6cdc8b624e90");
+//        map.put(StringConstant.sysKey, strSysKey);
+//        System.out.println("------funcPermitValidate----------------" + urcService.funcPermitValidate(map));
     }
 
     @Test
