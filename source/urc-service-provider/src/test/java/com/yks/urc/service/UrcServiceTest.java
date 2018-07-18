@@ -498,7 +498,6 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void test_updateApiPrefixCache(){
 		Map map =new HashMap();
 		map.put("operator","linwanxian");
-		map.put("name","linwan");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 

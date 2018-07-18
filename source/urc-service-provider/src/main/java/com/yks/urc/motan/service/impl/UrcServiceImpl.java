@@ -575,5 +575,17 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
 
     }
+    /**
+     *  更新缓存Api前缀
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/17 15:38
+     */
+    @Override
+    public ResultVO updateApiPrefixCache(String json) {
+        String operator =MotanSession.getRequest().getOperator();
+        return permissionService.updateApiPrefixCache(operator);
+    }
 
 }

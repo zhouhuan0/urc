@@ -3,30 +3,23 @@ package com.yks.demo.motan.service;
 import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 import com.yks.demo.DemoClientApplication;
-import com.yks.demo.bean.UserInfo;
-import com.yks.oms.api.face.IOmsApiFace;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
-import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.LoginRespVO;
 import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RunWith(SpringRunner.class)
@@ -37,13 +30,13 @@ public class MotanUserServiceTest {
     @MotanReferer
     private IUrcService urcService;
 
-    @MotanReferer
+   /* @MotanReferer
     private IOmsApiFace omsApiFace;
 
     @Test
     public void getStoreAccount_Test() {
         System.out.println(String.format("getStoreAccount_Test:\r\n%s", omsApiFace.getStoreAccount()));
-    }
+    }*/
 
     @Test
     public void getPlatformShopSite_Test() {
