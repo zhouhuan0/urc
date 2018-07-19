@@ -99,8 +99,8 @@ public class UserMapperTest extends BaseMapperTest {
         queryMap.put("pageSize", 200);
         String[] roleNames = {"admin2","复制"};
         queryMap.put("roleNames", roleNames);
-        List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
-        System.out.println(roleDOS.size());
+        //List<RoleVO> roleVOS = roleMapper.listRolesByPage(queryMap);
+        //System.out.println(roleVOS.size());
     	
 /*        UserVO userVO = new UserVO();
         int pagaNum = 0;

@@ -245,7 +245,7 @@
     </select>
 
 
-    <!--分页条件查询-->
+    <!--分页条件查询 , 包含owner-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
@@ -261,7 +261,12 @@
                         role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
                 </foreach>
-
+            </if>
+            <if test="roleIds != null">
+            or  role_id  IN
+                <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
+                </foreach>
             </if>
             and is_authorizable != 2
         </where>
@@ -282,6 +287,12 @@
                     <if test="item != null and item != ''">
                         role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
+                </foreach>
+            </if>
+            <if test="roleIds != null">
+                or  role_id  IN
+                <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
                 </foreach>
             </if>
             and is_authorizable != 2

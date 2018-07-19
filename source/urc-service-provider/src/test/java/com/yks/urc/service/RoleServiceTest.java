@@ -110,8 +110,8 @@ public class RoleServiceTest extends BaseServiceTest {
                  .append(System.getProperty("line.separator"));*/
         //roleNames.append("admin");
         //roleVO.setRoleName("line.separator"+"line.separator+"+"line.separator");
-        roleVO.setRoleName("1");
-        jsonObject.put("operator","wujianghui");
+       // roleVO.setRoleName("1");
+        jsonObject.put("operator","linwanxian");
         jsonObject.put("pageNumber",1);
         jsonObject.put("pageData",20);
         jsonObject.put("role",roleVO);
