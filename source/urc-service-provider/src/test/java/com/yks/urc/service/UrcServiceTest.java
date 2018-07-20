@@ -510,7 +510,7 @@ public class UrcServiceTest extends BaseServiceTest {
 
 	@Test
 	public void test_getRolesByInfo(){
-		getStartTime();
+
 		int pageNumber =1;
 		int pageData =20;
 		RoleVO roleVO = new RoleVO();
@@ -518,7 +518,7 @@ public class UrcServiceTest extends BaseServiceTest {
 		List<Long> roleIdList =new ArrayList<>();
 		roleIdList.add(Long.valueOf("1531973851898000027"));
 		Map map =new HashMap();
-		map.put("operator","wujianghui");
+		map.put("operator","linwanxian");
 		map.put("roleIds",roleIdList);
 		map.put("pageNumber",pageNumber);
 		map.put("pageData",pageData);
@@ -526,13 +526,18 @@ public class UrcServiceTest extends BaseServiceTest {
 		MotanSession.initialSession(json);
 		ResultVO resultVO =service.getRolesByInfo(json);
 		System.out.println(StringUtility.toJSONString(resultVO));
-		getEndTime();
+
+	}
+	@Test
+	public void test_getRoleByRoleId(){
+		Map map =new HashMap();
+		map.put("operator","wujianghui");
+		map.put("roleId","1531973851898000027");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		ResultVO resultVO =service.getRoleByRoleId(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
 	}
 
-	public void getStartTime(){
-		System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
-	}
-	public void getEndTime(){
-		System.out.println("End====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
-	}
+
 }

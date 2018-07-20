@@ -24,4 +24,30 @@
     FROM urc_role_owner
     WHERE owner =#{owner}
   </select>
+    <!--插入-->
+  <insert id="insertOwner" parameterType="com.yks.urc.entity.RoleOwnerDO">
+    INSERT  INTO  urc_role_owner
+    (role_id,owner,create_time,create_by, modified_time, modified_by)
+    VALUES (
+      #{roleId},
+      #{owner},
+      #{createTime},
+      #{createBy},
+      #{modifiedTime},
+      #{modifiedBy}
+    )
+
+  </insert>
+  <!--通过roleId  删除owner ,不能删除 owner为创建者-->
+  <delete id="deleteOwnerByRoleId" parameterType="java.lang.Long">
+    DELETE FROM urc_role_owner WHERE role_id =#{roleId}
+  </delete>
+  <!--通过roleId 更新owner-->
+  <update id="updateOwnerByRoleId" parameterType="com.yks.urc.entity.RoleOwnerDO">
+    UPDATE urc_role_owner
+    SET owner =#{owner},
+    modified_by =#{modifiedBy},
+    modified_time =#{modifiedTime}
+    WHERE  role_id =#{roleId}
+  </update>
 </mapper>

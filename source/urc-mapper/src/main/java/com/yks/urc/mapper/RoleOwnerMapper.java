@@ -30,4 +30,29 @@ public interface RoleOwnerMapper {
      * @Date 2018/7/19 15:23
      */
     List<RoleOwnerDO> selectOwnerByOwner(@Param("owner") String owner);
+    /**
+     * 插入
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/19 20:43
+     */
+    int insertOwner(RoleOwnerDO ownerDO);
+     /**
+      *  通过roleId 删除owner
+      * @param:
+      * @return
+      * @Author lwx
+      * @Date 2018/7/19 20:50
+      */
+     int deleteOwnerByRoleId(Long roleId);
+     /**
+      * 通过roleId 更新owner
+      * @param:
+      * @return 
+      * @Author lwx
+      * @Date 2018/7/19 20:53
+      */
+     int updateOwnerByRoleId(RoleOwnerDO ownerDO);
+     
 }
