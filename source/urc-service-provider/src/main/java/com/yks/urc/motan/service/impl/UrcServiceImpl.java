@@ -588,4 +588,18 @@ public class UrcServiceImpl implements IUrcService {
         return permissionService.updateApiPrefixCache(operator);
     }
 
+    @Override
+    public ResultVO<PageResultVO> getAmazonShopPage(String json) {
+        JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
+        String operator =MotanSession.getRequest().getOperator();
+        int pageNumber =jObj.getInteger("pageNumber");
+        int pageData =jObj.getInteger("pageData");
+        String shopSystem =jObj.getString("shopSystem");
+      if (StringUtility.isNullOrEmpty(shopSystem)){
+          return userService.getAmazonShopPage(operator,null,pageNumber,pageData);
+      }else {
+        return userService.getAmazonShopPage(operator,shopSystem,pageNumber,pageData);
+    }
+    }
+
 }

@@ -1,5 +1,7 @@
 package com.yks.urc.motan.service.impl;
 
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
 import com.yks.urc.vo.ResultVO;
@@ -17,7 +19,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     private ResultVO resultVO;
     private Map map =new HashMap();
     private String operator ="linwanxian";
-    private int pgaeData =20;
+    private int pageData =20;
     private int pageNumber=1;
     private  String roleId ="1529635932385000003";
     @Test
@@ -75,6 +77,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void copyRole() throws Exception {
+
     }
 
     @Test
@@ -225,5 +228,15 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void updateApiPrefixCache() throws Exception {
     }
-
+    @Test
+    public void getAmazonShopPage() throws Exception{
+        map.put("pageNumber",pageNumber);
+        map.put("pageData",pageData);
+        map.put("operator",operator);
+        map.put("shopSystem","0FunHifanDE");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO=service.getAmazonShopPage(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+    }
 }

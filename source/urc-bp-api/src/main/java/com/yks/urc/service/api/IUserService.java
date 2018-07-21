@@ -93,4 +93,12 @@ public interface IUserService {
 	ResultVO syncPlatform(String operator);
 
 	ResultVO syncShopSite(String operator);
+	/**
+	 *  获取亚马逊的账号(分页)
+	 * @param:
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/7/21 10:24
+	 */
+	ResultVO<PageResultVO> getAmazonShopPage(String operator,String shopSystem,int pageNumber,int pageData );
 }

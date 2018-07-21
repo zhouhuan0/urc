@@ -115,5 +115,18 @@
       SELECT <include refid="Base_Column_List"/>
      FROM urc_shop_site WHERE  platform_id = #{platformId}  and seller_id != ''
   </select>
-
+    <select id="listShopByPage" parameterType="java.util.HashMap" resultType="java.lang.String">
+      select shop_system from urc_shop_site where platform_id =#{platformId}
+       <if test="shopSystem != null and shopSystem !='' ">
+       AND  shop_system =#{shopSystem}
+       </if>
+       ORDER BY shop_system ASC  limit #{currIndex},#{pageSize}
+    </select>
+  <select id="listShopByPageCount" parameterType="java.util.HashMap" resultType="java.lang.Long">
+    select count(1) from urc_shop_site where platform_id =#{platformId}
+    <if test="shopSystem != null and shopSystem !='' ">
+      AND  shop_system =#{shopSystem}
+    </if>
+    ORDER BY shop_system ASC
+  </select>
 </mapper>

@@ -424,4 +424,12 @@ public interface IUrcService {
      * @Date 2018/7/17 15:34
      */
     ResultVO updateApiPrefixCache(String json);
+    /**
+     * 获取亚马逊的账号(分页)
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/21 10:26
+     */
+    ResultVO<PageResultVO> getAmazonShopPage(String json);
 }

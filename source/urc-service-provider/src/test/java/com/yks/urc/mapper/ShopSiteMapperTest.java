@@ -15,7 +15,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ShopSiteMapperTest extends BaseMapperTest {
     @Autowired
@@ -65,5 +67,20 @@ public class ShopSiteMapperTest extends BaseMapperTest {
         for (ShopSiteDO shopSiteDO:shopSiteDOS){
             System.out.println(shopSiteDO.getPlatformId());
         }
+    }
+    @Test
+    public void test_listShopByPage(){
+        int pageNumber =1;
+        int pageData =30;
+        Map<String,Object> queryMap =new HashMap<>();
+        queryMap.put("platformId","亚马逊");
+        int currPage = Integer.valueOf(pageNumber);
+        int pageSize = Integer.valueOf(pageData);
+        queryMap.put("currIndex", (currPage - 1) * pageSize);
+        queryMap.put("pageSize", pageSize);
+       List<String> shops=  shopSiteMapper.listShopByPage(queryMap);
+       shops.stream().forEach(shop -> System.out.println(shop));
+       long count =shopSiteMapper.listShopByPageCount(queryMap);
+        System.out.println(count);
     }
 }
