@@ -193,7 +193,6 @@ public class PermissionServiceImpl implements IPermissionService {
      * @Date 2018/7/17 15:44
      */
     @Override
-    @Transactional
     public ResultVO updateApiPrefixCache(String jsonStr) {
         try {
             List<PermissionDO> permissionDOList =permissionMapper.getSysApiUrlPrefix();
