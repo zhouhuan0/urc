@@ -544,7 +544,6 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO syncPlatform(String jsonStr) {
         String operator =MotanSession.getRequest().getOperator();
         return userService.syncPlatform(operator);
-
     }
 
     @Override

@@ -290,7 +290,7 @@ public class RoleServiceImpl implements IRoleService {
                         continue;
                     }
                     RoleOwnerDO ownerDO = new RoleOwnerDO();
-                    ownerDO.setRoleId(Long.valueOf(roleVO.roleId));
+                    ownerDO.setRoleId(roleId);
                     ownerDO.setCreateBy(operator);
                     ownerDO.setModifiedBy(operator);
                     ownerDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -707,11 +707,8 @@ public class RoleServiceImpl implements IRoleService {
             List<Long> roleIds = new ArrayList<>();
             for (RoleVO roleVO : lstRole) {
                 //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的owner不是他自己的话,则无权限更新此数据,跳过处理
-                if (!roleMapper.isSuperAdminAccount(operator)) {
-                    RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
-                    if (!operator.equals(roleDO.getCreateBy())) {
+                if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator) ) {
                         continue;
-                    }
                 }
                 //2. 更新角色的功能权限
                 List<PermissionVO> permissionVOS = roleVO.selectedContext;
@@ -993,7 +990,7 @@ public class RoleServiceImpl implements IRoleService {
         // 判断当前被复制角色是否为当前用户创建的角色
         RoleDO roleDO = roleMapper.getRoleByRoleId(String.valueOf(sourceRoleId));
         // 判断当前用户是否为管理员用户
-        if (roleMapper.isSuperAdminAccount(operator) || operator.equals(roleDO.getCreateBy())) {
+        if (roleMapper.isSuperAdminAccount(operator) || isOwner(operator)) {
             return roleDO;
         }
         throw new URCBizException(ErrorCode.E_101002);

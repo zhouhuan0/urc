@@ -5,11 +5,12 @@ import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.RoleOwnerVO;
+import com.yks.urc.vo.RoleVO;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -17,11 +18,12 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Autowired
     private IUrcService service;
     private ResultVO resultVO;
-    private Map map =new HashMap();
-    private String operator ="linwanxian";
-    private int pageData =20;
-    private int pageNumber=1;
-    private  String roleId ="1529635932385000003";
+    private Map map = new HashMap();
+    private String operator = "wujianghui";
+    private int pageData = 20;
+    private int pageNumber = 1;
+    private String roleId = "1529635932385000003";
+
     @Test
     public void syncUserInfo() throws Exception {
 
@@ -77,7 +79,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void copyRole() throws Exception {
-
+        map.put("newRoleName", "adminTest");
+        map.put("sourceRoleId", "1531981633151000028");
+        map.put("operator", operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.copyRole(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -167,18 +175,61 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getRolesByInfo() throws Exception {
+        map.put("pageNumber", pageNumber);
+        map.put("pageData", pageData);
+        map.put("operator", operator);
+        RoleVO roleVO = new RoleVO();
+        roleVO.roleName = "URC";
+        map.put("role", roleVO);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.getRolesByInfo(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
     public void addOrUpdateRoleInfo() throws Exception {
+        map.put("operator", operator);
+        RoleVO roleVO = new RoleVO();
+        roleVO.setRoleName("admin2");
+        roleVO.isForever = true;
+        roleVO.setActive(Boolean.TRUE);
+        roleVO.setAuthorizable(Boolean.FALSE);
+        roleVO.setEffectiveTime(new Date());
+        roleVO.setExpireTime(new Date());
+        roleVO.setCreateBy("admin");
+        roleVO.setExpireTime(new Date());
+        roleVO.lstOwner = new ArrayList<>();
+        RoleOwnerVO ownerVO = new RoleOwnerVO();
+        ownerVO.owner = "zhangqinghui";
+        roleVO.lstOwner.add(ownerVO);
+        map.put("role", roleVO);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.addOrUpdateRoleInfo(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
     public void getRoleByRoleId() throws Exception {
+        map.put("operator", operator);
+        map.put("roleId", "1532145741556000031");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.getRoleByRoleId(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
     public void deleteRoles() throws Exception {
+        map.put("operator", operator);
+        List<String> lstRoleId =new ArrayList<>();
+        lstRoleId.add("1532145741556000031");
+        map.put("lstRoleId",lstRoleId);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.deleteRoles(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -228,15 +279,16 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void updateApiPrefixCache() throws Exception {
     }
+
     @Test
-    public void getAmazonShopPage() throws Exception{
-        map.put("pageNumber",pageNumber);
-        map.put("pageData",pageData);
-        map.put("operator",operator);
-        map.put("shopSystem","0FunHifanDE");
+    public void getAmazonShopPage() throws Exception {
+        map.put("pageNumber", pageNumber);
+        map.put("pageData", pageData);
+        map.put("operator", operator);
+        //map.put("shopSystem", "0FunHifanDE");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
-        resultVO=service.getAmazonShopPage(json);
+        resultVO = service.getAmazonShopPage(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 }
