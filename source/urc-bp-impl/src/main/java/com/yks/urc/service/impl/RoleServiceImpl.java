@@ -122,8 +122,8 @@ public class RoleServiceImpl implements IRoleService {
             queryMap.put("createBy", "");
             queryMap.put("roleIds", null);
         }
-        String pageNumber = jsonObject.getString("pageNumber");
-        String pageData = jsonObject.getString("pageData");
+        int pageNumber = jsonObject.getInteger("pageNumber");
+        int pageData = jsonObject.getInteger("pageData");
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
             throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
         }
