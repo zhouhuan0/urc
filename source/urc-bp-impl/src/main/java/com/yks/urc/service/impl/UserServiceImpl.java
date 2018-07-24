@@ -295,30 +295,4 @@ public class UserServiceImpl implements IUserService {
             return VoHelper.getErrorResult();
         }
     }
-
-    @Override
-    @Transactional
-    public ResultVO<PageResultVO> getAmazonShopPage(String operator,String shopSystem, int pageNumber, int pageData) {
-        try {
-            PageResultVO pageResultVO = new PageResultVO();
-            String platformId = "亚马逊";
-            Map<String, Object> queryMap = new HashMap<>();
-            queryMap.put("platformId", platformId);
-            int currPage = Integer.valueOf(pageNumber);
-            int pageSize = Integer.valueOf(pageData);
-            queryMap.put("currIndex", (currPage - 1) * pageSize);
-            queryMap.put("pageSize", pageSize);
-            if (StringUtility.isNullOrEmpty(shopSystem)){
-                queryMap.put("shopSystem",null);
-            }
-            queryMap.put("shopSystem",shopSystem);
-            List<String> getShop = shopSiteMapper.listShopByPage(queryMap);
-            pageResultVO.lst = getShop;
-            pageResultVO.total = shopSiteMapper.listShopByPageCount(queryMap);
-            return VoHelper.getSuccessResult(pageResultVO);
-        } catch (Exception e) {
-            logger.error("未知异常",e);
-            return VoHelper.getErrorResult();
-        }
-    }
 }

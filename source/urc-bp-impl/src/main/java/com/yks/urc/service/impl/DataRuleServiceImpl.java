@@ -73,6 +73,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ISeqBp seqBp;
 
+    @Autowired
+    private ShopSiteMapper shopSiteMapper;
+
     /**
      * Description: 根据模板Id获取数据权限模板
      *
@@ -1184,6 +1187,36 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         List<DataRuleSysVO>  lstDr=getDataRuleVOByDataRuleSys(lstDrSysGt);
         return VoHelper.getSuccessResult(lstDr);
+    }
+
+    @Override
+    @Transactional
+    public ResultVO<List<OmsPlatformVO>> getAmazonShop(String operator) {
+        try {
+            List<OmsPlatformVO> omsPlatformVOS =new ArrayList<>();
+            OmsPlatformVO omsPlatformVO =new OmsPlatformVO();
+            omsPlatformVO.platformId ="所有账号";
+            omsPlatformVO.platformName ="所有账号";
+            omsPlatformVO.lstShop =new ArrayList<>();
+            String platformId = "亚马逊";
+            List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSite(platformId);
+            //组装账号
+            for (ShopSiteDO shopSiteDO:shopSiteDOS){
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())){
+                    continue;
+                }
+                OmsShopVO omsShopVO =new OmsShopVO();
+                omsShopVO.shopId =shopSiteDO.getShopSystem();
+                omsShopVO.shopName=shopSiteDO.getShop();
+                omsPlatformVO.lstShop.add(omsShopVO);
+            }
+            //组装平台
+            omsPlatformVOS.add(omsPlatformVO);
+            return VoHelper.getSuccessResult(omsPlatformVOS);
+        } catch (Exception e) {
+            logger.error("未知异常",e);
+            return VoHelper.getErrorResult();
+        }
     }
 
 }

@@ -68,4 +68,12 @@ public interface IDataRuleService {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
+    /**
+     *  获取亚马逊的账号(分页)
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/21 10:24
+     */
+    ResultVO<List<OmsPlatformVO>> getAmazonShop(String operator);
 }

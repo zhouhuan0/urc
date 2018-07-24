@@ -19,7 +19,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     private IUrcService service;
     private ResultVO resultVO;
     private Map map = new HashMap();
-    private String operator = "wujianghui";
+    private String operator = "linwanxian";
     private int pageData = 20;
     private int pageNumber = 1;
     private String roleId = "1529635932385000003";
@@ -123,6 +123,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRolePermission() throws Exception {
         map.put("operator", operator);
+
     }
 
     @Test
@@ -135,6 +136,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void fuzzySearchUsersByUserName() throws Exception {
+        map.put("name", "pei");
+        map.put("operator", operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.fuzzSearchPersonByName(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
     }
 
     @Test
@@ -213,7 +221,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRoleByRoleId() throws Exception {
         map.put("operator", operator);
-        map.put("roleId", "1532145741556000031");
+        map.put("roleId", "1529635932385000003");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getRoleByRoleId(json);
@@ -262,10 +270,20 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void syncPlatform() throws Exception {
+        map.put("operator", operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.syncPlatform(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
     public void syncShopSite() throws Exception {
+        map.put("operator", operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.syncShopSite(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -281,14 +299,12 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     }
 
     @Test
-    public void getAmazonShopPage() throws Exception {
-        map.put("pageNumber", pageNumber);
-        map.put("pageData", pageData);
+    public void getAmazonShop() throws Exception {
         map.put("operator", operator);
-        //map.put("shopSystem", "0FunHifanDE");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
-        resultVO = service.getAmazonShopPage(json);
+        resultVO = service.getAmazonShop(json);
+        System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 }

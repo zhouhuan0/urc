@@ -617,18 +617,9 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log("获取亚马逊平台账号")
-    public ResultVO<PageResultVO> getAmazonShopPage(String json) {
-        JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
+    @Log("数据授权-获取亚马逊平台账号")
+    public ResultVO<List<OmsPlatformVO>> getAmazonShop(String json) {
         String operator =MotanSession.getRequest().getOperator();
-        int pageNumber =jObj.getInteger("pageNumber");
-        int pageData =jObj.getInteger("pageData");
-        String shopSystem =jObj.getString("shopSystem");
-      if (StringUtility.isNullOrEmpty(shopSystem)){
-          return userService.getAmazonShopPage(operator,null,pageNumber,pageData);
-      }else {
-        return userService.getAmazonShopPage(operator,shopSystem,pageNumber,pageData);
+        return dataRuleService.getAmazonShop(operator);
     }
-    }
-
 }

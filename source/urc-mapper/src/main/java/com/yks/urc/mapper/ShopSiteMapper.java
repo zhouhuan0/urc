@@ -13,10 +13,25 @@ public interface ShopSiteMapper {
     int insertBatchShopSite(@Param("shopSiteDOList") List<ShopSiteDO> shopSiteDOList);
 
     int deleteShopSite();
-
+    /**
+     * 查询卖家id不为空的账号站点
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/24 16:24
+     */
     List<ShopSiteDO> selectShopSiteByPlatformId(@Param("platformId") String platformId);
     /**
-     * 分页查询亚马逊账号
+     * 查询账号站点
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/24 16:27
+     */
+    List<ShopSiteDO> selectShopSite(@Param("platformId") String platformId);
+
+    /**
+     * 分页查询账号
      * @param:
      * @return
      * @Author lwx

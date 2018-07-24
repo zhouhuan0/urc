@@ -127,8 +127,8 @@ public class RoleServiceImpl implements IRoleService {
         if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
             throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
         }
-        int currPage = Integer.valueOf(pageNumber);
-        int pageSize = Integer.valueOf(pageData);
+        int currPage = pageNumber;
+        int pageSize = pageData;
         queryMap.put("currIndex", (currPage - 1) * pageSize);
         queryMap.put("pageSize", pageSize);
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
