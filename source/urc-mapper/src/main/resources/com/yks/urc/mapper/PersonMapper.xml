@@ -371,7 +371,7 @@
     select  uo.org_name AS orgName,uo.full_name_path AS parentOrgName
       FROM urc_person p LEFT JOIN urc_person_org ug  ON  p.ding_user_id = ug.ding_user_id
       LEFT JOIN urc_organization uo ON  ug.ding_org_id =uo.ding_org_id
-      WHERE  p.ding_user_id  =#{dingUserId}
+      WHERE  p.ding_user_id  =#{dingUserId} limit 1
   </select>
 
 </mapper>
