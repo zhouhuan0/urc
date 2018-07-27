@@ -484,7 +484,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	public void fuzzSearchPersonByName(){
 		Map map =new HashMap();
 		map.put("operator","linwanxian");
-		map.put("name","linwan");
+		map.put("name","pan");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 

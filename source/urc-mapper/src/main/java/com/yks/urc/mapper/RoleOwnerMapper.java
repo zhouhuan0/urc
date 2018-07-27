@@ -54,5 +54,13 @@ public interface RoleOwnerMapper {
       * @Date 2018/7/19 20:53
       */
      int updateOwnerByRoleId(RoleOwnerDO ownerDO);
-     
+
+    /**
+     * 判断当前操作人是否是当前角色owner
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/19 15:23
+     */
+   int judgeOwnerByOwnerAndId(@Param("owner") String owner,@Param("roleId") long roleId);
 }

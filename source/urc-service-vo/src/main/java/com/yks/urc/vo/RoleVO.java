@@ -86,7 +86,7 @@ public class RoleVO implements Serializable {
     /**
      *  此角色的拥有者
      */
-    public List<RoleOwnerVO> lstOwner;
+    public List<String> lstOwner;
 
     public Integer getId() {
         return id;

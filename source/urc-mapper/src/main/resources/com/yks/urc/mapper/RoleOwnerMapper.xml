@@ -50,4 +50,11 @@
     modified_time =#{modifiedTime}
     WHERE  role_id =#{roleId}
   </update>
+
+  <select id="judgeOwnerByOwner" resultType="java.lang.Integer">
+    SELECT <include refid="Base_Column_List"/>
+    FROM urc_role_owner
+    WHERE owner =#{owner} and role_id =#{roleId}
+  </select>
+
 </mapper>

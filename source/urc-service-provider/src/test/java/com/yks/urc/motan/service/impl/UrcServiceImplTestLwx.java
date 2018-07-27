@@ -79,7 +79,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void copyRole() throws Exception {
-        map.put("newRoleName", "adminTest");
+        map.put("newRoleName", "adminTest2");
         map.put("sourceRoleId", "1531981633151000028");
         map.put("operator", operator);
         String json = StringUtility.toJSONString(map);
@@ -204,7 +204,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void addOrUpdateRoleInfo() throws Exception {
         map.put("operator", operator);
         RoleVO roleVO = new RoleVO();
-        roleVO.setRoleName("admin2");
+        roleVO.setRoleName("admin3");
         roleVO.isForever = true;
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.FALSE);
@@ -215,7 +215,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         roleVO.lstOwner = new ArrayList<>();
         RoleOwnerVO ownerVO = new RoleOwnerVO();
         ownerVO.owner = "zhangqinghui";
-        roleVO.lstOwner.add(ownerVO);
+        roleVO.lstOwner.add(ownerVO.owner);
         map.put("role", roleVO);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
