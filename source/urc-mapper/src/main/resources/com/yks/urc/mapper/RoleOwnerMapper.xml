@@ -4,14 +4,14 @@
   <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleOwnerDO">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
-    <result column="owner" jdbcType="VARCHAR" property="owner"/>
+    <result column="role_owner" jdbcType="VARCHAR" property="owner"/>
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, role_id, owner,create_time, create_by, modified_time, modified_by
+    id, role_id, role_owner,create_time, create_by, modified_time, modified_by
   </sql>
 
   <select id="selectOwnerByRoleId" resultMap="BaseResultMap">
@@ -22,12 +22,12 @@
   <select id="selectOwnerByOwner" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM urc_role_owner
-    WHERE owner =#{owner}
+    WHERE role_owner =#{owner}
   </select>
     <!--插入-->
   <insert id="insertOwner" parameterType="com.yks.urc.entity.RoleOwnerDO">
     INSERT  INTO  urc_role_owner
-    (role_id,owner,create_time,create_by, modified_time, modified_by)
+    (role_id,role_owner,create_time,create_by, modified_time, modified_by)
     VALUES (
       #{roleId},
       #{owner},
@@ -45,7 +45,7 @@
   <!--通过roleId 更新owner-->
   <update id="updateOwnerByRoleId" parameterType="com.yks.urc.entity.RoleOwnerDO">
     UPDATE urc_role_owner
-    SET owner =#{owner},
+    SET role_owner =#{owner},
     modified_by =#{modifiedBy},
     modified_time =#{modifiedTime}
     WHERE  role_id =#{roleId}
@@ -54,7 +54,7 @@
   <select id="judgeOwnerByOwner" resultType="java.lang.Integer">
     SELECT <include refid="Base_Column_List"/>
     FROM urc_role_owner
-    WHERE owner =#{owner} and role_id =#{roleId}
+    WHERE role_owner =#{owner} and role_id =#{roleId}
   </select>
 
 </mapper>
