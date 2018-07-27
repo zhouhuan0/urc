@@ -34,6 +34,7 @@ public class HttpUtility {
 			try {
 				httpCilent.close();// 释放资源
 			} catch (IOException e) {
+				LOG.error("释放资源出错:[%s]",e);
 				e.printStackTrace();
 			}
 		}
@@ -73,8 +74,10 @@ public class HttpUtility {
 				urlName += "?" + param;
 			}
 			URL realUrl = new URL(urlName);
-			URLConnection conn = realUrl.openConnection();// 打开和URL之间的连接
-			conn.setRequestProperty("accept", "*/*");// 设置通用的请求属性
+			// 打开和URL之间的连接
+			URLConnection conn = realUrl.openConnection();
+			// 设置通用的请求属性
+			conn.setRequestProperty("accept", "*/*");
 			conn.setRequestProperty("connection", "Keep-Alive");
 			conn.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1)");
 			conn.setConnectTimeout(4000);
@@ -101,10 +104,13 @@ public class HttpUtility {
 	}
 
 
-
-
-
-
+	/**
+	 *  httpclient post请求
+	 * @param url
+	 * @param paramBody
+	 * @param charset
+	 * @return
+	 */
 	public static String doPost(String url, String paramBody, String charset) {
 		HttpClient httpClient = null;
 		HttpPost httpPost = null;
@@ -125,7 +131,7 @@ public class HttpUtility {
 				}
 			}
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			LOG.error("发送post请求出错:[%s]",ex);
 		}
 		return result;
 	}

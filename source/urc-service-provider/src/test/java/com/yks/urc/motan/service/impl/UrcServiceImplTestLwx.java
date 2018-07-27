@@ -132,6 +132,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getMyAuthWay() throws Exception {
+        map.put("operator", operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.getMyAuthWay(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
