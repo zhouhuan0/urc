@@ -9,6 +9,7 @@ import java.net.URLConnection;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -122,7 +123,9 @@ public class HttpUtility {
 
 			StringEntity se = new StringEntity(paramBody);
 			httpPost.setEntity(se);
-
+			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30 * 1000)
+						.setSocketTimeout(120 * 1000).build();
+			httpPost.setConfig(requestConfig);
 			HttpResponse response = httpClient.execute(httpPost);
 			if (response != null) {
 				HttpEntity resEntity = response.getEntity();
