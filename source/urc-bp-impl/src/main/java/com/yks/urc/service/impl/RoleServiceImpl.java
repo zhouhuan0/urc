@@ -101,6 +101,7 @@ public class RoleServiceImpl implements IRoleService {
         if (roleVo != null) {
             String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
             queryMap.put("roleNames", roleNames);
+            // 正则判断多级搜索框空格
             Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
             Matcher matcher = pattern.matcher(roleVo.getRoleName());
             if (!matcher.matches()) {
@@ -272,6 +273,7 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertOrUpdateRole(String operator, RoleVO roleVO, RoleDO opRoleDO) {
         if (opRoleDO == null) {
+            logger.info("add role");
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
             Long roleId = seqBp.getNextRoleId();
@@ -283,12 +285,13 @@ public class RoleServiceImpl implements IRoleService {
             checkEffective(roleDO);
             int rtn = roleMapper.insert(roleDO);
             //owner 入库操作
-            insetOwnerDO(roleVO,roleId);
+            insetOwnerDO(roleVO,roleId,operator);
              /*批量新增角色-操作权限关系数据*/
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
         } else {
+            logger.info("update role");
             RoleDO role = roleMapper.getRoleByRoleId(String.valueOf(roleVO.getRoleId()));
             if (!role.getRoleName().equals(roleVO.getRoleName())) {
                 if (roleMapper.checkDuplicateRoleName(roleVO.getRoleName(), null)) {
@@ -304,10 +307,10 @@ public class RoleServiceImpl implements IRoleService {
             roleMapper.updateByRoleId(roleDO);
             //删除原有的owner ,插入新的owner
             ownerMapper.deleteOwnerByRoleId(Long.valueOf(roleVO.roleId));
-            logger.info("清除roleId 为:[%s] 的owner", roleVO.roleId);
+            logger.info(String.format("清除roleId 为:[%s] 的owner", roleVO.roleId));
             //owner 入库操作
-            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId));
-            logger.info("更新roleId 为:[%s] 的owner", roleVO.roleId);
+            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId),operator);
+            logger.info(String.format("更新roleId 为:[%s] 的owner", roleVO.roleId));
               /*删除原有角色-权限关系数据*/
             rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
             /*批量新增角色-操作权限关系数据*/
@@ -327,7 +330,7 @@ public class RoleServiceImpl implements IRoleService {
      * @Author lwx
      * @Date 2018/7/27 18:41
      */
-    public void insetOwnerDO(RoleVO roleVO,Long roleId) {
+    public void insetOwnerDO(RoleVO roleVO,Long roleId,String operator) {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
             //天假创建者
@@ -1061,7 +1064,6 @@ public class RoleServiceImpl implements IRoleService {
                 operationBp.addLog(logger.getName(), "没有角色过期", null);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有角色过期");
             }
-
         } catch (Exception ex) {
             operationBp.addLog(logger.getName(), "处理过期角色ERROR", ex);
             return VoHelper.getErrorResult();
@@ -1083,22 +1085,5 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             return true;
         }
-    }
-
-    public static void main(String[] args) {
-        List<String> matchList = new ArrayList<>();
-        matchList.add("a");
-        matchList.add("a");
-        matchList.add("c");
-        matchList.add("d");
-
-        boolean isExists = matchList.stream().anyMatch(s -> s.equals("c"));
-        System.out.println(isExists);
-
-        List<String> forEachLists = new ArrayList<>();
-        forEachLists.add("a");
-        forEachLists.add("b");
-        forEachLists.add("c");
-        forEachLists.stream().forEach(s -> System.out.println(s));
     }
 }

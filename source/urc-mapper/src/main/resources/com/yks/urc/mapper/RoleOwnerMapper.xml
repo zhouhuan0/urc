@@ -51,8 +51,8 @@
     WHERE  role_id =#{roleId}
   </update>
 
-  <select id="judgeOwnerByOwner" resultType="java.lang.Integer">
-    SELECT <include refid="Base_Column_List"/>
+  <select id="judgeOwnerByOwnerAndId" resultType="java.lang.Integer">
+    SELECT count(*)
     FROM urc_role_owner
     WHERE role_owner =#{owner} and role_id =#{roleId}
   </select>
