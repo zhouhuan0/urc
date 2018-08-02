@@ -432,4 +432,12 @@ public interface IUrcService {
      * @Date 2018/7/21 10:26
      */
     ResultVO<List<OmsPlatformVO>> getAmazonShop(String json);
+    /**
+     *  获取指定平台下的账号站点 数据权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/8/2 14:45
+     */
+    ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json);
 }

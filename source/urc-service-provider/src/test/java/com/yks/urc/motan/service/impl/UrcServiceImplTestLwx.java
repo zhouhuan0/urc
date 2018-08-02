@@ -307,14 +307,35 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void updateApiPrefixCache() throws Exception {
+        map.put("operator","linwanxian");
+        String json =StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+
+        System.out.println(json);
+        System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+        ResultVO resultVO =service.updateApiPrefixCache(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+        System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
     }
 
     @Test
     public void getAmazonShop() throws Exception {
         map.put("operator", operator);
+        map.put("platformId","亚马逊");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getAmazonShop(json);
+        System.out.println();
+        System.out.println(StringUtility.toJSONString(resultVO));
+    }
+
+    @Test
+    public void appointPlatformShopSite() throws Exception {
+        map.put("operator", operator);
+        map.put("platformId","ebay");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.appointPlatformShopSite(json);
         System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
     }
