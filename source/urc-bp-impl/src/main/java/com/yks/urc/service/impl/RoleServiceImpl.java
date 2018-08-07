@@ -333,7 +333,7 @@ public class RoleServiceImpl implements IRoleService {
     public void insetOwnerDO(RoleVO roleVO,Long roleId,String operator) {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
-            //天假创建者
+            //添加创建者
             roleVO.lstOwner.add(operator);
             //去重
             roleVO.lstOwner.stream().distinct();

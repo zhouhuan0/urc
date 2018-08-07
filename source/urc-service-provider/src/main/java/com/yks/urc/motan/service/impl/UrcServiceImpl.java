@@ -618,11 +618,11 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     @Log("数据授权-获取平台账号")
-    public ResultVO<List<OmsPlatformVO>> getAmazonShop(String json) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String json) {
         JSONObject jsonObject =StringUtility.parseString(json);
         String operator =MotanSession.getRequest().getOperator();
         String platformId =jsonObject.getString("platformId");
-        return dataRuleService.getAmazonShop(operator,platformId);
+        return dataRuleService.getPlatformShop(operator,platformId);
     }
 
     @Override

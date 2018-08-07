@@ -75,7 +75,7 @@ public interface IDataRuleService {
      * @Author lwx
      * @Date 2018/7/21 10:24
      */
-    ResultVO<List<OmsPlatformVO>> getAmazonShop(String operator,String platformId);
+    ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator,String platformId);
     /**
      *  获取指定平台下的账号站点 数据权限
      * @param

@@ -1192,12 +1192,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Override
     @Transactional
-    public ResultVO<List<OmsPlatformVO>> getAmazonShop(String operator, String platformId) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
         try {
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
             OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-            omsPlatformVO.platformId = "所有账号";
-            omsPlatformVO.platformName = "所有账号";
+            omsPlatformVO.platformId = platformId;
+            omsPlatformVO.platformName =platformId;
             omsPlatformVO.lstShop = new ArrayList<>();
             List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformId);
             //组装账号
@@ -1225,8 +1225,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         try {
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
             OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-            omsPlatformVO.platformId = "所有账号";
-            omsPlatformVO.platformName = "所有账号";
+            omsPlatformVO.platformId = platformId;
+            omsPlatformVO.platformName = platformId;
             omsPlatformVO.lstShop = new ArrayList<>();
             List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformId);
             //组装账号

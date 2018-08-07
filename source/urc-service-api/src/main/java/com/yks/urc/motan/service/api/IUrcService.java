@@ -431,7 +431,7 @@ public interface IUrcService {
      * @Author lwx
      * @Date 2018/7/21 10:26
      */
-    ResultVO<List<OmsPlatformVO>> getAmazonShop(String json);
+    ResultVO<List<OmsPlatformVO>>getPlatformShop(String json);
     /**
      *  获取指定平台下的账号站点 数据权限
      * @param
