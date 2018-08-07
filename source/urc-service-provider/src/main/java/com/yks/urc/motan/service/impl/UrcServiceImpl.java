@@ -278,9 +278,12 @@ public class UrcServiceImpl implements IUrcService {
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstUserName"))) {
             throw new URCBizException("lstUserName为空", ErrorCode.E_000002);
         }
+
+        String sysKey = jsonObject.getString("sysKey");
+
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
 
-        return dataRuleService.getDataRuleByUser(lstUserName,operator);
+        return dataRuleService.getDataRuleByUser(lstUserName,operator,sysKey);
     }
 
 

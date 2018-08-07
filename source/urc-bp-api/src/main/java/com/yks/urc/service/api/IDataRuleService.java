@@ -29,7 +29,7 @@ public interface IDataRuleService {
      * @param lstUserName
      * @return
      */
-    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator);
+    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator,String sysKey);
 
 
     /**
