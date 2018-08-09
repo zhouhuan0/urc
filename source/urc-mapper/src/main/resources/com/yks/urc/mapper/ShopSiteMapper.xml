@@ -120,7 +120,7 @@
     <select id="selectShopSite" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
-        FROM urc_shop_site WHERE platform_id = #{platformId} ORDER BY shop_system ASC
+        FROM urc_shop_site WHERE platform_id = #{platformId} 
     </select>
 
     <select id="listShopByPage" parameterType="java.util.HashMap" resultType="java.lang.String">
