@@ -398,6 +398,9 @@ public interface IUrcService {
      */
     ResultVO getPlatformShopSite(String jsonStr);
 
+
+    ResultVO getPlatformShopByEntityCode(String jsonStr);
+
     ResultVO syncPlatform(String jsonStr);
 
     ResultVO syncShopSite(String jsonStr);

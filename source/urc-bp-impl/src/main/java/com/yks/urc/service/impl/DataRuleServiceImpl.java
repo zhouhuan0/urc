@@ -2,6 +2,7 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
@@ -12,6 +13,7 @@ import com.yks.urc.mapper.*;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
+import com.yks.urc.service.api.IUserService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
@@ -75,6 +77,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ShopSiteMapper shopSiteMapper;
+
+    @Autowired
+    private IUserService userService;
+
+
+    @Autowired
+    private IDataRuleService dataRuleService;
 
     /**
      * Description: 根据模板Id获取数据权限模板
@@ -1042,9 +1051,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("既不是超级管理员也不是业务管理员", ErrorCode.E_100003);
         }
 
-/*        if(StringUtility.isNullOrEmpty(sysKey)){
+        if(StringUtility.isNullOrEmpty(sysKey)){
             return VoHelper.getSuccessResult((Object) "sysKey为空");
-        }*/
+        }
 
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         if (lstUserName != null && lstUserName.size() > 0) {
@@ -1052,11 +1061,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 UserDO userDO = new UserDO();
                 userDO.setUserName(lstUserName.get(i));
                 List<String> sysKeys = new ArrayList<>();
-               if (roleMapper.isAdminAccount(operator)) {
+/*               if (roleMapper.isAdminAccount(operator)) {
                     sysKeys = userRoleMapper.getSysKeyByUser(operator);
-                }
+                }*/
 
-                //sysKeys.add(sysKey);
+                sysKeys.add(sysKey);
 
                 //通过用户名得到DataRuleSysId\SysKey\SysName
                 List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO, sysKeys);
@@ -1267,5 +1276,67 @@ public class DataRuleServiceImpl implements IDataRuleService {
             logger.error("未知异常", e);
             return VoHelper.getErrorResult();
         }
+    }
+
+
+    @Override
+    @Transactional
+    public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
+        try {
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+            omsPlatformVO.platformId = platformId;
+            omsPlatformVO.platformName = platformId;
+            omsPlatformVO.lstShop = new ArrayList<>();
+            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformId);
+            //组装账号
+            for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
+                    continue;
+                }
+                OmsShopVO omsShopVO = new OmsShopVO();
+                omsShopVO.shopId = shopSiteDO.getShopSystem();
+                omsShopVO.shopName = shopSiteDO.getShop();
+                omsPlatformVO.lstShop.add(omsShopVO);
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+                    omsShopVO.lstSite = null;
+                } else {
+                    omsShopVO.lstSite = new ArrayList<>();
+                    OmsSiteVO siteVO = new OmsSiteVO();
+                    siteVO.siteId = shopSiteDO.getSiteId();
+                    if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+                        siteVO.siteName = siteVO.siteId;
+                    } else {
+                        siteVO.siteName = shopSiteDO.getSiteName();
+                    }
+                    omsShopVO.lstSite.add(siteVO);
+                }
+            }
+            //组装平台
+            omsPlatformVOS.add(omsPlatformVO);
+            return VoHelper.getSuccessResult(omsPlatformVOS);
+        } catch (Exception e) {
+            logger.error("未知异常", e);
+            return VoHelper.getErrorResult();
+        }
+    }
+
+    @Override
+    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode) {
+            if(StringUtility.isNullOrEmpty(entityCode)){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+            }
+            //根据entityCode找到对应得platforid
+            if(entityCode.equalsIgnoreCase("E_PlatformShopSite")){
+                //oms
+                return  dataRuleService.appointPlatformShopSiteOms(operator,"速卖通");
+            }else if(entityCode.equalsIgnoreCase("E_ArmShopAccount")){
+                //索赔-->亚马逊 只需要账号
+                return dataRuleService.getPlatformShop(operator,"亚马逊");
+            }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
+                // 刊登--->ebyay 只需要账号
+                return  dataRuleService.getPlatformShop(operator,"eBay");
+            }
+            return null;
     }
 }

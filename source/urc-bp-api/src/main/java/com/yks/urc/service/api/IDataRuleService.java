@@ -84,4 +84,9 @@ public interface IDataRuleService {
      * @Date 2018/8/2 14:46
      */
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator,String platformId);
+
+    ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator,String platformId);
+
+
+    ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode);
 }

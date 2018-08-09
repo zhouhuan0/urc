@@ -629,6 +629,15 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("数据授权-获取平台账号根据entityCode")
+    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String json) {
+        JSONObject jsonObject =StringUtility.parseString(json);
+        String operator =MotanSession.getRequest().getOperator();
+        String entityCode =jsonObject.getString("entityCode");
+        return dataRuleService.getPlatformShopByEntityCode(operator,entityCode);
+    }
+
+    @Override
     @Log("获取指定平台下的账号站点 数据权限")
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json) {
         JSONObject jsonObject =StringUtility.parseString(json);
