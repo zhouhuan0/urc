@@ -249,22 +249,35 @@ public class UserBpImpl implements IUserBp {
         List<UserInfo> dingUserList = null;
         // 1.请求token
         JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("password", password);
+
         String accessToken =null;
         String userInfo = null;
+        Map<String,String> headMap =new HashMap<>();
+        StringBuffer sb =new StringBuffer();
+
+
         try {
-            accessToken=  HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
+            object.put("username", username);
+            object.put("password", password);
+
+            headMap.put("Content-Type","application/json");
+
+            accessToken=  HttpUtility.postHasHeaders(GET_TOKEN,headMap, object.toJSONString(),"utf-8");
             if (StringUtility.isNullOrEmpty(accessToken)) {
                 logger.error(String.format("获取token失败, 请求参数为: %s ",StringUtility.toJSONString(object)),object);
-               throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
+                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
             }
             logger.info("获取token");
             // 将拿到的string 转为json
             JSONObject jsonToken = StringUtility.parseString(accessToken);
             String token = jsonToken.getString("token");
             // 2.只调用UserInfo接口，同步UserInfo数据
-             userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
+
+            sb.append("JWT").append(" ").append(token);
+
+            headMap.put("Authorization",sb.toString());
+
+            userInfo = HttpUtility.getHasHeaders(USER_INFO_ADDRESS,headMap);
             if (StringUtility.isNullOrEmpty(userInfo)) {
                 logger.error(String.format("获取userInfo失败, 请求参数为: %s token为: %s",USER_INFO_ADDRESS ,accessToken),userInfo);
                 throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取userInfo失败,userInfo返回数据为空");

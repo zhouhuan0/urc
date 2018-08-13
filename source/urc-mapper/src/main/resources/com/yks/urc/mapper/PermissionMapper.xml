@@ -123,11 +123,16 @@
 
     <update id="updateSysContextBySysKey">
         update urc_permission
-        set sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3)
+        set  sys_name = #{sysName}, sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3)
         where sys_key=#{sysKey}
     </update>
 
     <select id="perMissionMap" resultType="com.yks.urc.entity.PermissionDO">
         select sys_key,sys_name from urc_permission
     </select>
+
+    <select id="getSysNameByKey" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT sys_name FROM urc_permission WHERE  sys_key=#{sysKey}
+    </select>
+
 </mapper>
