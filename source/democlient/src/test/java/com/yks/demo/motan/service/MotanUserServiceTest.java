@@ -3,6 +3,7 @@ package com.yks.demo.motan.service;
 import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 import com.yks.demo.DemoClientApplication;
+import com.yks.oms.order.manage.motan.IOrderManageConfigApi;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -27,7 +28,7 @@ import java.util.Map;
 public class MotanUserServiceTest {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @MotanReferer
+//    @MotanReferer
     private IUrcService urcService;
 
    /* @MotanReferer
@@ -37,6 +38,14 @@ public class MotanUserServiceTest {
     public void getStoreAccount_Test() {
         System.out.println(String.format("getStoreAccount_Test:\r\n%s", omsApiFace.getStoreAccount()));
     }*/
+
+   @MotanReferer
+   private IOrderManageConfigApi orderManageConfigApi;
+
+   @Test
+   public void IOrderManageConfigApi_Test(){
+       System.out.println(StringUtility.toJSONString_NoException(orderManageConfigApi.queryConfigRuleWarehouse("{}")));
+   }
 
     @Test
     public void getPlatformShopSite_Test() {

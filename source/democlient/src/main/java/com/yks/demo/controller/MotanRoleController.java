@@ -31,7 +31,7 @@ import java.util.UUID;
 @RequestMapping("role")
 public class MotanRoleController {
 
-    @MotanReferer
+//    @MotanReferer
     private IUrcService urcService;
 
     @RequestMapping("checkDupName/{newRoleName}")

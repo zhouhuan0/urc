@@ -19,7 +19,7 @@ public class TestKafkaProducerClient
 
 		messages.add("hello,this is  kafka");
 
-		mqProducerClient.pubish("test-topic", messages, new MQProducerClient.MessageCallBack()
+		mqProducerClient.pubish("SKU_STORAGE_TOPIC", "1", new MQProducerClient.MessageCallBack()
 		{
 			@Override
 			public void onCompletion(RecordMetadata metadata, Exception exception)

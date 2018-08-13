@@ -80,9 +80,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void utcTime_Test() {
         System.out.println(StringUtility.dt2Str(new Date(), "yyyy-MM-dd'T'HH:mm:ssZ"));
     }
-
+    @Test
     public void mqConsumer_Test() {
-        String topic = String.format("URC_USER_DATARULE_%s", "001");
+        String topic = String.format("URC_USER_DATARULE_%s", "006");
         MessageCallBack callBack = new MessageCallBack() {
 
             @Override
@@ -99,7 +99,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         dr.userName = "py";
         dr.lstDataRuleSys = new ArrayList<>();
         DataRuleSysVO e = new DataRuleSysVO();
-        e.sysKey = "001";
+        e.sysKey = "006";
         e.userName = "panyun";
 
         ExpressionVO exp = new ExpressionVO();
