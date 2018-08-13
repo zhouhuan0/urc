@@ -118,7 +118,7 @@ public class UserBpImpl implements IUserBp {
                     userDo.setModifiedTime(StringUtility.getDateTimeNow());
                     userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
                     // 1 表示启用,0表示禁用
-                    if ("66050".equals(user.userAccountControl)) {
+                    if ("66050".equals(user.ad_control_number)) {
                         userDo.setIsActive(0);
                     } else {
                         userDo.setIsActive(1);
@@ -415,11 +415,4 @@ public class UserBpImpl implements IUserBp {
         return VoHelper.getSuccessResult("logout success");
     }
 
-    public static void main(String[] args) {
-        List list = new ArrayList();
-        list.add("linwanxian");
-        list.add("panyun");
-        String str = list.toString();
-        System.out.println("======================" + str);
-    }
 }
