@@ -44,4 +44,14 @@ public class MotanClientConfiguration {
     public RefererConfigBean refererConfigBeanOms() {
         return new RefererConfigBean();
     }
+
+
+    @ConditionalOnProperty(prefix = "motan.client", value = "enabled", havingValue = "true")
+    @Bean(name = "refereromsordermanage")
+    @ConfigurationProperties(prefix = "motan.client.refereromsordermanage")
+    public RefererConfigBean refererConfigBeanOmsOrderManage() {
+        return new RefererConfigBean();
+    }
+
+
 }

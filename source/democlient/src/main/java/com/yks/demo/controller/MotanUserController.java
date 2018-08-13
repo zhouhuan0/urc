@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class MotanUserController {
 
-    @MotanReferer
+//    @MotanReferer
     private IUrcService urcService;
     private static final String ApiUrlPrefix = "/urc/motan/service/api/IUrcService/";
 
