@@ -14,4 +14,6 @@ public interface ShopSiteMapper {
     int deleteShopSite();
 
     List<ShopSiteDO> selectShopSiteByPlatformId(@Param("platformId") String platformId);
+
+    List<ShopSiteDO> selectShopSite(@Param("platformId") String platformId);
 }

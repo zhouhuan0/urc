@@ -42,4 +42,10 @@ public class PermissionMapperTest extends BaseMapperTest {
       }
     }
 
+    @Test
+    public void test_getSysNameBykey(){
+       String sysName= permissionMapper.getSysNameByKey("005");
+        System.out.println(sysName);
+    }
+
 }

@@ -68,4 +68,19 @@ public interface IDataRuleService {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
+
+
+    ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator,String platformId);
+
+
+    ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode);
+
+
+    /**
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/21 10:24
+     */
+    ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator,String platformId);
 }

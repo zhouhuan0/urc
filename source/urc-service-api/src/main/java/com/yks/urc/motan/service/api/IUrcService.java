@@ -416,4 +416,15 @@ public interface IUrcService {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
+
+
+    /**
+     * @Description : 根据entityCode
+     * @Author: wujianghui@youkeshu.com
+     * @Date: 2018/8/13 14:23
+     * @Param: [jsonStr]
+     * @return: com.yks.urc.vo.ResultVO
+     **/
+    ResultVO getPlatformShopByEntityCode(String jsonStr);
+
 }

@@ -92,4 +92,5 @@ public interface PermissionMapper {
      */
     @MapKey("sysKey")
     Map<String, PermissionDO> perMissionMap();
+
 }

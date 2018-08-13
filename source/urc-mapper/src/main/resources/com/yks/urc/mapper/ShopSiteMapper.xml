@@ -116,4 +116,11 @@
      FROM urc_shop_site WHERE  platform_id = #{platformId}  and seller_id != ''
   </select>
 
+  <!--通过platformId获取账号和站点-->
+  <select id="selectShopSite" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    FROM urc_shop_site WHERE platform_id = #{platformId}
+  </select>
+
 </mapper>
