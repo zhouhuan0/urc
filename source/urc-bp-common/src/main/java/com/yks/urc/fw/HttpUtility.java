@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -125,6 +126,79 @@ public class HttpUtility {
 			httpPost.setEntity(se);
 			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30 * 1000)
 						.setSocketTimeout(120 * 1000).build();
+			httpPost.setConfig(requestConfig);
+			HttpResponse response = httpClient.execute(httpPost);
+			if (response != null) {
+				HttpEntity resEntity = response.getEntity();
+				if (resEntity != null) {
+					result = EntityUtils.toString(resEntity, charset);
+				}
+			}
+		} catch (Exception ex) {
+			LOG.error("发送post请求出错:[%s]",ex);
+		}
+		return result;
+	}
+
+	/**
+	 *  发送带有请求头的Get请求
+	 * @param
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/8/13 12:06
+	 */
+	public static String getHasHeaders(String url, Map<String,String> headMap) {
+		// Creates CloseableHttpClient instance with default configuration.
+		CloseableHttpClient httpCilent = HttpClients.createDefault();
+		HttpGet httpGet = new HttpGet(url);
+		try {
+			if (headMap != null && headMap.size() >0){
+				//遍历map
+				for (Map.Entry str :headMap.entrySet() ){
+					httpGet.setHeader(str.getKey().toString(),str.getValue().toString());
+				}
+			}
+			HttpResponse httpResponse = httpCilent.execute(httpGet);
+			return EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+		} catch (IOException e) {
+			LOG.error(String.format("httpGet:%s", httpGet), e);
+		} finally {
+			try {
+				httpCilent.close();// 释放资源
+			} catch (IOException e) {
+				LOG.error("释放资源出错:[%s]",e);
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 *  http post 请求, 带请求头
+	 * @param
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/8/13 14:08
+	 */
+	public static String postHasHeaders(String url, Map<String,String> headMap, String paramBody, String charset) {
+		HttpClient httpClient = null;
+		HttpPost httpPost = null;
+		String result = null;
+		try {
+			httpClient = new SSLClient();
+			httpPost = new HttpPost(url);
+			//设置头部
+			if (headMap != null && headMap.size() >0){
+				//遍历map
+				for (Map.Entry str :headMap.entrySet() ){
+					httpPost.setHeader(str.getKey().toString(),str.getValue().toString());
+				}
+			}
+			// 设置参数
+			StringEntity se = new StringEntity(paramBody);
+			httpPost.setEntity(se);
+			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30 * 1000)
+					.setSocketTimeout(120 * 1000).build();
 			httpPost.setConfig(requestConfig);
 			HttpResponse response = httpClient.execute(httpPost);
 			if (response != null) {

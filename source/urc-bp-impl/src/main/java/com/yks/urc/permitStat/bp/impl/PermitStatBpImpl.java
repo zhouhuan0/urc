@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.mapper.PermissionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	private IUserPermissionCacheMapper permissionCacheMapper;
 	@Autowired
 	private IUserValidateBp userValidateBp;
+
+	private PermissionMapper permissionMapper;
 
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
@@ -93,6 +97,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				cacheDo.setSysKey(sysKey);
 				// 合并json树
 				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
+				//获取sysName
+				rootVO.system.name =getSysNameBySyskey(sysKey);
+
 				cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
 //				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
 				cacheDo.setCreateTime(new Date());
@@ -130,7 +137,22 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		}
 		return permitCache;
 	}
-	
+	/**
+	 *  通过sysKey 获取sysName
+	 * @param
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/8/13 15:02
+	 */
+	private String getSysNameBySyskey(String sysKey) {
+	String sysName= permissionMapper.getSysNameByKey(sysKey);
+		if (StringUtility.isNullOrEmpty(sysName)) {
+			return sysName;
+		}else {
+			return null;
+		}
+	}
+
 	/**
 	 * 所有系统的功能权限json做字符串相加，再计算md5
 	 * @param permitCache

@@ -118,7 +118,7 @@ public class UserBpImpl implements IUserBp {
                     userDo.setModifiedTime(StringUtility.getDateTimeNow());
                     userDo.setActiveTime(StringUtility.stringToDate(user.date_joined, "yyyy-MM-dd HH:mm:ss"));
                     // 1 表示启用,0表示禁用
-                    if ("66050".equals(user.userAccountControl)) {
+                    if ("66050".equals(user.ad_control_number)) {
                         userDo.setIsActive(0);
                     } else {
                         userDo.setIsActive(1);
@@ -227,6 +227,7 @@ public class UserBpImpl implements IUserBp {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 9:34
      */
+    @Override
     public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
         List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
         try {
@@ -249,22 +250,35 @@ public class UserBpImpl implements IUserBp {
         List<UserInfo> dingUserList = null;
         // 1.请求token
         JSONObject object = new JSONObject();
-        object.put("username", username);
-        object.put("password", password);
+
         String accessToken =null;
         String userInfo = null;
+        Map<String,String> headMap =new HashMap<>();
+        StringBuffer sb =new StringBuffer();
+
+
         try {
-            accessToken=  HttpUtility.sendPost(GET_TOKEN, object.toJSONString());
+            object.put("username", username);
+            object.put("password", password);
+
+            headMap.put("Content-Type","application/json");
+
+            accessToken=  HttpUtility.postHasHeaders(GET_TOKEN,headMap, object.toJSONString(),"utf-8");
             if (StringUtility.isNullOrEmpty(accessToken)) {
                 logger.error(String.format("获取token失败, 请求参数为: %s ",StringUtility.toJSONString(object)),object);
-               throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
+                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取token 失败,返回的token为空");
             }
             logger.info("获取token");
             // 将拿到的string 转为json
             JSONObject jsonToken = StringUtility.parseString(accessToken);
             String token = jsonToken.getString("token");
             // 2.只调用UserInfo接口，同步UserInfo数据
-             userInfo = HttpUtility.httpGet(USER_INFO_ADDRESS + token);
+
+            sb.append("JWT").append(" ").append(token);
+
+            headMap.put("Authorization",sb.toString());
+
+            userInfo = HttpUtility.getHasHeaders(USER_INFO_ADDRESS,headMap);
             if (StringUtility.isNullOrEmpty(userInfo)) {
                 logger.error(String.format("获取userInfo失败, 请求参数为: %s token为: %s",USER_INFO_ADDRESS ,accessToken),userInfo);
                 throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取userInfo失败,userInfo返回数据为空");
@@ -325,7 +339,9 @@ public class UserBpImpl implements IUserBp {
      * @return
      */
     private String getPersonNameFromCacheOrDb(String userName) {
-        if (StringUtility.isNullOrEmpty(userName)) return userName;
+        if (StringUtility.isNullOrEmpty(userName)) {
+            return userName;
+        }
         String personName = cacheBp.getPersonNameByUserName(userName);
         if (StringUtility.isNullOrEmpty(personName)) {
             personName = userMapper.getPersonNameByUserName(userName);
@@ -382,8 +398,12 @@ public class UserBpImpl implements IUserBp {
         }
         if (permitCache != null) {
             permitCache.lstUserSysVO = null;
-            if (permitCache.lstSysRoot == null) permitCache.lstSysRoot = new ArrayList<>();
-            if (permitCache.funcVersion == null) permitCache.funcVersion = StringUtility.Empty;
+            if (permitCache.lstSysRoot == null) {
+                permitCache.lstSysRoot = new ArrayList<>();
+            }
+            if (permitCache.funcVersion == null) {
+                permitCache.funcVersion = StringUtility.Empty;
+            }
             return VoHelper.getSuccessResult(permitCache);
         }
         return VoHelper.getSuccessResult(null);
