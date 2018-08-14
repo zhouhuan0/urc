@@ -123,6 +123,7 @@
         FROM urc_shop_site WHERE platform_id = #{platformId} 
     </select>
 
+
     <select id="listShopByPage" parameterType="java.util.HashMap" resultType="java.lang.String">
         select shop_system from urc_shop_site where platform_id =#{platformId}
         <if test="shopSystem != null and shopSystem !='' ">
@@ -137,4 +138,7 @@
         </if>
         ORDER BY shop_system ASC
     </select>
+
+
+
 </mapper>

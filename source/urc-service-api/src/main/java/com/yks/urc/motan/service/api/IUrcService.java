@@ -398,9 +398,6 @@ public interface IUrcService {
      */
     ResultVO getPlatformShopSite(String jsonStr);
 
-
-    ResultVO getPlatformShopByEntityCode(String jsonStr);
-
     ResultVO syncPlatform(String jsonStr);
 
     ResultVO syncShopSite(String jsonStr);
@@ -419,6 +416,7 @@ public interface IUrcService {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
+
     /**
      *  更新缓存ａｐｉ前缀
      * @param:
@@ -443,4 +441,16 @@ public interface IUrcService {
      * @Date 2018/8/2 14:45
      */
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json);
+
+
+
+    /**
+     * @Description : 根据entityCode
+     * @Author: wujianghui@youkeshu.com
+     * @Date: 2018/8/13 14:23
+     * @Param: [jsonStr]
+     * @return: com.yks.urc.vo.ResultVO
+     **/
+    ResultVO getPlatformShopByEntityCode(String jsonStr);
+
 }

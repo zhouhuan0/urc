@@ -324,7 +324,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         map.put("platformId","亚马逊");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
-        resultVO = service.getAmazonShop(json);
+       //resultVO = service.getAmazonShop(json);
         System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
     }

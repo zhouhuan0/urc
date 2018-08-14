@@ -75,8 +75,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ISeqBp seqBp;
 
-    @Autowired
-    private ShopSiteMapper shopSiteMapper;
 
     @Autowired
     private IUserService userService;
@@ -84,6 +82,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private IDataRuleService dataRuleService;
+
+    @Autowired
+    private ShopSiteMapper shopSiteMapper;
+
 
     /**
      * Description: 根据模板Id获取数据权限模板
@@ -1207,6 +1209,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return VoHelper.getSuccessResult(lstDr);
     }
 
+
     @Override
     @Transactional
     public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
@@ -1237,7 +1240,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    @Transactional
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator, String platformId) {
         try {
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
@@ -1245,7 +1247,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             omsPlatformVO.platformId = platformId;
             omsPlatformVO.platformName = platformId;
             omsPlatformVO.lstShop = new ArrayList<>();
-            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformId);
+            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformId);
+
             //组装账号
             for (ShopSiteDO shopSiteDO : shopSiteDOS) {
                 if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
@@ -1255,13 +1258,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 omsShopVO.shopId = shopSiteDO.getShopSystem();
                 omsShopVO.shopName = shopSiteDO.getShop();
                 omsPlatformVO.lstShop.add(omsShopVO);
-                if (shopSiteDO.getSiteId() == null) {
+
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+
                     omsShopVO.lstSite = null;
                 } else {
                     omsShopVO.lstSite = new ArrayList<>();
                     OmsSiteVO siteVO = new OmsSiteVO();
                     siteVO.siteId = shopSiteDO.getSiteId();
-                    if (shopSiteDO.getSiteName() == null) {
+
+                    if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+
                         siteVO.siteName = siteVO.siteId;
                     } else {
                         siteVO.siteName = shopSiteDO.getSiteName();
@@ -1278,9 +1285,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
     }
 
-
     @Override
-    @Transactional
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
         try {
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
@@ -1289,6 +1294,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             omsPlatformVO.platformName = platformId;
             omsPlatformVO.lstShop = new ArrayList<>();
             List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformId);
+
             //组装账号
             for (ShopSiteDO shopSiteDO : shopSiteDOS) {
                 if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
@@ -1298,13 +1304,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 omsShopVO.shopId = shopSiteDO.getShopSystem();
                 omsShopVO.shopName = shopSiteDO.getShop();
                 omsPlatformVO.lstShop.add(omsShopVO);
+
                 if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+
                     omsShopVO.lstSite = null;
                 } else {
                     omsShopVO.lstSite = new ArrayList<>();
                     OmsSiteVO siteVO = new OmsSiteVO();
                     siteVO.siteId = shopSiteDO.getSiteId();
+
                     if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+
                         siteVO.siteName = siteVO.siteId;
                     } else {
                         siteVO.siteName = shopSiteDO.getSiteName();
@@ -1321,22 +1331,29 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
     }
 
+
+
     @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode) {
-            if(StringUtility.isNullOrEmpty(entityCode)){
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
-            }
-            //根据entityCode找到对应得platforid
-            if(entityCode.equalsIgnoreCase("E_PlatformShopSite")){
-                //oms
-                return  dataRuleService.appointPlatformShopSiteOms(operator,"速卖通");
-            }else if(entityCode.equalsIgnoreCase("E_ArmShopAccount")){
-                //索赔-->亚马逊 只需要账号
-                return dataRuleService.getPlatformShop(operator,"亚马逊");
-            }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
-                // 刊登--->ebyay 只需要账号
-                return  dataRuleService.getPlatformShop(operator,"eBay");
-            }
-            return null;
+        if(StringUtility.isNullOrEmpty(entityCode)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+        }
+        //根据entityCode找到对应得platforid
+        if(entityCode.equalsIgnoreCase("E_PlatformShopSite")){
+            //oms
+            return  dataRuleService.appointPlatformShopSiteOms(operator,"速卖通");
+        }else if(entityCode.equalsIgnoreCase("E_ArmShopAccount")){
+            //索赔-->亚马逊 只需要账号
+            return dataRuleService.getPlatformShop(operator,"亚马逊");
+        }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
+            // 刊登--->ebyay 只需要账号
+            return  dataRuleService.getPlatformShop(operator,"eBay");
+        }else{
+            //待定后续....
+            return VoHelper.getSuccessResult((Object) "待配置......");
+        }
+
     }
+
+
 }

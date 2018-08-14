@@ -637,6 +637,7 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getPlatformShopByEntityCode(operator,entityCode);
     }
 
+
     @Override
     @Log("获取指定平台下的账号站点 数据权限")
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json) {
@@ -645,4 +646,6 @@ public class UrcServiceImpl implements IUrcService {
         String platformId =jsonObject.getString("platformId");
         return dataRuleService.appointPlatformShopSite(operator,platformId);
     }
+
+
 }

@@ -422,11 +422,4 @@ public class UserBpImpl implements IUserBp {
         return VoHelper.getSuccessResult("logout success");
     }
 
-    public static void main(String[] args) {
-        List list = new ArrayList();
-        list.add("linwanxian");
-        list.add("panyun");
-        String str = list.toString();
-        System.out.println("======================" + str);
-    }
 }

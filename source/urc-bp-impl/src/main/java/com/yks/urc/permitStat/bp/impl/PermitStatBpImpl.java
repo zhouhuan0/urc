@@ -97,8 +97,11 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				cacheDo.setSysKey(sysKey);
 				// 合并json树
 				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
+
 				//获取sysName
 				rootVO.system.name =getSysNameBySyskey(sysKey);
+
+
 
 				cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
 //				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
@@ -137,6 +140,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		}
 		return permitCache;
 	}
+
 	/**
 	 *  通过sysKey 获取sysName
 	 * @param
@@ -152,6 +156,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 			return null;
 		}
 	}
+
+
+
 
 	/**
 	 * 所有系统的功能权限json做字符串相加，再计算md5

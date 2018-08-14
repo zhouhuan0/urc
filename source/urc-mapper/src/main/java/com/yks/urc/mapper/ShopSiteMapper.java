@@ -21,6 +21,7 @@ public interface ShopSiteMapper {
      * @Date 2018/7/24 16:24
      */
     List<ShopSiteDO> selectShopSiteByPlatformId(@Param("platformId") String platformId);
+
     /**
      * 查询账号站点
      * @param:
@@ -40,4 +41,6 @@ public interface ShopSiteMapper {
     List<String> listShopByPage(Map<String, Object> data);
 
     long listShopByPageCount(Map<String,Object> data);
+
+
 }

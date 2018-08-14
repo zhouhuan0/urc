@@ -143,6 +143,13 @@ public class WJHService extends BaseServiceTest {
     	System.out.println(StringUtility.toJSONString(permissionService.getUserAuthorizablePermission("panyun")));
 
     }
+
+    @Test
+    public void getPlatformShopByEntityCode() throws Exception{
+
+        ResultVO resultVO=dataRuleService.getPlatformShopByEntityCode("wujianghui","E_PlatformShopSite");
+        System.out.println(StringUtility.toJSONString(resultVO));
+    }
     
     @Test
     public void fuzzySearchUsersByUserName() throws Exception{
@@ -152,14 +159,6 @@ public class WJHService extends BaseServiceTest {
     }
 
 
-    @Test
-    public void getPlatformShopByEntityCode() throws Exception{
-
-        ResultVO resultVO=dataRuleService.getPlatformShopByEntityCode("wujianghui","E_PlatformShopSite");
-        System.out.println(StringUtility.toJSONString(resultVO));
-    }
-    
-    
     @Test
     public void dataRuleService() throws Exception{
     	List<String> lstUserName=new ArrayList<>();
