@@ -91,6 +91,9 @@ public class PermissionServiceImpl implements IPermissionService {
             if (arr != null && arr.length > 0) {
                 List<PermissionDO> lstPermit = new ArrayList<>(arr.length);
                 for (SystemRootVO root : arr) {
+                    if (root.apiUrlPrefix == null || root.apiUrlPrefix.size() ==0){
+                        return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"apiUrlPrefix 不能为空");
+                    }
                     PermissionDO p = new PermissionDO();
                     p.setApiUrlPrefixJson(root.apiUrlPrefix.toString());
                     p.setSysName(root.system.name);
