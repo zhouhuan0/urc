@@ -2,6 +2,8 @@ package com.yks.urc.service.impl;
 
 import java.util.*;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
@@ -90,11 +92,15 @@ public class PermissionServiceImpl implements IPermissionService {
                 List<PermissionDO> lstPermit = new ArrayList<>(arr.length);
                 for (SystemRootVO root : arr) {
                     PermissionDO p = new PermissionDO();
+                    p.setApiUrlPrefixJson(root.apiUrlPrefix.toString());
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
+                    // 将API 前缀置为null. 在存入sysContext
+                    root.apiUrlPrefix =null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));
                     p.setCreateTime(new Date());
-                    p.setModifiedBy(sessionBp.getOperator());
+                    p.setModifiedTime(new Date());
+                    p.setCreateBy(sessionBp.getOperator());
                     p.setModifiedBy(sessionBp.getOperator());
                     lstPermit.add(p);
                 }
@@ -111,10 +117,15 @@ public class PermissionServiceImpl implements IPermissionService {
                         // update
                         permissionMapper.updateSysContextBySysKey(p);
                     }
+                    //更新缓存
                     cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
+                    //更新API前缀
+                    this.updateApiPrefixCache();
+
                 }
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
                 rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
+                rslt.msg ="推送成功";
             } else {
                 rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 rslt.msg = "没有 data";
@@ -231,5 +242,22 @@ public class PermissionServiceImpl implements IPermissionService {
         queryMap.put("currIndex", (currPage - 1) * pageSize);
         queryMap.put("pageSize", pageSize);
     }
-
+    /**
+     *  更新API前缀
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/8/15 10:21
+     */
+    @Override
+    public ResultVO updateApiPrefixCache() {
+        try {
+            List<PermissionDO> permissionDOList =permissionMapper.getSysApiUrlPrefix();
+            cacheBp.setSysApiUrlPrefix(permissionDOList);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"缓存API更新成功");
+        } catch (Exception e) {
+            logger.error("未知异常",e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"更新失败");
+        }
+    }
 }

@@ -17,5 +17,9 @@ public class SystemRootVO implements Serializable {
      *
      */
     public SystemVO system;
+
 	public List<MenuVO> menu;
+
+	public List<String> apiUrlPrefix;
+
 }

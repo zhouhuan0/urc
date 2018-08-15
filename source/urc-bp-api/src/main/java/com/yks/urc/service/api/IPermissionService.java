@@ -16,5 +16,12 @@ public interface IPermissionService {
 	ResultVO getUserAuthorizablePermission(String operator);
 
 	ResultVO getUserPermissionList(String jsonStr);
-
+	/**
+	 *  更新缓存API前缀
+	 * @param
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/8/15 10:18
+	 */
+	ResultVO updateApiPrefixCache();
 }

@@ -179,6 +179,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return null;
     }
 
+    @Override
     public void setSysApiUrlPrefix(List<PermissionDO> lst) {
         try {
             String strKey = getCacheKey_SysApiUrlPrefix();
