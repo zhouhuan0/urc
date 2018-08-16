@@ -798,7 +798,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.insert(dataRuleTemplDO);
         } else {
-            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),operator);
+            DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),null);
+            if(dataRuleTemplDO!=null){
                 if(!dataRuleTemplDO.getTemplName().equals(templVO.getTemplName()))
                 {
                     if(dataRuleTemplMapper.checkDuplicateTemplName(templVO.getTemplName(),null))
@@ -806,6 +807,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                         throw new URCBizException(ErrorCode.E_000003.getState(),"方案名称重复");
                     }
                 }
+            }
             templId = orgDataRuleTemplDO.getTemplId();
             BeanUtils.copyProperties(templVO, orgDataRuleTemplDO);
             orgDataRuleTemplDO.setModifiedTime(new Date());
