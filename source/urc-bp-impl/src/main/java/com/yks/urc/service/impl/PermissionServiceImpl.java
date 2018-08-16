@@ -95,7 +95,7 @@ public class PermissionServiceImpl implements IPermissionService {
                         return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"apiUrlPrefix 不能为空");
                     }
                     PermissionDO p = new PermissionDO();
-                    p.setApiUrlPrefixJson(root.apiUrlPrefix.toString());
+                    p.setApiUrlPrefixJson(StringUtility.toJSONString_NoException(root.apiUrlPrefix));
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
                     // 将API 前缀置为null. 在存入sysContext
