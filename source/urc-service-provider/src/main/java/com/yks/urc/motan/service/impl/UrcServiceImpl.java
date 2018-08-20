@@ -288,7 +288,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
-    @Log("导入系统菜单树")
+    @Log("推送系统功能及子功能权限")
     public ResultVO importSysPermit(String jsonStr) {
         return permissionService.importSysPermit(jsonStr);
     }
@@ -630,6 +630,7 @@ public class UrcServiceImpl implements IUrcService {
 
     @Override
     @Log("数据授权-获取平台账号根据entityCode")
+    @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String json) {
         JSONObject jsonObject =StringUtility.parseString(json);
         String operator =MotanSession.getRequest().getOperator();
