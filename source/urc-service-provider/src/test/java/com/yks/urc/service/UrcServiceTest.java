@@ -34,8 +34,10 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.log4j.Logger;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -44,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 //@Component
 public class UrcServiceTest extends BaseServiceTest {
+	private static Logger logger =Logger.getLogger(UrcServiceTest.class);
 	@Autowired
 	private IUrcService service;
 	@Autowired
@@ -437,17 +440,24 @@ public class UrcServiceTest extends BaseServiceTest {
 	@Test
 	public void getPlatformShopSite(){
 		Map map =new HashMap();
-        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
-        System.out.println("START====================");
+		System.out.println("START====================");
+		long startTime = System.currentTimeMillis();
         map.put("operator","linwanxian");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
-		ResultVO resultVO =service.getPlatformShopSite(json);
-		System.out.println("========================");
-		System.out.println(StringUtility.toJSONString_NoException(resultVO));
-        System.out.println("END====================");
-        System.out.println(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date()));
-
+		for (int i=0;i<10;i++) {
+			ResultVO resultVO = service.getPlatformShopSite(json);
+			System.out.println("========================");
+			System.out.println(StringUtility.toJSONString_NoException(resultVO));
+			System.out.println("END====================");
+			long endTime = System.currentTimeMillis();
+			System.out.println(String.format("耗时:[%d]", endTime - startTime));
+			try {
+				TimeUnit.SECONDS.sleep((long) 0.1);
+			} catch (InterruptedException e) {
+				logger.error("未知异常",e);
+			}
+		}
 	}
 	@Test
     public void syncPlatform(){
@@ -468,12 +478,13 @@ public class UrcServiceTest extends BaseServiceTest {
         String json =StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         ResultVO resultVO =service.syncShopSite(json);
-    }
+		System.out.println(StringUtility.toJSONString(resultVO));
+	}
     @Test
 	public void fuzzSearchPersonByName(){
 		Map map =new HashMap();
 		map.put("operator","linwanxian");
-		map.put("name","linwan");
+		map.put("name","pan");
 		String json =StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 
@@ -482,6 +493,50 @@ public class UrcServiceTest extends BaseServiceTest {
 		ResultVO resultVO =service.fuzzSearchPersonByName(json);
 		System.out.println(StringUtility.toJSONString(resultVO));
 		System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+	}
+	@Test
+	public void test_updateApiPrefixCache(){
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+
+		System.out.println(json);
+		System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+		ResultVO resultVO =service.updateApiPrefixCache(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
+		System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+	}
+
+	@Test
+	public void test_getRolesByInfo(){
+
+		int pageNumber =1;
+		int pageData =20;
+		RoleVO roleVO = new RoleVO();
+		roleVO.roleName ="urc";
+		List<Long> roleIdList =new ArrayList<>();
+		roleIdList.add(Long.valueOf("1531973851898000027"));
+		Map map =new HashMap();
+		map.put("operator","linwanxian");
+		map.put("roleIds",roleIdList);
+		map.put("pageNumber",pageNumber);
+		map.put("pageData",pageData);
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		ResultVO resultVO =service.getRolesByInfo(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
+
+	}
+	@Test
+	public void test_getRoleByRoleId(){
+		Map map =new HashMap();
+		map.put("operator","wujianghui");
+		map.put("roleId","1531973851898000027");
+		String json =StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		ResultVO resultVO =service.getRoleByRoleId(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
 	}
 
 

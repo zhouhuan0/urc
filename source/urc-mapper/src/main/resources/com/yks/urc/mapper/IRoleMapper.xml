@@ -245,14 +245,23 @@
     </select>
 
 
-    <!--分页条件查询-->
+    <!--分页条件查询 , 包含owner-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_role
         <where>
+            1=1
             <if test="createBy != null and createBy != ''">
+                and   (
                 create_by=#{createBy,jdbcType=VARCHAR}
+                <if test="roleIds != null">
+                    or role_id IN
+                    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                        #{roleId}
+                    </foreach>
+                </if>
+                )
             </if>
             <if test="roleNames != null and roleNames != ''">
                 and
@@ -261,8 +270,8 @@
                         role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
                 </foreach>
-
             </if>
+
             and is_authorizable != 2
         </where>
         order by create_time desc
@@ -282,6 +291,12 @@
                     <if test="item != null and item != ''">
                         role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
+                </foreach>
+            </if>
+            <if test="roleIds != null">
+                or  role_id  IN
+                <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                    #{roleId}
                 </foreach>
             </if>
             and is_authorizable != 2

@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.vo.RoleVO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 

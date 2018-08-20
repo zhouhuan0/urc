@@ -199,6 +199,24 @@ public class PermissionServiceImpl implements IPermissionService {
         PageResultVO pageResultVO = new PageResultVO(userPermitStatVOs, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
+    /**
+     * 更新缓存API前缀
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/17 15:44
+     */
+    @Override
+    public ResultVO updateApiPrefixCache(String jsonStr) {
+        try {
+            List<PermissionDO> permissionDOList =permissionMapper.getSysApiUrlPrefix();
+            cacheBp.setSysApiUrlPrefix(permissionDOList);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"缓存API更新成功");
+        } catch (Exception e) {
+            logger.error("未知异常",e);
+           return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"更新失败");
+        }
+    }
 
     private List<UserPermitStatVO> convertUserPermitStatDoToVO(List<UserPermitStatDO> userPermitStatDOS) {
         List<UserPermitStatVO> userPermitStatVOS = new ArrayList<>();

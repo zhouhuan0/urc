@@ -227,6 +227,7 @@ public class UserBpImpl implements IUserBp {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 9:34
      */
+    @Override
     public ResultVO<UserSysVO> getSysKeyByUserName(String userName, String sysKey, String ticket) {
         List<String> userRoleDOS = userRoleMapper.getSysKeyByUser(userName);
         try {
@@ -338,7 +339,9 @@ public class UserBpImpl implements IUserBp {
      * @return
      */
     private String getPersonNameFromCacheOrDb(String userName) {
-        if (StringUtility.isNullOrEmpty(userName)) return userName;
+        if (StringUtility.isNullOrEmpty(userName)) {
+            return userName;
+        }
         String personName = cacheBp.getPersonNameByUserName(userName);
         if (StringUtility.isNullOrEmpty(personName)) {
             personName = userMapper.getPersonNameByUserName(userName);
@@ -395,8 +398,12 @@ public class UserBpImpl implements IUserBp {
         }
         if (permitCache != null) {
             permitCache.lstUserSysVO = null;
-            if (permitCache.lstSysRoot == null) permitCache.lstSysRoot = new ArrayList<>();
-            if (permitCache.funcVersion == null) permitCache.funcVersion = StringUtility.Empty;
+            if (permitCache.lstSysRoot == null) {
+                permitCache.lstSysRoot = new ArrayList<>();
+            }
+            if (permitCache.funcVersion == null) {
+                permitCache.funcVersion = StringUtility.Empty;
+            }
             return VoHelper.getSuccessResult(permitCache);
         }
         return VoHelper.getSuccessResult(null);
