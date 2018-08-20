@@ -616,7 +616,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log("更新缓存Api前缀")
     public ResultVO updateApiPrefixCache(String json) {
         String operator =MotanSession.getRequest().getOperator();
-        return permissionService.updateApiPrefixCache(operator);
+        return permissionService.updateApiPrefixCache();
     }
 
     @Override
