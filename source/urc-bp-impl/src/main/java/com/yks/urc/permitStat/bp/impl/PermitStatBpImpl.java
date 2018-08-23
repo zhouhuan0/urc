@@ -154,7 +154,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	private String getSysNameBySyskey(String sysKey) {
 	String sysName= permissionMapper.getSysNameByKey(sysKey);
 		if (StringUtility.isNullOrEmpty(sysName)) {
-			return null;
+			return "";
 		}else {
 			return sysName;
 		}
