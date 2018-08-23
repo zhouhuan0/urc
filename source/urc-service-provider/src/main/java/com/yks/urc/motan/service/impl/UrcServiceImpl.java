@@ -342,7 +342,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log("获取SSO账号查询和获取，并关联显示账号对应员工名称的服务")
+    @Log("通过用户名模糊所有域账号")
     public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -586,7 +586,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log("通过名字模糊搜索人员")
+    @Log("获取SSO账号查询和获取，并关联显示账号对应员工名称的服务")
     public ResultVO fuzzSearchPersonByName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator =MotanSession.getRequest().getOperator();
