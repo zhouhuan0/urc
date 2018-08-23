@@ -39,6 +39,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private IUserValidateBp userValidateBp;
 
+	@Autowired
 	private PermissionMapper permissionMapper;
 
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
