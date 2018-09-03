@@ -58,9 +58,6 @@
             <if test="roleId != null ">
                 role_id =#{roleId}
             </if>
-            <if test="createBy != null and createBy != '' ">
-                and create_by =#{createBy}
-            </if>
         </where>
 
     </delete>
@@ -71,9 +68,6 @@
         <where>
             <if test="userRole.roleId != null ">
                 role_id =#{userRole.roleId}
-            </if>
-            <if test="userRole.createBy != null and userRole.createBy != '' ">
-                and create_by =#{userRole.createBy}
             </if>
             <if test=" userNameList !=null and userNameList.size >0 ">
                 AND   user_name  IN
