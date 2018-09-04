@@ -1228,8 +1228,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             //先从缓存取, 没有在从数据库读
             String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
             if (!StringUtility.isNullOrEmpty(result)) {
-
-                return VoHelper.getSuccessResult(result);
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),CommonMessageCodeEnum.SUCCESS.getName(),result);
             }
             //缓存没有 从DB取
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
