@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -86,7 +87,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ShopSiteMapper shopSiteMapper;
 
+    @Autowired
+    private PlatformMapper platformMapper;
 
+    @Autowired
+    private ICacheBp cacheBp;
+
+    private String KEY_PLATFORM_SHOP = "all_platform_shop";
     /**
      * Description: 根据模板Id获取数据权限模板
      *
@@ -1218,29 +1225,75 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Transactional
     public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
         try {
-            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
-            OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-            omsPlatformVO.platformId = platformId;
-            omsPlatformVO.platformName =platformId;
-            omsPlatformVO.lstShop = new ArrayList<>();
-            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformId);
-            //组装账号
-            for (ShopSiteDO shopSiteDO : shopSiteDOS) {
-                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
-                    continue;
-                }
-                OmsShopVO omsShopVO = new OmsShopVO();
-                omsShopVO.shopId = shopSiteDO.getShopSystem();
-                omsShopVO.shopName = shopSiteDO.getShop();
-                omsPlatformVO.lstShop.add(omsShopVO);
+            //先从缓存取, 没有在从数据库读
+            String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
+            if (!StringUtility.isNullOrEmpty(result)) {
+                return VoHelper.getSuccessResult(result);
             }
-            //组装平台
-            omsPlatformVOS.add(omsPlatformVO);
-            return VoHelper.getSuccessResult(omsPlatformVOS);
+            //缓存没有 从DB取
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            return this.getAllPlatformShopFromDB(omsPlatformVOS);
         } catch (Exception e) {
-            logger.error("未知异常", e);
+            logger.error("获取平台账号站点失败", e);
             return VoHelper.getErrorResult();
         }
+    }
+    /**
+     *  从DB 获取平台账号站点
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/9/4 17:05
+     */
+    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS){
+        //返回所有平台和账号
+        //获取所有平台
+        List<PlatformDO> platformDOS = platformMapper.selectAll();
+        //获取一部分平台的数据
+          /*  List<PlatformDO> platformDOS =new ArrayList<>();
+            PlatformDO p1 =new PlatformDO();
+            PlatformDO p2 =new PlatformDO();
+            PlatformDO p3 =new PlatformDO();
+            PlatformDO p4 =new PlatformDO();
+
+            p1.setPlatformId("shopee");
+            p2.setPlatformId("ebay");
+            p3.setPlatformId("亚马逊");
+            p4.setPlatformId("lazada");
+            platformDOS.add(p1);
+            platformDOS.add(p2);
+            platformDOS.add(p3);
+            platformDOS.add(p4);*/
+        if (platformDOS != null && platformDOS.size() > 0) {
+            for (PlatformDO platformDO : platformDOS) {
+                if (StringUtility.isNullOrEmpty(platformDO.getPlatformId())) {
+                    continue;
+                }
+                List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformDO.getPlatformId());
+                if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
+                    continue;
+                }
+                for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                    OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                    omsPlatformVO.platformId = platformDO.getPlatformId();
+                    omsPlatformVO.platformName = platformDO.getPlatformName();
+                    omsPlatformVO.lstShop = new ArrayList<>();
+                    if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
+                        continue;
+                    }
+                    //组装账号
+                    OmsShopVO omsShopVO = new OmsShopVO();
+                    omsShopVO.shopId = shopSiteDO.getShopSystem();
+                    omsShopVO.shopName = shopSiteDO.getShop();
+                    omsPlatformVO.lstShop.add(omsShopVO);
+                    //组装平台
+                    omsPlatformVOS.add(omsPlatformVO);
+                }
+            }
+        }
+        //放入缓存
+        cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
+        return VoHelper.getSuccessResult(omsPlatformVOS);
     }
 
     @Override
@@ -1351,7 +1404,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return dataRuleService.getPlatformShop(operator,"亚马逊");
         }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
             // 刊登--->ebyay 只需要账号
-            return  dataRuleService.getPlatformShop(operator,"eBay");
+            return  dataRuleService.getPlatformShop(operator,"");
         }else{
             //待定后续....
             return VoHelper.getSuccessResult((Object) "待配置......");

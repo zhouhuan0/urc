@@ -282,4 +282,26 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     public void setPersonNameByUserName(String userName, String personName) {
         getUserInfoCache(userName).put(KEY_personName, personName);
     }
+
+    private String Key_platform_shop ="all_platform_shop";
+    @Override
+    public String getAllPlatformShop(String platformShopKey) {
+        return StringUtility.addEmptyString(getPlatformShopCache(Key_platform_shop).get(Key_platform_shop));
+    }
+
+    @Override
+    public void setAllPlatformShop(String allPlatformShopJson) {
+        getPlatformShopCache(Key_platform_shop).put(Key_platform_shop,allPlatformShopJson);
+    }
+
+   /**
+    *  获取所有的平台账号 缓存2天
+    * @param
+    * @return
+    * @Author lwx
+    * @Date 2018/9/4 16:54
+    */
+    private Cache getPlatformShopCache(String allPlatformShopJson) {
+        return getCache(Key_platform_shop,172800);
+    }
 }
