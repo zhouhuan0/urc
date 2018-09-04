@@ -1227,11 +1227,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
         try {
             //先从缓存取, 没有在从数据库读
             String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
             if (!StringUtility.isNullOrEmpty(result)) {
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),CommonMessageCodeEnum.SUCCESS.getName(),result);
+                //转成vo  在转成json
+                omsPlatformVOS = StringUtility.jsonToList(result,OmsPlatformVO.class);
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),CommonMessageCodeEnum.SUCCESS.getName(),omsPlatformVOS);
             }
             //缓存没有 从DB取
-            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+
             return this.getAllPlatformShopFromDB(omsPlatformVOS);
         } catch (Exception e) {
             logger.error("获取平台账号站点失败", e);
