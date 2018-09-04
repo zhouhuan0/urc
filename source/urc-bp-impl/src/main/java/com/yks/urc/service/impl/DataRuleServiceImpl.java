@@ -1250,9 +1250,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
     public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS){
         //返回所有平台和账号
         //获取所有平台
-       // List<PlatformDO> platformDOS = platformMapper.selectAll();
+        List<PlatformDO> platformDOS = platformMapper.selectAll();
         //获取一部分平台的数据
-        List<PlatformDO> platformDOS = new ArrayList<>();
+       /* List<PlatformDO> platformDOS = new ArrayList<>();
         PlatformDO p1 = new PlatformDO();
         PlatformDO p2 = new PlatformDO();
         PlatformDO p3 = new PlatformDO();
@@ -1265,7 +1265,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         platformDOS.add(p1);
         platformDOS.add(p2);
         platformDOS.add(p3);
-        platformDOS.add(p4);
+        platformDOS.add(p4);*/
         if (platformDOS != null && platformDOS.size() > 0) {
             for (PlatformDO platformDO : platformDOS) {
                 if (StringUtility.isNullOrEmpty(platformDO.getPlatformId())) {

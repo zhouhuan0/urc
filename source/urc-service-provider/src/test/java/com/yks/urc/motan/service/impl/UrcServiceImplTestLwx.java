@@ -348,12 +348,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         MotanSession.initialSession(json);
         resultVO = service.getPlatformShopByEntityCode(json);
         System.out.println("返回结果为");
-        System.out.println();
-        System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
-        System.out.println();
-        System.out.println();
-        System.out.println();
         Long endTime =StringUtility.getDateTimeNow().getTime();
         System.out.println(String.format("花费的时间为:[%d]",endTime-startTime));
     }
