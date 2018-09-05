@@ -1252,20 +1252,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //获取所有平台
        // List<PlatformDO> platformDOS = platformMapper.selectAll();
         //获取一部分平台的数据
-        List<PlatformDO> platformDOS = new ArrayList<>();
-        PlatformDO p1 = new PlatformDO();
-        PlatformDO p2 = new PlatformDO();
-        PlatformDO p3 = new PlatformDO();
-        PlatformDO p4 = new PlatformDO();
-
-        p1.setPlatformId("shopee");
-        p2.setPlatformId("ebay");
-        p3.setPlatformId("亚马逊");
-        p4.setPlatformId("lazada");
-        platformDOS.add(p1);
-        platformDOS.add(p2);
-        platformDOS.add(p3);
-        platformDOS.add(p4);
+        List<String> platformIds =new ArrayList<>();
+        platformIds.add("shopee");
+        platformIds.add("ebay");
+        platformIds.add("亚马逊");
+        platformIds.add("lazada");
+        List<PlatformDO> platformDOS = platformMapper.selectPlatforms(platformIds);
         if (platformDOS != null && platformDOS.size() > 0) {
             for (PlatformDO platformDO : platformDOS) {
                 if (StringUtility.isNullOrEmpty(platformDO.getPlatformId())) {

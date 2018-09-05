@@ -11,7 +11,23 @@ public interface PlatformMapper {
 
     int deletePlatform();
 
+    /**
+     *  获取所有的平台
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/9/5 11:52
+     */
     List<PlatformDO> selectAll();
 
     List<OmsPlatShopSiteVO> getAllPlatformShopSite();
+
+    /**
+     *  查询对应的平台
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/9/5 11:52
+     */
+    List<PlatformDO> selectPlatforms(List<String> platforms);
 }
