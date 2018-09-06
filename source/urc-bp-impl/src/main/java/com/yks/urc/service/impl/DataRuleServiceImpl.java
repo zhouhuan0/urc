@@ -1225,16 +1225,21 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Transactional
     public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
         try {
-            //先从缓存取, 没有在从数据库读
-            String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
-            if (!StringUtility.isNullOrEmpty(result)) {
-                //转成vo  在转成json
-                omsPlatformVOS = StringUtility.jsonToList(result,OmsPlatformVO.class);
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(),CommonMessageCodeEnum.SUCCESS.getName(),omsPlatformVOS);
+            // 如果传入的平台id 为空 代表是刊登,不为空 则正常走
+            if (!StringUtility.isNullOrEmpty(platformId)) {
+                return this.getAllPlatformShopFromDB(omsPlatformVOS,platformId);
+            } else {
+                //先从缓存取, 没有在从数据库读
+                String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
+                if (!StringUtility.isNullOrEmpty(result)) {
+                    //转成vo  在转成json
+                    omsPlatformVOS = StringUtility.jsonToList(result, OmsPlatformVO.class);
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getName(), omsPlatformVOS);
+                }
+                //缓存没有 从DB取
+                return this.getAllPlatformShopFromDB(omsPlatformVOS,null);
             }
-            //缓存没有 从DB取
-            return this.getAllPlatformShopFromDB(omsPlatformVOS);
         } catch (Exception e) {
             logger.error("获取平台账号站点失败", e);
             return VoHelper.getErrorResult();
@@ -1247,17 +1252,23 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @Author lwx
      * @Date 2018/9/4 17:05
      */
-    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS){
+    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS,String platformId){
         //返回所有平台和账号
         //获取所有平台
        // List<PlatformDO> platformDOS = platformMapper.selectAll();
         //获取一部分平台的数据
         List<String> platformIds =new ArrayList<>();
-        platformIds.add("shopee");
-        platformIds.add("ebay");
-        platformIds.add("亚马逊");
-        platformIds.add("lazada");
-        List<PlatformDO> platformDOS = platformMapper.selectPlatforms(platformIds);
+        List<PlatformDO> platformDOS =new ArrayList<>();
+        if (!StringUtility.isNullOrEmpty(platformId)){
+           // 如果平台id 不为空，　则只需要传入对应的平台
+            platformIds.add(platformId);
+        }else {
+            platformIds.add("shopee");
+            platformIds.add("ebay");
+            platformIds.add("亚马逊");
+            platformIds.add("lazada");
+        }
+        platformDOS = platformMapper.selectPlatforms(platformIds);
         if (platformDOS != null && platformDOS.size() > 0) {
             for (PlatformDO platformDO : platformDOS) {
                 if (StringUtility.isNullOrEmpty(platformDO.getPlatformId())) {
@@ -1287,8 +1298,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 omsPlatformVOS.add(omsPlatformVO);
             }
         }
-        //放入缓存
-        cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
+        //放入缓存 , 只有刊登才需要放入缓存
+        if (!StringUtility.isNullOrEmpty(platformId)) {
+            cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
+        }
         return VoHelper.getSuccessResult(omsPlatformVOS);
     }
 
