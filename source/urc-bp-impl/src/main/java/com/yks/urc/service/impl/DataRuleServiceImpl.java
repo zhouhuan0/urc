@@ -1299,7 +1299,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
         }
         //放入缓存 , 只有刊登才需要放入缓存
-        if (!StringUtility.isNullOrEmpty(platformId)) {
+        if (StringUtility.isNullOrEmpty(platformId)) {
             cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
         }
         return VoHelper.getSuccessResult(omsPlatformVOS);
