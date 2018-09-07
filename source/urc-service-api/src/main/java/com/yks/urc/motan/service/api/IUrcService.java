@@ -417,6 +417,32 @@ public interface IUrcService {
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
 
+    /**
+     *  更新缓存ａｐｉ前缀
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/17 15:34
+     */
+    ResultVO updateApiPrefixCache(String json);
+    /**
+     * 获取亚马逊的账号,数据授权
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/21 10:26
+     */
+    ResultVO<List<OmsPlatformVO>>getPlatformShop(String json);
+    /**
+     *  获取指定平台下的账号站点 数据权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/8/2 14:45
+     */
+    ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json);
+
+
 
     /**
      * @Description : 根据entityCode

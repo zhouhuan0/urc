@@ -101,7 +101,7 @@ public class WJHService extends BaseServiceTest {
     public void getDataRuleByUser() throws Exception{
     	List<String> userName=new ArrayList<>();
     	userName.add("panyun");
-    	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName,"panyun");
+    	ResultVO  dataVO=dataRuleService.getDataRuleByUser(userName,"panyun","001");
     	System.out.println(StringUtility.toJSONString(dataVO));
     }
 
@@ -157,8 +157,8 @@ public class WJHService extends BaseServiceTest {
     	userService.fuzzySearchUsersByUserName(null, null, null, "");
     	//System.out.println(StringUtility.toJSONString(permissionService.getUserAuthorizablePermission("panyun")));
     }
-    
-    
+
+
     @Test
     public void dataRuleService() throws Exception{
     	List<String> lstUserName=new ArrayList<>();
@@ -166,7 +166,7 @@ public class WJHService extends BaseServiceTest {
     	lstUserName.add("wujianghui");
     	
     	
-    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"panyun")));
+    	System.out.println(StringUtility.toJSONString(dataRuleService.getDataRuleByUser(lstUserName,"panyun","001")));
     	
     }
     

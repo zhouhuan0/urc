@@ -75,4 +75,14 @@
     p.platform_id = s.platform_id AND s.shop_id != ''
   </select>
 
+  <!--获取指定平台数据-->
+  <select id="selectPlatforms" parameterType="java.util.List" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List"/>
+    from urc_platform
+    WHERE platform_id IN
+    <foreach collection="list" index="index" item="platformId" open="(" separator="," close=")">
+      #{platformId}
+    </foreach>
+  </select>
 </mapper>

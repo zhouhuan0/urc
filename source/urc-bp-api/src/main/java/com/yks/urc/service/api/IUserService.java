@@ -93,4 +93,5 @@ public interface IUserService {
 	ResultVO syncPlatform(String operator);
 
 	ResultVO syncShopSite(String operator);
+
 }

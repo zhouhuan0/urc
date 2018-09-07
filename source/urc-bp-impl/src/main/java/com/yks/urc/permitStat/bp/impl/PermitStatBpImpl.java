@@ -39,6 +39,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private IUserValidateBp userValidateBp;
 
+	@Autowired
 	private PermissionMapper permissionMapper;
 
 	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
@@ -98,6 +99,13 @@ public class PermitStatBpImpl implements IPermitStatBp {
 				// 合并json树
 				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
 
+				//获取sysName
+				String sysName = getSysNameBySyskey(sysKey);
+				if (!StringUtility.isNullOrEmpty(sysName)) {
+					rootVO.system.name = sysName;
+				}
+
+
 				cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
 //				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
 				cacheDo.setCreateTime(new Date());
@@ -135,6 +143,24 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		}
 		return permitCache;
 	}
+
+	/**
+	 *  通过sysKey 获取sysName
+	 * @param
+	 * @return
+	 * @Author lwx
+	 * @Date 2018/8/13 15:02
+	 */
+	private String getSysNameBySyskey(String sysKey) {
+	String sysName= permissionMapper.getSysNameByKey(sysKey);
+		if (StringUtility.isNullOrEmpty(sysName)) {
+			return "";
+		}else {
+			return sysName;
+		}
+	}
+
+
 
 
 	/**

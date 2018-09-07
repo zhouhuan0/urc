@@ -1,6 +1,7 @@
 package com.yks.urc.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -225,50 +226,50 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<List<OmsPlatformVO>> getPlatformShopSite(String operator) {
-       try {
-           List<PlatformDO> platformDOS = platformMapper.selectAll();
-           //装载平台volist
-           List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
-           for (PlatformDO platformDO : platformDOS) {
-               OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-               omsPlatformVO.platformId = platformDO.getPlatformId();
-               omsPlatformVO.platformName = platformDO.getPlatformName();
+        try {
+            List<PlatformDO> platformDOS = platformMapper.selectAll();
+            //装载平台volist
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            for (PlatformDO platformDO : platformDOS) {
+                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                omsPlatformVO.platformId = platformDO.getPlatformId();
+                omsPlatformVO.platformName = platformDO.getPlatformName();
 
-               List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformDO.getPlatformId());
-               if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
-                   continue;
-               } else {
-                   //集合都必须先初识化
-                   omsPlatformVO.lstShop =new ArrayList<>(shopSiteDOS.size());
-                   for (ShopSiteDO shopSiteDO : shopSiteDOS) {
-                       OmsShopVO omsShopVO = new OmsShopVO();
-                       //针对速卖通的
-                       omsShopVO.shopId = shopSiteDO.getSellerId();
-                       omsShopVO.shopName = shopSiteDO.getShop();
-                       //如果站点id为空,则list为空
-                       if ("".equals(shopSiteDO.getSiteId())) {
-                           omsShopVO.lstSite = null;
-                       } else {
-                           OmsSiteVO omsSiteVO = new OmsSiteVO();
-                           omsSiteVO.siteId = shopSiteDO.getSiteId();
-                           //如果站点名称为空,则吧站点id赋值给站点名称
-                           if ("".equals(shopSiteDO.getSiteName())) {
-                               omsSiteVO.siteName = omsSiteVO.siteId;
-                           } else {
-                               omsSiteVO.siteName = shopSiteDO.getSiteName();
-                               omsShopVO.lstSite.add(omsSiteVO);
-                           }
-                       }
-                       omsPlatformVO.lstShop.add(omsShopVO);
-                   }
-                   omsPlatformVOS.add(omsPlatformVO);
-               }
-           }
-           return VoHelper.getSuccessResult(omsPlatformVOS);
-       }catch (Exception e){
-           logger.error("获取数据异常:",e);
-           return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"未知异常");
-       }
+                List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformDO.getPlatformId());
+                if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
+                    continue;
+                } else {
+                    //集合都必须先初识化
+                    omsPlatformVO.lstShop = new ArrayList<>(shopSiteDOS.size());
+                    for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                        OmsShopVO omsShopVO = new OmsShopVO();
+                        //针对速卖通的
+                        omsShopVO.shopId = shopSiteDO.getSellerId();
+                        omsShopVO.shopName = shopSiteDO.getShop();
+                        //如果站点id为空,则list为空
+                        if ("".equals(shopSiteDO.getSiteId())) {
+                            omsShopVO.lstSite = null;
+                        } else {
+                            OmsSiteVO omsSiteVO = new OmsSiteVO();
+                            omsSiteVO.siteId = shopSiteDO.getSiteId();
+                            //如果站点名称为空,则吧站点id赋值给站点名称
+                            if ("".equals(shopSiteDO.getSiteName())) {
+                                omsSiteVO.siteName = omsSiteVO.siteId;
+                            } else {
+                                omsSiteVO.siteName = shopSiteDO.getSiteName();
+                                omsShopVO.lstSite.add(omsSiteVO);
+                            }
+                        }
+                        omsPlatformVO.lstShop.add(omsShopVO);
+                    }
+                    omsPlatformVOS.add(omsPlatformVO);
+                }
+            }
+            return VoHelper.getSuccessResult(omsPlatformVOS);
+        } catch (Exception e) {
+            logger.error("获取数据异常:", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "未知异常");
+        }
     }
 
     @Override

@@ -5,7 +5,7 @@
 
     <groupId>com.yks.urc</groupId>
     <artifactId>urc-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <name>urc-parent</name>
@@ -16,7 +16,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <urc.version>0.0.1-SNAPSHOT</urc.version>
+        <urc.version>1.0.0</urc.version>
         <junit.version>4.12</junit.version>
         <yks.eventbus.version>1.0.0</yks.eventbus.version>
         <yks.config.file.center.version>1.0.0</yks.config.file.center.version>

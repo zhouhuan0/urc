@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -75,6 +76,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ISeqBp seqBp;
 
+
     @Autowired
     private IUserService userService;
 
@@ -85,7 +87,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ShopSiteMapper shopSiteMapper;
 
+    @Autowired
+    private PlatformMapper platformMapper;
 
+    @Autowired
+    private ICacheBp cacheBp;
+
+    private String KEY_PLATFORM_SHOP = "all_platform_shop";
     /**
      * Description: 根据模板Id获取数据权限模板
      *
@@ -184,16 +192,18 @@ public class DataRuleServiceImpl implements IDataRuleService {
          * 5、DO 转 VO
          */
         List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
-        convertRuleSysDo2Vo(dataRuleSyAndOpers,dataRuleSysVOS);
+        convertRuleSysDo2Vo(dataRuleSyAndOpers, dataRuleSysVOS);
         /*设置权限系统数据  一个系统一个dataRukeSysVo*/
         dataRuleTemplVO.setLstDataRuleSys(dataRuleSysVOS);
 
         return VoHelper.getSuccessResult(dataRuleTemplVO);
     }
+
     /**
      * Description: 判断当前用户对应权限的系统是否包含 方案对应的系统
+     *
      * @param :
-     * @return: 
+     * @return:
      * @auther: lvcr
      * @date: 2018/7/4 17:38
      * @see
@@ -216,11 +226,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
             throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]没有该方案对应系统权限，例如[%s]", operator, diffSyss.toString().substring(0, diffSyss.toString().length() - 1)));
-        }else{
+        } else {
             for (String templOwnSys : templOwnSyss) {
-                Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator,templOwnSys);
-                if(!isSysAdmin){
-                    throw new URCBizException(ErrorCode.E_000003.getState(),String.format("用户[%s]不是系统[%s]的业务管理员，不能操作该方案",operator,permissionDOMap.get(templOwnSys).getSysName()));
+                Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator, templOwnSys);
+                if (!isSysAdmin) {
+                    throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]不是系统[%s]的业务管理员，不能操作该方案", operator, permissionDOMap.get(templOwnSys).getSysName()));
                 }
             }
 
@@ -437,14 +447,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         /**/
-        convertRuleSysDo2VoNoName(dataRuleSyAndOpers,dataRuleSysVOS);
+        convertRuleSysDo2VoNoName(dataRuleSyAndOpers, dataRuleSysVOS);
         List<DataRuleVO> dataRuleVOS = new ArrayList<>();
         for (String userName : lstUserName) {
             DataRuleVO dataRuleVO = new DataRuleVO();
             dataRuleVO.userName = userName;
             List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList();
-            dataRuleSysVOS1.addAll(StringUtility.jsonToList(StringUtility.toJSONString_NoException(dataRuleSysVOS),DataRuleSysVO.class));
-            for(DataRuleSysVO mem :dataRuleSysVOS1){
+            dataRuleSysVOS1.addAll(StringUtility.jsonToList(StringUtility.toJSONString_NoException(dataRuleSysVOS), DataRuleSysVO.class));
+            for (DataRuleSysVO mem : dataRuleSysVOS1) {
                 mem.setUserName(userName);
             }
             dataRuleVO.lstDataRuleSys = dataRuleSysVOS1;
@@ -624,7 +634,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/15 14:26
      * @see
      */
-    private void sendToMq(List<DataRuleVO> dataRuleVOS ) {
+    private void sendToMq(List<DataRuleVO> dataRuleVOS) {
 /*        List<DataRuleSysVO> dataRuleSysVOS = new ArrayList<>();
         for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {
             DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
@@ -956,27 +966,27 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
 
         //分批量操作
-        List<DataRuleDO> dataBatchRuleIds=new ArrayList<DataRuleDO>();
-        if(dataRuleVOS!=null&&dataRuleVOS.size()>1){
-            for (DataRuleVO dataRuleVo:dataRuleVOS){
-                DataRuleDO dataRuleDO=new DataRuleDO();
+        List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
+        if (dataRuleVOS != null && dataRuleVOS.size() > 1) {
+            for (DataRuleVO dataRuleVo : dataRuleVOS) {
+                DataRuleDO dataRuleDO = new DataRuleDO();
                 dataRuleDO.setUserName(dataRuleVo.getUserName());
-                DataRuleDO dataRule= dataRuleMapper.getDataRule(dataRuleDO);
+                DataRuleDO dataRule = dataRuleMapper.getDataRule(dataRuleDO);
                 //记下dataRuleId
                 dataBatchRuleIds.add(dataRule);
-                if(dataRule!=null&&dataRule.getDataRuleId()!=null){
-                    List<DataRuleSysVO>  dataRuleSys=dataRuleVo.getLstDataRuleSys();
-                    if(dataRuleSys!=null&&dataRuleSys.size()>0){
-                        List<String> sysKeys=new ArrayList<>();
-                        for (DataRuleSysVO dataRuleSysVo : dataRuleSys){
+                if (dataRule != null && dataRule.getDataRuleId() != null) {
+                    List<DataRuleSysVO> dataRuleSys = dataRuleVo.getLstDataRuleSys();
+                    if (dataRuleSys != null && dataRuleSys.size() > 0) {
+                        List<String> sysKeys = new ArrayList<>();
+                        for (DataRuleSysVO dataRuleSysVo : dataRuleSys) {
                             sysKeys.add(dataRuleSysVo.getSysKey());
                         }
-                        dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys,dataRule.getDataRuleId());
+                        dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
                     }
                 }
 
             }
-        }else{
+        } else {
         /*1、删除用户列表对应的数据权限 */
             List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
             dataRuleMapper.delBatchByUserNames(lstUserName);
@@ -994,19 +1004,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*行权限数据列表*/
         List<ExpressionDO> expressionCache = new ArrayList<>();
         /*2、新增用户-操作权限关系数据 dataRule*/
-        for (int i=0;i<dataRuleVOS.size();i++) {
-            DataRuleVO dataRuleVO=dataRuleVOS.get(i);
+        for (int i = 0; i < dataRuleVOS.size(); i++) {
+            DataRuleVO dataRuleVO = dataRuleVOS.get(i);
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
             dataRuleDO.setCreateTime(new Date());
-            Long dataRuleId=null;
+            Long dataRuleId = null;
             dataRuleDO.setUserName(dataRuleVO.getUserName());
-            if(dataBatchRuleIds.isEmpty()||dataBatchRuleIds.get(i)==null){
+            if (dataBatchRuleIds.isEmpty() || dataBatchRuleIds.get(i) == null) {
                 dataRuleId = seqBp.getNextDataRuleId();
                 dataRuleDO.setDataRuleId(dataRuleId);
                 dataRuleDOSCache.add(dataRuleDO);
-            }else{
-                dataRuleId=dataBatchRuleIds.get(i).getDataRuleId();
+            } else {
+                dataRuleId = dataBatchRuleIds.get(i).getDataRuleId();
 
             }
 
@@ -1049,19 +1059,27 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO getDataRuleByUser(List<String> lstUserName, String operator) {
+    public ResultVO getDataRuleByUser(List<String> lstUserName, String operator,String sysKey) {
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
             throw new URCBizException("既不是超级管理员也不是业务管理员", ErrorCode.E_100003);
         }
+
+/*        if(StringUtility.isNullOrEmpty(sysKey)){
+            return VoHelper.getSuccessResult((Object) "sysKey为空");
+        }*/
+
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         if (lstUserName != null && lstUserName.size() > 0) {
             for (int i = 0; i < lstUserName.size(); i++) {
                 UserDO userDO = new UserDO();
                 userDO.setUserName(lstUserName.get(i));
-                List<String> sysKeys = null;
-                if (roleMapper.isAdminAccount(operator)) {
+                List<String> sysKeys = new ArrayList<>();
+               if (roleMapper.isAdminAccount(operator)) {
                     sysKeys = userRoleMapper.getSysKeyByUser(operator);
                 }
+
+                //sysKeys.add(sysKey);
+
                 //通过用户名得到DataRuleSysId\SysKey\SysName
                 List<DataRuleSysDO> syskeyList = dataRuleSysMapper.getDataRuleSysByUserName(userDO, sysKeys);
                 List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
@@ -1127,13 +1145,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         return VoHelper.getSuccessResult(dataRuel);
     }
+
     @Override
     public ResultVO<Integer> checkDuplicateTemplName(String operator, String newTemplName, String templId) {
         return VoHelper.getSuccessResult(dataRuleTemplMapper.checkDuplicateTemplName(newTemplName, templId) ? 1 : 0);
 
     }
 
-    private List<DataRuleSysVO> getDataRuleVOByDataRuleSys(List<DataRuleSysDO> lstDrSysGt){
+    private List<DataRuleSysVO> getDataRuleVOByDataRuleSys(List<DataRuleSysDO> lstDrSysGt) {
         List<DataRuleSysVO> lstDataRuleSys = new ArrayList<DataRuleSysVO>();
         if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
             for (int j = 0; j < lstDrSysGt.size(); j++) {
@@ -1177,35 +1196,117 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
                 DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
                 expressionVO.setSubWhereClause(expressionVOList);
-                dataRuleSysVO.createTime=lstDrSysGt.get(j).getCreateTime();
-                dataRuleSysVO.userName=lstDrSysGt.get(j).getUserName();
+                dataRuleSysVO.createTime = lstDrSysGt.get(j).getCreateTime();
+                dataRuleSysVO.userName = lstDrSysGt.get(j).getUserName();
                 dataRuleSysVO.sysKey = lstDrSysGt.get(j).getSysKey();
                 dataRuleSysVO.col = dataRuleColVOList;
                 dataRuleSysVO.row = expressionVO;
                 lstDataRuleSys.add(dataRuleSysVO);
             }
         }
-        return  lstDataRuleSys;
+        return lstDataRuleSys;
     }
 
     @Override
     public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
-        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey,dt,pageSize==null ? 200:pageSize);
-       if(lstDrSysGt!=null&&lstDrSysGt.size()>0){
+        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize == null ? 200 : pageSize);
+        if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
             // 查询等于最大时间的记录
-            List<DataRuleSysDO> lstDrSysEq= dataRuleSysMapper.getDataRuleSysEqDt(sysKey,lstDrSysGt.get(lstDrSysGt.size()-1).getCreateTime());
+            List<DataRuleSysDO> lstDrSysEq = dataRuleSysMapper.getDataRuleSysEqDt(sysKey, lstDrSysGt.get(lstDrSysGt.size() - 1).getCreateTime());
             lstDrSysEq.remove(0);
             lstDrSysGt.addAll(lstDrSysEq);
         }
-        List<DataRuleSysVO>  lstDr=getDataRuleVOByDataRuleSys(lstDrSysGt);
+        List<DataRuleSysVO> lstDr = getDataRuleVOByDataRuleSys(lstDrSysGt);
         return VoHelper.getSuccessResult(lstDr);
     }
 
 
-
     @Override
     @Transactional
-    public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
+        try {
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            // 如果传入的平台id 为空 代表是刊登,不为空 则正常走
+            if (!StringUtility.isNullOrEmpty(platformId)) {
+                return this.getAllPlatformShopFromDB(omsPlatformVOS,platformId);
+            } else {
+                //先从缓存取, 没有在从数据库读
+                String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
+                if (!StringUtility.isNullOrEmpty(result)) {
+                    //转成vo  在转成json
+                    omsPlatformVOS = StringUtility.jsonToList(result, OmsPlatformVO.class);
+                    return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getName(), omsPlatformVOS);
+                }
+                //缓存没有 从DB取
+                return this.getAllPlatformShopFromDB(omsPlatformVOS,null);
+            }
+        } catch (Exception e) {
+            logger.error("获取平台账号站点失败", e);
+            return VoHelper.getErrorResult();
+        }
+    }
+    /**
+     *  从DB 获取平台账号站点
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/9/4 17:05
+     */
+    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS,String platformId){
+        //返回所有平台和账号
+        //获取所有平台
+       // List<PlatformDO> platformDOS = platformMapper.selectAll();
+        //获取一部分平台的数据
+        List<String> platformIds =new ArrayList<>();
+        List<PlatformDO> platformDOS =new ArrayList<>();
+        if (!StringUtility.isNullOrEmpty(platformId)){
+           // 如果平台id 不为空，　则只需要传入对应的平台
+            platformIds.add(platformId);
+        }else {
+            platformIds.add("shopee");
+            platformIds.add("ebay");
+            platformIds.add("亚马逊");
+            platformIds.add("lazada");
+        }
+        platformDOS = platformMapper.selectPlatforms(platformIds);
+        if (platformDOS != null && platformDOS.size() > 0) {
+            for (PlatformDO platformDO : platformDOS) {
+                if (StringUtility.isNullOrEmpty(platformDO.getPlatformId())) {
+                    continue;
+                }
+                //装载平台
+                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                omsPlatformVO.platformId = platformDO.getPlatformId();
+                omsPlatformVO.platformName = platformDO.getPlatformName();
+
+                List<ShopSiteDO> shopSiteDOS  = shopSiteMapper.selectShopSite(platformDO.getPlatformId());
+                if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
+                    continue;
+                }
+                omsPlatformVO.lstShop = new ArrayList<>();
+                for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                    if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
+                        continue;
+                    }
+                    //组装账号
+                    OmsShopVO omsShopVO = new OmsShopVO();
+                    omsShopVO.shopId = shopSiteDO.getShopSystem();
+                    omsShopVO.shopName = shopSiteDO.getShop();
+                    omsPlatformVO.lstShop.add(omsShopVO);
+                }
+                //组装平台
+                omsPlatformVOS.add(omsPlatformVO);
+            }
+        }
+        //放入缓存 , 只有刊登才需要放入缓存
+        if (StringUtility.isNullOrEmpty(platformId)) {
+            cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
+        }
+        return VoHelper.getSuccessResult(omsPlatformVOS);
+    }
+
+    @Override
+    public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator, String platformId) {
         try {
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
             OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
@@ -1213,6 +1314,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             omsPlatformVO.platformName = platformId;
             omsPlatformVO.lstShop = new ArrayList<>();
             List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformId);
+
             //组装账号
             for (ShopSiteDO shopSiteDO : shopSiteDOS) {
                 if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
@@ -1222,13 +1324,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 omsShopVO.shopId = shopSiteDO.getShopSystem();
                 omsShopVO.shopName = shopSiteDO.getShop();
                 omsPlatformVO.lstShop.add(omsShopVO);
+
                 if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+
                     omsShopVO.lstSite = null;
                 } else {
                     omsShopVO.lstSite = new ArrayList<>();
                     OmsSiteVO siteVO = new OmsSiteVO();
                     siteVO.siteId = shopSiteDO.getSiteId();
+
                     if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+
                         siteVO.siteName = siteVO.siteId;
                     } else {
                         siteVO.siteName = shopSiteDO.getSiteName();
@@ -1246,6 +1352,54 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
+    public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
+        try {
+            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+            omsPlatformVO.platformId = platformId;
+            omsPlatformVO.platformName = platformId;
+            omsPlatformVO.lstShop = new ArrayList<>();
+            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformId);
+
+            //组装账号
+            for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
+                    continue;
+                }
+                OmsShopVO omsShopVO = new OmsShopVO();
+                omsShopVO.shopId = shopSiteDO.getShopSystem();
+                omsShopVO.shopName = shopSiteDO.getShop();
+                omsPlatformVO.lstShop.add(omsShopVO);
+
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+
+                    omsShopVO.lstSite = null;
+                } else {
+                    omsShopVO.lstSite = new ArrayList<>();
+                    OmsSiteVO siteVO = new OmsSiteVO();
+                    siteVO.siteId = shopSiteDO.getSiteId();
+
+                    if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+
+                        siteVO.siteName = siteVO.siteId;
+                    } else {
+                        siteVO.siteName = shopSiteDO.getSiteName();
+                    }
+                    omsShopVO.lstSite.add(siteVO);
+                }
+            }
+            //组装平台
+            omsPlatformVOS.add(omsPlatformVO);
+            return VoHelper.getSuccessResult(omsPlatformVOS);
+        } catch (Exception e) {
+            logger.error("未知异常", e);
+            return VoHelper.getErrorResult();
+        }
+    }
+
+
+
+    @Override
     public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode) {
         if(StringUtility.isNullOrEmpty(entityCode)){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
@@ -1259,7 +1413,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return dataRuleService.getPlatformShop(operator,"亚马逊");
         }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
             // 刊登--->ebyay 只需要账号
-            return  dataRuleService.getPlatformShop(operator,"eBay");
+            return  dataRuleService.getPlatformShop(operator,"");
         }else{
             //待定后续....
             return VoHelper.getSuccessResult((Object) "待配置......");
@@ -1267,33 +1421,5 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     }
 
-
-    @Transactional
-    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
-        try {
-            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
-            OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-            omsPlatformVO.platformId = platformId;
-            omsPlatformVO.platformName =platformId;
-            omsPlatformVO.lstShop = new ArrayList<>();
-            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformId);
-            //组装账号
-            for (ShopSiteDO shopSiteDO : shopSiteDOS) {
-                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
-                    continue;
-                }
-                OmsShopVO omsShopVO = new OmsShopVO();
-                omsShopVO.shopId = shopSiteDO.getShopSystem();
-                omsShopVO.shopName = shopSiteDO.getShop();
-                omsPlatformVO.lstShop.add(omsShopVO);
-            }
-            //组装平台
-            omsPlatformVOS.add(omsPlatformVO);
-            return VoHelper.getSuccessResult(omsPlatformVOS);
-        } catch (Exception e) {
-            logger.error("未知异常", e);
-            return VoHelper.getErrorResult();
-        }
-    }
 
 }

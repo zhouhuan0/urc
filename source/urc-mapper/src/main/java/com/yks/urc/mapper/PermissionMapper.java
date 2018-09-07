@@ -93,4 +93,14 @@ public interface PermissionMapper {
     @MapKey("sysKey")
     Map<String, PermissionDO> perMissionMap();
 
+
+    /**
+     *  根据sysKey 获取SysName
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/8/13 15:07
+     */
+    String getSysNameByKey(String sysKey);
+
 }

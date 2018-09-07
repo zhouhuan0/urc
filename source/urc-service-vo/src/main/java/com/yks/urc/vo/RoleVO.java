@@ -14,7 +14,9 @@ import java.util.List;
 
 public class RoleVO implements Serializable {
     private static final long serialVersionUID = -706052625111152853L;
-    
+    /**
+     * roleId
+     */
     public String roleId;
     /**
      *
@@ -81,7 +83,10 @@ public class RoleVO implements Serializable {
      * 拥有此角色的用户域账号
      */
     public List<String> lstUserName;
-
+    /**
+     *  此角色的拥有者
+     */
+    public List<String> lstOwner;
 
     public Integer getId() {
         return id;

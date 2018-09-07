@@ -29,7 +29,7 @@ public interface IDataRuleService {
      * @param lstUserName
      * @return
      */
-    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator);
+    public ResultVO getDataRuleByUser(List<String> lstUserName,String operator,String sysKey);
 
 
     /**
@@ -69,18 +69,34 @@ public interface IDataRuleService {
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
 
-
+    /**
+     *  获取亚马逊的账号(分页)
+     *
+     *
+     *
+     */
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator,String platformId);
 
 
     ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode);
 
-
-    /**
+     /**
      * @param:
      * @return
      * @Author lwx
      * @Date 2018/7/21 10:24
      */
     ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator,String platformId);
+
+    /**
+     *  获取指定平台下的账号站点 数据权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/8/2 14:46
+     */
+    ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator,String platformId);
+
+
+
 }

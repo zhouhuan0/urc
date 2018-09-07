@@ -131,4 +131,9 @@
         select sys_key,sys_name from urc_permission
     </select>
 
+
+    <select id="getSysNameByKey" parameterType="java.lang.String" resultType="java.lang.String">
+        SELECT sys_name FROM urc_permission WHERE  sys_key=#{sysKey}
+    </select>
+
 </mapper>

@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RoleOwnerDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.UserVO;
 
@@ -193,6 +194,8 @@ public class RoleMapperTest extends BaseMapperTest {
        RoleDO roleDO = roleMapper.getByRoleName("admin");
        Assert.assertNotNull(roleDO);
     }
+    @Autowired
+    private RoleOwnerMapper ownerMapper;
 
     @Test
     public void testListRolesByPage(){
@@ -201,15 +204,19 @@ public class RoleMapperTest extends BaseMapperTest {
         RoleDO roleDO = new RoleDO();
 //        roleDO.setRoleName("admin");
 //        roleDO.setRemark("hehe");
-
+        List<RoleOwnerDO>  ownerDOS =ownerMapper.selectOwnerByOwner("wujianghui");
+        List<Long> roleIds =new ArrayList<>();
+        for (RoleOwnerDO ownerDO :ownerDOS){
+            roleIds.add(ownerDO.getRoleId());
+        }
         Map<String, Object> map = new HashMap<>();
-        map.put("createBy", "huangpeiqin");
+        map.put("createBy", "wujianghui");
 //        map.put("roleDO", roleDO);
         map.put("currIndex", (currPage - 1) * pageSize);
         map.put("pageSize", pageSize);
-
-        List<RoleDO> roleDOS = roleMapper.listRolesByPage(map);
-        Assert.assertNotNull(roleDOS);
+        map.put("roleIds",roleIds);
+       List<RoleDO> roleDOS = roleMapper.listRolesByPage(map);
+       // Assert.assertNotNull(roleDOS);
     }
     @Test
     public void getRoleName(){

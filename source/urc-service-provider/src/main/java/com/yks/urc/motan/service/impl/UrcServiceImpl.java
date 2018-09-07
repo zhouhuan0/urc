@@ -1,6 +1,5 @@
 package com.yks.urc.motan.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
@@ -65,12 +64,14 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("同步组织架构")
     public ResultVO syncDingOrgAndUser() {
         String operator = MotanSession.getRequest().getOperator();
         return personService.SynPersonOrgFromDing(operator);
     }
 
     @Override
+    @Log("通过id搜索组织架构用户")
     public ResultVO getUserByDingOrgId(String params) {
 
         JSONObject jsonObject = StringUtility.parseString(params);
@@ -84,6 +85,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("组织架构搜索用户")
     public ResultVO getUserByUserInfo(String params) {
         JSONObject jsonObject = StringUtility.parseString(params);
         PersonVO personVo = jsonObject.getObject("user", PersonVO.class);
@@ -93,6 +95,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取所有部门树")
     public ResultVO getAllOrgTree() {
         return organizationService.getAllOrgTree();
     }
@@ -128,6 +131,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("快速分配数据权限模板给用户")
     public ResultVO assignDataRuleTempl2User(String jsonStr) {
         return dataRuleService.assignDataRuleTempl2User(jsonStr);
     }
@@ -142,6 +146,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("根据templId获取数据权限模板")
     public ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr) {
         return dataRuleService.getDataRuleTemplByTemplId(jsonStr);
     }
@@ -156,6 +161,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("获取数据权限模板")
     public ResultVO<PageResultVO> getDataRuleTempl(String jsonStr) {
         return dataRuleService.getDataRuleTempl(jsonStr);
     }
@@ -198,6 +204,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取用户的所有功能权限")
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
         return userService.getAllFuncPermit(jsonStr);
     }
@@ -209,6 +216,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("通过roleId 获取用户")
     public ResultVO getUserByRoleId(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -225,6 +233,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取角色列表")
     public ResultVO getRoleUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -242,6 +251,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取我的授权方案")
     public ResultVO getMyDataRuleTempl(String jsonStr) {
 /*        JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -257,6 +267,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("通过域账号获取数据权限")
     public ResultVO getDataRuleByUser(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -267,9 +278,12 @@ public class UrcServiceImpl implements IUrcService {
         if (StringUtility.isNullOrEmpty(jsonObject.getString("lstUserName"))) {
             throw new URCBizException("lstUserName为空", ErrorCode.E_000002);
         }
+
+        String sysKey = jsonObject.getString("sysKey");
+
         List<String> lstUserName = StringUtility.jsonToList(jsonObject.getString("lstUserName"), String.class);
 
-        return dataRuleService.getDataRuleByUser(lstUserName,operator);
+        return dataRuleService.getDataRuleByUser(lstUserName,operator,sysKey);
     }
 
 
@@ -280,6 +294,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取当前用户能授权的功能权限")
     public ResultVO getUserAuthorizablePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -287,6 +302,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取多个角色已有的功能权限")
     public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -326,6 +342,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("通过用户名模糊所有域账号")
     public ResultVO fuzzySearchUsersByUserName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -343,6 +360,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
+    @Log("更新多个角色的用户 ")
     public ResultVO updateUsersOfRole(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -369,6 +387,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
+    @Log("获取maven打包的时间")
     public ResultVO getMavenPackageTime() {
         return operationBp.getMavenPackageTime();
     }
@@ -383,6 +402,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("新增或编辑一个方案")
     public ResultVO addOrUpdateDataRuleTempl(String jsonStr) {
         return dataRuleService.addOrUpdateDataRuleTempl(jsonStr);
     }
@@ -396,6 +416,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("删除方案")
     public ResultVO deleteDataRuleTempl(String jsonStr) {
         return dataRuleService.deleteDataRuleTempl(jsonStr);
     }
@@ -418,6 +439,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("查看用户的功能权限列表")
     public ResultVO getUserPermissionList(String jsonStr) {
         return permissionService.getUserPermissionList(jsonStr);
     }
@@ -431,6 +453,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("创建或更新多个用户的数据权限")
     public ResultVO addOrUpdateDataRule(String jsonStr) {
         return dataRuleService.addOrUpdateDataRule(jsonStr);
     }
@@ -444,6 +467,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("多条件搜索角色")
     public ResultVO getRolesByInfo(String jsonStr) {
         return roleService.getRolesByInfo(jsonStr);
     }
@@ -457,6 +481,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("新增或更新角色、功能权限、用户")
     public ResultVO addOrUpdateRoleInfo(String jsonStr) {
         return roleService.addOrUpdateRoleInfo(jsonStr);
     }
@@ -470,6 +495,7 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log(" 根据角色id获取角色信息")
     public ResultVO getRoleByRoleId(String jsonStr) {
         return roleService.getRoleByRoleId(jsonStr);
     }
@@ -483,11 +509,13 @@ public class UrcServiceImpl implements IUrcService {
      * @see
      */
     @Override
+    @Log("删除多个角色")
     public ResultVO deleteRoles(String jsonStr) {
         return roleService.deleteRoles(jsonStr);
     }
 
     @Override
+    @Log("通过roleId 更新角色的权限和缓存")
     public ResultVO assignAllPermit2Role(String jsonStr) {
         return roleService.assignAllPermit2Role();
     }
@@ -522,6 +550,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("判断当前用户是否是超级管理员")
     public ResultVO operIsSuperAdmin(String jsonStr) {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         String operator = jsonObject.getString("operator");
@@ -545,7 +574,6 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO syncPlatform(String jsonStr) {
         String operator =MotanSession.getRequest().getOperator();
         return userService.syncPlatform(operator);
-
     }
 
     @Override
@@ -558,7 +586,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
-    @Log("通过名字模糊搜索人员")
+    @Log("获取SSO账号查询和获取，并关联显示账号对应员工名称的服务")
     public ResultVO fuzzSearchPersonByName(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator =MotanSession.getRequest().getOperator();
@@ -568,6 +596,7 @@ public class UrcServiceImpl implements IUrcService {
     }
 
     @Override
+    @Log("获取指定系统的数据权限")
     public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json) {
         JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
         String sysKey = jObj.getString(StringConstant.sysKey);
@@ -576,14 +605,47 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
 
     }
-
-    @Log("数据授权-获取平台账号根据entityCode")
+    /**
+     *  更新缓存Api前缀
+     * @param:
+     * @return
+     * @Author lwx
+     * @Date 2018/7/17 15:38
+     */
     @Override
+    @Log("更新缓存Api前缀")
+    public ResultVO updateApiPrefixCache(String json) {
+        String operator =MotanSession.getRequest().getOperator();
+        return permissionService.updateApiPrefixCache();
+    }
+
+    @Override
+    @Log("数据授权-获取平台账号")
+    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String json) {
+        JSONObject jsonObject =StringUtility.parseString(json);
+        String operator =MotanSession.getRequest().getOperator();
+        String platformId =jsonObject.getString("platformId");
+        return dataRuleService.getPlatformShop(operator,platformId);
+    }
+
+    @Override
+    @Log("数据授权-获取平台账号根据entityCode")
     public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String json) {
         JSONObject jsonObject =StringUtility.parseString(json);
         String operator =MotanSession.getRequest().getOperator();
         String entityCode =jsonObject.getString("entityCode");
         return dataRuleService.getPlatformShopByEntityCode(operator,entityCode);
     }
+
+
+    @Override
+    @Log("获取指定平台下的账号站点 数据权限")
+    public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json) {
+        JSONObject jsonObject =StringUtility.parseString(json);
+        String operator =MotanSession.getRequest().getOperator();
+        String platformId =jsonObject.getString("platformId");
+        return dataRuleService.appointPlatformShopSite(operator,platformId);
+    }
+
 
 }
