@@ -1079,6 +1079,11 @@ public class RoleServiceImpl implements IRoleService {
      * @Date 2018/7/20 14:30
      */
     public boolean isOwner(String operator, Long roleId) {
+        // 先判断是否是创建人 , 若是, 则肯定是owner
+        RoleDO roleDO =roleMapper.getRoleByRoleId(String.valueOf(roleId));
+        if (roleDO !=null && StringUtility.stringEqualsIgnoreCase(operator,roleDO.getCreateBy())){
+            return true;
+        }
         int result = ownerMapper.judgeOwnerByOwnerAndId(operator, roleId);
         if (result == 0) {
             return false;
