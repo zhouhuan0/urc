@@ -29,11 +29,15 @@
 		<!-- 当获取连接失败重试次数 -->
 		<property name="acquireRetryAttempts" value="2" />
 
+
 		<!---->
 		<!--<property name="testConnectionOnCheckout" value="false"/>
 		<property name="testConnectionOnCheckin" value="false"/>-->
-		<property name="idleConnectionTestPeriod" value="200"/>
+
 		<!--<property name="maxIdleTime" value="600000"/>-->
+		<!-- 空闲时间-->
+		<property name="maxIdleTime" value="250"/>
+		<property name="idleConnectionTestPeriod" value="250"/>
 	</bean>
 
 	<!-- 3.配置SqlSessionFactory对象 -->
