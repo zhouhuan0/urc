@@ -644,7 +644,7 @@ public class RoleServiceImpl implements IRoleService {
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
                 RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-                if (roleDo != null) {
+                if (roleDo != null && roleDo.getRoleId() != null) {
                     if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, roleDo.getRoleId())) {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不是该角色的owner" + lstRoleId.get(i), ErrorCode.E_000003);
                     }
@@ -653,7 +653,6 @@ public class RoleServiceImpl implements IRoleService {
                     List<RolePermissionDO> rolePermissionList = null;
                     if (!roleMapper.isSuperAdminAccount(operator)) {
                         //非超管
-                        permissionDO.setCreateBy(operator);
                         rolePermissionList = rolePermissionMapper.getRoleSalePermission(permissionDO);
                     } else {
                         rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
