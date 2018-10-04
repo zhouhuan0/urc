@@ -70,6 +70,16 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Value("${importSysPermit.aesPwd}")
     private String aesPwd;
 
+    @Test
+    public void mergeFuncJson2Obj_Test() throws IOException {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
+        String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
+        List<String> lstJson = new ArrayList<>();
+        lstJson.add(strJson1);
+        lstJson.add(strJson2);
+        System.out.println(userValidateBp.mergeFuncJson(lstJson));
+    }
+
     public void testIPermissionService() throws Exception {
         String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
         String strEncrypt = EncryptHelper.encryptAes_Base64(strJson1, aesPwd);
@@ -80,6 +90,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void utcTime_Test() {
         System.out.println(StringUtility.dt2Str(new Date(), "yyyy-MM-dd'T'HH:mm:ssZ"));
     }
+
     @Test
     public void mqConsumer_Test() {
         String topic = String.format("URC_USER_DATARULE_%s", "006");
