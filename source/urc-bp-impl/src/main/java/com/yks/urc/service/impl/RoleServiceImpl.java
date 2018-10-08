@@ -644,7 +644,7 @@ public class RoleServiceImpl implements IRoleService {
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
                 RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-                if (roleDo != null) {
+                if (roleDo != null && roleDo.getRoleId() != null) {
                     if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, roleDo.getRoleId())) {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不是该角色的owner" + lstRoleId.get(i), ErrorCode.E_000003);
                     }
@@ -653,7 +653,6 @@ public class RoleServiceImpl implements IRoleService {
                     List<RolePermissionDO> rolePermissionList = null;
                     if (!roleMapper.isSuperAdminAccount(operator)) {
                         //非超管
-                        permissionDO.setCreateBy(operator);
                         rolePermissionList = rolePermissionMapper.getRoleSalePermission(permissionDO);
                     } else {
                         rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
@@ -1079,6 +1078,11 @@ public class RoleServiceImpl implements IRoleService {
      * @Date 2018/7/20 14:30
      */
     public boolean isOwner(String operator, Long roleId) {
+        // 先判断是否是创建人 , 若是, 则肯定是owner
+        RoleDO roleDO =roleMapper.getRoleByRoleId(String.valueOf(roleId));
+        if (roleDO !=null && StringUtility.stringEqualsIgnoreCase(operator,roleDO.getCreateBy())){
+            return true;
+        }
         int result = ownerMapper.judgeOwnerByOwnerAndId(operator, roleId);
         if (result == 0) {
             return false;

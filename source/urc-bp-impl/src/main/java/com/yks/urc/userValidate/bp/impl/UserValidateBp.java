@@ -333,8 +333,8 @@ public class UserValidateBp implements IUserValidateBp {
 		List<MenuVO> menu1 = sys1.menu;
 		List<MenuVO> menu2 = sys2.menu;
 
-		boolean hasSameMenu = false;
 		for (int j = 0; j < menu2.size(); j++) {
+			boolean hasSameMenu = false;
 			for (int i = 0; i < menu1.size(); i++) {
 				if (StringUtility.stringEqualsIgnoreCase(menu1.get(i).key, menu2.get(j).key)) {
 					// 合并相同menu
@@ -374,8 +374,8 @@ public class UserValidateBp implements IUserValidateBp {
 			page1 = new ArrayList<>();
 		if (page2 == null)
 			page2 = new ArrayList<>();
-		boolean hasSameMenu = false;
 		for (int j = 0; j < page2.size(); j++) {
+			boolean hasSameMenu = false;
 			for (int i = 0; i < page1.size(); i++) {
 				if (StringUtility.stringEqualsIgnoreCase(page1.get(i).key, page2.get(j).key)) {
 					// 合并相同page
@@ -410,8 +410,8 @@ public class UserValidateBp implements IUserValidateBp {
 			functions1 = new ArrayList<>();
 		if (functions2 == null)
 			functions2 = new ArrayList<>();
-		boolean hasSameMenu = false;
 		for (int j = 0; j < functions2.size(); j++) {
+			boolean hasSameMenu = false;
 			for (int i = 0; i < functions1.size(); i++) {
 				if (StringUtility.stringEqualsIgnoreCase(functions1.get(i).key, functions2.get(j).key)) {
 					// 合并相同functions
@@ -555,7 +555,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * 从db或cache获取funcVersion
 	 * 
 	 * @param userName
-	 * @param sysKey
+	 * @param
 	 * @return
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午4:43:27

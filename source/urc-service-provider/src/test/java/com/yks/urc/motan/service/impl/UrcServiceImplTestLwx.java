@@ -1,12 +1,14 @@
 package com.yks.urc.motan.service.impl;
 
+import com.yks.mq.utils.KafkaProducerSingleton;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleOwnerVO;
-import com.yks.urc.vo.RoleVO;
+import com.yks.urc.vo.*;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -91,6 +93,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getAllFuncPermit() throws Exception {
+        map.put("operator", "huangpeiqin");
+       // map.put("ticket","d49b892e591dc3e098fd02f34410e5f5");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO = service.getAllFuncPermit(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -123,8 +132,15 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getRolePermission() throws Exception {
-        map.put("operator", operator);
 
+        List<String> lstRoleId =new ArrayList<>();
+        lstRoleId.add("1538624216130000003");
+        map.put("operator", "songguanye");
+        map.put("lstRoleId", lstRoleId);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.getRolePermission(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -351,5 +367,23 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
         Long endTime =StringUtility.getDateTimeNow().getTime();
         System.out.println(String.format("花费的时间为:[%d]",endTime-startTime));
+    }
+    @Test
+    public void test_kafka(){
+        List<DataRuleSysVO> dataRuleSysVOS =new ArrayList<>();
+        DataRuleSysVO sysVO =new DataRuleSysVO();
+        ExpressionVO expressionVO =new ExpressionVO();
+       /* ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>("URC_USER_DATARULE_009", value);
+        Callback arg1 = new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata arg0, Exception arg1) {
+
+            }
+        };
+        KafkaProducerSingleton.getInstance(null).send(arg0, arg1);*/
+    }
+    @Test
+    public void test_meageJson(){
+        //StringUtility.inputStream2String()
     }
 }
