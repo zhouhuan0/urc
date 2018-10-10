@@ -69,6 +69,12 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getPlatformList() throws Exception {
+        map.put("operator",operator);
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO = service.getPlatformList(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test

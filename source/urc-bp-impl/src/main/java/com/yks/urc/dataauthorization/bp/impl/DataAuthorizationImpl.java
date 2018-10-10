@@ -206,10 +206,24 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsPlatformVO> getPlatformList(String operator) {
         List<OmsPlatformVO> omsPlatformVoList = new ArrayList<>();
-        String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
+       // String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
         //将拿到的结果转为json ,获取平台信息
-        JSONObject platformObject = StringUtility.parseString(getPlatformResult);
-        if (platformObject.getInteger("state") == 200) {
+       // JSONObject platformObject = StringUtility.parseString(getPlatformResult);
+        List<PlatformDO> platformDOS =platformMapper.selectAll();
+        if (platformDOS != null && platformDOS.size() >0){
+            platformDOS.forEach(platformDO -> {
+                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                omsPlatformVO.platformId =platformDO.getPlatformId();
+                //如果没有name , 将id作为name
+                if (StringUtility.isNullOrEmpty(platformDO.getPlatformName())){
+                    omsPlatformVO.platformName =omsPlatformVO.platformId;
+                }else {
+                    omsPlatformVO.platformName=platformDO.getPlatformName();
+                }
+                omsPlatformVoList.add(omsPlatformVO);
+            });
+        }
+        /*if (platformObject.getInteger("state") == 200) {
             JSONArray dataArray = platformObject.getJSONArray("data");
             List<PlatformResp> platformResps = StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
             for (PlatformResp platformResp : platformResps) {
@@ -222,7 +236,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 omsPlatformVO.platformName = platformResp.name;
                 omsPlatformVoList.add(omsPlatformVO);
             }
-        }
+        }*/
         return omsPlatformVoList;
     }
 
@@ -238,12 +252,43 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsShopVO> getShopList(String operator, String platform) {
         List<OmsShopVO> omsShopVoList = new ArrayList<>();
-        String url = GET_SHOP_AND_SITE + "&platform=" + platform;
+        if (StringUtility.isNullOrEmpty(platform)){
+            return null;
+        }
+       List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSiteByPlatformId(platform);
+        if (shopSiteDOS != null && shopSiteDOS.size() >0){
+            shopSiteDOS.forEach(shopSiteDO -> {
+                OmsShopVO omsShopVO = new OmsShopVO();
+                OmsSiteVO omsSiteVO =new OmsSiteVO();
+                omsShopVO.shopId =shopSiteDO.getShopSystem();
+                if (StringUtility.isNullOrEmpty(omsShopVO.shopId)) {
+                    return;
+                }
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShop())){
+                    omsShopVO.shopName=omsShopVO.shopId;
+                }else {
+                    omsShopVO.shopName = shopSiteDO.getShop();
+                }
+                omsShopVO.lstSite =new ArrayList<>();
+                omsSiteVO.siteId =shopSiteDO.getSiteId();
+                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)){
+                    return;
+                }
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())){
+                   omsSiteVO.siteName =omsSiteVO.siteId;
+                }else {
+                    omsSiteVO.siteName =shopSiteDO.getSiteName();
+                }
+                omsShopVO.lstSite.add(omsSiteVO);
+                omsShopVoList.add(omsShopVO);
+            });
+        }
+    /*    *//*String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
             throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息为空");
         }
-        JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
+        JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);*//*
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
@@ -275,7 +320,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 }
                 omsShopVoList.add(omsShopVO);
             }
-        }
+        }*/
         return omsShopVoList;
     }
 
