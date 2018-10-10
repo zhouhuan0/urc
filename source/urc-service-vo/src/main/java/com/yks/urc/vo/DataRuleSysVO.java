@@ -24,15 +24,15 @@ public class DataRuleSysVO  implements Serializable{
      *
      */
     public String sysName;
-    public Date createTime;
-    public Date getCreateTime(){
+    public String createTime;
+    public String getCreateTime(){
         return createTime;
     }
 
-    public void setCreateTime(Date dt){
+    public void setCreateTime(String dt){
         createTime=dt;
     }
-    
+
     /**
      * 行权限
      */
@@ -43,6 +43,8 @@ public class DataRuleSysVO  implements Serializable{
      */
     public List<DataRuleColVO> col;
 	public String userName;
+
+	public String t;
     
 
     public String getUserName() {

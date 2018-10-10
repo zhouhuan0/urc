@@ -455,6 +455,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList();
             dataRuleSysVOS1.addAll(StringUtility.jsonToList(StringUtility.toJSONString_NoException(dataRuleSysVOS), DataRuleSysVO.class));
             for (DataRuleSysVO mem : dataRuleSysVOS1) {
+                mem.setCreateTime(String.valueOf(System.currentTimeMillis()));
                 mem.setUserName(userName);
             }
             dataRuleVO.lstDataRuleSys = dataRuleSysVOS1;
@@ -1196,7 +1197,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
                 DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
                 expressionVO.setSubWhereClause(expressionVOList);
-                dataRuleSysVO.createTime = lstDrSysGt.get(j).getCreateTime();
+                dataRuleSysVO.createTime = String.valueOf(lstDrSysGt.get(j).getCreateTime());
                 dataRuleSysVO.userName = lstDrSysGt.get(j).getUserName();
                 dataRuleSysVO.sysKey = lstDrSysGt.get(j).getSysKey();
                 dataRuleSysVO.col = dataRuleColVOList;
