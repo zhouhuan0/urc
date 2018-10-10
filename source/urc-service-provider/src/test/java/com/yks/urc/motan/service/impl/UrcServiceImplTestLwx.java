@@ -226,9 +226,16 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void addOrUpdateRoleInfo() throws Exception {
         map.put("operator", operator);
+        PermissionVO permissionVO =new PermissionVO();
+        List<PermissionVO> permissionVOS =new ArrayList<>();
+        permissionVO.setSysKey("000");
+        permissionVO.setSysContext("{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001-000001\",\"name\":\"我的操作权限\",\"pageFullPathName\":\"\",\"show\":0,\"url\":\"/permissionlist/\"}],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}");
+        permissionVOS.add(permissionVO);
         RoleVO roleVO = new RoleVO();
-        roleVO.setRoleName("admin3");
-        roleVO.roleId="1532690328183000038";
+        roleVO.roleName="test_lwx1";
+        roleVO.setRemark("test");
+        roleVO.setSelectedContext(permissionVOS);
+      //  roleVO.roleId="1532690328183000038";
         roleVO.isForever = true;
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.FALSE);
@@ -236,11 +243,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         roleVO.setExpireTime(new Date());
         roleVO.setCreateBy(operator);
         roleVO.setExpireTime(new Date());
+        roleVO.lstUserName =new ArrayList<>();
+        roleVO.lstUserName.add("houyunfeng");
+        roleVO.lstUserName.add("houyunfeng");
         roleVO.lstOwner = new ArrayList<>();
-        roleVO.lstOwner.add("zhangqinghui");
-        roleVO.lstOwner.add("houyunfeng");
-        roleVO.lstOwner.add("wujianghui");
-        roleVO.lstOwner.add("lvchangrong");
+        roleVO.lstOwner.add("panyun");
+        roleVO.lstOwner.add("panyun");
+
         map.put("role", roleVO);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);

@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.yks.urc.fw.constant.StringConstant.operator;
@@ -273,6 +274,10 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertOrUpdateRole(String operator, RoleVO roleVO, RoleDO opRoleDO) {
         if (opRoleDO == null) {
+           RoleDO role = roleMapper.getByRoleName(roleVO.roleName);
+           if (role != null && StringUtility.stringEqualsIgnoreCase(roleVO.roleName,role.getRoleName())){
+               throw new URCBizException(ErrorCode.E_101001.getState(), "已存在此角色");
+           }
             logger.info("add role");
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
@@ -334,9 +339,9 @@ public class RoleServiceImpl implements IRoleService {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
             //添加创建者
-            roleVO.lstOwner.add(operator);
+           // roleVO.lstOwner.add(operator);
             //去重
-            roleVO.lstOwner.stream().distinct();
+           roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner1 : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
                 ownerDO.setRoleId(roleId);
@@ -349,8 +354,9 @@ public class RoleServiceImpl implements IRoleService {
             }
         } else {
             //仍然需要插入创建者
-            roleVO.lstOwner = new ArrayList<>();
-            roleVO.lstOwner.add(operator);
+           // roleVO.lstOwner = new ArrayList<>();
+          //  roleVO.lstOwner.add(operator);
+            roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
                 ownerDO.setRoleId(roleId);
@@ -400,6 +406,8 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertBatchUserRole(RoleVO roleVO, String operator, Long roleId) {
         List<String> lstUserName = roleVO.getLstUserName();
+        //去重
+        lstUserName =lstUserName.stream().distinct().collect(Collectors.toList());
         if (lstUserName != null && !lstUserName.isEmpty()) {
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             for (String userName : lstUserName) {
@@ -505,7 +513,7 @@ public class RoleServiceImpl implements IRoleService {
             lstUserName.add(userRoleDO.getUserName());
         }
         roleVO.setLstUserName(lstUserName);
-        //组装roleVO里面的 owner
+        //组装roleVO里面的 owner, 创建者放在第一位
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);
         roleVO.lstOwner = new ArrayList<>();
         for (RoleOwnerDO ownerDO : ownerDOS) {
