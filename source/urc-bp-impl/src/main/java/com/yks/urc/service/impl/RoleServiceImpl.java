@@ -513,12 +513,16 @@ public class RoleServiceImpl implements IRoleService {
             lstUserName.add(userRoleDO.getUserName());
         }
         roleVO.setLstUserName(lstUserName);
-        //组装roleVO里面的 owner, 创建者放在第一位
+        //组装roleVO里面的 owner,
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);
         roleVO.lstOwner = new ArrayList<>();
         for (RoleOwnerDO ownerDO : ownerDOS) {
             RoleOwnerVO ownerVO = new RoleOwnerVO();
             ownerVO.owner = ownerDO.getOwner();
+            //创建者放在第一位
+            if (StringUtility.stringEqualsIgnoreCase(ownerDO.getOwner(),ownerDO.getCreateBy())){
+                roleVO.lstOwner.set(0,ownerVO.owner);
+            }
             roleVO.lstOwner.add(ownerVO.owner);
         }
         return VoHelper.getSuccessResult(roleVO);
