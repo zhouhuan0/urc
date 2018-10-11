@@ -1294,7 +1294,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                     omsShopVO.shopName = shopSiteDO.getShop();
                     omsPlatformVO.lstShop.add(omsShopVO);
                     //客服系统, 需要站点
-                    if (StringUtility.stringEqualsIgnoreCase(entityCode, "E_CustomerService")) {
+                    /*if (StringUtility.stringEqualsIgnoreCase(entityCode, "E_CustomerService")) {
                         if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId())) {
                             continue;
                         }
@@ -1307,7 +1307,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                             siteVO.siteName = shopSiteDO.getSiteName();
                         }
                         omsShopVO.lstSite.add(siteVO);
-                    }
+                    }*/
                 }
                 //组装平台
                 omsPlatformVOS.add(omsPlatformVO);
@@ -1436,7 +1436,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             platformIds.add("lazada");
             return dataRuleService.getPlatformShop(operator, platformIds,entityCode);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
-            //客服系统 --> 平台账号站点
+            //客服系统 --> 平台账号  站点
             List<PlatformDO> platformDOS = platformMapper.selectAll();
             if (platformDOS != null && platformDOS.size() > 0) {
                 platformIds = platformDOS.stream().map(platformDO -> platformDO.getPlatformId()).collect(Collectors.toList());
