@@ -628,7 +628,8 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject =StringUtility.parseString(json);
         String operator =MotanSession.getRequest().getOperator();
         String platformId =jsonObject.getString("platformId");
-        return dataRuleService.getPlatformShop(operator,platformId);
+        //return dataRuleService.getPlatformShop(operator,platformId);
+        return null;
     }
 
     @Override

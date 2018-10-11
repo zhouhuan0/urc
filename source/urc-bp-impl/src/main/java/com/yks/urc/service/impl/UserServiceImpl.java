@@ -132,7 +132,7 @@ public class UserServiceImpl implements IUserService {
                 return rslt;
             }
             rslt.data = dataAuthorization.getShopList(operator, platform);
-            rslt.msg = "Success " + operator;
+            rslt.msg = "Success";
             rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
             if (rslt.data == null) {
                 rslt.msg = "Error 无法找到此平台的店铺信息,或者无此平台," + operator;

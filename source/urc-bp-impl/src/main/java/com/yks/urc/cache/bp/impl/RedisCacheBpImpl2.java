@@ -283,15 +283,24 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         getUserInfoCache(userName).put(KEY_personName, personName);
     }
 
-    private String Key_platform_shop ="all_platform_shop";
+    private String Key_platform_shop ="ebay_platform_shop";
+    private String Key_all_platform_shop ="all_platform_shop";
     @Override
-    public String getAllPlatformShop(String platformShopKey) {
-        return StringUtility.addEmptyString(getPlatformShopCache(Key_platform_shop).get(Key_platform_shop));
+    public String getAllPlatformShop(String platformShopKey,String entityCode) {
+        if (StringUtility.stringEqualsIgnoreCase("E_PlatformShopSite",entityCode)) {
+            return StringUtility.addEmptyString(getPlatformShopCache(Key_platform_shop).get(Key_platform_shop));
+        }else {
+            return StringUtility.addEmptyString(getPlatformShopCache(Key_all_platform_shop).get(Key_all_platform_shop));
+        }
     }
 
     @Override
-    public void setAllPlatformShop(String allPlatformShopJson) {
-        getPlatformShopCache(Key_platform_shop).put(Key_platform_shop,allPlatformShopJson);
+    public void setAllPlatformShop(String allPlatformShopJson,String entityCode) {
+        if (StringUtility.stringEqualsIgnoreCase("E_PlatformShopSite",entityCode)) {
+            getPlatformShopCache(Key_platform_shop).put(Key_platform_shop, allPlatformShopJson);
+        }else {
+            getPlatformShopCache(Key_all_platform_shop).put(Key_all_platform_shop, allPlatformShopJson);
+        }
     }
 
    /**
@@ -301,7 +310,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     * @Author lwx
     * @Date 2018/9/4 16:54
     */
-    private Cache getPlatformShopCache(String allPlatformShopJson) {
-        return getCache(Key_platform_shop,172800);
+    private Cache getPlatformShopCache(String platformShopKey) {
+        return getCache(platformShopKey,172800);
     }
 }

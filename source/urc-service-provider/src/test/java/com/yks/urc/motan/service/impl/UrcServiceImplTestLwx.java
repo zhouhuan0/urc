@@ -12,6 +12,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.*;
 import java.util.*;
 
 import static org.junit.Assert.*;
@@ -69,7 +70,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getPlatformList() throws Exception {
-        map.put("operator",operator);
+        map.put("operator", operator);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
@@ -79,8 +80,8 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getShopList() throws Exception {
-        map.put("operator",operator);
-        map.put("platform","亚马逊");
+        map.put("operator", operator);
+        map.put("platform", "亚马逊");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
@@ -107,7 +108,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getAllFuncPermit() throws Exception {
         map.put("operator", "huangpeiqin");
-       // map.put("ticket","d49b892e591dc3e098fd02f34410e5f5");
+        // map.put("ticket","d49b892e591dc3e098fd02f34410e5f5");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
@@ -146,7 +147,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRolePermission() throws Exception {
 
-        List<String> lstRoleId =new ArrayList<>();
+        List<String> lstRoleId = new ArrayList<>();
         lstRoleId.add("1538624216130000003");
         map.put("operator", "songguanye");
         map.put("lstRoleId", lstRoleId);
@@ -233,16 +234,16 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void addOrUpdateRoleInfo() throws Exception {
         map.put("operator", "panyun");
-        PermissionVO permissionVO =new PermissionVO();
-        List<PermissionVO> permissionVOS =new ArrayList<>();
+        PermissionVO permissionVO = new PermissionVO();
+        List<PermissionVO> permissionVOS = new ArrayList<>();
         permissionVO.setSysKey("000");
         permissionVO.setSysContext("{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001-000001\",\"name\":\"我的操作权限\",\"pageFullPathName\":\"\",\"show\":0,\"url\":\"/permissionlist/\"}],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}");
         permissionVOS.add(permissionVO);
         RoleVO roleVO = new RoleVO();
-        roleVO.roleName="test_lwx3";
+        roleVO.roleName = "test_lwx3";
         roleVO.setRemark("test");
         roleVO.setSelectedContext(permissionVOS);
-       // roleVO.roleId="1539221185095000011";
+        // roleVO.roleId="1539221185095000011";
         roleVO.isForever = true;
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.FALSE);
@@ -250,7 +251,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         roleVO.setExpireTime(new Date());
         roleVO.setCreateBy("panyun");
         roleVO.setExpireTime(new Date());
-        roleVO.lstUserName =new ArrayList<>();
+        roleVO.lstUserName = new ArrayList<>();
         roleVO.lstUserName.add("houyunfeng");
         roleVO.lstUserName.add("huangjianfeng");
         roleVO.lstOwner = new ArrayList<>();
@@ -279,9 +280,9 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void deleteRoles() throws Exception {
         map.put("operator", operator);
-        List<String> lstRoleId =new ArrayList<>();
+        List<String> lstRoleId = new ArrayList<>();
         lstRoleId.add("1539221430345000012");
-        map.put("lstRoleId",lstRoleId);
+        map.put("lstRoleId", lstRoleId);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
@@ -345,24 +346,24 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void updateApiPrefixCache() throws Exception {
-        map.put("operator","linwanxian");
-        String json =StringUtility.toJSONString(map);
+        map.put("operator", "linwanxian");
+        String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
 
         System.out.println(json);
-        System.out.println("START====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
-        ResultVO resultVO =service.updateApiPrefixCache(json);
+        System.out.println("START====================" + StringUtility.dt2Str(new Date(), "yyyy-MM-dd HH:mm:sss"));
+        ResultVO resultVO = service.updateApiPrefixCache(json);
         System.out.println(StringUtility.toJSONString(resultVO));
-        System.out.println("END====================" +StringUtility.dt2Str(new Date(),"yyyy-MM-dd HH:mm:sss"));
+        System.out.println("END====================" + StringUtility.dt2Str(new Date(), "yyyy-MM-dd HH:mm:sss"));
     }
 
     @Test
     public void getAmazonShop() throws Exception {
         map.put("operator", operator);
-        map.put("platformId","亚马逊");
+        map.put("platformId", "亚马逊");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
-       //resultVO = service.getAmazonShop(json);
+        //resultVO = service.getAmazonShop(json);
         System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
     }
@@ -370,26 +371,49 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void appointPlatformShopSite() throws Exception {
         map.put("operator", operator);
-        map.put("platformId","ebay");
+        map.put("platformId", "ebay");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.appointPlatformShopSite(json);
         System.out.println();
         System.out.println(StringUtility.toJSONString(resultVO));
     }
+
     @Test
-    public void test_getPlatformShopByEntityCode(){
-        Long startTime =StringUtility.getDateTimeNow().getTime();
+    public void test_getPlatformShopByEntityCode() {
+        Long startTime = StringUtility.getDateTimeNow().getTime();
         map.put("operator", operator);
-        map.put("entityCode", "E_ArmShopAccount");
+        map.put("entityCode", "E_PlsShopAccount");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getPlatformShopByEntityCode(json);
         System.out.println("返回结果为");
         System.out.println(StringUtility.toJSONString(resultVO));
-        Long endTime =StringUtility.getDateTimeNow().getTime();
-        System.out.println(String.format("花费的时间为:[%d]",endTime-startTime));
+        Long endTime = StringUtility.getDateTimeNow().getTime();
+        System.out.println(String.format("花费的时间为:[%d]", endTime - startTime));
+       // outToFile(StringUtility.toJSONString(resultVO), "platform.json");
     }
+
+    public static void outToFile(String str, String filePath) {
+        File file = new File("F:\\Gitrepository\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\" + filePath);
+        BufferedWriter writer = null;
+        //文件不存在
+        try {
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file, false), "utf-8"));
+            writer.write(str);
+            writer.flush();
+            writer.close();
+        } catch (Exception e) {
+
+        }
+    }
+
+
+
+
     @Test
     public void test_kafka(){
         List<DataRuleSysVO> dataRuleSysVOS =new ArrayList<>();
