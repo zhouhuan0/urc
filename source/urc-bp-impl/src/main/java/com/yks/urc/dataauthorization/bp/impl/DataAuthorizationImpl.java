@@ -255,7 +255,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
         if (StringUtility.isNullOrEmpty(platform)){
             return null;
         }
-       List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSiteByPlatformId(platform);
+       List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSite(platform);
         if (shopSiteDOS != null && shopSiteDOS.size() >0){
             shopSiteDOS.forEach(shopSiteDO -> {
                 OmsShopVO omsShopVO = new OmsShopVO();

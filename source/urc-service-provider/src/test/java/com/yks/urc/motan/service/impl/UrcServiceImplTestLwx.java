@@ -79,6 +79,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getShopList() throws Exception {
+        map.put("operator",operator);
+        map.put("platform","亚马逊");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO = service.getShopList(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test

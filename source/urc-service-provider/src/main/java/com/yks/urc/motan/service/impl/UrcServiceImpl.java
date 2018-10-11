@@ -180,6 +180,9 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
         String operator = MotanSession.getRequest().getOperator();
         String platform = jsonObject.getString("platform");
+        if (StringUtility.isNullOrEmpty(platform)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"平台不能为空");
+        }
         return userService.getShopList(operator, platform);
     }
 
