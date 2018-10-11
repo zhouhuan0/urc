@@ -1,9 +1,9 @@
+/*
 package com.yks.demo.motan.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.weibo.api.motan.config.springsupport.annotation.MotanReferer;
 import com.yks.demo.DemoClientApplication;
-import com.yks.oms.order.manage.motan.IOrderManageConfigApi;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -31,13 +31,14 @@ public class MotanUserServiceTest {
 //    @MotanReferer
     private IUrcService urcService;
 
-   /* @MotanReferer
+ @MotanReferer
     private IOmsApiFace omsApiFace;
 
     @Test
     public void getStoreAccount_Test() {
         System.out.println(String.format("getStoreAccount_Test:\r\n%s", omsApiFace.getStoreAccount()));
-    }*/
+    }
+
 
    @MotanReferer
    private IOrderManageConfigApi orderManageConfigApi;
@@ -210,3 +211,4 @@ public class MotanUserServiceTest {
         urcService.endMonitorMemory(StringUtility.toJSONString_NoException(map));
     }
 }
+*/
