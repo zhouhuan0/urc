@@ -1236,7 +1236,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             String redisResult =null;
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
             //ebay 缓存
-            if (StringUtility.stringEqualsIgnoreCase("E_PlatformShopSite",entityCode) ){
+            if (StringUtility.stringEqualsIgnoreCase("E_PlsShopAccount",entityCode) ){
                  redisResult = cacheBp.getAllPlatformShop(Key_platform_shop,entityCode);
                 //客服缓存
             }else if( StringUtility.stringEqualsIgnoreCase("E_CustomerService",entityCode)){
