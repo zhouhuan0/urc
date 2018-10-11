@@ -383,7 +383,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void test_getPlatformShopByEntityCode() {
         Long startTime = StringUtility.getDateTimeNow().getTime();
         map.put("operator", operator);
-        map.put("entityCode", "E_PlsShopAccount");
+        map.put("entityCode", "E_CustomerService");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getPlatformShopByEntityCode(json);
@@ -391,7 +391,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
         Long endTime = StringUtility.getDateTimeNow().getTime();
         System.out.println(String.format("花费的时间为:[%d]", endTime - startTime));
-       // outToFile(StringUtility.toJSONString(resultVO), "platform.json");
+       outToFile(StringUtility.toJSONString(resultVO), "platform.json");
     }
 
     public static void outToFile(String str, String filePath) {
