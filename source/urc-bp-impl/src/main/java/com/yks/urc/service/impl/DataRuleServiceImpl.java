@@ -1314,7 +1314,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
         }
         //放入缓存 , 只有刊登, 客服系统 放入缓存
-        if (StringUtility.stringEqualsIgnoreCase("E_PlatformShopSite",entityCode) | StringUtility.stringEqualsIgnoreCase("E_CustomerService",entityCode)) {
+        if (StringUtility.stringEqualsIgnoreCase("E_PlatformShopSite",entityCode) || StringUtility.stringEqualsIgnoreCase("E_CustomerService",entityCode)) {
             cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS),entityCode);
         }
         return VoHelper.getSuccessResult(omsPlatformVOS);
