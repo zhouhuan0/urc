@@ -339,7 +339,7 @@ public class RoleServiceImpl implements IRoleService {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
             //添加创建者
-           // roleVO.lstOwner.add(operator);
+            roleVO.lstOwner.add(operator);
             //去重
            roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner1 : roleVO.lstOwner) {
@@ -354,8 +354,8 @@ public class RoleServiceImpl implements IRoleService {
             }
         } else {
             //仍然需要插入创建者
-           // roleVO.lstOwner = new ArrayList<>();
-          //  roleVO.lstOwner.add(operator);
+            roleVO.lstOwner = new ArrayList<>();
+            roleVO.lstOwner.add(operator);
             roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
