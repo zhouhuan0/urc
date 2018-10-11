@@ -225,29 +225,29 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void addOrUpdateRoleInfo() throws Exception {
-        map.put("operator", operator);
+        map.put("operator", "panyun");
         PermissionVO permissionVO =new PermissionVO();
         List<PermissionVO> permissionVOS =new ArrayList<>();
         permissionVO.setSysKey("000");
         permissionVO.setSysContext("{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001-000001\",\"name\":\"我的操作权限\",\"pageFullPathName\":\"\",\"show\":0,\"url\":\"/permissionlist/\"}],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}");
         permissionVOS.add(permissionVO);
         RoleVO roleVO = new RoleVO();
-        roleVO.roleName="test_lwx1";
+        roleVO.roleName="test_lwx3";
         roleVO.setRemark("test");
         roleVO.setSelectedContext(permissionVOS);
-      //  roleVO.roleId="1532690328183000038";
+       // roleVO.roleId="1539221185095000011";
         roleVO.isForever = true;
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.FALSE);
         roleVO.setEffectiveTime(new Date());
         roleVO.setExpireTime(new Date());
-        roleVO.setCreateBy(operator);
+        roleVO.setCreateBy("panyun");
         roleVO.setExpireTime(new Date());
         roleVO.lstUserName =new ArrayList<>();
         roleVO.lstUserName.add("houyunfeng");
-        roleVO.lstUserName.add("houyunfeng");
+        roleVO.lstUserName.add("huangjianfeng");
         roleVO.lstOwner = new ArrayList<>();
-        roleVO.lstOwner.add("panyun");
+        roleVO.lstOwner.add("linwanxian");
         roleVO.lstOwner.add("panyun");
 
         map.put("role", roleVO);
@@ -261,7 +261,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRoleByRoleId() throws Exception {
         map.put("operator", operator);
-        map.put("roleId", "1529635932385000003");
+        map.put("roleId", "1539221477917000013");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
@@ -273,7 +273,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void deleteRoles() throws Exception {
         map.put("operator", operator);
         List<String> lstRoleId =new ArrayList<>();
-        lstRoleId.add("1532914690933000040");
+        lstRoleId.add("1539221430345000012");
         map.put("lstRoleId",lstRoleId);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
