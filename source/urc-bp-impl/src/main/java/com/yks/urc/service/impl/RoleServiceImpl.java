@@ -117,7 +117,7 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             //查出当前操作人所属的owner的roleId
             List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByOwner(operator);
-            if (CollectionUtils.isEmpty(ownerDOS)) {
+            if (!CollectionUtils.isEmpty(ownerDOS)) {
                 List<Long> roleIdList = new ArrayList<>();
                 for (RoleOwnerDO ownerDO : ownerDOS) {
                     roleIdList.add(ownerDO.getRoleId());
