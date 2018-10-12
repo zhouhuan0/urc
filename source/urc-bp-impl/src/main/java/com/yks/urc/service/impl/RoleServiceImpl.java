@@ -630,18 +630,18 @@ public class RoleServiceImpl implements IRoleService {
         if (roleMapper.isSuperAdminAccount(operator)) {
             dataMap.put("createBy", "");
         } else {
+            lstRoleId.forEach(roleId ->{
+                RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
+                if (!StringUtils.equalsIgnoreCase(operator,roleDO1.getCreateBy())){
+                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择",roleDO1.getRoleName()));
+                }
+            });
             dataMap.put("createBy", operator);
         }
         dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         /*4、删除角色信息  包括角色基本信息、角色-操作权限关系数据、用户-角色关系数据*/
-        lstRoleId.forEach(roleId ->{
-         RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
-         if (!StringUtils.equalsIgnoreCase(operator,roleDO1.getCreateBy())){
-             throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择",roleDO1.getRoleName()));
-         }
-        });
         roleMapper.deleteBatchRoleDatas(dataMap);
         //删除角色的owner
         lstRoleId.stream().forEach(s -> ownerMapper.deleteOwnerByRoleId(s));
