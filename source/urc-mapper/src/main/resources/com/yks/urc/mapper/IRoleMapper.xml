@@ -171,7 +171,7 @@
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
     
-     <!--根据username/syskey获取业务员角色功能权限-->
+     <!--根据username/syskey获取业务员角色功能权限, owner 所需的权限树-->
     <select id="getBizAdminFuncJsonByUserAndSysKey" resultType="java.lang.String">
         select rp.selected_context
         from urc_user_role ur
@@ -179,6 +179,14 @@
         inner join urc_role_permission rp ON rp.role_id=r.role_id
         WHERE ur.user_name=#{userName} and rp.sys_key=#{sysKey}
         AND r.is_active=1 and r.is_authorizable=1 
+		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
+		union  distinct
+		select rp.selected_context
+        from urc_role_owner ur
+        inner join urc_role r ON ur.role_id=r.role_id
+        inner join urc_role_permission rp ON rp.role_id=r.role_id
+        WHERE ur.role_owner=#{userName} and rp.sys_key=#{sysKey}
+        AND r.is_active=1 and r.is_authorizable=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
 

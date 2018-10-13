@@ -240,7 +240,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         permissionVO.setSysContext("{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001-000001\",\"name\":\"我的操作权限\",\"pageFullPathName\":\"\",\"show\":0,\"url\":\"/permissionlist/\"}],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}");
         permissionVOS.add(permissionVO);
         RoleVO roleVO = new RoleVO();
-        roleVO.roleName = "test_lwx3";
+        roleVO.roleName = "test_bug_3";
         roleVO.setRemark("test");
         roleVO.setSelectedContext(permissionVOS);
         // roleVO.roleId="1539221185095000011";
@@ -249,14 +249,14 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         roleVO.setAuthorizable(Boolean.FALSE);
         roleVO.setEffectiveTime(new Date());
         roleVO.setExpireTime(new Date());
-        roleVO.setCreateBy("panyun");
+        roleVO.setCreateBy("linwanxian");
         roleVO.setExpireTime(new Date());
         roleVO.lstUserName = new ArrayList<>();
         roleVO.lstUserName.add("houyunfeng");
-        roleVO.lstUserName.add("huangjianfeng");
+        roleVO.lstUserName.add("hexiaopeng");
         roleVO.lstOwner = new ArrayList<>();
         roleVO.lstOwner.add("linwanxian");
-        roleVO.lstOwner.add("panyun");
+        roleVO.lstOwner.add("huanghongfei");
 
         map.put("role", roleVO);
         String json = StringUtility.toJSONString(map);

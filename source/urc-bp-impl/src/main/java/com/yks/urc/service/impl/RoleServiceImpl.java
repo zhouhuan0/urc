@@ -291,7 +291,7 @@ public class RoleServiceImpl implements IRoleService {
             int rtn = roleMapper.insert(roleDO);
             //owner 入库操作
             insetOwnerDO(roleVO,roleId,operator);
-             /*批量新增角色-操作权限关系数据*/
+             /*批量新增角色-操作权限关系数据 ,  将创建者的操作权限复制给owner*/
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
