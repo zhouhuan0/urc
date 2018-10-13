@@ -275,8 +275,8 @@ public class RoleServiceImpl implements IRoleService {
     private void insertOrUpdateRole(String operator, RoleVO roleVO, RoleDO opRoleDO) {
         if (opRoleDO == null) {
            RoleDO role = roleMapper.getByRoleName(roleVO.roleName);
-           if (role != null && StringUtility.stringEqualsIgnoreCase(roleVO.roleName,role.getRoleName())){
-               throw new URCBizException(ErrorCode.E_101001.getState(), "已存在此角色");
+           if (roleMapper.checkDuplicateRoleName(roleVO.roleName,null)){
+               throw new URCBizException(ErrorCode.E_101001.getState(), "已存在相同的角色名称");
            }
             logger.info("add role");
             RoleDO roleDO = new RoleDO();
