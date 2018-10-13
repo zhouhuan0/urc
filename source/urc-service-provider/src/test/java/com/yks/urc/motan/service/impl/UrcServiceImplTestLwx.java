@@ -142,6 +142,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getUserAuthorizablePermission() throws Exception {
+        map.put("operator","huanghongfei");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        service.getUserAuthorizablePermission(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
