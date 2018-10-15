@@ -886,8 +886,9 @@ public class RoleServiceImpl implements IRoleService {
                         userRoleDOS.add(userRoleDO);
                     }
                 } else {
-                    if (roleDO.getCreateBy().equals(operator)) {
-                        userRole.setCreateBy(operator);
+                    // 如果不是超级管理员 的话 owner  可以分配用户
+                    if (this.isOwner(operator,roleDO.getRoleId())) {
+                        userRole.setCreateBy(roleDO.getCreateBy());
                         if (lstRole.size() > 1) {
                             userRoleMapper.deleteUserRoleInUserName(userRole, userNameList);
                         } else {

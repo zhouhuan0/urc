@@ -188,6 +188,18 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void updateUsersOfRole() throws Exception {
+        List<RoleVO> roleVOS = new ArrayList<>();
+        RoleVO roleVO = new RoleVO();
+        roleVO.roleId = "1539595765302000077";
+        roleVO.lstUserName = new ArrayList<>();
+        roleVO.lstUserName.add("test333");
+        roleVOS.add(roleVO);
+        map.put("lstRole", roleVOS);
+        map.put("operator", "test");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO=service.updateUsersOfRole(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -286,7 +298,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void deleteRoles() throws Exception {
         map.put("operator", operator);
         List<String> lstRoleId = new ArrayList<>();
-        lstRoleId.add("1539221430345000012");
+        lstRoleId.add("1539586809841000069");
         map.put("lstRoleId", lstRoleId);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
