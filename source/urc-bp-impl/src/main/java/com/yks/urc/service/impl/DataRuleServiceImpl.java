@@ -971,6 +971,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<String> lstUserName = new ArrayList<>();
         for (DataRuleVO dataRuleVO : dataRuleVOS) {
             lstUserName.add(dataRuleVO.getUserName());
+            dataRuleVO.t = String.valueOf(new Date().getTime());
         }
 
         //分批量操作
