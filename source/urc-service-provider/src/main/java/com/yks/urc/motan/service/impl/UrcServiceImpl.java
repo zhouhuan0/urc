@@ -50,11 +50,34 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private MonitorMemoryService memoryService;
+
+    @Autowired
+    private ICsService csService;
+
+
     @Override
     @Log(value = "同步数据",level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
         String operator = MotanSession.getRequest().getOperator();
         return userService.syncUserInfo(operator);
+    }
+
+    @Override
+    @Log(value = "新增客服分组",level = LogLevel.INFO)
+    public ResultVO addCsUserGroup(String json) {
+        return csService.addCsUserGroup(json);
+    }
+
+    @Override
+    @Log(value = "编辑客服分组名称",level = LogLevel.INFO)
+    public ResultVO editCsUserGroup(String json) {
+        return csService.editCsUserGroup(json);
+    }
+
+    @Override
+    @Log(value = "删除客服分组",level = LogLevel.INFO)
+    public ResultVO delCsUserGroup(String json) {
+        return csService.delCsUserGroup(json);
     }
 
     @Override

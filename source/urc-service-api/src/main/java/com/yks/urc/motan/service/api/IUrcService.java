@@ -15,6 +15,31 @@ public interface IUrcService {
     ResultVO syncUserInfo(String json);
 
     /**
+     * 新增客服分组
+     *
+     * @param json
+     * @return
+     */
+    ResultVO addCsUserGroup(String json);
+
+    /**
+     * 编辑客服分组名称
+     *
+     * @param json
+     * @return
+     */
+    ResultVO editCsUserGroup(String json);
+
+
+    /**
+     * 删除客服分组
+     *
+     * @param json
+     * @return
+     */
+    ResultVO delCsUserGroup(String json);
+
+    /**
      * 登陆校验：用户名密码检验
      *
      * @param map
