@@ -1517,7 +1517,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return  dataRuleService.getCsPlatformCodeName(operator);
         } else {
             //待定后续....
-            return VoHelper.getSuccessResult((Object) "待配置......");
+            return VoHelper.getSuccessResult((Object) "待配置!......");
         }
 
     }
