@@ -735,6 +735,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*1、添加到数据权限Sys列表*/
             DataRuleSysDO dataRuleSysDO = new DataRuleSysDO();
             dataRuleSysVO.setSysName(null);
+            //增加创建时间
+            dataRuleSysVO.t = String.valueOf(new Date().getTime());
             BeanUtils.copyProperties(dataRuleSysVO, dataRuleSysDO);
             Long dataRuleSysId = seqBp.getNextDataRuleSysId();
             dataRuleSysDO.setDataRuleSysId(dataRuleSysId);
