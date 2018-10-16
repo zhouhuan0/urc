@@ -23,6 +23,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -76,6 +77,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ISeqBp seqBp;
 
+
+    @Autowired
+    private CsPlatformGroupMapper csPlatformGroupMapper;
 
     @Autowired
     private IUserService userService;
@@ -1245,6 +1249,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return VoHelper.getErrorResult();
         }
     }
+
+
+
+
+
     /**
      *  从DB 获取平台账号站点
      * @param
@@ -1351,6 +1360,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
     }
 
+
     @Override
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
         try {
@@ -1398,9 +1408,63 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
 
+    private List<CsCodeNameVO> getCsChildren(){
+        List<CsCodeNameVO> csCodeNameVOList=new ArrayList<>();
+        CsCodeNameVO csCodeNameVO1=new CsCodeNameVO();
+        csCodeNameVO1.code="ZZ";
+        csCodeNameVO1.name="组长";
+        csCodeNameVO1.type="0";
+        CsCodeNameVO csCodeNameVO2=new CsCodeNameVO();
+        csCodeNameVO2.code="ZY";
+        csCodeNameVO2.name="组员";
+        csCodeNameVO2.type="0";
+        csCodeNameVOList.add(csCodeNameVO1);
+        csCodeNameVOList.add(csCodeNameVO2);
+        return  csCodeNameVOList;
+    }
+
+    private CsCodeNameVO getCsManager(){
+        CsCodeNameVO csCodeNameVO1=new CsCodeNameVO();
+        csCodeNameVO1.code="PM";
+        csCodeNameVO1.name="经理";
+        csCodeNameVO1.type="0";
+        return  csCodeNameVO1;
+    }
+
 
     @Override
-    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode) {
+    public ResultVO getCsPlatformCodeName(String operator) {
+        List<CsPlatformGroup> csPlatformGroupList=  csPlatformGroupMapper.selectAllGroupIdInfo();
+        if(CollectionUtils.isEmpty(csPlatformGroupList)) {
+            return VoHelper.getSuccessResult();
+        }
+        List<CsCodeNameVO> csCodeNameVOList=new ArrayList<>();
+        for (CsPlatformGroup csPlatformGroup:csPlatformGroupList){
+            CsCodeNameVO csCodeNameVO=new CsCodeNameVO();
+            csCodeNameVO.code=String.valueOf(csPlatformGroup.getPlatformId());
+            csCodeNameVO.name=csPlatformGroup.getPlatformName();
+            csCodeNameVO.type="1";
+            List<CsCodeNameVO> csCodeNameVOSChildren=new ArrayList<>();
+            csCodeNameVOSChildren.add(getCsManager());
+            List<CsPlatformGroup> csPlatformGroupDataList= csPlatformGroupMapper.selectByPlantformId(String.valueOf(csPlatformGroup.getPlatformId()));
+            if(!CollectionUtils.isEmpty(csPlatformGroupDataList)){
+                for (CsPlatformGroup csPlatformGroupData:csPlatformGroupDataList){
+                    CsCodeNameVO csCodeNameVOData =csCodeNameVOData=new CsCodeNameVO();
+                    csCodeNameVOData.code=String.valueOf(csPlatformGroupData.getGroupId());
+                    csCodeNameVOData.name=csPlatformGroupData.getGroupName();
+                    csCodeNameVOData.type="1";
+                    csCodeNameVOData.children=getCsChildren();
+                    csCodeNameVOSChildren.add(csCodeNameVOData);
+                }
+            }
+            csCodeNameVO.children=csCodeNameVOSChildren;
+            csCodeNameVOList.add(csCodeNameVO);
+        }
+        return VoHelper.getSuccessResult(csCodeNameVOList);
+    }
+
+    @Override
+    public ResultVO getPlatformShopByEntityCode(String operator, String entityCode) {
         if(StringUtility.isNullOrEmpty(entityCode)){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
         }
@@ -1414,6 +1478,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
             // 刊登--->ebyay 只需要账号
             return  dataRuleService.getPlatformShop(operator,"");
+        }else if(entityCode.equalsIgnoreCase("E_CsOrg")){
+            //客服--【职级】---范围
+            return  dataRuleService.getCsPlatformCodeName(operator);
         }else{
             //待定后续....
             return VoHelper.getSuccessResult((Object) "待配置......");

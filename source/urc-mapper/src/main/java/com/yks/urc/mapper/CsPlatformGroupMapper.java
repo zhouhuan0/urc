@@ -3,6 +3,8 @@ package com.yks.urc.mapper;
 import com.yks.urc.entity.CsPlatformGroup;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface CsPlatformGroupMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -21,4 +23,8 @@ public interface CsPlatformGroupMapper {
     CsPlatformGroup selectByGroupId(@Param(value = "groupId") String groupId);
 
     int deleteByGroupId(@Param(value = "groupId") String groupId);
+
+    List<CsPlatformGroup> selectAllGroupIdInfo();
+
+    List<CsPlatformGroup> selectByPlantformId(@Param(value = "platformId") String centerPlatformId);
 }

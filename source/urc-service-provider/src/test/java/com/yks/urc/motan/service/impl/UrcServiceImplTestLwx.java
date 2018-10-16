@@ -359,7 +359,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void test_getPlatformShopByEntityCode(){
         Long startTime =StringUtility.getDateTimeNow().getTime();
         map.put("operator", operator);
-        map.put("entityCode", "E_ArmShopAccount");
+        map.put("entityCode", "E_CsOrg");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getPlatformShopByEntityCode(json);

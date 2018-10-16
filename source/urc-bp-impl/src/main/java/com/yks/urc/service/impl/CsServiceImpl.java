@@ -44,6 +44,7 @@ public class CsServiceImpl implements ICsService {
     @Autowired
     private CsPlatformGroupMapper csPlatformGroupMapper;
 
+
     @Override
     public ResultVO addCsUserGroup(String json) {
         JSONObject jsonObject = StringUtility.parseString(json);
@@ -56,7 +57,7 @@ public class CsServiceImpl implements ICsService {
             throw new URCBizException(ErrorCode.E_000003.getState(), "新增客服分组参数为空");
         }
 
-        if(csPlatformGroupMapper.selectByPlantIdAndGroupId(centerPlatformId,groupId)!=null){
+        if(csPlatformGroupMapper.selectByGroupId(groupId)!=null){
             throw new URCBizException(ErrorCode.E_000003.getState(), String.format("新增客服分组参数已经存在platformId=%s,groupId=%s", centerPlatformId,groupId));
         }
         CsPlatformGroup csPlatformGroup = new CsPlatformGroup();

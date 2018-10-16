@@ -39,6 +39,22 @@
   </select>
 
 
+  <select id="selectByPlantformId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from urc_cs_platform_group
+    where  platform_id = #{platformId,jdbcType=BIGINT}
+  </select>
+
+
+
+  <select id="selectAllGroupIdInfo"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from urc_cs_platform_group GROUP BY platform_id
+  </select>
+
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_cs_platform_group
     where id = #{id,jdbcType=BIGINT}
