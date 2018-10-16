@@ -33,6 +33,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.yks.urc.fw.constant.StringConstant.operator;
@@ -116,7 +117,7 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             //查出当前操作人所属的owner的roleId
             List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByOwner(operator);
-            if (ownerDOS != null && ownerDOS.size() != 0) {
+            if (!CollectionUtils.isEmpty(ownerDOS)) {
                 List<Long> roleIdList = new ArrayList<>();
                 for (RoleOwnerDO ownerDO : ownerDOS) {
                     roleIdList.add(ownerDO.getRoleId());
@@ -273,6 +274,10 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertOrUpdateRole(String operator, RoleVO roleVO, RoleDO opRoleDO) {
         if (opRoleDO == null) {
+           RoleDO role = roleMapper.getByRoleName(roleVO.roleName);
+           if (roleMapper.checkDuplicateRoleName(roleVO.roleName,null)){
+               throw new URCBizException(ErrorCode.E_101001.getState(), "已存在相同的角色名称");
+           }
             logger.info("add role");
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
@@ -286,7 +291,7 @@ public class RoleServiceImpl implements IRoleService {
             int rtn = roleMapper.insert(roleDO);
             //owner 入库操作
             insetOwnerDO(roleVO,roleId,operator);
-             /*批量新增角色-操作权限关系数据*/
+             /*批量新增角色-操作权限关系数据 ,  将创建者的操作权限复制给owner*/
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
@@ -308,8 +313,11 @@ public class RoleServiceImpl implements IRoleService {
             //删除原有的owner ,插入新的owner
             ownerMapper.deleteOwnerByRoleId(Long.valueOf(roleVO.roleId));
             logger.info(String.format("清除roleId 为:[%s] 的owner", roleVO.roleId));
-            //owner 入库操作
-            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId),operator);
+            //owner 入库操作, 插入创建者
+            if (StringUtils.isEmpty(role.getCreateBy())){
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"该角色的创建人不存在");
+            }
+            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId),role.getCreateBy());
             logger.info(String.format("更新roleId 为:[%s] 的owner", roleVO.roleId));
               /*删除原有角色-权限关系数据*/
             rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
@@ -330,18 +338,18 @@ public class RoleServiceImpl implements IRoleService {
      * @Author lwx
      * @Date 2018/7/27 18:41
      */
-    public void insetOwnerDO(RoleVO roleVO,Long roleId,String operator) {
+    public void insetOwnerDO(RoleVO roleVO,Long roleId,String createBy) {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
             //添加创建者
-            roleVO.lstOwner.add(operator);
+            roleVO.lstOwner.add(createBy);
             //去重
-            roleVO.lstOwner.stream().distinct();
+           roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner1 : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
                 ownerDO.setRoleId(roleId);
-                ownerDO.setCreateBy(operator);
-                ownerDO.setModifiedBy(operator);
+                ownerDO.setCreateBy(createBy);
+                ownerDO.setModifiedBy(createBy);
                 ownerDO.setCreateTime(StringUtility.getDateTimeNow());
                 ownerDO.setModifiedTime(StringUtility.getDateTimeNow());
                 ownerDO.setOwner(owner1);
@@ -350,12 +358,13 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             //仍然需要插入创建者
             roleVO.lstOwner = new ArrayList<>();
-            roleVO.lstOwner.add(operator);
+            roleVO.lstOwner.add(createBy);
+            roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
                 ownerDO.setRoleId(roleId);
-                ownerDO.setCreateBy(operator);
-                ownerDO.setModifiedBy(operator);
+                ownerDO.setCreateBy(createBy);
+                ownerDO.setModifiedBy(createBy);
                 ownerDO.setCreateTime(StringUtility.getDateTimeNow());
                 ownerDO.setModifiedTime(StringUtility.getDateTimeNow());
                 ownerDO.setOwner(owner);
@@ -400,6 +409,8 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertBatchUserRole(RoleVO roleVO, String operator, Long roleId) {
         List<String> lstUserName = roleVO.getLstUserName();
+        //去重
+        lstUserName =lstUserName.stream().distinct().collect(Collectors.toList());
         if (lstUserName != null && !lstUserName.isEmpty()) {
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             for (String userName : lstUserName) {
@@ -469,6 +480,9 @@ public class RoleServiceImpl implements IRoleService {
 
         Long roleId = Long.valueOf(roleIdStr);
         RoleDO roleDO = roleMapper.getRoleDatasByRoleId(roleId);
+        if (StringUtils.isEmpty(roleDO.getCreateBy())){
+            throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"该角色的创建人不存在");
+        }
         /*获取系统集合*/
         if (roleDO == null) {
             throw new URCBizException("role data is null where roleId is:" + roleIdStr, ErrorCode.E_000003);
@@ -505,14 +519,19 @@ public class RoleServiceImpl implements IRoleService {
             lstUserName.add(userRoleDO.getUserName());
         }
         roleVO.setLstUserName(lstUserName);
-        //组装roleVO里面的 owner
+        //组装roleVO里面的 owner,
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);
         roleVO.lstOwner = new ArrayList<>();
         for (RoleOwnerDO ownerDO : ownerDOS) {
             RoleOwnerVO ownerVO = new RoleOwnerVO();
             ownerVO.owner = ownerDO.getOwner();
+            //创建者放在第一位, 去重, 从role 表获取创建者
+            if (StringUtility.stringEqualsIgnoreCase(ownerDO.getOwner(),roleDO.getCreateBy())){
+                roleVO.lstOwner.add(0,ownerVO.owner);
+            }
             roleVO.lstOwner.add(ownerVO.owner);
         }
+        roleVO.lstOwner =roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
         return VoHelper.getSuccessResult(roleVO);
     }
 
@@ -609,9 +628,16 @@ public class RoleServiceImpl implements IRoleService {
         /* 非管理员用户只能管理自己创建的角色 */
         Map dataMap = new HashMap();
         if (roleMapper.isSuperAdminAccount(operator)) {
-            dataMap.put("createBy", "");
+            dataMap.put("owner", "");
         } else {
-            dataMap.put("createBy", operator);
+            lstRoleId.forEach(roleId ->{
+                RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
+                if (!StringUtils.equalsIgnoreCase(operator,roleDO1.getCreateBy())){
+                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择",roleDO1.getRoleName()));
+                }
+            });
+            // 通过owner  查看 角色下的用户
+            dataMap.put("owner", operator);
         }
         dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
@@ -861,8 +887,9 @@ public class RoleServiceImpl implements IRoleService {
                         userRoleDOS.add(userRoleDO);
                     }
                 } else {
-                    if (roleDO.getCreateBy().equals(operator)) {
-                        userRole.setCreateBy(operator);
+                    // 如果不是超级管理员 的话 owner  可以分配用户
+                    if (this.isOwner(operator,roleDO.getRoleId())) {
+                        userRole.setCreateBy(roleDO.getCreateBy());
                         if (lstRole.size() > 1) {
                             userRoleMapper.deleteUserRoleInUserName(userRole, userNameList);
                         } else {

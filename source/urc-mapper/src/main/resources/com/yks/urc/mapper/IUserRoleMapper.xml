@@ -215,14 +215,14 @@
     </select>
     <!--根据roleId列表和创建人查找用户-角色对应的用户名-->
     <select id="listUserNamesByRoleIds" resultType="java.lang.String" parameterType="java.util.HashMap">
-        select user_name from urc_user_role
+        select  u.user_name from urc_user_role u INNER  JOIN  urc_role_owner r on u.role_id = r.role_id
         <where>
-            role_id in
+           u.role_id in
             <foreach item="item" index="index" collection="roleIds" open="(" separator="," close=")">
                 #{item}
             </foreach>
-            <if test="createBy != null and createBy != '' ">
-                and create_by=#{createBy}
+            <if test="owner != null and owner != '' ">
+                and  r.role_owner=#{owner}
             </if>
         </where>
     </select>

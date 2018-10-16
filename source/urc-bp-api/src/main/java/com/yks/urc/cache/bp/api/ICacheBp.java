@@ -91,7 +91,7 @@ public interface ICacheBp {
 	 * @Author lwx
 	 * @Date 2018/9/4 16:41
 	 */
-	String getAllPlatformShop(String platformShopKey);
+	String getAllPlatformShop(String platformShopKey,String entityCode);
 	/**
 	 *  设置 所有有用的平台和账号
 	 * @param
@@ -99,5 +99,5 @@ public interface ICacheBp {
 	 * @Author lwx
 	 * @Date 2018/9/4 16:43
 	 */
-	void  setAllPlatformShop(String allPlatformShopJson);
+	void  setAllPlatformShop(String allPlatformShopJson,String entityCode);
 }
