@@ -3,6 +3,7 @@ package com.yks.urc.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yks.urc.service.api.*;
 import org.drools.compiler.lang.DRL5Expressions.literal_return;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -13,12 +14,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.service.api.IDataRuleService;
-import com.yks.urc.service.api.IOrganizationService;
-import com.yks.urc.service.api.IPermissionService;
-import com.yks.urc.service.api.IPersonService;
-import com.yks.urc.service.api.IRoleService;
-import com.yks.urc.service.api.IUserService;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
@@ -49,8 +44,10 @@ public class WJHService extends BaseServiceTest {
 	
 	@Autowired
 	private IDataRuleService dataRuleService;
-	
-	
+
+    @Autowired
+    private ICsService csService;
+
 	@Autowired
 	private DingApiProxy dingApiProxy;
 
@@ -63,6 +60,17 @@ public class WJHService extends BaseServiceTest {
 //    	person.setOrgId("11111");
     	//person.setPhoneNum("17771054080");
     	personService.getUserByDingOrgId("1", "0", "10");
+    }
+
+    @Test
+    public void addCsUserGroup() throws Exception{
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("center_platform_id","2");
+        jsonObject.put("platformName","222");
+        jsonObject.put("groupId","3");
+        jsonObject.put("groupName","333");
+        jsonObject.put("operator","3333");
+        csService.addCsUserGroup(jsonObject.toJSONString());
     }
 
 
