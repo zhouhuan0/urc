@@ -988,6 +988,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                         List<String> sysKeys = new ArrayList<>();
                         for (DataRuleSysVO dataRuleSysVo : dataRuleSys) {
                             sysKeys.add(dataRuleSysVo.getSysKey());
+                            //增加创建时间
                             dataRuleSysVo.t = String.valueOf(new Date().getTime());
                         }
                         dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
@@ -1026,7 +1027,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 dataRuleDOSCache.add(dataRuleDO);
             } else {
                 dataRuleId = dataBatchRuleIds.get(i).getDataRuleId();
-
             }
 
             /*新增urc_data_rule_sys*/
