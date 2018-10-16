@@ -628,7 +628,7 @@ public class RoleServiceImpl implements IRoleService {
         /* 非管理员用户只能管理自己创建的角色 */
         Map dataMap = new HashMap();
         if (roleMapper.isSuperAdminAccount(operator)) {
-            dataMap.put("createBy", "");
+            dataMap.put("owner", "");
         } else {
             lstRoleId.forEach(roleId ->{
                 RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
@@ -636,7 +636,8 @@ public class RoleServiceImpl implements IRoleService {
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择",roleDO1.getRoleName()));
                 }
             });
-            dataMap.put("createBy", operator);
+            // 通过owner  查看 角色下的用户
+            dataMap.put("owner", operator);
         }
         dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/

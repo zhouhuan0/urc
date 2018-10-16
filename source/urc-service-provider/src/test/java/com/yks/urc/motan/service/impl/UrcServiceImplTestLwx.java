@@ -296,9 +296,9 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void deleteRoles() throws Exception {
-        map.put("operator", operator);
+        map.put("operator", "chenjiangxin");
         List<String> lstRoleId = new ArrayList<>();
-        lstRoleId.add("1539586809841000069");
+        lstRoleId.add("1539597354603000085");
         map.put("lstRoleId", lstRoleId);
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
