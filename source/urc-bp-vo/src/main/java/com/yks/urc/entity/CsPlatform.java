@@ -2,15 +2,12 @@ package com.yks.urc.entity;
 
 import java.util.Date;
 
-public class CsPlatformGroup {
+public class CsPlatform {
     private Long id;
 
     private String platformId;
 
-
-    private String groupId;
-
-    private String groupName;
+    private String platformName;
 
     private Date createTime;
 
@@ -33,23 +30,15 @@ public class CsPlatformGroup {
     }
 
     public void setPlatformId(String platformId) {
-        this.platformId = platformId;
+        this.platformId = platformId == null ? null : platformId.trim();
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getPlatformName() {
+        return platformName;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName == null ? null : groupName.trim();
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName == null ? null : platformName.trim();
     }
 
     public Date getCreateTime() {

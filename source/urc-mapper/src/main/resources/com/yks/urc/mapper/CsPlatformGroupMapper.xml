@@ -3,9 +3,8 @@
 <mapper namespace="com.yks.urc.mapper.CsPlatformGroupMapper">
   <resultMap id="BaseResultMap" type="com.yks.urc.entity.CsPlatformGroup">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="platform_id" jdbcType="BIGINT" property="platformId" />
-    <result column="platform_name" jdbcType="VARCHAR" property="platformName" />
-    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="platform_id" jdbcType="VARCHAR" property="platformId" />
+    <result column="group_id" jdbcType="VARCHAR" property="groupId" />
     <result column="group_name" jdbcType="VARCHAR" property="groupName" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="create_by" jdbcType="VARCHAR" property="createBy" />
@@ -13,13 +12,13 @@
     <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, platform_id, platform_name, group_id, group_name, create_time, create_by, modified_time, 
+    id, platform_id, group_id, group_name, create_time, create_by, modified_time,
     modified_by
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from urc_cs_platform_group
+    from urc_cs_group
     where id = #{id,jdbcType=BIGINT}
   </select>
 
@@ -27,23 +26,23 @@
   <select id="selectByPlantIdAndGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from urc_cs_platform_group
-    where platform_id = #{platformId,jdbcType=BIGINT} AND  group_id = #{groupId,jdbcType=BIGINT}
+    from urc_cs_group
+    where platform_id = #{platformId,jdbcType=VARCHAR} AND  group_id = #{groupId,jdbcType=VARCHAR}
   </select>
 
   <select id="selectByGroupId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from urc_cs_platform_group
-    where  group_id = #{groupId,jdbcType=BIGINT}
+    from urc_cs_group
+    where  group_id = #{groupId,jdbcType=VARCHAR}
   </select>
 
 
   <select id="selectByPlantformId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from urc_cs_platform_group
-    where  platform_id = #{platformId,jdbcType=BIGINT}
+    from urc_cs_group
+    where  platform_id = #{platformId,jdbcType=VARCHAR}
   </select>
 
 
@@ -51,40 +50,37 @@
   <select id="selectAllGroupIdInfo"  resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
-    from urc_cs_platform_group GROUP BY platform_id
+    from urc_cs_group GROUP BY platform_id
   </select>
 
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from urc_cs_platform_group
+    delete from urc_cs_group
     where id = #{id,jdbcType=BIGINT}
   </delete>
 
   <delete id="deleteByGroupId" parameterType="java.lang.String">
-    delete from urc_cs_platform_group
-    where group_id = #{groupId,jdbcType=BIGINT}
+    delete from urc_cs_group
+    where group_id = #{groupId,jdbcType=VARCHAR}
   </delete>
 
 
   <insert id="insert" parameterType="com.yks.urc.entity.CsPlatformGroup">
-    insert into urc_cs_platform_group (id, platform_id, platform_name, 
+    insert into urc_cs_group (id, platform_id,
       group_id, group_name, create_time, 
       create_by, modified_time, modified_by
       )
-    values (#{id,jdbcType=BIGINT}, #{platformId,jdbcType=BIGINT}, #{platformName,jdbcType=VARCHAR}, 
-      #{groupId,jdbcType=BIGINT}, #{groupName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{id,jdbcType=BIGINT}, #{platformId,jdbcType=VARCHAR},
+      #{groupId,jdbcType=VARCHAR}, #{groupName,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
       #{createBy,jdbcType=VARCHAR}, #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.yks.urc.entity.CsPlatformGroup">
-    insert into urc_cs_platform_group
+    insert into urc_cs_group
     <trim prefix="(" suffix=")" suffixOverrides=",">
 
       <if test="platformId != null">
         platform_id,
-      </if>
-      <if test="platformName != null">
-        platform_name,
       </if>
       <if test="groupId != null">
         group_id,
@@ -108,13 +104,10 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
 
       <if test="platformId != null">
-        #{platformId,jdbcType=BIGINT},
-      </if>
-      <if test="platformName != null">
-        #{platformName,jdbcType=VARCHAR},
+        #{platformId,jdbcType=VARCHAR},
       </if>
       <if test="groupId != null">
-        #{groupId,jdbcType=BIGINT},
+        #{groupId,jdbcType=VARCHAR},
       </if>
       <if test="groupName != null">
         #{groupName,jdbcType=VARCHAR},
@@ -134,14 +127,12 @@
     </trim>
   </insert>
   <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.CsPlatformGroup">
-    update urc_cs_platform_group
+    update urc_cs_group
     <set>
       <if test="platformId != null">
         platform_id = #{platformId,jdbcType=BIGINT},
       </if>
-      <if test="platformName != null">
-        platform_name = #{platformName,jdbcType=VARCHAR},
-      </if>
+
       <if test="groupId != null">
         group_id = #{groupId,jdbcType=BIGINT},
       </if>
@@ -164,10 +155,9 @@
     where platform_id = #{platformId,jdbcType=BIGINT} AND  group_id = #{groupId,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.CsPlatformGroup">
-    update urc_cs_platform_group
-    set platform_id = #{platformId,jdbcType=BIGINT},
-      platform_name = #{platformName,jdbcType=VARCHAR},
-      group_id = #{groupId,jdbcType=BIGINT},
+    update urc_cs_group
+    set platform_id = #{platformId,jdbcType=VARCHAR},
+      group_id = #{groupId,jdbcType=VARCHAR},
       group_name = #{groupName,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       create_by = #{createBy,jdbcType=VARCHAR},

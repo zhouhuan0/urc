@@ -67,8 +67,8 @@ public class WJHService extends BaseServiceTest {
         JSONObject jsonObject=new JSONObject();
         jsonObject.put("center_platform_id","2");
         jsonObject.put("platformName","222");
-        jsonObject.put("groupId","3");
-        jsonObject.put("groupName","333");
+        jsonObject.put("groupId","31");
+        jsonObject.put("groupName","3331");
         jsonObject.put("operator","3333");
         csService.addCsUserGroup(jsonObject.toJSONString());
     }

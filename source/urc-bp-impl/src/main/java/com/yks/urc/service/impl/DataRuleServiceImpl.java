@@ -46,6 +46,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private IDataRuleTemplMapper dataRuleTemplMapper;
 
     @Autowired
+    private CsPlatformMapper csPlatformMapper;
+
+    @Autowired
     private IDataRuleMapper dataRuleMapper;
 
     @Autowired
@@ -1452,19 +1455,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Override
     public ResultVO getCsPlatformCodeName(String operator) {
-        List<CsPlatformGroup> csPlatformGroupList=  csPlatformGroupMapper.selectAllGroupIdInfo();
+        List<CsPlatform> csPlatformGroupList=  csPlatformMapper.selectAllInfo();
         if(CollectionUtils.isEmpty(csPlatformGroupList)) {
             return VoHelper.getSuccessResult();
         }
         List<CsCodeNameVO> csCodeNameVOList=new ArrayList<>();
-        for (CsPlatformGroup csPlatformGroup:csPlatformGroupList){
+        for (CsPlatform csPlatform:csPlatformGroupList){
             CsCodeNameVO csCodeNameVO=new CsCodeNameVO();
-            csCodeNameVO.code=String.valueOf(csPlatformGroup.getPlatformId());
-            csCodeNameVO.name=csPlatformGroup.getPlatformName();
+            csCodeNameVO.code=csPlatform.getPlatformId();
+            csCodeNameVO.name=csPlatform.getPlatformName();
             csCodeNameVO.type="1";
             List<CsCodeNameVO> csCodeNameVOSChildren=new ArrayList<>();
             csCodeNameVOSChildren.add(getCsManager());
-            List<CsPlatformGroup> csPlatformGroupDataList= csPlatformGroupMapper.selectByPlantformId(String.valueOf(csPlatformGroup.getPlatformId()));
+            List<CsPlatformGroup> csPlatformGroupDataList= csPlatformGroupMapper.selectByPlantformId(csPlatform.getPlatformId());
             if(!CollectionUtils.isEmpty(csPlatformGroupDataList)){
                 for (CsPlatformGroup csPlatformGroupData:csPlatformGroupDataList){
                     CsCodeNameVO csCodeNameVOData =csCodeNameVOData=new CsCodeNameVO();

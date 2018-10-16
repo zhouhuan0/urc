@@ -11,10 +11,7 @@ import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
-import com.yks.urc.entity.CsPlatformGroup;
-import com.yks.urc.entity.Organization;
-import com.yks.urc.entity.Person;
-import com.yks.urc.entity.PersonOrg;
+import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
@@ -44,8 +41,10 @@ public class CsServiceImpl implements ICsService {
     @Autowired
     private CsPlatformGroupMapper csPlatformGroupMapper;
 
+    @Autowired
+    private CsPlatformMapper csPlatformMapper;
 
-    @Override
+    @Transactional
     public ResultVO addCsUserGroup(String json) {
         JSONObject jsonObject = StringUtility.parseString(json);
         String centerPlatformId=jsonObject.getString("center_platform_id");
@@ -60,16 +59,28 @@ public class CsServiceImpl implements ICsService {
         if(csPlatformGroupMapper.selectByGroupId(groupId)!=null){
             throw new URCBizException(ErrorCode.E_000003.getState(), String.format("新增客服分组参数已经存在platformId=%s,groupId=%s", centerPlatformId,groupId));
         }
+
         CsPlatformGroup csPlatformGroup = new CsPlatformGroup();
         csPlatformGroup.setCreateBy(operator);
         csPlatformGroup.setModifiedBy(operator);
         csPlatformGroup.setCreateTime(new Date());
         csPlatformGroup.setModifiedTime(new Date());
-        csPlatformGroup.setGroupId(Long.parseLong(groupId));
-        csPlatformGroup.setPlatformId(Long.parseLong(centerPlatformId));
-        csPlatformGroup.setPlatformName(platformName);
+        csPlatformGroup.setGroupId(groupId);
+        csPlatformGroup.setPlatformId(centerPlatformId);
         csPlatformGroup.setGroupName(groupName);
         csPlatformGroupMapper.insertSelective(csPlatformGroup);
+
+        if(csPlatformMapper.selectByPlatformId(centerPlatformId)==null){
+            CsPlatform csPlatform=new CsPlatform();
+            csPlatform.setCreateBy(operator);
+            csPlatform.setCreateTime(new Date());
+            csPlatform.setModifiedBy(operator);
+            csPlatform.setModifiedTime(new Date());
+            csPlatform.setPlatformId(centerPlatformId);
+            csPlatform.setPlatformName(platformName);
+            csPlatformMapper.insertSelective(csPlatform);
+        }
+
         return VoHelper.getSuccessResult();
     }
 
