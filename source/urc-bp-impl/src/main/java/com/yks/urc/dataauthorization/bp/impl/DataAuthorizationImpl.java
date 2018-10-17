@@ -35,7 +35,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Component
@@ -174,14 +179,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
                             shopSiteDOS.add(shopSiteDO);
                             if (shopSiteDOS.size() >= 1000) {
                                 //去重
-                                shopSiteDOS =shopSiteDOS.stream().distinct().collect(Collectors.toList());
+                                shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                                 shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                                 shopSiteDOS.clear();
                             }
                         }
                         if (shopSiteDOS.size() != 0) {
                             //去重
-                            shopSiteDOS =shopSiteDOS.stream().distinct().collect(Collectors.toList());
+                            shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                             shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                         }
                     }
@@ -342,4 +347,16 @@ public class DataAuthorizationImpl implements DataAuthorization {
             System.out.println(omsShopVO.shopName);
         }
     }
+    /**
+     * 对象去重构造器
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/10/17 15:48
+     */
+    public static <T>Predicate<T> distinctByKey(Function<? super T,Object> keyExtractor){
+        Map<Object,Boolean> seen =new ConcurrentHashMap<>();
+        return object ->seen.putIfAbsent(keyExtractor.apply(object),Boolean.TRUE) ==null;
+    }
+
 }
