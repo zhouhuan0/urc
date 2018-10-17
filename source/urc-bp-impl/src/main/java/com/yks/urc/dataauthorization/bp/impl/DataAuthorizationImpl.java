@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class DataAuthorizationImpl implements DataAuthorization {
@@ -172,11 +173,15 @@ public class DataAuthorizationImpl implements DataAuthorization {
                             shopSiteDO.setModifiedBy(operator);
                             shopSiteDOS.add(shopSiteDO);
                             if (shopSiteDOS.size() >= 1000) {
+                                //去重
+                                shopSiteDOS =shopSiteDOS.stream().distinct().collect(Collectors.toList());
                                 shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                                 shopSiteDOS.clear();
                             }
                         }
                         if (shopSiteDOS.size() != 0) {
+                            //去重
+                            shopSiteDOS =shopSiteDOS.stream().distinct().collect(Collectors.toList());
                             shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                         }
                     }
