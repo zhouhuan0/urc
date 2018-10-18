@@ -216,7 +216,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
         expressionVO.setSubWhereClause(subWhereClause);
 
         DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-        dataRuleSysVO.setSysKey("001");
+        dataRuleSysVO.setSysKey("002");
         dataRuleSysVO.setRow(expressionVO);
         dataRuleSysVO.setCol(dataRuleColVOS);
         List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList<>();
@@ -227,13 +227,13 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
         DataRuleVO dataRuleVO = new DataRuleVO();
-        dataRuleVO.setUserName("wujianghui1");
+        dataRuleVO.setUserName("songguanye");
         dataRuleVO.setLstDataRuleSys(dataRuleSysVOS1);
         lstDataRule.add(dataRuleVO);
 
 
         DataRuleVO dataRuleVO1 = new DataRuleVO();
-        dataRuleVO1.setUserName("wujianghui");
+        dataRuleVO1.setUserName("tangjianbo");
         dataRuleVO1.setLstDataRuleSys(dataRuleSysVOS1);
         lstDataRule.add(dataRuleVO1);
 

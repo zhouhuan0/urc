@@ -232,6 +232,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void addOrUpdateDataRule() throws Exception {
+        String json = StringUtility.convertStreamToString(new FileInputStream(new File("F:\\Gitrepository\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\dataRule.json")));
+        MotanSession.initialSession(json);
+        resultVO = service.addOrUpdateDataRule(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -412,7 +416,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         System.out.println(String.format("花费的时间为:[%d]", endTime - startTime));
        outToFile(StringUtility.toJSONString(resultVO), "platform.json");
     }
-
+    /**
+     *  写出到文件
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/10/16 15:46
+     */
     public static void outToFile(String str, String filePath) {
         File file = new File("F:\\Gitrepository\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\" + filePath);
         BufferedWriter writer = null;
