@@ -94,9 +94,14 @@ public interface IUserService {
 
 	ResultVO syncShopSite(String operator);
 
-<<<<<<< HEAD
+	/**
+	 * 
+	 * @param userName
+	 * @param mobile
+	 * @return
+	 */
 	ResultVO resetPwdGetVerificationCode(String userName,String mobile);
-=======
+
 	/**
 	 *  重置密码-提交重置请求
 	 * @param mobile
@@ -106,6 +111,6 @@ public interface IUserService {
 	 * @return
 	 */
 	ResultVO resetPwdSubmit(String mobile,String new_password,String username,String get_code);
->>>>>>> 2e0d3a5d377d2c990a168f55fb210b97cfa1e173
+
 
 }
