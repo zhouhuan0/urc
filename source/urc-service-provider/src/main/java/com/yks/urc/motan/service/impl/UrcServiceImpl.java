@@ -641,6 +641,15 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getPlatformShopByEntityCode(operator,entityCode);
     }
 
+    @Override
+    @Log("获取验证码")
+    public ResultVO resetPwdGetVerificationCode(String jsonStr) {
+        JSONObject jsonObject = JSONObject.parseObject(jsonStr);
+        String username = jsonObject.getString("userName");
+        String mobile = jsonObject.getString("mobile");
+        return null;
+    }
+
 
     @Override
     @Log("获取指定平台下的账号站点 数据权限")

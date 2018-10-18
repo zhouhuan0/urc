@@ -453,4 +453,12 @@ public interface IUrcService {
      **/
     ResultVO getPlatformShopByEntityCode(String jsonStr);
 
+    /**
+     *获取验证码
+     * @param jsonStr
+     * 前端传入的json字符串
+     * @return
+     */
+    ResultVO resetPwdGetVerificationCode(String jsonStr);
+
 }

@@ -94,4 +94,6 @@ public interface IUserService {
 
 	ResultVO syncShopSite(String operator);
 
+	ResultVO resetPwdGetVerificationCode(String userName,String mobile);
+
 }

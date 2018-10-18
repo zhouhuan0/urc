@@ -295,4 +295,19 @@ public class UserServiceImpl implements IUserService {
             return VoHelper.getErrorResult();
         }
     }
+
+    @Override
+    public ResultVO resetPwdGetVerificationCode(String userName, String mobile) {
+        Map map = new HashMap(10);
+        map.put("username",userName);
+        map.put("mobile",mobile);
+        map.put("get_code","true");
+        try {
+            HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw",map,null);
+        }catch (Exception e){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取验证码失败");
+        }
+
+        return VoHelper.getSuccessResult(CommonMessageCodeEnum.SUCCESS);
+    }
 }
