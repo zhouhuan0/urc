@@ -473,19 +473,18 @@ public interface IUrcService {
     ResultVO getPlatformShopByEntityCode(String jsonStr);
 
     /**
-<<<<<<< HEAD
      *获取验证码
      * @param jsonStr
      * 前端传入的json字符串
      * @return
      */
     ResultVO resetPwdGetVerificationCode(String jsonStr);
-=======
+     /**
      * 重置密码-提交重置请求
      * @param jsonStr
      * @return
      */
     ResultVO resetPwdSubmit(String jsonStr);
->>>>>>> 2e0d3a5d377d2c990a168f55fb210b97cfa1e173
+
 
 }
