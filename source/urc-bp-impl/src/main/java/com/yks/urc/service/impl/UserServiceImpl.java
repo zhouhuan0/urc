@@ -13,6 +13,7 @@ import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
+import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.vo.*;
@@ -294,5 +295,25 @@ public class UserServiceImpl implements IUserService {
             logger.error("同步账号站点数据出错", e);
             return VoHelper.getErrorResult();
         }
+    }
+
+    @Override
+    public ResultVO resetPwdSubmit(String mobile,String new_password,String username,String code){
+        ResultVO rslt=new ResultVO();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("mobile", mobile);
+        jsonObject.put("code", code);
+        jsonObject.put("username",  username);
+        jsonObject.put("new_password",  new_password);
+        jsonObject.put("get_code", "false");
+        //jsonObject.put("get_code", "true");
+        String requestBody=jsonObject.toString();
+        Map<String,String> requestHeader=new HashMap();
+        requestHeader.put("Content-Type","application/json");
+        String response= HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw",requestBody,requestHeader);
+        System.out.println(response);
+        rslt.msg="操作成功！";
+        rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
+        return rslt;
     }
 }

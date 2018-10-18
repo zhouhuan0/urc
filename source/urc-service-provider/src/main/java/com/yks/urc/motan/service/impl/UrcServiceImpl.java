@@ -640,6 +640,16 @@ public class UrcServiceImpl implements IUrcService {
         String entityCode =jsonObject.getString("entityCode");
         return dataRuleService.getPlatformShopByEntityCode(operator,entityCode);
     }
+    @Override
+    @Log("重置密码-提交重置请求")
+    public  ResultVO resetPwdSubmit(String jsonStr){
+        JSONObject jsonObject=JSONObject.parseObject(jsonStr);
+        String  mobile=String.valueOf(jsonObject.get("mobile"));
+        String new_password  =String.valueOf(jsonObject.get("newPwd"));
+        String username=String.valueOf(jsonObject.get("userName"));
+        String code= String.valueOf(jsonObject.get("verificationCode"));
+        return userService.resetPwdSubmit(mobile,new_password,username,code);
+    }
 
 
     @Override

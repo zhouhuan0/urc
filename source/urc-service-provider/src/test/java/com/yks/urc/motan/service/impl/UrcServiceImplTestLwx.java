@@ -414,6 +414,19 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         System.out.println(String.format("花费的时间为:[%d]", endTime - startTime));
        outToFile(StringUtility.toJSONString(resultVO), "platform.json");
     }
+
+    @Test
+    public void test() {
+        String jsonStr = "{\"userName\":\"tangjianbo\",\n" +
+                "\n" +
+                "\"mobile\":\"18482128984\", \n" +
+                "\n" +
+                "\"verificationCode\": 7639,\n" +
+                "\n" + "\"newPwd\": \"19941216\" \n" +
+                "\t\n" +
+                "}";
+        service.resetPwdSubmit(jsonStr);
+    }
     /**
      *  写出到文件
      * @param
