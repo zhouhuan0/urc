@@ -133,6 +133,7 @@ public interface IUrcService {
     /**
      * 复制角色
      * 包含复制角色对应权限
+     *
      * @param jsonStr
      * @return
      */
@@ -343,13 +344,16 @@ public interface IUrcService {
 
     /**
      * 将所有系统的所有功能权限授予指定角色
+     *
      * @param jsonStr
      * @return
      */
     ResultVO assignAllPermit2Role(String jsonStr);
+
     /**
-     *  开启监控内存
-     * @param  jsonStr
+     * 开启监控内存
+     *
+     * @param jsonStr
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/2 17:05
@@ -357,24 +361,29 @@ public interface IUrcService {
     ResultVO startMonitorMemory(String jsonStr);
 
     /**
-     *  开启监控内存
-     * @param  jsonStr
+     * 开启监控内存
+     *
+     * @param jsonStr
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/2 17:05
      */
     ResultVO endMonitorMemory(String jsonStr);
+
     /**
      * 手动触发角色过期方法
-     * @param  jsonStr
+     *
+     * @param jsonStr
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/4 9:22
      */
     ResultVO handleExpiredRole(String jsonStr);
+
     /**
      * 更新用户缓存
-     * @param  jsonStr
+     *
+     * @param jsonStr
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/4 16:06
@@ -383,14 +392,17 @@ public interface IUrcService {
 
     /**
      * 查看用户是否是超级管理员
-     * @param  jsonStr
+     *
+     * @param jsonStr
      * @return
      * @Author linwanxian@youkeshu.com
      * @Date 2018/7/4 16:06
      */
     ResultVO operIsSuperAdmin(String jsonStr);
+
     /**
      * 查找所有的平台账号和站点
+     *
      * @param
      * @return
      * @Author linwanxian@youkeshu.com
@@ -401,8 +413,10 @@ public interface IUrcService {
     ResultVO syncPlatform(String jsonStr);
 
     ResultVO syncShopSite(String jsonStr);
+
     /**
      * 通过
+     *
      * @param
      * @return
      * @Author linwanxian@youkeshu.com
@@ -412,36 +426,41 @@ public interface IUrcService {
 
     /**
      * 获取指定系统大于某个时间之后有更新的数据权限
+     *
      * @param json
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
 
     /**
-     *  更新缓存ａｐｉ前缀
-     * @param:
+     * 更新缓存ａｐｉ前缀
+     *
      * @return
+     * @param:
      * @Author lwx
      * @Date 2018/7/17 15:34
      */
     ResultVO updateApiPrefixCache(String json);
+
     /**
      * 获取亚马逊的账号,数据授权
-     * @param:
+     *
      * @return
+     * @param:
      * @Author lwx
      * @Date 2018/7/21 10:26
      */
-    ResultVO<List<OmsPlatformVO>>getPlatformShop(String json);
+    ResultVO<List<OmsPlatformVO>> getPlatformShop(String json);
+
     /**
-     *  获取指定平台下的账号站点 数据权限
+     * 获取指定平台下的账号站点 数据权限
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2018/8/2 14:45
      */
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json);
-
 
 
     /**
@@ -454,11 +473,19 @@ public interface IUrcService {
     ResultVO getPlatformShopByEntityCode(String jsonStr);
 
     /**
+<<<<<<< HEAD
      *获取验证码
      * @param jsonStr
      * 前端传入的json字符串
      * @return
      */
     ResultVO resetPwdGetVerificationCode(String jsonStr);
+=======
+     * 重置密码-提交重置请求
+     * @param jsonStr
+     * @return
+     */
+    ResultVO resetPwdSubmit(String jsonStr);
+>>>>>>> 2e0d3a5d377d2c990a168f55fb210b97cfa1e173
 
 }

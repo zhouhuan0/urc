@@ -13,6 +13,7 @@ import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
+import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.vo.*;
@@ -34,7 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class UserServiceImpl implements IUserService {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private Logger logger=LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     IUserBp userBp;
@@ -50,11 +51,11 @@ public class UserServiceImpl implements IUserService {
     private IRoleMapper roleMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO syncUserInfo(String operator) {
-        ResultVO resultVO = new ResultVO();
+        ResultVO resultVO=new ResultVO();
         try {
-            resultVO = userBp.SynUserFromUserInfo(operator);
+            resultVO=userBp.SynUserFromUserInfo(operator);
         } catch (Exception e) {
             logger.error("同步任务异常" + e.getMessage());
             return VoHelper.getErrorResult();
@@ -87,7 +88,7 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         //首先要判断该用户是否是超级管理员或业务管理员
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
@@ -97,23 +98,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<List<OmsPlatformVO>> getPlatformList(String operator) {
-        ResultVO<List<OmsPlatformVO>> rslt = new ResultVO();
+        ResultVO<List<OmsPlatformVO>> rslt=new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator)) {
-                rslt.msg = "操作人员为空 " + operator;
-                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
+                rslt.msg="操作人员为空 " + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
-            rslt.data = dataAuthorization.getPlatformList(operator);
+            rslt.data=dataAuthorization.getPlatformList(operator);
             if (rslt.data == null) {
-                rslt.msg = "Error,获取的平台为空 " + operator;
-                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
+                rslt.msg="Error,获取的平台为空 " + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
-            rslt.msg = "Success " + operator;
-            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.msg="Success " + operator;
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
             logger.error("未知异常", e);
             throw new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(), "出现未知异常", e);
@@ -124,19 +125,19 @@ public class UserServiceImpl implements IUserService {
 
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<List<OmsShopVO>> getShopList(String operator, String platform) {
-        ResultVO<List<OmsShopVO>> rslt = new ResultVO();
+        ResultVO<List<OmsShopVO>> rslt=new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator) || StringUtility.isNullOrEmpty(platform)) {
                 return rslt;
             }
-            rslt.data = dataAuthorization.getShopList(operator, platform);
-            rslt.msg = "Success";
-            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.data=dataAuthorization.getShopList(operator, platform);
+            rslt.msg="Success";
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
             if (rslt.data == null) {
-                rslt.msg = "Error 无法找到此平台的店铺信息,或者无此平台," + operator;
-                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
+                rslt.msg="Error 无法找到此平台的店铺信息,或者无此平台," + operator;
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
         } catch (Exception e) {
@@ -148,21 +149,21 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<List<SysAuthWayVO>> getMyAuthWay(String operator) {
-        ResultVO<List<SysAuthWayVO>> rslt = new ResultVO();
+        ResultVO<List<SysAuthWayVO>> rslt=new ResultVO();
         try {
             if (StringUtility.isNullOrEmpty(operator)) {
                 return rslt;
             }
-            rslt.data = authWayBp.getMyAuthWay(operator);
+            rslt.data=authWayBp.getMyAuthWay(operator);
             if (rslt.data == null) {
-                rslt.msg = "Failed ," + operator + "您不是管理员,没有授权权限";
-                rslt.state = CommonMessageCodeEnum.FAIL.getCode();
+                rslt.msg="Failed ," + operator + "您不是管理员,没有授权权限";
+                rslt.state=CommonMessageCodeEnum.FAIL.getCode();
                 return rslt;
             }
-            rslt.msg = "成功, " + operator;
-            rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
+            rslt.msg="成功, " + operator;
+            rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
             logger.error("未知异常", e);
             throw new URCServiceException(CommonMessageCodeEnum.UNKOWN_ERROR.getCode(), "出现未知异常", e);
@@ -174,8 +175,8 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
         try {
-            JSONObject jsonObject = StringUtility.parseString(jsonStr);
-            String operator = jsonObject.getString(StringConstant.operator);
+            JSONObject jsonObject=StringUtility.parseString(jsonStr);
+            String operator=jsonObject.getString(StringConstant.operator);
             return userBp.getAllFuncPermit(operator);
         } catch (Exception ex) {
             logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
@@ -192,28 +193,28 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO fuzzySearchUsersByUserName(String pageNumber, String pageData, String userName, String operator) {
-        UserVO userVO = new UserVO();
-        userVO.userName = userName;
+        UserVO userVO=new UserVO();
+        userVO.userName=userName;
         if (!roleMapper.isSuperAdminAccount(operator)) {
-            userVO.createBy = operator;
+            userVO.createBy=operator;
         }
-        Query query = new Query(userVO, pageNumber, pageData);
-        List<UserVO> userList = userMapper.fuzzySearchUsersByUserName(query);
-        long userCount = userMapper.fuzzySearchUsersByUserNameCount(query);
-        PageResultVO pageResultVO = new PageResultVO(userList, userCount, pageData);
+        Query query=new Query(userVO, pageNumber, pageData);
+        List<UserVO> userList=userMapper.fuzzySearchUsersByUserName(query);
+        long userCount=userMapper.fuzzySearchUsersByUserNameCount(query);
+        PageResultVO pageResultVO=new PageResultVO(userList, userCount, pageData);
         return VoHelper.getSuccessResult(pageResultVO);
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<List<UserVO>> getUserByUserName(String operator, UserVO userVO) {
-        List<UserVO> userVOS = new ArrayList<>();
-        UserVO userVO1 = new UserVO();
-        UserDO userDO = userMapper.getUserByUserName(userVO);
+        List<UserVO> userVOS=new ArrayList<>();
+        UserVO userVO1=new UserVO();
+        UserDO userDO=userMapper.getUserByUserName(userVO);
         if (userDO == null) {
             return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "用户不存在");
         }
-        userVO1.userName = userDO.getUserName();
+        userVO1.userName=userDO.getUserName();
         userVOS.add(userVO1);
         return VoHelper.getSuccessResult(userVOS);
     }
@@ -224,39 +225,39 @@ public class UserServiceImpl implements IUserService {
     private ShopSiteMapper shopSiteMapper;
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO<List<OmsPlatformVO>> getPlatformShopSite(String operator) {
         try {
-            List<PlatformDO> platformDOS = platformMapper.selectAll();
+            List<PlatformDO> platformDOS=platformMapper.selectAll();
             //装载平台volist
-            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+            List<OmsPlatformVO> omsPlatformVOS=new ArrayList<>();
             for (PlatformDO platformDO : platformDOS) {
-                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-                omsPlatformVO.platformId = platformDO.getPlatformId();
-                omsPlatformVO.platformName = platformDO.getPlatformName();
+                OmsPlatformVO omsPlatformVO=new OmsPlatformVO();
+                omsPlatformVO.platformId=platformDO.getPlatformId();
+                omsPlatformVO.platformName=platformDO.getPlatformName();
 
-                List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformId(platformDO.getPlatformId());
+                List<ShopSiteDO> shopSiteDOS=shopSiteMapper.selectShopSiteByPlatformId(platformDO.getPlatformId());
                 if (shopSiteDOS == null || shopSiteDOS.size() == 0) {
                     continue;
                 } else {
                     //集合都必须先初识化
-                    omsPlatformVO.lstShop = new ArrayList<>(shopSiteDOS.size());
+                    omsPlatformVO.lstShop=new ArrayList<>(shopSiteDOS.size());
                     for (ShopSiteDO shopSiteDO : shopSiteDOS) {
-                        OmsShopVO omsShopVO = new OmsShopVO();
+                        OmsShopVO omsShopVO=new OmsShopVO();
                         //针对速卖通的
-                        omsShopVO.shopId = shopSiteDO.getSellerId();
-                        omsShopVO.shopName = shopSiteDO.getShop();
+                        omsShopVO.shopId=shopSiteDO.getSellerId();
+                        omsShopVO.shopName=shopSiteDO.getShop();
                         //如果站点id为空,则list为空
                         if ("".equals(shopSiteDO.getSiteId())) {
-                            omsShopVO.lstSite = null;
+                            omsShopVO.lstSite=null;
                         } else {
-                            OmsSiteVO omsSiteVO = new OmsSiteVO();
-                            omsSiteVO.siteId = shopSiteDO.getSiteId();
+                            OmsSiteVO omsSiteVO=new OmsSiteVO();
+                            omsSiteVO.siteId=shopSiteDO.getSiteId();
                             //如果站点名称为空,则吧站点id赋值给站点名称
                             if ("".equals(shopSiteDO.getSiteName())) {
-                                omsSiteVO.siteName = omsSiteVO.siteId;
+                                omsSiteVO.siteName=omsSiteVO.siteId;
                             } else {
-                                omsSiteVO.siteName = shopSiteDO.getSiteName();
+                                omsSiteVO.siteName=shopSiteDO.getSiteName();
                                 omsShopVO.lstSite.add(omsSiteVO);
                             }
                         }
@@ -273,7 +274,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO syncPlatform(String operator) {
         try {
             dataAuthorization.syncPlatform(operator);
@@ -285,7 +286,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional(rollbackFor=Exception.class)
     public ResultVO syncShopSite(String operator) {
         try {
             dataAuthorization.syncShopSite(operator);
@@ -298,16 +299,36 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO resetPwdGetVerificationCode(String userName, String mobile) {
-        Map map = new HashMap(10);
-        map.put("username",userName);
-        map.put("mobile",mobile);
-        map.put("get_code","true");
+        Map map=new HashMap(10);
+        map.put("username", userName);
+        map.put("mobile", mobile);
+        map.put("get_code", "true");
         try {
-            HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw",map,null);
-        }catch (Exception e){
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取验证码失败");
+            HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
+        } catch (Exception e) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
 
         return VoHelper.getSuccessResult(CommonMessageCodeEnum.SUCCESS);
     }
+    @Override
+    public ResultVO resetPwdSubmit(String mobile, String new_password, String username, String code) {
+        ResultVO rslt = new ResultVO();
+        JSONObject jsonObject=new JSONObject();
+        jsonObject.put("mobile", mobile);
+        jsonObject.put("code", code);
+        jsonObject.put("username", username);
+        jsonObject.put("new_password", new_password);
+        jsonObject.put("get_code", "false");
+        //jsonObject.put("get_code", "true");
+        String requestBody=jsonObject.toString();
+        Map<String, String> requestHeader=new HashMap();
+        requestHeader.put("Content-Type", "application/json");
+        String response=HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", requestBody, requestHeader);
+        System.out.println(response);
+        rslt.msg="操作成功！";
+        rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
+        return rslt;
+    }
 }
+
