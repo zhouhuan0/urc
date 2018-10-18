@@ -304,7 +304,7 @@ public class UserServiceImpl implements IUserService {
         map.put("mobile", mobile);
         map.put("get_code", "true");
         try {
-            HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
+            String response = HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
         } catch (Exception e) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
@@ -325,7 +325,6 @@ public class UserServiceImpl implements IUserService {
         Map<String, String> requestHeader=new HashMap();
         requestHeader.put("Content-Type", "application/json");
         String response=HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", requestBody, requestHeader);
-        System.out.println(response);
         rslt.msg="操作成功！";
         rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         return rslt;
