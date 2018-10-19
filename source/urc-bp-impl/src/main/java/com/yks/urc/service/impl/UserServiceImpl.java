@@ -344,18 +344,13 @@ public class UserServiceImpl implements IUserService {
         }catch (Exception e)
         {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败");
-
         }
         JSONObject jsonObjectResponse=JSONObject.parseObject(response);
         String message=jsonObjectResponse.getString("message");
         String error=jsonObjectResponse.getString("error");
-        if(StringUtility.isNullOrEmpty(message)){
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败");
-        }
         if(!StringUtility.isNullOrEmpty(error)){
             return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),error);
         }
-
         rslt.msg=message;
         rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         return rslt;
