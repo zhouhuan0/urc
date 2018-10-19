@@ -319,12 +319,17 @@ public class UserServiceImpl implements IUserService {
         jsonObject.put("code", code);
         jsonObject.put("username", username);
         jsonObject.put("new_password", new_password);
-        jsonObject.put("get_code", "false");
-        //jsonObject.put("get_code", "true");
+        jsonObject.put("get_code", false);
         String requestBody=jsonObject.toString();
         Map<String, String> requestHeader=new HashMap();
         requestHeader.put("Content-Type", "application/json");
-        String response=HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", requestBody, requestHeader);
+        try {
+            String response = HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", requestBody, requestHeader);
+        }catch (Exception e)
+        {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败");
+
+        }
         rslt.msg="操作成功！";
         rslt.state=CommonMessageCodeEnum.SUCCESS.getCode();
         return rslt;
