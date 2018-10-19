@@ -20,6 +20,7 @@ import com.yks.urc.vo.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.yks.urc.fw.StringUtility;
@@ -49,6 +50,8 @@ public class UserServiceImpl implements IUserService {
     private IUserValidateBp userValidateBp;
     @Autowired
     private IRoleMapper roleMapper;
+    @Value("${userInfo.resetPwdGetVerificationCode}")
+    private String resetPwdGetVerificationCode;
 
     @Override
     @Transactional(rollbackFor=Exception.class)
@@ -311,7 +314,7 @@ public class UserServiceImpl implements IUserService {
         map.put("get_code", "true");
         String response;
         try {
-            response = HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
+            response = HttpUtility2.postForm(resetPwdGetVerificationCode, map, null);
         } catch (Exception e) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
