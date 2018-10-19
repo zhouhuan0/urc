@@ -417,15 +417,24 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void test() {
-        String jsonStr = "{\"userName\":\"tangjianbo\",\n" +
+        String jsonStr = "{\"userName\":\"songguanye\",\n" +
                 "\n" +
-                "\"mobile\":\"18482128984\", \n" +
+                "\"mobile\":\"18376740674\", \n" +
                 "\n" +
-                "\"verificationCode\": 7639,\n" +
-                "\n" + "\"newPwd\": \"19941216\" \n" +
+                "\"verificationCode\": 7415,\n" +
+                "\n" + "\"newPwd\": \"670317483sgy???\" \n" +
                 "\t\n" +
                 "}";
         service.resetPwdSubmit(jsonStr);
+    }
+    @Test
+    public  void test2(){
+        map.put("userName","songguanye");
+        map.put("mobile","18376740674");
+        map.put("get_code","true");
+       String json = StringUtility.toJSONString(map);
+        service.resetPwdGetVerificationCode(json);
+
     }
     /**
      *  写出到文件

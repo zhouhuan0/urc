@@ -648,6 +648,12 @@ public class UrcServiceImpl implements IUrcService {
         String new_password  =String.valueOf(jsonObject.get("newPwd"));
         String username=String.valueOf(jsonObject.get("userName"));
         String code= String.valueOf(jsonObject.get("verificationCode"));
+        if(StringUtility.isNullOrEmpty(new_password)){
+            return  VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"新密码不能为空！");
+        }
+        if(StringUtility.isNullOrEmpty(code)){
+            return  VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"验证码不能为空。");
+        }
         return userService.resetPwdSubmit(mobile,new_password,username,code);
     }
 
@@ -657,7 +663,13 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = JSONObject.parseObject(jsonStr);
         String username = jsonObject.getString("userName");
         String mobile = jsonObject.getString("mobile");
-        return null;
+        if(StringUtility.isNullOrEmpty(username)){
+            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"用户名不能为空");
+        }
+        if(StringUtility.isNullOrEmpty(mobile)){
+            return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(),"手机号不能为空");
+        }
+        return userService.resetPwdGetVerificationCode(username,mobile);
     }
 
 
