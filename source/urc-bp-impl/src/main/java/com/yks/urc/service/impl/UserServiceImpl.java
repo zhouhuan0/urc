@@ -315,8 +315,13 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
-
-        return VoHelper.getSuccessResult(response);
+        JSONObject jsonObject = JSONObject.parseObject(response);
+        String message = jsonObject.getString("message");
+        String error = jsonObject.getString("error");
+        if(!StringUtility.isNullOrEmpty(error)){
+            return VoHelper.getSuccessResult(error);
+        }
+        return VoHelper.getSuccessResult(message);
     }
     @Override
     public ResultVO resetPwdSubmit(String mobile, String new_password, String username, String code) {
