@@ -319,7 +319,7 @@ public class UserServiceImpl implements IUserService {
         String message = jsonObject.getString("message");
         String error = jsonObject.getString("error");
         if(!StringUtility.isNullOrEmpty(error)){
-            return VoHelper.getSuccessResult(error);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),error);
         }
         return VoHelper.getSuccessResult(message);
     }
