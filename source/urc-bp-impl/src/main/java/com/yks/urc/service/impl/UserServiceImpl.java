@@ -299,17 +299,19 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO resetPwdGetVerificationCode(String userName, String mobile) {
+        if(StringUtility.isNullOrEmpty(userName)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"用户名不能为空");
+        }
+        if(StringUtility.isNullOrEmpty(mobile)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"手机号不能为空");
+        }
         Map map=new HashMap(10);
         map.put("username", userName);
         map.put("mobile", mobile);
         map.put("get_code", "true");
         String response;
         try {
-<<<<<<< HEAD
             response = HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
-=======
-            String response = HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
->>>>>>> 079af6f55995be74998a1571af67579fbac2cd0f
         } catch (Exception e) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
