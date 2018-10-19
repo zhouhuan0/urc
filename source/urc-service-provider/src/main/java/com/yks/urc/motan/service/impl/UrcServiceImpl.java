@@ -52,11 +52,32 @@ public class UrcServiceImpl implements IUrcService {
     @Autowired
     private MonitorMemoryService memoryService;
 
+    @Autowired
+    private ICsService csService;
+
     @Override
     @Log(value = "同步数据", level = LogLevel.INFO)
     public ResultVO syncUserInfo(String json) {
         String operator = MotanSession.getRequest().getOperator();
         return userService.syncUserInfo(operator);
+    }
+
+    @Override
+    @Log(value = "新增客服分组",level = LogLevel.INFO)
+    public ResultVO addCsUserGroup(String json) {
+        return csService.addCsUserGroup(json);
+    }
+
+    @Override
+    @Log(value = "编辑客服分组名称",level = LogLevel.INFO)
+    public ResultVO editCsUserGroup(String json) {
+        return csService.editCsUserGroup(json);
+    }
+
+    @Override
+    @Log(value = "删除客服分组",level = LogLevel.INFO)
+    public ResultVO delCsUserGroup(String json) {
+        return csService.delCsUserGroup(json);
     }
 
     @Override
@@ -640,14 +661,9 @@ public class UrcServiceImpl implements IUrcService {
         return null;
     }
 
-    @Override
-    @Log("数据授权-获取平台账号根据entityCode")
-    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String json) {
-        JSONObject jsonObject = StringUtility.parseString(json);
-        String operator = MotanSession.getRequest().getOperator();
-        String entityCode = jsonObject.getString("entityCode");
-        return dataRuleService.getPlatformShopByEntityCode(operator, entityCode);
-    }
+
+
+
 
     @Override
     @Log("重置密码-提交重置请求")
@@ -682,6 +698,16 @@ public class UrcServiceImpl implements IUrcService {
             return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "手机号不能为空");
         }
         return userService.resetPwdGetVerificationCode(username, mobile);
+    }
+
+
+    @Override
+    @Log("数据授权-获取平台账号根据entityCode")
+    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String json) {
+        JSONObject jsonObject = StringUtility.parseString(json);
+        String operator = MotanSession.getRequest().getOperator();
+        String entityCode = jsonObject.getString("entityCode");
+        return dataRuleService.getPlatformShopByEntityCode(operator, entityCode);
     }
 
 

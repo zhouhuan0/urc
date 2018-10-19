@@ -78,7 +78,7 @@ public interface IDataRuleService {
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator,String platformId);
 
 
-    ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode);
+    ResultVO getPlatformShopByEntityCode(String operator, String entityCode);
 
      /**
      * @param:
@@ -98,5 +98,5 @@ public interface IDataRuleService {
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator,String platformId);
 
 
-
+    ResultVO getCsPlatformCodeName(String operator);
 }
