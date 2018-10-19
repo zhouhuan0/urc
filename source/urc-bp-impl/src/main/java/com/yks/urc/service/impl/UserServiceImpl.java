@@ -340,7 +340,7 @@ public class UserServiceImpl implements IUserService {
         requestHeader.put("Content-Type", "application/json");
         String response;
         try {
-             response = HttpUtility2.postString("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", requestBody, requestHeader);
+             response = HttpUtility2.postString(resetPwdGetVerificationCode, requestBody, requestHeader);
         }catch (Exception e)
         {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败");
