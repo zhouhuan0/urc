@@ -95,7 +95,7 @@ public interface IUserService {
 	ResultVO syncShopSite(String operator);
 
 	/**
-	 * 
+	 *
 	 * @param userName
 	 * @param mobile
 	 * @return

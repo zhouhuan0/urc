@@ -303,13 +303,14 @@ public class UserServiceImpl implements IUserService {
         map.put("username", userName);
         map.put("mobile", mobile);
         map.put("get_code", "true");
+        String response;
         try {
-            HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
+            response = HttpUtility2.postForm("https://userinfo.youkeshu.com/api/1.0/account/forgotpw", map, null);
         } catch (Exception e) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取验证码失败");
         }
 
-        return VoHelper.getSuccessResult(CommonMessageCodeEnum.SUCCESS);
+        return VoHelper.getSuccessResult(response);
     }
     @Override
     public ResultVO resetPwdSubmit(String mobile, String new_password, String username, String code) {
