@@ -343,7 +343,7 @@ public class UserServiceImpl implements IUserService {
              response = HttpUtility2.postString(resetPwdGetVerificationCode, requestBody, requestHeader);
         }catch (Exception e)
         {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "重置密码失败。");
         }
         JSONObject jsonObjectResponse=JSONObject.parseObject(response);
         String message=jsonObjectResponse.getString("message");
