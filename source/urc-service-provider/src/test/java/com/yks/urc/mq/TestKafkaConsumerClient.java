@@ -17,7 +17,7 @@ public class TestKafkaConsumerClient
 		
 		Set<Long> orderIdSet = new HashSet<Long>();
 
-		client.subscribe("test-topic", new MessageCallBack()
+		client.subscribe("URC_USER_DATARULE_008", new MessageCallBack()
 		{
 			@Override
 			public void call(String topic, String message)

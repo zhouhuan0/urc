@@ -22,6 +22,8 @@ public class DataRuleVO implements Serializable {
      */
     public List<DataRuleSysVO> lstDataRuleSys;
 
+    public String t;
+
     public String getUserName() {
         return userName;
     }
