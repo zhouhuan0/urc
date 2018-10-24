@@ -12,7 +12,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
 
 public class DataRuleSysVO  implements Serializable{
     private static final long serialVersionUID = 6871231447375008701L;
@@ -32,7 +31,7 @@ public class DataRuleSysVO  implements Serializable{
     public void setCreateTime(Date dt){
         createTime=dt;
     }
-    
+
     /**
      * 行权限
      */
@@ -43,6 +42,8 @@ public class DataRuleSysVO  implements Serializable{
      */
     public List<DataRuleColVO> col;
 	public String userName;
+
+	public String t;
     
 
     public String getUserName() {

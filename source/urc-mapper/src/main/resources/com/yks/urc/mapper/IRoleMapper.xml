@@ -171,7 +171,7 @@
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
     
-     <!--根据username/syskey获取业务员角色功能权限-->
+     <!--根据username/syskey获取业务员角色功能权限, owner 所需的权限树-->
     <select id="getBizAdminFuncJsonByUserAndSysKey" resultType="java.lang.String">
         select rp.selected_context
         from urc_user_role ur

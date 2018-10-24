@@ -35,7 +35,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Component
 public class DataAuthorizationImpl implements DataAuthorization {
@@ -172,11 +178,15 @@ public class DataAuthorizationImpl implements DataAuthorization {
                             shopSiteDO.setModifiedBy(operator);
                             shopSiteDOS.add(shopSiteDO);
                             if (shopSiteDOS.size() >= 1000) {
+                                //去重
+                                shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                                 shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                                 shopSiteDOS.clear();
                             }
                         }
                         if (shopSiteDOS.size() != 0) {
+                            //去重
+                            shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                             shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                         }
                     }
@@ -206,10 +216,24 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsPlatformVO> getPlatformList(String operator) {
         List<OmsPlatformVO> omsPlatformVoList = new ArrayList<>();
-        String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
+       // String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
         //将拿到的结果转为json ,获取平台信息
-        JSONObject platformObject = StringUtility.parseString(getPlatformResult);
-        if (platformObject.getInteger("state") == 200) {
+       // JSONObject platformObject = StringUtility.parseString(getPlatformResult);
+        List<PlatformDO> platformDOS =platformMapper.selectAll();
+        if (platformDOS != null && platformDOS.size() >0){
+            platformDOS.forEach(platformDO -> {
+                OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                omsPlatformVO.platformId =platformDO.getPlatformId();
+                //如果没有name , 将id作为name
+                if (StringUtility.isNullOrEmpty(platformDO.getPlatformName())){
+                    omsPlatformVO.platformName =omsPlatformVO.platformId;
+                }else {
+                    omsPlatformVO.platformName=platformDO.getPlatformName();
+                }
+                omsPlatformVoList.add(omsPlatformVO);
+            });
+        }
+        /*if (platformObject.getInteger("state") == 200) {
             JSONArray dataArray = platformObject.getJSONArray("data");
             List<PlatformResp> platformResps = StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
             for (PlatformResp platformResp : platformResps) {
@@ -222,7 +246,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 omsPlatformVO.platformName = platformResp.name;
                 omsPlatformVoList.add(omsPlatformVO);
             }
-        }
+        }*/
         return omsPlatformVoList;
     }
 
@@ -238,12 +262,43 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsShopVO> getShopList(String operator, String platform) {
         List<OmsShopVO> omsShopVoList = new ArrayList<>();
-        String url = GET_SHOP_AND_SITE + "&platform=" + platform;
+        if (StringUtility.isNullOrEmpty(platform)){
+            return null;
+        }
+       List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSite(platform);
+        if (shopSiteDOS != null && shopSiteDOS.size() >0){
+            shopSiteDOS.forEach(shopSiteDO -> {
+                OmsShopVO omsShopVO = new OmsShopVO();
+                OmsSiteVO omsSiteVO =new OmsSiteVO();
+                omsShopVO.shopId =shopSiteDO.getShopSystem();
+                if (StringUtility.isNullOrEmpty(omsShopVO.shopId)) {
+                    return;
+                }
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShop())){
+                    omsShopVO.shopName=omsShopVO.shopId;
+                }else {
+                    omsShopVO.shopName = shopSiteDO.getShop();
+                }
+                omsShopVO.lstSite =new ArrayList<>();
+                omsSiteVO.siteId =shopSiteDO.getSiteId();
+                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)){
+                    return;
+                }
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())){
+                   omsSiteVO.siteName =omsSiteVO.siteId;
+                }else {
+                    omsSiteVO.siteName =shopSiteDO.getSiteName();
+                }
+                omsShopVO.lstSite.add(omsSiteVO);
+                omsShopVoList.add(omsShopVO);
+            });
+        }
+    /*    *//*String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
             throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息为空");
         }
-        JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);
+        JSONObject shopObject = StringUtility.parseString(getShopAndSiteResult);*//*
         if (shopObject.getInteger("state") == 200) {
             JSONArray dataArray = shopObject.getJSONArray("data");
             List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
@@ -275,7 +330,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 }
                 omsShopVoList.add(omsShopVO);
             }
-        }
+        }*/
         return omsShopVoList;
     }
 
@@ -292,4 +347,16 @@ public class DataAuthorizationImpl implements DataAuthorization {
             System.out.println(omsShopVO.shopName);
         }
     }
+    /**
+     * 对象去重构造器
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/10/17 15:48
+     */
+    public static <T>Predicate<T> distinctByKey(Function<? super T,Object> keyExtractor){
+        Map<Object,Boolean> seen =new ConcurrentHashMap<>();
+        return object ->seen.putIfAbsent(keyExtractor.apply(object),Boolean.TRUE) ==null;
+    }
+
 }

@@ -78,7 +78,7 @@ public interface IDataRuleService {
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator,String platformId);
 
 
-    ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode);
+    ResultVO getPlatformShopByEntityCode(String operator, String entityCode);
 
      /**
      * @param:
@@ -86,7 +86,7 @@ public interface IDataRuleService {
      * @Author lwx
      * @Date 2018/7/21 10:24
      */
-    ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator,String platformId);
+    ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator,List<String> platformIds,String entityCode);
 
     /**
      *  获取指定平台下的账号站点 数据权限
@@ -98,5 +98,5 @@ public interface IDataRuleService {
     ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String operator,String platformId);
 
 
-
+    ResultVO getCsPlatformCodeName(String operator);
 }

@@ -23,8 +23,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉
@@ -42,6 +44,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private IDataRuleTemplMapper dataRuleTemplMapper;
+
+    @Autowired
+    private CsPlatformMapper csPlatformMapper;
 
     @Autowired
     private IDataRuleMapper dataRuleMapper;
@@ -78,6 +83,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
 
     @Autowired
+    private CsPlatformGroupMapper csPlatformGroupMapper;
+
+    @Autowired
     private IUserService userService;
 
 
@@ -92,8 +100,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ICacheBp cacheBp;
-
-    private String KEY_PLATFORM_SHOP = "all_platform_shop";
+    /**
+     * ebay 缓存
+     */
+    private String Key_platform_shop ="ebay_platform_shop";
+    /**
+     * 客服缓存
+     */
+    private String Key_all_platform_shop ="all_platform_shop";
     /**
      * Description: 根据模板Id获取数据权限模板
      *
@@ -455,6 +469,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList();
             dataRuleSysVOS1.addAll(StringUtility.jsonToList(StringUtility.toJSONString_NoException(dataRuleSysVOS), DataRuleSysVO.class));
             for (DataRuleSysVO mem : dataRuleSysVOS1) {
+                mem.t = String.valueOf(new Date().getTime());
                 mem.setUserName(userName);
             }
             dataRuleVO.lstDataRuleSys = dataRuleSysVOS1;
@@ -727,6 +742,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             /*1、添加到数据权限Sys列表*/
             DataRuleSysDO dataRuleSysDO = new DataRuleSysDO();
             dataRuleSysVO.setSysName(null);
+            //增加创建时间
+            dataRuleSysVO.t = String.valueOf(new Date().getTime());
             BeanUtils.copyProperties(dataRuleSysVO, dataRuleSysDO);
             Long dataRuleSysId = seqBp.getNextDataRuleSysId();
             dataRuleSysDO.setDataRuleSysId(dataRuleSysId);
@@ -980,6 +997,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
                         List<String> sysKeys = new ArrayList<>();
                         for (DataRuleSysVO dataRuleSysVo : dataRuleSys) {
                             sysKeys.add(dataRuleSysVo.getSysKey());
+                            //增加创建时间
+                            dataRuleSysVo.t = String.valueOf(new Date().getTime());
                         }
                         dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
                     }
@@ -1017,7 +1036,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 dataRuleDOSCache.add(dataRuleDO);
             } else {
                 dataRuleId = dataBatchRuleIds.get(i).getDataRuleId();
-
             }
 
             /*新增urc_data_rule_sys*/
@@ -1223,28 +1241,35 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Override
     @Transactional
-    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, String platformId) {
+    public ResultVO<List<OmsPlatformVO>> getPlatformShop(String operator, List<String> platformIds,String entityCode) {
         try {
+            String redisResult =null;
             List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
-            // 如果传入的平台id 为空 代表是刊登,不为空 则正常走
-            if (!StringUtility.isNullOrEmpty(platformId)) {
-                return this.getAllPlatformShopFromDB(omsPlatformVOS,platformId);
-            } else {
+            //ebay 缓存
+            if (StringUtility.stringEqualsIgnoreCase("E_PlsShopAccount",entityCode) ){
+                 redisResult = cacheBp.getAllPlatformShop(Key_platform_shop,entityCode);
+                //客服缓存
+            }else if( StringUtility.stringEqualsIgnoreCase("E_CustomerService",entityCode)){
                 //先从缓存取, 没有在从数据库读
-                String result = cacheBp.getAllPlatformShop(KEY_PLATFORM_SHOP);
-                if (!StringUtility.isNullOrEmpty(result)) {
-                    //转成vo  在转成json
-                    omsPlatformVOS = StringUtility.jsonToList(result, OmsPlatformVO.class);
-                    return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getName(), omsPlatformVOS);
-                }
-                //缓存没有 从DB取
-                return this.getAllPlatformShopFromDB(omsPlatformVOS,null);
+                redisResult = cacheBp.getAllPlatformShop(Key_all_platform_shop,entityCode);
             }
+            if (!StringUtility.isNullOrEmpty(redisResult)) {
+                //转成vo  在转成json
+                omsPlatformVOS = StringUtility.jsonToList(redisResult, OmsPlatformVO.class);
+                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getName(), omsPlatformVOS);
+            }
+            //缓存没有 从DB取
+            return this.getAllPlatformShopFromDB(omsPlatformVOS,platformIds,entityCode);
         } catch (Exception e) {
             logger.error("获取平台账号站点失败", e);
             return VoHelper.getErrorResult();
         }
     }
+
+
+
+
+
     /**
      *  从DB 获取平台账号站点
      * @param
@@ -1252,22 +1277,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @Author lwx
      * @Date 2018/9/4 17:05
      */
-    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS,String platformId){
+    public ResultVO getAllPlatformShopFromDB( List<OmsPlatformVO> omsPlatformVOS,List<String> platformIds,String entityCode){
         //返回所有平台和账号
         //获取所有平台
        // List<PlatformDO> platformDOS = platformMapper.selectAll();
         //获取一部分平台的数据
-        List<String> platformIds =new ArrayList<>();
         List<PlatformDO> platformDOS =new ArrayList<>();
-        if (!StringUtility.isNullOrEmpty(platformId)){
-           // 如果平台id 不为空，　则只需要传入对应的平台
-            platformIds.add(platformId);
-        }else {
-            platformIds.add("shopee");
-            platformIds.add("ebay");
-            platformIds.add("亚马逊");
-            platformIds.add("lazada");
-        }
         platformDOS = platformMapper.selectPlatforms(platformIds);
         if (platformDOS != null && platformDOS.size() > 0) {
             for (PlatformDO platformDO : platformDOS) {
@@ -1293,14 +1308,29 @@ public class DataRuleServiceImpl implements IDataRuleService {
                     omsShopVO.shopId = shopSiteDO.getShopSystem();
                     omsShopVO.shopName = shopSiteDO.getShop();
                     omsPlatformVO.lstShop.add(omsShopVO);
+                    //客服系统, 需要站点
+                    /*if (StringUtility.stringEqualsIgnoreCase(entityCode, "E_CustomerService")) {
+                        if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId())) {
+                            continue;
+                        }
+                        OmsSiteVO siteVO = new OmsSiteVO();
+                        omsShopVO.lstSite =new ArrayList<>();
+                        siteVO.siteId = shopSiteDO.getSiteId();
+                        if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+                            siteVO.siteName = siteVO.siteId;
+                        } else {
+                            siteVO.siteName = shopSiteDO.getSiteName();
+                        }
+                        omsShopVO.lstSite.add(siteVO);
+                    }*/
                 }
                 //组装平台
                 omsPlatformVOS.add(omsPlatformVO);
             }
         }
-        //放入缓存 , 只有刊登才需要放入缓存
-        if (StringUtility.isNullOrEmpty(platformId)) {
-            cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS));
+        //放入缓存 , 只有刊登, 客服系统 放入缓存
+        if (StringUtility.stringEqualsIgnoreCase("E_PlsShopAccount",entityCode) || StringUtility.stringEqualsIgnoreCase("E_CustomerService",entityCode)) {
+            cacheBp.setAllPlatformShop(StringUtility.toJSONString(omsPlatformVOS),entityCode);
         }
         return VoHelper.getSuccessResult(omsPlatformVOS);
     }
@@ -1351,6 +1381,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
     }
 
+
     @Override
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteOms(String operator, String platformId) {
         try {
@@ -1398,28 +1429,96 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
 
+    private List<CsCodeNameVO> getCsChildren(){
+        List<CsCodeNameVO> csCodeNameVOList=new ArrayList<>();
+        CsCodeNameVO csCodeNameVO1=new CsCodeNameVO();
+        csCodeNameVO1.code="ZZ";
+        csCodeNameVO1.name="组长";
+        csCodeNameVO1.type="0";
+        CsCodeNameVO csCodeNameVO2=new CsCodeNameVO();
+        csCodeNameVO2.code="ZY";
+        csCodeNameVO2.name="组员";
+        csCodeNameVO2.type="0";
+        csCodeNameVOList.add(csCodeNameVO1);
+        csCodeNameVOList.add(csCodeNameVO2);
+        return  csCodeNameVOList;
+    }
 
-    @Override
-    public ResultVO<List<OmsPlatformVO>> getPlatformShopByEntityCode(String operator, String entityCode) {
-        if(StringUtility.isNullOrEmpty(entityCode)){
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
-        }
-        //根据entityCode找到对应得platforid
-        if(entityCode.equalsIgnoreCase("E_PlatformShopSite")){
-            //oms
-            return  dataRuleService.appointPlatformShopSiteOms(operator,"速卖通");
-        }else if(entityCode.equalsIgnoreCase("E_ArmShopAccount")){
-            //索赔-->亚马逊 只需要账号
-            return dataRuleService.getPlatformShop(operator,"亚马逊");
-        }else if(entityCode.equalsIgnoreCase("E_PlsShopAccount")){
-            // 刊登--->ebyay 只需要账号
-            return  dataRuleService.getPlatformShop(operator,"");
-        }else{
-            //待定后续....
-            return VoHelper.getSuccessResult((Object) "待配置......");
-        }
-
+    private CsCodeNameVO getCsManager(){
+        CsCodeNameVO csCodeNameVO1=new CsCodeNameVO();
+        csCodeNameVO1.code="PM";
+        csCodeNameVO1.name="经理";
+        csCodeNameVO1.type="0";
+        return  csCodeNameVO1;
     }
 
 
+    @Override
+    public ResultVO getCsPlatformCodeName(String operator) {
+        List<CsPlatform> csPlatformGroupList=  csPlatformMapper.selectAllInfo();
+        if(CollectionUtils.isEmpty(csPlatformGroupList)) {
+            return VoHelper.getSuccessResult();
+        }
+        List<CsCodeNameVO> csCodeNameVOList=new ArrayList<>();
+        for (CsPlatform csPlatform:csPlatformGroupList){
+            CsCodeNameVO csCodeNameVO=new CsCodeNameVO();
+            csCodeNameVO.code=csPlatform.getPlatformId();
+            csCodeNameVO.name=csPlatform.getPlatformName();
+            csCodeNameVO.type="1";
+            List<CsCodeNameVO> csCodeNameVOSChildren=new ArrayList<>();
+            csCodeNameVOSChildren.add(getCsManager());
+            List<CsPlatformGroup> csPlatformGroupDataList= csPlatformGroupMapper.selectByPlantformId(csPlatform.getPlatformId());
+            if(!CollectionUtils.isEmpty(csPlatformGroupDataList)){
+                for (CsPlatformGroup csPlatformGroupData:csPlatformGroupDataList){
+                    CsCodeNameVO csCodeNameVOData =csCodeNameVOData=new CsCodeNameVO();
+                    csCodeNameVOData.code=String.valueOf(csPlatformGroupData.getGroupId());
+                    csCodeNameVOData.name=csPlatformGroupData.getGroupName();
+                    csCodeNameVOData.type="1";
+                    csCodeNameVOData.children=getCsChildren();
+                    csCodeNameVOSChildren.add(csCodeNameVOData);
+                }
+            }
+            csCodeNameVO.children=csCodeNameVOSChildren;
+            csCodeNameVOList.add(csCodeNameVO);
+        }
+        return VoHelper.getSuccessResult(csCodeNameVOList);
+    }
+
+    @Override
+    public ResultVO getPlatformShopByEntityCode(String operator, String entityCode) {
+        List<String> platformIds = new ArrayList<>();
+        if (StringUtility.isNullOrEmpty(entityCode)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+        }
+        //根据entityCode找到对应得platforid
+        if (entityCode.equalsIgnoreCase("E_PlatformShopSite")) {
+            //oms
+            return dataRuleService.appointPlatformShopSiteOms(operator, "速卖通");
+        } else if (entityCode.equalsIgnoreCase("E_ArmShopAccount")) {
+            //索赔-->亚马逊 只需要账号
+            platformIds.add("亚马逊");
+            return dataRuleService.getPlatformShop(operator, platformIds,entityCode);
+        } else if (entityCode.equalsIgnoreCase("E_PlsShopAccount")) {
+            // 刊登--->ebyay 只需要账号, 目前返回这4个平台
+            platformIds.add("shopee");
+            platformIds.add("ebay");
+            platformIds.add("亚马逊");
+            platformIds.add("lazada");
+            return dataRuleService.getPlatformShop(operator, platformIds,entityCode);
+        } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
+            //客服系统 --> 平台账号  站点
+            List<PlatformDO> platformDOS = platformMapper.selectAll();
+            if (platformDOS != null && platformDOS.size() > 0) {
+                platformIds = platformDOS.stream().map(platformDO -> platformDO.getPlatformId()).collect(Collectors.toList());
+            }
+            return dataRuleService.getPlatformShop(operator, platformIds,entityCode);
+        } else  if(entityCode.equalsIgnoreCase("E_CsOrg")){
+            //客服--【职级】---范围
+            return  dataRuleService.getCsPlatformCodeName(operator);
+        } else {
+            //待定后续....
+            return VoHelper.getSuccessResult((Object) "待配置!......");
+        }
+
+    }
 }
