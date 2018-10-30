@@ -1504,6 +1504,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             platformIds.add("ebay");
             platformIds.add("亚马逊");
             platformIds.add("lazada");
+            platformIds.add("速卖通");
             return dataRuleService.getPlatformShop(operator, platformIds,entityCode);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
             //客服系统 --> 平台账号  站点
