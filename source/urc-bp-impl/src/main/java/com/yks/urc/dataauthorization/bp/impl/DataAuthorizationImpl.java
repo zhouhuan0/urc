@@ -94,8 +94,8 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         logger.info("清理平台表完成");
                         for (PlatformResp platformResp : platformResps) {
                             PlatformDO platformDO = new PlatformDO();
-                            platformDO.setPlatformId(StringUtility.trimPattern_Private(platformResp.code," "));
-                            platformDO.setPlatformName(StringUtility.trimPattern_Private(platformResp.name," "));
+                            platformDO.setPlatformId(StringUtility.trimPattern_Private(platformResp.code, "\\s"));
+                            platformDO.setPlatformName(StringUtility.trimPattern_Private(platformResp.name,"\\s"));
                             platformDO.setCreateBy(operator);
                             platformDO.setModifiedBy(operator);
                             platformDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -168,12 +168,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         List<ShopSiteDO> shopSiteDOS = new ArrayList<>();
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             ShopSiteDO shopSiteDO = new ShopSiteDO();
-                            shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code," "));
-                            shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid," "));
-                            shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system," "));
-                            shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop," "));
-                            shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code," "));
-                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name," "));
+                            shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code,"\\s"));
+                            shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid,"\\s"));
+                            shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system,"\\s"));
+                            shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop,"\\s"));
+                            shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code,"\\s"));
+                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name,"\\s"));
                             shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
                             shopSiteDO.setCreateBy(operator);
                             shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
