@@ -26,6 +26,7 @@ import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,12 +167,18 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         List<ShopSiteDO> shopSiteDOS = new ArrayList<>();
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             ShopSiteDO shopSiteDO = new ShopSiteDO();
-                            shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.platform_code));
+                           /* shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.platform_code));
                             shopSiteDO.setSellerId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.sellerid));
                             shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(" ",shopAndSiteResp.shop_system));
                             shopSiteDO.setShop(StringUtility.trimPattern_Private(" ",shopAndSiteResp.shop));
                             shopSiteDO.setSiteId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.site_code));
-                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(" ",shopAndSiteResp.site_name));
+                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(" ",shopAndSiteResp.site_name));*/
+                            shopSiteDO.setPlatformId(StringUtils.trim(shopAndSiteResp.platform_code));
+                            shopSiteDO.setSellerId(StringUtils.trim(shopAndSiteResp.sellerid));
+                            shopSiteDO.setShopSystem(StringUtils.trim(shopAndSiteResp.shop_system));
+                            shopSiteDO.setShop(StringUtils.trim(shopAndSiteResp.shop));
+                            shopSiteDO.setSiteId(StringUtils.trim(shopAndSiteResp.site_code));
+                            shopSiteDO.setSiteName(StringUtils.trim(shopAndSiteResp.site_name));
                             shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
                             shopSiteDO.setCreateBy(operator);
                             shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
