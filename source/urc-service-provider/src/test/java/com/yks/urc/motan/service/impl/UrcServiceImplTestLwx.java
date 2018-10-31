@@ -6,6 +6,7 @@ import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
 import com.yks.urc.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
@@ -481,6 +482,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     }
     @Test
     public void test_meageJson(){
-        //StringUtility.inputStream2String()
+       String  test ="   abc  def    ";
+       String str =null;
+        //System.out.println(str.trim());
+       // System.out.println(StringUtils.trim(str));
+        System.out.println(StringUtility.trimPattern_Private(test,"\\s"));
     }
 }
