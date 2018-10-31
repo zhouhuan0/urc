@@ -92,8 +92,8 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         logger.info("清理平台表完成");
                         for (PlatformResp platformResp : platformResps) {
                             PlatformDO platformDO = new PlatformDO();
-                            platformDO.setPlatformId(platformResp.code);
-                            platformDO.setPlatformName(platformResp.name);
+                            platformDO.setPlatformId(platformResp.code.trim());
+                            platformDO.setPlatformName(platformResp.name.trim());
                             platformDO.setCreateBy(operator);
                             platformDO.setModifiedBy(operator);
                             platformDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -166,12 +166,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         List<ShopSiteDO> shopSiteDOS = new ArrayList<>();
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             ShopSiteDO shopSiteDO = new ShopSiteDO();
-                            shopSiteDO.setPlatformId(shopAndSiteResp.platform_code);
-                            shopSiteDO.setSellerId(shopAndSiteResp.sellerid);
-                            shopSiteDO.setShopSystem(shopAndSiteResp.shop_system);
-                            shopSiteDO.setShop(shopAndSiteResp.shop);
-                            shopSiteDO.setSiteId(shopAndSiteResp.site_code);
-                            shopSiteDO.setSiteName(shopAndSiteResp.site_name);
+                            shopSiteDO.setPlatformId(shopAndSiteResp.platform_code.trim());
+                            shopSiteDO.setSellerId(shopAndSiteResp.sellerid.trim());
+                            shopSiteDO.setShopSystem(shopAndSiteResp.shop_system.trim());
+                            shopSiteDO.setShop(shopAndSiteResp.shop.trim());
+                            shopSiteDO.setSiteId(shopAndSiteResp.site_code.trim());
+                            shopSiteDO.setSiteName(shopAndSiteResp.site_name.trim());
                             shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
                             shopSiteDO.setCreateBy(operator);
                             shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());

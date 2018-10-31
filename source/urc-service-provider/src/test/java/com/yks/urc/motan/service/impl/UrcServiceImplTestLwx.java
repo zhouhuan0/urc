@@ -481,6 +481,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     }
     @Test
     public void test_meageJson(){
-        //StringUtility.inputStream2String()
+       String  test ="   abc  def    ";
+        System.out.println(test.trim());
     }
 }
