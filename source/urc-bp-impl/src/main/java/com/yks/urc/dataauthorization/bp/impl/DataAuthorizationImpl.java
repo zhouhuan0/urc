@@ -88,13 +88,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 } else {
                     JSONArray dataArray = platformObject.getJSONArray("data");
                     List<PlatformResp> platformResps = StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
+                    platformResps =platformResps.stream().filter(distinctByKey(platformResp -> platformResp.code)).collect(Collectors.toList());
                     if (platformResps != null && platformResps.size() > 0) {
                         platformMapper.deletePlatform();
                         logger.info("清理平台表完成");
                         for (PlatformResp platformResp : platformResps) {
                             PlatformDO platformDO = new PlatformDO();
-                            platformDO.setPlatformId(StringUtility.trimPattern_Private(" ",platformResp.code));
-                            platformDO.setPlatformName(StringUtility.trimPattern_Private(" ",platformResp.name));
+                            platformDO.setPlatformId(StringUtility.trimPattern_Private(platformResp.code," "));
+                            platformDO.setPlatformName(StringUtility.trimPattern_Private(platformResp.name," "));
                             platformDO.setCreateBy(operator);
                             platformDO.setModifiedBy(operator);
                             platformDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -167,18 +168,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         List<ShopSiteDO> shopSiteDOS = new ArrayList<>();
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             ShopSiteDO shopSiteDO = new ShopSiteDO();
-                           /* shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.platform_code));
-                            shopSiteDO.setSellerId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.sellerid));
-                            shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(" ",shopAndSiteResp.shop_system));
-                            shopSiteDO.setShop(StringUtility.trimPattern_Private(" ",shopAndSiteResp.shop));
-                            shopSiteDO.setSiteId(StringUtility.trimPattern_Private(" ",shopAndSiteResp.site_code));
-                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(" ",shopAndSiteResp.site_name));*/
-                            shopSiteDO.setPlatformId(StringUtils.trim(shopAndSiteResp.platform_code));
-                            shopSiteDO.setSellerId(StringUtils.trim(shopAndSiteResp.sellerid));
-                            shopSiteDO.setShopSystem(StringUtils.trim(shopAndSiteResp.shop_system));
-                            shopSiteDO.setShop(StringUtils.trim(shopAndSiteResp.shop));
-                            shopSiteDO.setSiteId(StringUtils.trim(shopAndSiteResp.site_code));
-                            shopSiteDO.setSiteName(StringUtils.trim(shopAndSiteResp.site_name));
+                            shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code," "));
+                            shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid," "));
+                            shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system," "));
+                            shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop," "));
+                            shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code," "));
+                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name," "));
                             shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
                             shopSiteDO.setCreateBy(operator);
                             shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
