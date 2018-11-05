@@ -126,6 +126,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
             roleIds.add(String.valueOf(rolePermissionDO.getRoleId()));
         });
+        //去重
+        roleIds.stream().distinct();
         dataMap.put("roleIds",roleIds);
         /*3、获取roleIds角色对应的用户名*/
             logger.info(String.format("获取的角色id为%s", roleIds));
@@ -250,7 +252,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                     //将得到的结果再转为json
                     String selectedContext = StringUtility.toJSONString(systemRootVO);
                     if (StringUtils.isEmpty(selectedContext)) {
-                        logger.error("systemRootVＯ　转 json 失败");
+                        logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
                     }
                     if (result ==false){
                         return;
