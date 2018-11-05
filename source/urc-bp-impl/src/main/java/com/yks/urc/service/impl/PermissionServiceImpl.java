@@ -9,6 +9,7 @@ import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.mapper.IUserPermitStatMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
@@ -73,6 +74,9 @@ public class PermissionServiceImpl implements IPermissionService {
 
     @Autowired
     IPermitStatBp permitStatBp;
+
+    @Autowired
+    IFuncJsonTreeBp funcJsonTreeBp;
 
     @Transactional
     @Override
@@ -303,149 +307,17 @@ public class PermissionServiceImpl implements IPermissionService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO deleteSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
-        //获取所有和sysKey 有关的角色和权限
+        if (CollectionUtils.isEmpty(funcTreeVOS)) {
+            throw new URCBizException(ErrorCode.E_000002);
+        }
         try {
-            funcTreeVOS.forEach(funcTreeVO -> {
-
-                List<RolePermissionDO> insertPermissionDO = new ArrayList<>();
-                List<Long> roleIds = new ArrayList<>();
-
-                if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                    return;
-                }
-                //拿到所有和当前系统有关的角色和权限
-                List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
-                if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                    return;
-                }
-
-                rolePermissionDOS.forEach(rolePermissionDO -> {
-                    if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
-                        return;
-                    }
-                    //遍历 json 树,删除节点
-                    SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
-                    if (systemRootVO == null) {
-                        logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
-                        return;
-                    }
-                    //遍历删除menu
-                    this.foreachMenuTree(systemRootVO, funcTreeVO.delKeys);
-
-                    if (rolePermissionDO.getRoleId() != null) {
-                        roleIds.add(rolePermissionDO.getRoleId());
-                    }
-                    //节点删除后,在转化为 json 权限树.入库
-                    String selectedContext = StringUtility.toJSONString(systemRootVO);
-                    if (StringUtils.isEmpty(selectedContext)) {
-                        logger.error("systemRootVＯ　转 json 失败");
-                    }
-                    rolePermissionDO.setSelectedContext(selectedContext);
-                    insertPermissionDO.add(rolePermissionDO);
-                });
-                updateRolePermissionAndRoleUser(insertPermissionDO, roleIds);
-
-            });
-            return VoHelper.getSuccessResult();
+            return funcJsonTreeBp.deleteSysPermitNode(funcTreeVOS);
         } catch (Exception e) {
-            logger.error("删除节点失败,更新权限出错", e.getMessage());
-            return VoHelper.getErrorResult();
+            logger.error("删除节点失败,失败原因:", e.getMessage());
         }
+        return null;
     }
 
-    /**
-     * 更新角色的权限,角色下的用户及缓存
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 17:22
-     */
-    private void updateRolePermissionAndRoleUser(List<RolePermissionDO> insertPermissionDO, List<Long> roleIds) {
-        //清除掉这些角色的权限,重新将权限树插入
-        if (!CollectionUtils.isEmpty(insertPermissionDO)) {
-            rolePermissionMapper.deleteBatch(roleIds);
-            logger.info("清理角色权限完成");
-            rolePermissionMapper.insertAndUpdateBatch(insertPermissionDO);
-            logger.info("更新相关功能权限完成");
-            Map dataMap = new HashMap();
-            dataMap.put("roleIds", roleIds);
-        /*3、获取roleIds角色对应的用户名*/
-            logger.info(String.format("获取的角色id为%s", roleIds));
-            if (CollectionUtils.isEmpty(roleIds)) {
-                logger.info("roleID 的集合为空");
-            }
-            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
-            logger.info(String.format("获取的用户名为%s", userNames));
-    /*4、更新用户操作权限冗余表和缓存*/
-            permitStatBp.updateUserPermitCache(userNames);
-        }
-    }
-
-    /**
-     * 遍历 清理module
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 14:38
-     */
-    private void foreachModuleTree(List<ModuleVO> lstModule, List<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(lstModule)) {
-            return;
-        }
-        for (int i = 0; i < lstModule.size(); i++) {
-            if (lstDeleteKey.contains(lstModule.get(i).key)) {
-                lstModule.remove(i);
-                i--;
-            }
-            foreachModuleTree(lstModule, lstDeleteKey);
-            foreachFuncTree(lstModule.get(i).function, lstDeleteKey);
-        }
-    }
-
-    /**
-     * 遍历 清楚func 节点
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 14:57
-     */
-    private void foreachFuncTree(List<FunctionVO> functionVOS, List<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(functionVOS)) {
-            return;
-        }
-        for (int i = 0; i < functionVOS.size(); i++) {
-            if (lstDeleteKey.contains(functionVOS.get(i).key)) {
-                functionVOS.remove(i);
-                i--;
-            }
-            foreachFuncTree(functionVOS.get(i).function, lstDeleteKey);
-        }
-    }
-
-    /**
-     * 遍历所有的menu
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 11:19
-     */
-    private void foreachMenuTree(SystemRootVO systemRootVO, List<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(systemRootVO.menu)) {
-            return;
-        }
-        for (int i = 0; i < systemRootVO.menu.size(); i++) {
-            if (lstDeleteKey.contains(systemRootVO.menu.get(i).key)) {
-                systemRootVO.menu.remove(i);
-                i--;
-            } else {
-                foreachModuleTree(systemRootVO.menu.get(i).module, lstDeleteKey);
-            }
-        }
-    }
 
     /**
      * 修改功能权限节点树
@@ -459,137 +331,15 @@ public class PermissionServiceImpl implements IPermissionService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
         // 找到和sysKey 相关的 权限
+        if (CollectionUtils.isEmpty(funcTreeVOS)) {
+            throw new URCBizException(ErrorCode.E_000002);
+        }
         try {
-            funcTreeVOS.forEach(funcTreeVO -> {
-
-                List<RolePermissionDO> insertPermissionDO = new ArrayList<>();
-                List<Long> roleIds = new ArrayList<>();
-
-                if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                    return;
-                }
-                //拿到所有和当前系统有关的角色和权限
-                List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
-                if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                    return;
-                }
-                rolePermissionDOS.forEach(rolePermissionDO -> {
-                    if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
-                        return;
-                    }
-                    //遍历 json 树, 修改节点
-                    SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
-                    if (systemRootVO == null) {
-                        logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
-                        return;
-                    }
-                    //修改节点
-                    updateMenuValue(systemRootVO, funcTreeVO.updateNode);
-                    //将得到的结果再转为json
-                    String selectedContext = StringUtility.toJSONString(systemRootVO);
-                    if (StringUtils.isEmpty(selectedContext)) {
-                        logger.error("systemRootVＯ　转 json 失败");
-                    }
-                    rolePermissionDO.setSelectedContext(selectedContext);
-                    insertPermissionDO.add(rolePermissionDO);
-                });
-                updateRolePermissionAndRoleUser(insertPermissionDO, roleIds);
-            });
-            return VoHelper.getSuccessResult();
+            return funcJsonTreeBp.updateSysPermitNode(funcTreeVOS);
         } catch (Exception e) {
             logger.error("删除节点失败,更新权限出错", e.getMessage());
-            return VoHelper.getErrorResult();
         }
+        return null;
     }
 
-    /**
-     * 更新菜单下的节点
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 17:11
-     */
-    private void updateMenuValue(SystemRootVO systemRootVO, List<NodeVO> lstNode) {
-        if (systemRootVO == null || CollectionUtils.isEmpty(lstNode) || CollectionUtils.isEmpty(systemRootVO.menu)) {
-            return;
-        }
-        systemRootVO.menu.forEach(menuVO -> {
-            lstNode.forEach(nodeVO -> {
-                if (StringUtils.isEmpty(nodeVO.key)) {
-                    return;
-                }
-                //当key相等时,修改数据
-                if (nodeVO.key.equalsIgnoreCase(menuVO.key)) {
-                    if (StringUtils.isNotEmpty(nodeVO.name)) {
-                        menuVO.name = nodeVO.name;
-                    }
-                    if (StringUtils.isNotEmpty(nodeVO.url)) {
-                        menuVO.url = nodeVO.url;
-                    }
-                }
-                updateModuleValue(menuVO.module, lstNode);
-            });
-        });
-    }
-
-    /**
-     * 更新模块下的节点
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 17:12
-     */
-    private void updateModuleValue(List<ModuleVO> lstModule, List<NodeVO> lstNode) {
-        if (CollectionUtils.isEmpty(lstModule) || CollectionUtils.isEmpty(lstNode)) {
-            return;
-        }
-        lstModule.forEach(moduleVO -> {
-            lstNode.forEach(nodeVO -> {
-                if (StringUtils.isEmpty(nodeVO.key)) {
-                    return;
-                }
-                //当key相等时,修改数据
-                if (nodeVO.key.equalsIgnoreCase(moduleVO.key)) {
-                    if (StringUtils.isNotEmpty(nodeVO.name)) {
-                        moduleVO.name = nodeVO.name;
-                    }
-                    if (StringUtils.isNotEmpty(nodeVO.url)) {
-                        moduleVO.url = nodeVO.url;
-                    }
-                    updateModuleValue(moduleVO.module, lstNode);
-                    updateFuncValue(moduleVO.function, lstNode);
-                }
-            });
-        });
-    }
-
-    /**
-     * 更新功能下的节点
-     *
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/2 17:19
-     */
-    private void updateFuncValue(List<FunctionVO> lstFunction, List<NodeVO> lstNode) {
-        if (CollectionUtils.isEmpty(lstFunction) || CollectionUtils.isEmpty(lstNode)) {
-            return;
-        }
-        lstFunction.forEach(functionVO -> {
-            lstNode.forEach(nodeVO -> {
-                if (StringUtils.isEmpty(nodeVO.key)) {
-                    return;
-                }
-                //当key相等时,修改数据
-                if (nodeVO.key.equalsIgnoreCase(functionVO.key)) {
-                    if (StringUtils.isNotEmpty(nodeVO.name)) {
-                        functionVO.name = nodeVO.name;
-                    }
-                    updateFuncValue(functionVO.function, lstNode);
-                }
-            });
-        });
-    }
 }

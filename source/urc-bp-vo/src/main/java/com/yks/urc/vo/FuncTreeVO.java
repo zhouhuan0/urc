@@ -10,12 +10,13 @@ package com.yks.urc.vo;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 public class FuncTreeVO implements Serializable{
 
     private static final long serialVersionUID = 5180617940244370510L;
 
-    public List<String> delKeys;
+    public Set<String> delKeys;
 
     public String sysKey;
 
