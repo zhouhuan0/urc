@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 public class UrcServiceImpl implements IUrcService {
 
@@ -720,5 +721,25 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.appointPlatformShopSite(operator, platformId);
     }
 
+    @Log("删除功能权限树节点")
+    @Override
+    public ResultVO deleteSysPermitNode(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        List<FuncTreeVO> funcTreeVOS =StringUtility.parseObject(jsonObject.getJSONArray("data").toString(),List.class);
+        if (CollectionUtils.isEmpty(funcTreeVOS)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        return permissionService.deleteSysPermitNode(funcTreeVOS);
+    }
 
+    @Log("修改功能权限名称")
+    @Override
+    public ResultVO updateSysPermitNode(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        List<FuncTreeVO> funcTreeVOS =StringUtility.parseObject(jsonObject.getJSONArray("data").toString(),List.class);
+        if (CollectionUtils.isEmpty(funcTreeVOS)){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        return permissionService.updateSysPermitNode(funcTreeVOS);
+    }
 }

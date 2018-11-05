@@ -258,4 +258,9 @@
         </set>
         where role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER}
     </update>
+
+    <!--获取角色权限-->
+    <select id="getROlePermissionBySysKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE role_id =role_id = #{roleId}
+    </select>
 </mapper>

@@ -488,4 +488,14 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
        // System.out.println(StringUtils.trim(str));
         System.out.println(StringUtility.trimPattern_Private(test,"\\s"));
     }
+
+    @Test
+    public void test_deleteNode(){
+
+    }
+
+    @Test
+    public void test_updateNode(){
+
+    }
 }

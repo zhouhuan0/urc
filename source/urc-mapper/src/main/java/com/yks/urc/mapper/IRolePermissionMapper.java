@@ -97,5 +97,14 @@ public interface IRolePermissionMapper {
     Integer deleteByRoleIdInSysKey( @Param("roleId") String roleId, @Param("roleSysKey") List<String> roleSysKey);
 
 
+    /**
+     *  获取 sys有关的角色 和权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 10:41
+     */
+    List<RolePermissionDO> getROlePermissionBySysKey(Long sysKey);
+
 
 }
