@@ -244,9 +244,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         map.put("pageNumber", pageNumber);
         map.put("pageData", pageData);
         map.put("operator", operator);
-        RoleVO roleVO = new RoleVO();
-        roleVO.roleName = "admin";
-        map.put("role", roleVO);
+        map.put("isActive",1);
+        map.put("isAdmin",0);
+        map.put("searchType",2);
+        map.put("searchContent","linwanxian");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         resultVO = service.getRolesByInfo(json);

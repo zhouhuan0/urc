@@ -247,32 +247,57 @@
 
     <!--分页条件查询 , 包含owner-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_role
+        select  u.role_id, u.role_name, u.is_active, u.is_authorizable, u.is_forever, u.effective_time, u.expire_time,
+        u.create_time, u.create_by, u.modified_time, u.modified_by,u.remark
+        from urc_role u
         <where>
-            1=1
+            <!-- 是否启用-->
+            <if test ="isActive != null">
+                and  u.is_active =#{isActive}
+            </if>
+            <if test ="isAdmin != null">
+                and u.is_authorizable =#{isAdmin}
+            </if>
             <if test="createBy != null and createBy != ''">
                 and   (
-                create_by=#{createBy,jdbcType=VARCHAR}
+                u.create_by=#{createBy,jdbcType=VARCHAR}
                 <if test="roleIds != null">
-                    or role_id IN
+                    or u.role_id IN
                     <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
                         #{roleId}
                     </foreach>
                 </if>
                 )
             </if>
-            <if test="roleNames != null and roleNames != ''">
+            <if test="roleNames != null and roleNames.size()>0">
                 and
                 <foreach item="item" index="index" collection="roleNames" open="(" separator="or" close=")">
                     <if test="item != null and item != ''">
-                        role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                        u.role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
                 </foreach>
             </if>
-
-            and is_authorizable != 2
+            <if test="createBys != null and createBys.size() > 0">
+                and
+                <foreach item="item" index="index" collection="createBys" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                       u. create_by  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
+                </foreach>
+            </if>
+            <if test="owners != null and owners.size() >0">
+                and exists (
+                select o.role_id from urc_role_owner o
+               <where>
+                   <foreach item="item" index="index" collection="owners" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                        o.role_owner LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
+                </foreach>
+                and o.role_id = u.role_id
+               </where>
+                )
+            </if>
         </where>
         order by create_time desc
         limit #{currIndex},#{pageSize}
@@ -280,28 +305,58 @@
 
     <!--获取总条目-->
     <select id="getCounts" parameterType="java.util.HashMap" resultType="java.lang.Long">
-        select count(1) from urc_role
+        select count(1) from urc_role u
         <where>
-            <if test="createBy != null and createBy != ''">
-                create_by=#{createBy,jdbcType=VARCHAR}
+            <!-- 是否启用-->
+            <if test ="isActive != null">
+                and  u.is_active =#{isActive}
             </if>
-            <if test="roleNames != null and roleNames != ''">
+            <if test ="isAdmin != null">
+                and u.is_authorizable =#{isAdmin}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and   (
+                u.create_by=#{createBy,jdbcType=VARCHAR}
+                <if test="roleIds != null">
+                    or u.role_id IN
+                    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                        #{roleId}
+                    </foreach>
+                </if>
+                )
+            </if>
+            <if test="roleNames != null and roleNames.size()>0">
                 and
                 <foreach item="item" index="index" collection="roleNames" open="(" separator="or" close=")">
                     <if test="item != null and item != ''">
-                        role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                        u.role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
                     </if>
                 </foreach>
             </if>
-            <if test="roleIds != null">
-                or  role_id  IN
-                <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
-                    #{roleId}
+            <if test="createBys != null and createBys.size() > 0">
+                and
+                <foreach item="item" index="index" collection="createBys" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                        u. create_by  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
                 </foreach>
             </if>
-            and is_authorizable != 2
+            <if test="owners != null and owners.size() >0">
+                and exists (
+                select o.role_id from urc_role_owner o
+                <where>
+                  <foreach item="item" index="index" collection="owners" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                        o.role_owner LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
+                </foreach>
+                    and o.role_id = u.role_id
+                </where>
+                )
+            </if>
         </where>
     </select>
+
     <!--根据用户名 获取角色名称-->
     <select id="selectRoleNameByUserName" resultType="java.lang.String">
         select  DISTINCT (r.role_name) as roleName
