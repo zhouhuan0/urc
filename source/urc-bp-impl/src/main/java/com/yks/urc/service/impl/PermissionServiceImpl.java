@@ -306,12 +306,9 @@ public class PermissionServiceImpl implements IPermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO deleteSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
-        if (CollectionUtils.isEmpty(funcTreeVOS)) {
-            throw new URCBizException(ErrorCode.E_000002);
-        }
+    public ResultVO deleteSysPermitNode(FuncTreeVO funcTreeVO) {
         try {
-            return funcJsonTreeBp.deleteSysPermitNode(funcTreeVOS);
+            return funcJsonTreeBp.deleteSysPermitNode(funcTreeVO);
         } catch (Exception e) {
             logger.error("删除节点失败,失败原因:", e.getMessage());
         }

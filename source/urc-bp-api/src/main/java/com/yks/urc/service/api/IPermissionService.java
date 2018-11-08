@@ -35,7 +35,7 @@ public interface IPermissionService {
 	 * @Author lwx
 	 * @Date 2018/11/2 10:26
 	 */
-	ResultVO deleteSysPermitNode(List<FuncTreeVO> funcTreeVOS);
+	ResultVO deleteSysPermitNode(FuncTreeVO funcTreeVO);
 	/**
 	 *  修改功能权限树节点
 	 * @param

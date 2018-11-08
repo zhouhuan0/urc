@@ -725,11 +725,11 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO deleteSysPermitNode(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        List<FuncTreeVO> funcTreeVOS =StringUtility.parseObject(jsonObject.getJSONArray("data").toString(),List.class);
-        if (CollectionUtils.isEmpty(funcTreeVOS)){
+        FuncTreeVO funcTreeVO =StringUtility.parseObject(jsonObject.getJSONArray("data").toString(),FuncTreeVO.class);
+        if (funcTreeVO == null){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
-        return permissionService.deleteSysPermitNode(funcTreeVOS);
+        return permissionService.deleteSysPermitNode(funcTreeVO);
     }
 
     @Log("修改功能权限名称")

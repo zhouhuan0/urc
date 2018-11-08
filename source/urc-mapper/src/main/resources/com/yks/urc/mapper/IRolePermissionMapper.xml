@@ -263,4 +263,9 @@
     <select id="getROlePermissionBySysKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
         SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE role_id = #{roleId}
     </select>
+
+    <!--根据sysKey删除系统对应的功能权限-->
+    <delete id="deleteBySysKey" >
+         delete from urc_role_permission where sys_key = #{sysKey,jdbcType=VARCHAR}
+    </delete>
 </mapper>

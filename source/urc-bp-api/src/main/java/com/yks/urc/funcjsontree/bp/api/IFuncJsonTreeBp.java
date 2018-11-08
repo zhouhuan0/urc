@@ -21,7 +21,7 @@ public interface IFuncJsonTreeBp {
      * @Author lwx
      * @Date 2018/11/5 11:04
      */
-    ResultVO deleteSysPermitNode(List<FuncTreeVO> funcTreeVOS);
+    ResultVO deleteSysPermitNode(FuncTreeVO funcTreeVO);
 
     /**
      *  更新权限树的名称

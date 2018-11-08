@@ -105,6 +105,16 @@ public interface IRolePermissionMapper {
      * @Date 2018/11/2 10:41
      */
     List<RolePermissionDO> getROlePermissionBySysKey(Long sysKey);
+    
+    /**
+     * Description: 根据sysKey删除系统对应的功能权限
+     * @param :
+     * @return: 
+     * @auther: lvcr
+     * @date: 2018/11/8 14:48
+     * @see
+     */
+    Integer deleteBySysKey(@Param("sysKey") String sysKey);
 
 
 }

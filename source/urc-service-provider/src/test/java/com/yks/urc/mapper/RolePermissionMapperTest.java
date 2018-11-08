@@ -135,4 +135,11 @@ public class RolePermissionMapperTest extends BaseMapperTest {
         }
     }
 
+    @Test
+    public void deleteBySysKey(){
+        String sysKey = "111";
+        Integer rtn = rolePermissionMapper.deleteBySysKey(sysKey);
+        System.out.println(rtn);
+    }
+
 }

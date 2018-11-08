@@ -8,6 +8,7 @@
  */
 package com.yks.urc;
 
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
@@ -49,26 +51,44 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO deleteSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
+    public ResultVO deleteSysPermitNode(FuncTreeVO funcTreeVO) {
         //获取所有和sysKey 有关的角色和权限
         try {
             //递归返回结果
             //受影响的角色id 有
             Boolean result;
             // sysKey, 角色
-           List<RolePermissionDO> updatePermissionMap =new ArrayList<>(4);
-            for (FuncTreeVO funcTreeVO : funcTreeVOS) {
-                if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                    continue;
+            List<RolePermissionDO> updatePermissionMap = new ArrayList<>();
+            if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            }
+            //拿到所有和当前系统有关的角色和权限
+            // List<RolePermissionDO> updatePermissionS =new ArrayList<>();
+            List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
+            if (CollectionUtils.isEmpty(rolePermissionDOS)) {
+                return VoHelper.getSuccessResult();
+            }
+            //sysKey不为空且delKeys为空时，删除sysKey系统的所有功能权限
+            if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
+                //1、删除sysKey对应的 角色-功能权限数据
+                rolePermissionMapper.deleteBySysKey(funcTreeVO.sysKey);
+                //获取sysKey相关连的roleId
+                List<Long> roleIds = rolePermissionDOS.stream().map(RolePermissionDO::getRoleId).collect(Collectors.toList());
+                if (CollectionUtils.isEmpty(roleIds)) {
+                    logger.info("roleID 的集合为空");
+                    return VoHelper.getSuccessResult();
                 }
-                //拿到所有和当前系统有关的角色和权限
-                List<RolePermissionDO> updatePermissionS =new ArrayList<>();
-                List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
-                if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                    continue;
+                /*2、获取roleIds角色对应的用户名*/
+                Map dataMap = new HashMap();
+                dataMap.put("roleIds", roleIds);
+                List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+                /*3、更新用户操作权限冗余表和缓存*/
+                if(!CollectionUtils.isEmpty(userNames)){
+                    permitStatBp.updateUserPermitCache(userNames);
                 }
+            } else {
                 for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
-                    RolePermissionDO updateRolePermission =new RolePermissionDO();
+                    RolePermissionDO updateRolePermission = new RolePermissionDO();
                     if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
                         continue;
                     }
@@ -85,20 +105,20 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                     if (StringUtils.isEmpty(selectedContext)) {
                         logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
                     }
-                    if (result == true && rolePermissionDO.getRoleId() !=null) {
+                    if (result == true && rolePermissionDO.getRoleId() != null) {
                         // 已删除完成, 收集受影响的角色id
                         updateRolePermission.setRoleId(rolePermissionDO.getRoleId());
                         updateRolePermission.setSelectedContext(selectedContext);
                         updateRolePermission.setSysKey(rolePermissionDO.getSysKey());
-                        updatePermissionS.add(rolePermissionDO);
+                        updatePermissionMap.add(rolePermissionDO);
                     }
                     //说明key 已经删除完毕
                     if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
                         break;
                     }
                 }
+                updateRolePermissionAndRoleUser(updatePermissionMap);
             }
-            updateRolePermissionAndRoleUser(updatePermissionMap);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             logger.error("删除节点失败,更新权限出错", e.getMessage());
@@ -120,7 +140,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             return;
         }
         Map dataMap = new HashMap();
-        List<String> roleIds =new ArrayList<>();
+        List<String> roleIds = new ArrayList<>();
         updatePermissions.forEach(rolePermissionDO -> {
             //更新权限树
             rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
@@ -128,17 +148,17 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         });
         //去重
         roleIds.stream().distinct();
-        dataMap.put("roleIds",roleIds);
+        dataMap.put("roleIds", roleIds);
         /*3、获取roleIds角色对应的用户名*/
-            logger.info(String.format("获取的角色id为%s", roleIds));
-            if (CollectionUtils.isEmpty(roleIds)) {
-                logger.info("roleID 的集合为空");
-            }
-            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
-            logger.info(String.format("获取的用户名为%s", userNames));
-    /*4、更新用户操作权限冗余表和缓存*/
-            permitStatBp.updateUserPermitCache(userNames);
+        logger.info(String.format("获取的角色id为%s", roleIds));
+        if (CollectionUtils.isEmpty(roleIds)) {
+            logger.info("roleID 的集合为空");
         }
+        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        logger.info(String.format("获取的用户名为%s", userNames));
+    /*4、更新用户操作权限冗余表和缓存*/
+        permitStatBp.updateUserPermitCache(userNames);
+    }
 
     /**
      * 遍历 清理module
@@ -237,7 +257,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                 }
                 rolePermissionDOS.forEach(rolePermissionDO -> {
                     Boolean result;
-                   RolePermissionDO updatePermission =new RolePermissionDO();
+                    RolePermissionDO updatePermission = new RolePermissionDO();
                     if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
                         return;
                     }
@@ -248,13 +268,13 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                         return;
                     }
                     //修改节点
-                    result= updateMenuValue(systemRootVO, funcTreeVO.updateNode);
+                    result = updateMenuValue(systemRootVO, funcTreeVO.updateNode);
                     //将得到的结果再转为json
                     String selectedContext = StringUtility.toJSONString(systemRootVO);
                     if (StringUtils.isEmpty(selectedContext)) {
                         logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
                     }
-                    if (result ==false){
+                    if (result == false) {
                         return;
                     }
                     //组装需要更新的数据
@@ -303,7 +323,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                 updateModuleValue(menuVO.module, lstNode);
             });
         });
-        return  true;
+        return true;
     }
 
     /**
