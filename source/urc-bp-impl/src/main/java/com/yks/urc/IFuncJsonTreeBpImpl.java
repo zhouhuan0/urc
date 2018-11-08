@@ -10,7 +10,6 @@ package com.yks.urc;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.entity.RolePermissionDO;
-import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.fw.StringUtility;
@@ -64,7 +63,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             }
             //拿到所有和当前系统有关的角色和权限
             // List<RolePermissionDO> updatePermissionS =new ArrayList<>();
-            List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
+            List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
             if (CollectionUtils.isEmpty(rolePermissionDOS)) {
                 return VoHelper.getSuccessResult();
             }
@@ -251,7 +250,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                     return;
                 }
                 //拿到所有和当前系统有关的角色和权限
-                List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(Long.valueOf(funcTreeVO.sysKey));
+                List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
                 if (CollectionUtils.isEmpty(rolePermissionDOS)) {
                     return;
                 }

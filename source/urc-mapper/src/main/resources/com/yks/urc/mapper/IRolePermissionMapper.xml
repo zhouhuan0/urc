@@ -14,7 +14,7 @@
         <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext"/>
     </resultMap>
     <sql id="Base_Column_List">
-    role_permission_id, role_id, sys_key, create_time, create_by, modified_time, modified_by
+     role_id, sys_key, create_time, create_by, modified_time, modified_by
   </sql>
     <sql id="Blob_Column_List">
     selected_context
@@ -260,7 +260,7 @@
     </update>
 
     <!--获取角色权限-->
-    <select id="getROlePermissionBySysKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    <select id="getROlePermissionBySysKey" parameterType="java.lang.String" resultMap="BaseResultMap">
         SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE role_id = #{roleId}
     </select>
 

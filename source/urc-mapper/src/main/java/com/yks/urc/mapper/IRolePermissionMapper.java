@@ -104,7 +104,7 @@ public interface IRolePermissionMapper {
      * @Author lwx
      * @Date 2018/11/2 10:41
      */
-    List<RolePermissionDO> getROlePermissionBySysKey(Long sysKey);
+    List<RolePermissionDO> getROlePermissionBySysKey(String sysKey);
     
     /**
      * Description: 根据sysKey删除系统对应的功能权限
