@@ -261,7 +261,7 @@
 
     <!--获取角色权限-->
     <select id="getROlePermissionBySysKey" parameterType="java.lang.String" resultMap="BaseResultMap">
-        SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE role_id = #{roleId}
+        SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE sys_key = #{sysKey}
     </select>
 
     <!--根据sysKey删除系统对应的功能权限-->
