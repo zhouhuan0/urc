@@ -43,6 +43,6 @@ public interface IPermissionService {
 	 * @Author lwx
 	 * @Date 2018/11/2 15:43
 	 */
-	ResultVO updateSysPermitNode(List<FuncTreeVO> funcTreeVOS);
+	ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO);
 
 }

@@ -30,5 +30,5 @@ public interface IFuncJsonTreeBp {
      * @Author lwx
      * @Date 2018/11/5 11:04
      */
-    ResultVO updateSysPermitNode(List<FuncTreeVO> funcTreeVOS);
+    ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO);
 }

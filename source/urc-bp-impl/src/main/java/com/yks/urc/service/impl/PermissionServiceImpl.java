@@ -326,11 +326,7 @@ public class PermissionServiceImpl implements IPermissionService {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO updateSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
-        // 找到和sysKey 相关的 权限
-        if (CollectionUtils.isEmpty(funcTreeVOS)) {
-            throw new URCBizException(ErrorCode.E_000002);
-        }
+    public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
         try {
             return funcJsonTreeBp.updateSysPermitNode(funcTreeVOS);
         } catch (Exception e) {

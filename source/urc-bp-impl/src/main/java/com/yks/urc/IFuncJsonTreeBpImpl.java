@@ -241,18 +241,17 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO updateSysPermitNode(List<FuncTreeVO> funcTreeVOS) {
+    public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
         // 找到和sysKey 相关的 权限
         try {
             List<RolePermissionDO> updatePermissions = new ArrayList<>();
-            funcTreeVOS.forEach(funcTreeVO -> {
                 if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                    return;
+                    return VoHelper.getSuccessResult();
                 }
                 //拿到所有和当前系统有关的角色和权限
                 List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
                 if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                    return;
+                    return VoHelper.getSuccessResult();
                 }
                 rolePermissionDOS.forEach(rolePermissionDO -> {
                     Boolean result;
@@ -284,7 +283,6 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                         updatePermissions.add(rolePermissionDO);
                     }
                 });
-            });
             updateRolePermissionAndRoleUser(updatePermissions);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
