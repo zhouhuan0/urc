@@ -725,7 +725,7 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO deleteSysPermitNode(String jsonStr) {
         JSONObject jsonObject =StringUtility.parseString(jsonStr);
-        FuncTreeVO funcTreeVO =StringUtility.parseObject(jsonObject.getJSONArray("data").toString(),FuncTreeVO.class);
+        FuncTreeVO funcTreeVO =StringUtility.parseObject(jsonObject.getJSONObject("data").toString(),FuncTreeVO.class);
         if (funcTreeVO == null){
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
