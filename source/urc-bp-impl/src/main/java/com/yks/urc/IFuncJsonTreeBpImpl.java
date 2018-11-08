@@ -121,7 +121,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             }
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
-            logger.error("删除节点失败,更新权限出错", e.getMessage());
+            logger.error("删除节点失败,更新权限出错", e);
             return VoHelper.getErrorResult();
         }
     }
