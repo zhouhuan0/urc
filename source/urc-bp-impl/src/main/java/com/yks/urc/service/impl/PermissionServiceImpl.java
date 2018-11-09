@@ -328,7 +328,7 @@ public class PermissionServiceImpl implements IPermissionService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
         try {
-            return funcJsonTreeBp.updateSysPermitNode(funcTreeVOS);
+            return funcJsonTreeBp.updateSysPermitNode(funcTreeVO);
         } catch (Exception e) {
             logger.error("删除节点失败,更新权限出错", e.getMessage());
         }
