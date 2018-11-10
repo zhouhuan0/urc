@@ -23,6 +23,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     private IUrcService service;
     private ResultVO resultVO;
     private Map map = new HashMap();
+    private Map dataMap = new HashMap();
     private String operator = "linwanxian";
     private int pageData = 20;
     private int pageNumber = 1;
@@ -492,11 +493,35 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void test_deleteNode(){
-
+        Set<String> delKeys =new HashSet<>();
+        delKeys.add("011-000001-000001-001");
+        dataMap.put("sysKey","011");
+        dataMap.put("delKeys",delKeys);
+        map.put("data",dataMap);
+        map.put("operator",operator);
+        String json =StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO=service.deleteSysPermitNode(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
     public void test_updateNode(){
-
+        dataMap.put("sysKey","011");
+       List<NodeVO> updateNode =new ArrayList<>();
+        NodeVO nodeVO =new NodeVO();
+        nodeVO.key="011-000001-000001-001";
+        nodeVO.name="查看";
+        nodeVO.url="";
+        updateNode.add(nodeVO);
+        dataMap.put("updateNode",updateNode);
+        map.put("data",dataMap);
+        map.put("operator",operator);
+        String json =StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO=service.updateSysPermitNode(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 }

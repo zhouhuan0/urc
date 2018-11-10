@@ -16,6 +16,7 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +40,9 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     private IUserRoleMapper userRoleMapper;
     @Autowired
     private IPermitStatBp permitStatBp;
+
+    @Autowired
+    private ISessionBp sessionBp;
 
     /**
      * 删除功能权限树节点
@@ -109,6 +113,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                         updateRolePermission.setRoleId(rolePermissionDO.getRoleId());
                         updateRolePermission.setSelectedContext(selectedContext);
                         updateRolePermission.setSysKey(rolePermissionDO.getSysKey());
+                        updateRolePermission.setModifiedTime(StringUtility.getDateTimeNow());
+                        updateRolePermission.setModifiedBy(sessionBp.getOperator());
                         updatePermissionMap.add(rolePermissionDO);
                     }
                     //说明key 已经删除完毕
@@ -168,18 +174,28 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      * @Date 2018/11/2 14:38
      */
     private void foreachModuleTree(List<ModuleVO> lstModule, Set<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(lstModule)) {
+        if (CollectionUtils.isEmpty(lstModule) || CollectionUtils.isEmpty(lstDeleteKey)) {
             return;
         }
-        for (int i = 0; i < lstModule.size(); i++) {
+     /*   for (int i = 0; i < lstModule.size(); i++) {
             if (lstDeleteKey.contains(lstModule.get(i).key)) {
                 lstModule.remove(i);
                 //key 已经删除成功
                 lstDeleteKey.remove(lstModule.get(i).key);
                 i--;
             }
-            foreachModuleTree(lstModule, lstDeleteKey);
+            foreachModuleTree(lstModule.get(i).module, lstDeleteKey);
             foreachFuncTree(lstModule.get(i).function, lstDeleteKey);
+        }*/
+        Iterator moduleTor = lstModule.iterator();
+        while (moduleTor.hasNext()) {
+            ModuleVO moduleVO = (ModuleVO) moduleTor.next();
+            if (lstDeleteKey.contains(moduleVO.key)) {
+                moduleTor.remove();
+                lstDeleteKey.remove(moduleVO.key);
+            }
+            foreachModuleTree(moduleVO.module, lstDeleteKey);
+            foreachFuncTree(moduleVO.function, lstDeleteKey);
         }
     }
 
@@ -192,10 +208,10 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      * @Date 2018/11/2 14:57
      */
     private void foreachFuncTree(List<FunctionVO> lstFunction, Set<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(lstFunction)) {
+        if (CollectionUtils.isEmpty(lstFunction) || CollectionUtils.isEmpty(lstDeleteKey)) {
             return;
         }
-        for (int i = 0; i < lstFunction.size(); i++) {
+    /*    for (int i = 0; i < lstFunction.size(); i++) {
             if (lstDeleteKey.contains(lstFunction.get(i).key)) {
                 lstFunction.remove(i);
                 //移除
@@ -203,7 +219,23 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                 i--;
             }
             foreachFuncTree(lstFunction.get(i).function, lstDeleteKey);
+        }*/
+        Iterator funcTor =lstFunction.iterator();
+        while (funcTor.hasNext()){
+            FunctionVO functionVO = (FunctionVO) funcTor.next();
+            if (lstDeleteKey.contains(functionVO.key)){
+                funcTor.remove();
+                lstDeleteKey.remove(functionVO.key);
+            }
+            foreachFuncTree(functionVO.function,lstDeleteKey);
         }
+       /* lstFunction.forEach(functionVO -> {
+            if (lstDeleteKey.contains(functionVO.key)){
+                lstFunction.remove(functionVO.key);
+                lstDeleteKey.remove(functionVO.key);
+            }
+            foreachFuncTree(functionVO.function, lstDeleteKey);
+        });*/
     }
 
     /**
@@ -215,18 +247,28 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      * @Date 2018/11/2 11:19
      */
     private Boolean foreachMenuTree(SystemRootVO systemRootVO, Set<String> lstDeleteKey) {
-        if (CollectionUtils.isEmpty(systemRootVO.menu)) {
+        if (CollectionUtils.isEmpty(systemRootVO.menu) || CollectionUtils.isEmpty(lstDeleteKey)) {
             return false;
         }
-        for (int i = 0; i < systemRootVO.menu.size(); i++) {
-            if (lstDeleteKey.contains(systemRootVO.menu.get(i).key)) {
-                systemRootVO.menu.remove(i);
-                //key 也移除掉
-                lstDeleteKey.remove(systemRootVO.menu.get(i).key);
-                i--;
-            } else {
-                foreachModuleTree(systemRootVO.menu.get(i).module, lstDeleteKey);
+ /*     systemRootVO.menu.forEach(menuVO -> {
+          if (lstDeleteKey.contains(menuVO.key)) {
+              systemRootVO.menu.remove(menuVO.key);
+              //key 也移除掉
+              lstDeleteKey.remove(menuVO.key);
+          } else {
+              foreachModuleTree(menuVO.module, lstDeleteKey);
+          }
+      });*/
+        Iterator menuTor =systemRootVO.menu.iterator();
+        while (menuTor.hasNext()){
+            MenuVO menuVO = (MenuVO) menuTor.next();
+            if (lstDeleteKey.contains(menuVO.key)){
+                menuTor.remove();
+                lstDeleteKey.remove(menuVO.key);
+            }else {
+                foreachModuleTree(menuVO.module,lstDeleteKey);
             }
+
         }
         return true;
     }

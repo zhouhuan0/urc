@@ -713,7 +713,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
-    @Log("获取指定平台下的账号站点 数据权限")
+    @Log("获取指定平台下的账号站点数据权限")
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json) {
         JSONObject jsonObject = StringUtility.parseString(json);
         String operator = MotanSession.getRequest().getOperator();

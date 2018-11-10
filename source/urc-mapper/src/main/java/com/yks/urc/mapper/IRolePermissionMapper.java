@@ -80,7 +80,7 @@ public interface IRolePermissionMapper {
      */
     List<String> getSysKetByRoleAndUserName(@Param("userName") String userName);
     /**
-     * 根据roleId 更新角色的功能权限
+     * 根据roleId 和 sysKey 更新角色的功能权限
      * @param  rolePermissionDO
      * @return
      * @Author linwanxian@youkeshu.com
