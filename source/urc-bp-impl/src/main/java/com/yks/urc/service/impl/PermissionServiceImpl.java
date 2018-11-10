@@ -310,7 +310,7 @@ public class PermissionServiceImpl implements IPermissionService {
         try {
             return funcJsonTreeBp.deleteSysPermitNode(funcTreeVO);
         } catch (Exception e) {
-            logger.error("删除节点失败,失败原因:", e.getMessage());
+            logger.error("删除节点失败,失败原因:", e);
         }
         return null;
     }
