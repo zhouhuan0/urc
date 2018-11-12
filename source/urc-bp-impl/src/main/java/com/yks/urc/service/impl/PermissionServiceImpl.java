@@ -13,6 +13,7 @@ import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.mapper.IUserPermitStatMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
@@ -78,6 +79,9 @@ public class PermissionServiceImpl implements IPermissionService {
     @Autowired
     IFuncJsonTreeBp funcJsonTreeBp;
 
+    @Autowired
+    private IRoleService roleService;
+
     @Transactional
     @Override
     public ResultVO importSysPermit(String jsonStr) {
@@ -134,6 +138,8 @@ public class PermissionServiceImpl implements IPermissionService {
                     cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
                     //更新API前缀
                     this.updateApiPrefixCache();
+                    //更新角色权限
+                    if (updateRolePermissionAndCache(p)){ continue;}
 
                 }
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
@@ -148,6 +154,28 @@ public class PermissionServiceImpl implements IPermissionService {
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
         return rslt;
+    }
+
+    /**
+     *  更新角色的权限, 角色下的用户 和缓存
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/12 12:00
+     */
+    private boolean updateRolePermissionAndCache(PermissionDO p) {
+        List<RolePermissionDO> rolePermissionDOS =rolePermissionMapper.getROlePermissionBySysKey(p.getSysKey());
+        if (CollectionUtils.isEmpty(rolePermissionDOS)){
+            return true;
+        }
+        rolePermissionDOS.forEach(rolePermissionDO -> {
+            if (rolePermissionDO.getRoleId() == null){
+                return;
+            }
+            //更新角色对应的权限,用户,缓存等
+            roleService.assignAllPermit2Role(rolePermissionDO.getRoleId());
+        });
+        return false;
     }
 
     @Override

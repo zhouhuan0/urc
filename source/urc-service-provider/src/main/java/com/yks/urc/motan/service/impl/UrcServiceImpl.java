@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.CollectionUtils;
 
@@ -547,7 +548,12 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     @Log("通过roleId 更新角色的权限和缓存")
     public ResultVO assignAllPermit2Role(String jsonStr) {
-        return roleService.assignAllPermit2Role();
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String roleId =jsonObject.getString("roleId");
+        if (StringUtils.isEmpty(roleId)){
+            return VoHelper.getErrorResult(ErrorCode.E_000002.getState(),ErrorCode.E_000002.getMsg());
+        }
+        return roleService.assignAllPermit2Role(Long.valueOf(roleId));
     }
 
     @Override

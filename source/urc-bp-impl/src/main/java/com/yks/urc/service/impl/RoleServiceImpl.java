@@ -1052,8 +1052,10 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     @Transactional
-    public ResultVO assignAllPermit2Role() {
-        Long roleId = sessionBp.getLong("roleId");
+    public ResultVO assignAllPermit2Role(Long roleId) {
+        if (roleId ==null){
+            throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);
+        }
         RoleDO roleFromDb = roleMapper.getRoleByRoleId(String.valueOf(roleId));
         if (roleFromDb == null){ throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);}
         List<RolePermissionDO> lstRolePermit = new ArrayList<>();
