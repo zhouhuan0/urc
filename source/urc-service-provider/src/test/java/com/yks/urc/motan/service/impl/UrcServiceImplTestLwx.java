@@ -494,9 +494,9 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void test_deleteNode(){
         Set<String> delKeys =new HashSet<>();
-        delKeys.add("011-000001-000001-001");
+       // delKeys.add("011-000001-000001-001");
         dataMap.put("sysKey","011");
-        dataMap.put("delKeys",delKeys);
+        //dataMap.put("delKeys",delKeys);
         map.put("data",dataMap);
         map.put("operator",operator);
         String json =StringUtility.toJSONString(map);

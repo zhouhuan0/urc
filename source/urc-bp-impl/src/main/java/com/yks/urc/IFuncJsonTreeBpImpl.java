@@ -74,7 +74,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             // List<RolePermissionDO> updatePermissionS =new ArrayList<>();
             List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
             if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                return VoHelper.getSuccessResult();
+                return VoHelper.getSuccessResult("无关联角色需要处理");
             }
             //sysKey不为空且delKeys为空时，删除sysKey系统的所有功能权限
             if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
@@ -321,7 +321,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             //拿到所有和当前系统有关的角色和权限
             List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
             if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                return VoHelper.getSuccessResult();
+                return VoHelper.getSuccessResult("无关联角色需要处理");
             }
             rolePermissionDOS.forEach(rolePermissionDO -> {
                 Boolean result;
