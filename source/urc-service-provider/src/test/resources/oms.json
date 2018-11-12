@@ -45,12 +45,12 @@
                     "show": 1,
                     "url": "/console/messagenotification/"
                 }],
-            "name": "工作台2",
+            "name": "工作台_test",
             "url": "/console/"
         }],
         "system": {
             "key": "012",
-            "name": "工作台2",
+            "name": "工作台_test",
             "url": "/console/"
         },
         "apiUrlPrefix": [ "/listing/base/"]

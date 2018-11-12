@@ -499,7 +499,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void test_deleteNode(){
         Set<String> delKeys =new HashSet<>();
        // delKeys.add("011-000001-000001-001");
-        dataMap.put("sysKey","011");
+        dataMap.put("sysKey","012");
         //dataMap.put("delKeys",delKeys);
         map.put("data",dataMap);
         map.put("operator",operator);
@@ -512,11 +512,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void test_updateNode(){
-        dataMap.put("sysKey","011");
+        dataMap.put("sysKey","001");
        List<NodeVO> updateNode =new ArrayList<>();
         NodeVO nodeVO =new NodeVO();
-        nodeVO.key="011-000001-000001-001";
-        nodeVO.name="查看";
+        nodeVO.key="001-000003";
+        nodeVO.name="包裹订单_test";
         nodeVO.url="";
         updateNode.add(nodeVO);
         dataMap.put("updateNode",updateNode);

@@ -122,7 +122,10 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                     }
                     //组装系统定义树
                     updatePermission.setSysKey(rolePermissionDO.getSysKey());
-                    updatePermission.setSysName(rolePermissionDO.getSysName());
+                    String systemName=permissionMapper.getSysNameByKey(rolePermissionDO.getSysKey());
+                    if (StringUtils.isNotEmpty(systemName)){
+                        updatePermission.setSysName(systemName);
+                    }
                     updatePermission.setSysContext(selectedContext);
                     updatePermission.setModifiedBy(sessionBp.getOperator());
                     updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
@@ -349,7 +352,10 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                 }
                 //组装需要更新的数据
                 updatePermissionDO.setSysKey(rolePermissionDO.getSysKey());
-                updatePermissionDO.setSysName(rolePermissionDO.getSysName());
+                String systemName =permissionMapper.getSysNameByKey(rolePermissionDO.getSysKey());
+                if (StringUtils.isNotEmpty(systemName)){
+                    updatePermissionDO.setSysName(systemName);
+                }
                 updatePermissionDO.setSysContext(selectedContext);
                 updatePermissionDO.setModifiedBy(sessionBp.getOperator());
                 updatePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
