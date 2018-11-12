@@ -121,12 +121,13 @@
 		SELECT sys_key, sys_context FROM  urc_permission 
     </select>
 
- <!--   <update id="updateSysContextBySysKey">
+    <update id="updateSysContextBySysKey">
         update urc_permission
         set sys_name =#{sysName},api_url_prefix_json =#{apiUrlPrefixJson}, sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3)
         where sys_key=#{sysKey}
-    </update>-->
-    <update id="updateSysContextBySysKey">
+    </update>
+
+    <update id="updateSysContextBySysKeyCondition">
         update urc_permission
         <set>
             <if test="sysName != null and sysName !=''">
@@ -145,6 +146,7 @@
         </set>
         where sys_key=#{sysKey}
     </update>
+
     <select id="perMissionMap" resultType="com.yks.urc.entity.PermissionDO">
         select sys_key,sys_name from urc_permission
     </select>

@@ -174,7 +174,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         List<String> roleIds = new ArrayList<>();
         updatePermissionDOS.forEach(permissionDO -> {
             //更新系统定义表
-            permissionMapper.updateSysContextBySysKey(permissionDO);
+            permissionMapper.updateSysContextBySysKeyCondition(permissionDO);
         });
         updatePermissions.forEach(rolePermissionDO -> {
             //更新权限树
