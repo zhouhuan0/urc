@@ -311,6 +311,6 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     * @Date 2018/9/4 16:54
     */
     private Cache getPlatformShopCache(String platformShopKey) {
-        return getCache(platformShopKey,120);
+        return getCache(platformShopKey,7200);
     }
 }
