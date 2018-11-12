@@ -126,6 +126,10 @@ public class PermissionServiceImpl implements IPermissionService {
 
                 // 更新缓存
                 for (PermissionDO p : lstPermit) {
+                    //更新定义表
+                    if (p==null){
+                        continue;
+                    }
                     PermissionDO pFromDb = permissionMapper.getPermission(p.getSysKey());
                     if (pFromDb == null) {
                         // insert
@@ -138,7 +142,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
                     //更新API前缀
                     this.updateApiPrefixCache();
-                    //更新角色权限
+                    //更新角色的权限, 角色下的用户 和缓存
                     if (updateRolePermissionAndCache(p)){ continue;}
 
                 }
@@ -168,13 +172,35 @@ public class PermissionServiceImpl implements IPermissionService {
         if (CollectionUtils.isEmpty(rolePermissionDOS)){
             return true;
         }
+        List<Long> roleIds =new ArrayList<>();
         rolePermissionDOS.forEach(rolePermissionDO -> {
             if (rolePermissionDO.getRoleId() == null){
                 return;
             }
             //更新角色对应的权限,用户,缓存等
-            roleService.assignAllPermit2Role(rolePermissionDO.getRoleId());
+            RolePermissionDO updatePermission =new RolePermissionDO();
+            updatePermission.setSysKey(rolePermissionDO.getSysKey());
+            updatePermission.setRoleId(rolePermissionDO.getRoleId());
+            updatePermission.setSelectedContext(p.getSysContext());
+            updatePermission.setModifiedBy(sessionBp.getOperator());
+            updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
+            rolePermissionMapper.updateUserRoleByRoleId(updatePermission);
+            //获取所关联的角色id
+            roleIds.add(rolePermissionDO.getRoleId());
         });
+        //去重
+        roleIds.stream().distinct();
+        Map dataMap =new HashMap();
+        dataMap.put("roleIds", roleIds);
+        /*3、获取roleIds角色对应的用户名*/
+        logger.info(String.format("获取的角色id为%s", roleIds));
+        if (CollectionUtils.isEmpty(roleIds)) {
+            logger.info("roleID 的集合为空");
+        }
+        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        logger.info(String.format("获取的用户名为%s", userNames));
+    /*4、更新用户操作权限冗余表和缓存*/
+        permitStatBp.updateUserPermitCache(userNames);
         return false;
     }
 

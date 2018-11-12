@@ -140,6 +140,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void importSysPermit() throws Exception {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+        MotanSession.initialSession(strJson1);
+        resultVO =service.importSysPermit(strJson1);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -147,7 +151,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         map.put("operator","huanghongfei");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
-        service.getUserAuthorizablePermission(json);
+        resultVO=service.getUserAuthorizablePermission(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 

@@ -1,31 +1,58 @@
 {
-    "operator":"panyun",
-    "pwd":"com.yks.urc.123456",
-    "ticket":"f96d0e4d01701baf0a1773c0095314de",
-    "data":[
-        {
-            "system": {
-                "key": "000",
-                "name": "首页",
-                "url": "/"
+    "operator": "panyun",
+    "pwd": "com.yks.urc.123456",
+    "ticket": "f96d0e4d01701baf0a1773c0095314de",
+    "data": [{
+        "menu": [{
+            "key": "010-000001",
+            "module": [{
+                "function": [{
+                    "key": "011-000001-000001-001",
+                    "name": "查看"
+                },
+                    {
+                        "key": "011-000001-000001-002",
+                        "name": "待审批的订单/查看"
+                    },
+                    {
+                        "key": "011-000001-000001-003",
+                        "name": "待核查的任务/查看"
+                    }],
+                "key": "011-000001-000001",
+                "module": [],
+                "name": "我的待办",
+                "pageFullPathName": "",
+                "show": 1,
+                "url": "/console/myupcoming/"
             },
-            "menu": [
                 {
-                    "key": "000-000001",
-                    "name": "首页",
-                    "url": "/",
-                    "module": [
+                    "function": [{
+                        "key": "011-000001-000002-001",
+                        "name": "查看"
+                    },
                         {
-                            "key": "000-000001-000001",
-                            "name": "数据走势",
-                            "url": "/",
-                            "show": 1,
-                            "function": [],
-                            "module": []
-                        }
-                    ]
-                }
-            ]
-        }
-    ]
+                            "key": "011-000001-000002-002",
+                            "name": "我收到的消息/查看"
+                        },
+                        {
+                            "key": "011-000001-000002-003",
+                            "name": "我发出的消息/查看"
+                        }],
+                    "key": "011-000001-000002",
+                    "module": [],
+                    "name": "消息通知",
+                    "pageFullPathName": "",
+                    "show": 1,
+                    "url": "/console/messagenotification/"
+                }],
+            "name": "工作台2",
+            "url": "/console/"
+        }],
+        "system": {
+            "key": "012",
+            "name": "工作台2",
+            "url": "/console/"
+        },
+        "apiUrlPrefix": [ "/listing/base/"]
+    }]
 }
