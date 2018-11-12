@@ -136,4 +136,9 @@
         SELECT sys_name FROM urc_permission WHERE  sys_key=#{sysKey}
     </select>
 
+    <!--根据key删除系统-->
+    <delete id="deleteSysPermissionBySysKey" parameterType="java.lang.String" >
+        DELETE FROM urc_permission WHERE  sys_key=#{sysKey}
+    </delete>
+
 </mapper>

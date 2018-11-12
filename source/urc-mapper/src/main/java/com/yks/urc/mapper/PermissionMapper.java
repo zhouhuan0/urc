@@ -102,5 +102,13 @@ public interface PermissionMapper {
      * @Date 2018/8/13 15:07
      */
     String getSysNameByKey(String sysKey);
+    /**
+     *  根据 sysKey 删除权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/12 10:06
+     */
+    int deleteSysPermissionBySysKey(String sysKey);
 
 }
