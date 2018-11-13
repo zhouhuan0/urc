@@ -518,11 +518,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void test_updateNode(){
-        dataMap.put("sysKey","001");
+        dataMap.put("sysKey","015");
        List<NodeVO> updateNode =new ArrayList<>();
         NodeVO nodeVO =new NodeVO();
-        nodeVO.key="001-000003";
-        nodeVO.name="包裹订单_test";
+        nodeVO.key="015-000002";
+        nodeVO.name="基础设置_test222";
         nodeVO.url="";
         updateNode.add(nodeVO);
         dataMap.put("updateNode",updateNode);

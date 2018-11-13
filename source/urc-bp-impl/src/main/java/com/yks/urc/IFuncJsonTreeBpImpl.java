@@ -466,7 +466,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                 updatePermission.setModifiedBy(sessionBp.getOperator());
                 updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
                 if (updatePermission != null) {
-                    updateRolePermissions.add(rolePermissionDO);
+                    updateRolePermissions.add(updatePermission);
                 }
             }
         });
