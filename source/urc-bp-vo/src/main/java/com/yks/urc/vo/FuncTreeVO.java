@@ -21,4 +21,5 @@ public class FuncTreeVO implements Serializable{
     public String sysKey;
 
     public List<NodeVO> updateNode;
+
 }

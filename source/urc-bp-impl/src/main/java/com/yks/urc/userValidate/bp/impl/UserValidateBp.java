@@ -598,7 +598,7 @@ public class UserValidateBp implements IUserValidateBp {
 		if (!strSysFuncJson.contains(String.format("%s%s%s", "\"", apiUrl, "\"")))
 			return true;
 
-		// 获取用户当前业务系统的funcJson
+		// 获取用户当前业务系统的funcJson, 若本身没有权限,返回NA
 		String strCurUserFuncJson = cacheBp.getFuncJson(operator, sysKey);
 		if (strCurUserFuncJson == null)
 			return false;

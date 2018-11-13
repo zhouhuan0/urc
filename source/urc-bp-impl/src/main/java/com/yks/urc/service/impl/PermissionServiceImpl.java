@@ -142,8 +142,8 @@ public class PermissionServiceImpl implements IPermissionService {
                     cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
                     //更新API前缀
                     this.updateApiPrefixCache();
-                    //更新角色的权限, 角色下的用户 和缓存
-                    if (updateRolePermissionAndCache(p)){ continue;}
+                   /* //更新角色的权限, 角色下的用户 和缓存
+                    if (updateRolePermissionAndCache(p)){ continue;}*/
 
                 }
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);

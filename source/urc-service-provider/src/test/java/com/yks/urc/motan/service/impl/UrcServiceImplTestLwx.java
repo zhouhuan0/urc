@@ -320,6 +320,12 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void assignAllPermit2Role() throws Exception {
+        map.put("roleId","1529635932385000001");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        System.out.println(json);
+        resultVO = service.assignAllPermit2Role(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -498,9 +504,9 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void test_deleteNode(){
         Set<String> delKeys =new HashSet<>();
-       // delKeys.add("011-000001-000001-001");
-        dataMap.put("sysKey","012");
-        //dataMap.put("delKeys",delKeys);
+        delKeys.add("015-000001");
+        dataMap.put("sysKey","015");
+        dataMap.put("delKeys",delKeys);
         map.put("data",dataMap);
         map.put("operator",operator);
         String json =StringUtility.toJSONString(map);
