@@ -22,6 +22,7 @@ import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,64 +67,110 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             Boolean result;
             // sysKey, 角色
             List<RolePermissionDO> updatePermissionMap = new ArrayList<>();
-            if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
-            }
-            //更新系统菜单树 ,复制源数据
-            foreachUpdateSysRootVo(funcTreeVO);
-
-            //拿到所有和当前系统有关的角色和权限
-            List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
-            if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                return VoHelper.getSuccessResult("无关联角色需要处理");
-            }
-            //sysKey不为空且delKeys为空时，删除sysKey系统的所有功能权限
-            if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
-                //删除对应的系统
-                if (deleteSystemFuncBykey(funcTreeVO, rolePermissionDOS)){ return VoHelper.getSuccessResult();}
-
-            } else {
-                for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
-                    RolePermissionDO updateRolePermission = new RolePermissionDO();
-                    if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
-                        continue;
-                    }
-                    //遍历 json 树,删除节点
-                    SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
-                    if (systemRootVO == null) {
-                        logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
-                        throw new URCBizException("数据转换异常,异常的角色为", String.valueOf(rolePermissionDO.getRoleId()));
-                    }
-                    //遍历删除menu
-                    result = this.foreachMenuTree(systemRootVO, funcTreeVO.delKeys);
-                    //节点删除后,在转化为 json 权限树.入库
-                    String selectedContext = StringUtility.toJSONString(systemRootVO);
-                    if (StringUtils.isEmpty(selectedContext)) {
-                        logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
-                        continue;
-                    }
-                    if (result == false) {
-                        continue;
-                    }
-                    if (rolePermissionDO.getRoleId() != null) {
-                        // 已删除完成, 收集受影响的角色id , 组装角色权限
-                        updateRolePermission.setRoleId(rolePermissionDO.getRoleId());
-                        updateRolePermission.setSelectedContext(selectedContext);
-                        updateRolePermission.setSysKey(rolePermissionDO.getSysKey());
-                        updateRolePermission.setModifiedTime(StringUtility.getDateTimeNow());
-                        updateRolePermission.setModifiedBy(sessionBp.getOperator());
-                        if (updateRolePermission != null) {
-                            updatePermissionMap.add(rolePermissionDO);
-                        }
-                    }
-                }
-                updateRolePermissionAndRoleUser(updatePermissionMap);
-            }
+            // 递归删除角色下的功能权限树, 组装需要更新的数据
+            ResultVO x = deleteUrcPermission(funcTreeVO, updatePermissionMap);
+            if (x != null) return x;
+            updateRolePermissionAndRoleUser(updatePermissionMap);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             logger.error("删除节点失败,更新权限出错", e);
             return VoHelper.getErrorResult();
         }
+    }
+
+    /**
+     * 修改功能权限节点树
+     *
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 15:46
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
+        // 找到和sysKey 相关的 权限
+        try {
+            List<RolePermissionDO> updateRolePermissions = new ArrayList<>();
+            if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
+                return VoHelper.getSuccessResult();
+            }
+            //更新系统定义树
+            udateSysRootVo(funcTreeVO);
+            // 更新角色的功能权限,组装需要更新的数据
+            if (updateUrcRoleSysContext(funcTreeVO, updateRolePermissions)){ return VoHelper.getSuccessResult("无关联角色需要处理");}
+
+            updateRolePermissionAndRoleUser(updateRolePermissions);
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            logger.error("删除节点失败,更新权限出错", e.getMessage());
+            return VoHelper.getErrorResult();
+        }
+    }
+
+    /**
+     *   递归json 树 删除角色下的功能权限,组装需要处理的数据
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/13 14:45
+     */
+    @Nullable
+    private ResultVO deleteUrcPermission(FuncTreeVO funcTreeVO, List<RolePermissionDO> updatePermissionMap) {
+        Boolean result;
+        if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        //更新系统菜单树 ,复制源数据
+        foreachDeleteUpateSysRootVo(funcTreeVO);
+
+        //拿到所有和当前系统有关的角色和权限
+        List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
+        if (CollectionUtils.isEmpty(rolePermissionDOS)) {
+            return VoHelper.getSuccessResult("无关联角色需要处理");
+        }
+        //sysKey不为空且delKeys为空时，删除sysKey系统的所有功能权限
+        if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
+            //删除对应的系统
+            if (deleteSystemFuncBykey(funcTreeVO, rolePermissionDOS)){ return VoHelper.getSuccessResult();}
+
+        } else {
+            for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
+                RolePermissionDO updateRolePermission = new RolePermissionDO();
+                if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
+                    continue;
+                }
+                //遍历 json 树,删除节点
+                SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
+                if (systemRootVO == null) {
+                    logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
+                    throw new URCBizException("数据转换异常,异常的角色为", String.valueOf(rolePermissionDO.getRoleId()));
+                }
+                //遍历删除menu
+                result = this.foreachMenuTree(systemRootVO, funcTreeVO.delKeys);
+                //节点删除后,在转化为 json 权限树.入库
+                String selectedContext = StringUtility.toJSONString(systemRootVO);
+                if (StringUtils.isEmpty(selectedContext)) {
+                    logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
+                    continue;
+                }
+                if (result == false) {
+                    continue;
+                }
+                if (rolePermissionDO.getRoleId() != null) {
+                    // 已删除完成, 收集受影响的角色id , 组装角色权限
+                    updateRolePermission.setRoleId(rolePermissionDO.getRoleId());
+                    updateRolePermission.setSelectedContext(selectedContext);
+                    updateRolePermission.setSysKey(rolePermissionDO.getSysKey());
+                    updateRolePermission.setModifiedTime(StringUtility.getDateTimeNow());
+                    updateRolePermission.setModifiedBy(sessionBp.getOperator());
+                    if (updateRolePermission != null) {
+                        updatePermissionMap.add(rolePermissionDO);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -162,7 +209,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      * @Author lwx
      * @Date 2018/11/13 9:27
      */
-    private void foreachUpdateSysRootVo(FuncTreeVO funcTreeVO) {
+    private void foreachDeleteUpateSysRootVo(FuncTreeVO funcTreeVO) {
         //拿到所有的系统定义树
         PermissionDO permissionDO =permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
         //组装系统定义树
@@ -175,6 +222,44 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             }
             this.foreachMenuTree(systemRootVO,funcTreeVO.delKeys);
             //节点删除后,在转化为 json 权限树.入库
+            String sysContext = StringUtility.toJSONString(systemRootVO);
+            if (StringUtils.isEmpty(sysContext)) {
+                logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]",StringUtility.toJSONString(systemRootVO));
+                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",StringUtility.toJSONString(systemRootVO)));
+            }
+            PermissionDO updatePermission =new PermissionDO();
+            updatePermission.setSysKey(permissionDO.getSysKey());
+            String systemName=permissionMapper.getSysNameByKey(permissionDO.getSysKey());
+            if (StringUtils.isNotEmpty(systemName)){
+                updatePermission.setSysName(systemName);
+            }
+            updatePermission.setSysContext(sysContext);
+            updatePermission.setModifiedBy(sessionBp.getOperator());
+            updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
+            permissionMapper.updateSysContextBySysKeyCondition(updatePermission);
+        }
+    }
+
+    /**
+     *  更新系统菜单树
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/13 9:27
+     */
+    private void udateSysRootVo(FuncTreeVO funcTreeVO) {
+        //拿到所有的系统定义树
+        PermissionDO permissionDO =permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
+        //组装系统定义树
+        if (StringUtils.isNotEmpty(permissionDO.getSysContext())){
+            //遍历 json 树,修改节点
+            SystemRootVO systemRootVO = StringUtility.parseObject(permissionDO.getSysContext(), SystemRootVO.class);
+            if (systemRootVO ==null){
+                logger.error("json树转换systemRootVO转失败",permissionDO.getSysContext());
+                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",permissionDO.getSysContext()));
+            }
+            this.updateMenuValue(systemRootVO,funcTreeVO.updateNode);
+            //节点修改后,在转化为 json 权限树.入库
             String sysContext = StringUtility.toJSONString(systemRootVO);
             if (StringUtils.isEmpty(sysContext)) {
                 logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]",StringUtility.toJSONString(systemRootVO));
@@ -335,72 +420,57 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         return true;
     }
 
+
+
     /**
-     * 修改功能权限节点树
-     *
+     *  递归json 树, 更新角色下的功能权限,组装需要更新的数据
      * @param
      * @return
      * @Author lwx
-     * @Date 2018/11/2 15:46
+     * @Date 2018/11/13 14:41
      */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
-        // 找到和sysKey 相关的 权限
-        try {
-            List<RolePermissionDO> updateRolePermissions = new ArrayList<>();
-            if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
-                return VoHelper.getSuccessResult();
-            }
-            //更新系统定义树,复制源数据
-            foreachUpdateSysRootVo(funcTreeVO);
-
-            //拿到所有和当前系统有关的角色和权限
-            List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
-            if (CollectionUtils.isEmpty(rolePermissionDOS)) {
-                return VoHelper.getSuccessResult("无关联角色需要处理");
-            }
-            rolePermissionDOS.forEach(rolePermissionDO -> {
-                Boolean result;
-                RolePermissionDO updatePermission = new RolePermissionDO();
-                if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
-                    return;
-                }
-                //遍历 json 树, 修改节点
-                SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
-                if (systemRootVO == null) {
-                    logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
-                    return;
-                }
-                //修改节点
-                result = updateMenuValue(systemRootVO, funcTreeVO.updateNode);
-                //将得到的结果再转为json
-                String selectedContext = StringUtility.toJSONString(systemRootVO);
-                if (StringUtils.isEmpty(selectedContext)) {
-                    logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
-                    return;
-                }
-                if (result == false) {
-                    return;
-                }
-                if (rolePermissionDO.getRoleId() != null) {
-                    //更新角色 权限
-                    updatePermission.setSelectedContext(selectedContext);
-                    updatePermission.setRoleId(rolePermissionDO.getRoleId());
-                    updatePermission.setSysKey(rolePermissionDO.getSysKey());
-                    updatePermission.setModifiedBy(sessionBp.getOperator());
-                    updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
-                    if (updatePermission != null) {
-                        updateRolePermissions.add(rolePermissionDO);
-                    }
-                }
-            });
-            updateRolePermissionAndRoleUser(updateRolePermissions);
-            return VoHelper.getSuccessResult();
-        } catch (Exception e) {
-            logger.error("删除节点失败,更新权限出错", e.getMessage());
-            return VoHelper.getErrorResult();
+    private boolean updateUrcRoleSysContext(FuncTreeVO funcTreeVO, List<RolePermissionDO> updateRolePermissions) {
+        //拿到所有和当前系统有关的角色和权限
+        List<RolePermissionDO> rolePermissionDOS = rolePermissionMapper.getROlePermissionBySysKey(funcTreeVO.sysKey);
+        if (CollectionUtils.isEmpty(rolePermissionDOS)) {
+            return true;
         }
+        rolePermissionDOS.forEach(rolePermissionDO -> {
+            Boolean result;
+            RolePermissionDO updatePermission = new RolePermissionDO();
+            if (StringUtils.isEmpty(rolePermissionDO.getSelectedContext())) {
+                return;
+            }
+            //遍历 json 树, 修改节点
+            SystemRootVO systemRootVO = StringUtility.parseObject(rolePermissionDO.getSelectedContext(), SystemRootVO.class);
+            if (systemRootVO == null) {
+                logger.error("json 树转换失败", rolePermissionDO.getSelectedContext());
+                return;
+            }
+            //修改节点
+            result = updateMenuValue(systemRootVO, funcTreeVO.updateNode);
+            //将得到的结果再转为json
+            String selectedContext = StringUtility.toJSONString(systemRootVO);
+            if (StringUtils.isEmpty(selectedContext)) {
+                logger.error("systemRootVO　转 json 失败,失败的roleId为[%s]", rolePermissionDO.getRoleId());
+                return;
+            }
+            if (result == false) {
+                return;
+            }
+            if (rolePermissionDO.getRoleId() != null) {
+                //更新角色 权限
+                updatePermission.setSelectedContext(selectedContext);
+                updatePermission.setRoleId(rolePermissionDO.getRoleId());
+                updatePermission.setSysKey(rolePermissionDO.getSysKey());
+                updatePermission.setModifiedBy(sessionBp.getOperator());
+                updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
+                if (updatePermission != null) {
+                    updateRolePermissions.add(rolePermissionDO);
+                }
+            }
+        });
+        return false;
     }
 
     /**
