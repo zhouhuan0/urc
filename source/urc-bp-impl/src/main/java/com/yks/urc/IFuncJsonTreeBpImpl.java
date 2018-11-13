@@ -98,7 +98,9 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             //更新系统定义树
             udateSysRootVo(funcTreeVO);
             // 更新角色的功能权限,组装需要更新的数据
-            if (updateUrcRoleSysContext(funcTreeVO, updateRolePermissions)){ return VoHelper.getSuccessResult("无关联角色需要处理");}
+            if (updateUrcRoleSysContext(funcTreeVO, updateRolePermissions)) {
+                return VoHelper.getSuccessResult("无关联角色需要处理");
+            }
 
             updateRolePermissionAndRoleUser(updateRolePermissions);
             return VoHelper.getSuccessResult();
@@ -109,7 +111,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     }
 
     /**
-     *   递归json 树 删除角色下的功能权限,组装需要处理的数据
+     * 递归json 树 删除角色下的功能权限,组装需要处理的数据
+     *
      * @param
      * @return
      * @Author lwx
@@ -132,7 +135,9 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         //sysKey不为空且delKeys为空时，删除sysKey系统的所有功能权限
         if (CollectionUtils.isEmpty(funcTreeVO.delKeys)) {
             //删除对应的系统
-            if (deleteSystemFuncBykey(funcTreeVO, rolePermissionDOS)){ return VoHelper.getSuccessResult();}
+            if (deleteSystemFuncBykey(funcTreeVO, rolePermissionDOS)) {
+                return VoHelper.getSuccessResult();
+            }
 
         } else {
             for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
@@ -174,7 +179,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     }
 
     /**
-     *   删除对应系统的数据
+     * 删除对应系统的数据
+     *
      * @param
      * @return
      * @Author lwx
@@ -203,7 +209,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     }
 
     /**
-     *  更新系统菜单树
+     * 更新系统菜单树
+     *
      * @param
      * @return
      * @Author lwx
@@ -211,26 +218,26 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      */
     private void foreachDeleteUpateSysRootVo(FuncTreeVO funcTreeVO) {
         //拿到所有的系统定义树
-        PermissionDO permissionDO =permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
+        PermissionDO permissionDO = permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
         //组装系统定义树
-        if (StringUtils.isNotEmpty(permissionDO.getSysContext())){
+        if (StringUtils.isNotEmpty(permissionDO.getSysContext())) {
             //遍历 json 树,删除节点
             SystemRootVO systemRootVO = StringUtility.parseObject(permissionDO.getSysContext(), SystemRootVO.class);
-            if (systemRootVO ==null){
-                logger.error("json树转换systemRootVO转失败",permissionDO.getSysContext());
-                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",permissionDO.getSysContext()));
+            if (systemRootVO == null) {
+                logger.error("json树转换systemRootVO转失败", permissionDO.getSysContext());
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("json树转换systemRootVO转失败:失败的json[%s]", permissionDO.getSysContext()));
             }
-            this.foreachMenuTree(systemRootVO,funcTreeVO.delKeys);
+            this.foreachMenuTree(systemRootVO, funcTreeVO.delKeys);
             //节点删除后,在转化为 json 权限树.入库
             String sysContext = StringUtility.toJSONString(systemRootVO);
             if (StringUtils.isEmpty(sysContext)) {
-                logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]",StringUtility.toJSONString(systemRootVO));
-                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",StringUtility.toJSONString(systemRootVO)));
+                logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]", StringUtility.toJSONString(systemRootVO));
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("json树转换systemRootVO转失败:失败的json[%s]", StringUtility.toJSONString(systemRootVO)));
             }
-            PermissionDO updatePermission =new PermissionDO();
+            PermissionDO updatePermission = new PermissionDO();
             updatePermission.setSysKey(permissionDO.getSysKey());
-            String systemName=permissionMapper.getSysNameByKey(permissionDO.getSysKey());
-            if (StringUtils.isNotEmpty(systemName)){
+            String systemName = permissionMapper.getSysNameByKey(permissionDO.getSysKey());
+            if (StringUtils.isNotEmpty(systemName)) {
                 updatePermission.setSysName(systemName);
             }
             updatePermission.setSysContext(sysContext);
@@ -241,7 +248,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     }
 
     /**
-     *  更新系统菜单树
+     * 更新系统菜单树
+     *
      * @param
      * @return
      * @Author lwx
@@ -249,26 +257,26 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      */
     private void udateSysRootVo(FuncTreeVO funcTreeVO) {
         //拿到所有的系统定义树
-        PermissionDO permissionDO =permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
+        PermissionDO permissionDO = permissionMapper.getPermissionBySysKey(funcTreeVO.sysKey);
         //组装系统定义树
-        if (StringUtils.isNotEmpty(permissionDO.getSysContext())){
+        if (StringUtils.isNotEmpty(permissionDO.getSysContext())) {
             //遍历 json 树,修改节点
             SystemRootVO systemRootVO = StringUtility.parseObject(permissionDO.getSysContext(), SystemRootVO.class);
-            if (systemRootVO ==null){
-                logger.error("json树转换systemRootVO转失败",permissionDO.getSysContext());
-                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",permissionDO.getSysContext()));
+            if (systemRootVO == null) {
+                logger.error("json树转换systemRootVO转失败", permissionDO.getSysContext());
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("json树转换systemRootVO转失败:失败的json[%s]", permissionDO.getSysContext()));
             }
-            this.updateMenuValue(systemRootVO,funcTreeVO.updateNode);
+            this.updateMenuValue(systemRootVO, funcTreeVO.updateNode);
             //节点修改后,在转化为 json 权限树.入库
             String sysContext = StringUtility.toJSONString(systemRootVO);
             if (StringUtils.isEmpty(sysContext)) {
-                logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]",StringUtility.toJSONString(systemRootVO));
-                throw  new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("json树转换systemRootVO转失败:失败的json[%s]",StringUtility.toJSONString(systemRootVO)));
+                logger.error("systemRootVO转 json 失败,失败的systemRootVO为[%s]", StringUtility.toJSONString(systemRootVO));
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("json树转换systemRootVO转失败:失败的json[%s]", StringUtility.toJSONString(systemRootVO)));
             }
-            PermissionDO updatePermission =new PermissionDO();
+            PermissionDO updatePermission = new PermissionDO();
             updatePermission.setSysKey(permissionDO.getSysKey());
-            String systemName=permissionMapper.getSysNameByKey(permissionDO.getSysKey());
-            if (StringUtils.isNotEmpty(systemName)){
+            String systemName = permissionMapper.getSysNameByKey(permissionDO.getSysKey());
+            if (StringUtils.isNotEmpty(systemName)) {
                 updatePermission.setSysName(systemName);
             }
             updatePermission.setSysContext(sysContext);
@@ -293,13 +301,15 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         }
         Map dataMap = new HashMap();
         List<String> roleIds = new ArrayList<>();
-        updatePermissions.forEach(rolePermissionDO -> {
+        for (RolePermissionDO permissionDO : updatePermissions) {
             //更新权限树
-            rolePermissionMapper.updateUserRoleByRoleId(rolePermissionDO);
-            roleIds.add(String.valueOf(rolePermissionDO.getRoleId()));
-        });
+            rolePermissionMapper.updateUserRoleByRoleId(permissionDO);
+            if (permissionDO.getRoleId() != null) {
+                roleIds.add(String.valueOf(permissionDO.getRoleId()));
+            }
+        }
         //去重
-        roleIds.stream().distinct();
+        roleIds = roleIds.stream().distinct().collect(Collectors.toList());
         dataMap.put("roleIds", roleIds);
         /*3、获取roleIds角色对应的用户名*/
         logger.info(String.format("获取的角色id为%s", roleIds));
@@ -308,6 +318,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         }
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
+        userNames = userNames.stream().distinct().collect(Collectors.toList());
     /*4、更新用户操作权限冗余表和缓存*/
         permitStatBp.updateUserPermitCache(userNames);
     }
@@ -421,9 +432,9 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     }
 
 
-
     /**
-     *  递归json 树, 更新角色下的功能权限,组装需要更新的数据
+     * 递归json 树, 更新角色下的功能权限,组装需要更新的数据
+     *
      * @param
      * @return
      * @Author lwx
@@ -530,9 +541,9 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
                     if (StringUtils.isNotEmpty(nodeVO.url)) {
                         moduleVO.url = nodeVO.url;
                     }
-                    updateModuleValue(moduleVO.module, lstNode);
-                    updateFuncValue(moduleVO.function, lstNode);
                 }
+                updateModuleValue(moduleVO.module, lstNode);
+                updateFuncValue(moduleVO.function, lstNode);
             });
         });
     }
