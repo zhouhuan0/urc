@@ -101,7 +101,6 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             if (updateUrcRoleSysContext(funcTreeVO, updateRolePermissions)) {
                 return VoHelper.getSuccessResult("无关联角色需要处理");
             }
-
             updateRolePermissionAndRoleUser(updateRolePermissions);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
@@ -118,7 +117,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
      * @Author lwx
      * @Date 2018/11/13 14:45
      */
-    @Nullable
+
     private ResultVO deleteUrcPermission(FuncTreeVO funcTreeVO, List<RolePermissionDO> updatePermissionMap) {
         Boolean result;
         if (StringUtils.isEmpty(funcTreeVO.sysKey)) {
