@@ -127,6 +127,26 @@
         where sys_key=#{sysKey}
     </update>
 
+    <update id="updateSysContextBySysKeyCondition">
+        update urc_permission
+        <set>
+            <if test="sysName != null and sysName !=''">
+                sys_name =#{sysName},
+            </if>
+            <if test="apiUrlPrefixJson != null and apiUrlPrefixJson !=''">
+                api_url_prefix_json =#{apiUrlPrefixJson},
+            </if>
+            <if test="sysContext != null and sysContext !=''">
+                sys_context=#{sysContext},
+            </if>
+            <if test="modifiedBy != null and modifiedBy !=''">
+                modified_by=#{modifiedBy},
+            </if>
+                modified_time=now(3)
+        </set>
+        where sys_key=#{sysKey}
+    </update>
+
     <select id="perMissionMap" resultType="com.yks.urc.entity.PermissionDO">
         select sys_key,sys_name from urc_permission
     </select>
@@ -135,5 +155,10 @@
     <select id="getSysNameByKey" parameterType="java.lang.String" resultType="java.lang.String">
         SELECT sys_name FROM urc_permission WHERE  sys_key=#{sysKey}
     </select>
+
+    <!--根据key删除系统-->
+    <delete id="deleteSysPermissionBySysKey" parameterType="java.lang.String" >
+        DELETE FROM urc_permission WHERE  sys_key=#{sysKey}
+    </delete>
 
 </mapper>

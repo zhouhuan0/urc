@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.fw.StringUtility;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,4 +136,18 @@ public class RolePermissionMapperTest extends BaseMapperTest {
         }
     }
 
+    @Test
+    public void deleteBySysKey(){
+        String sysKey = "111";
+        Integer rtn = rolePermissionMapper.deleteBySysKey(sysKey);
+        System.out.println(rtn);
+    }
+
+    @Test
+    public void test_update(){
+        RolePermissionDO permissionDO =new RolePermissionDO();
+        permissionDO.setRoleId(Long.valueOf("1541831483517000027"));
+        permissionDO.setModifiedTime(StringUtility.getDateTimeNow());
+        rolePermissionMapper.updateUserRoleByRoleId(permissionDO);
+    }
 }

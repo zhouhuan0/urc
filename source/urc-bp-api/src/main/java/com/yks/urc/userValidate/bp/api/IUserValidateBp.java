@@ -50,6 +50,7 @@ public interface IUserValidateBp {
 	 * @date 2018年6月13日 下午3:46:16
 	 */
 	String mergeFuncJson(List<String> lstJson);
+
 	SystemRootVO mergeFuncJson2Obj(List<String> lstJson);
 
 

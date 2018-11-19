@@ -22,6 +22,7 @@ import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
 public class UrcServiceImpl implements IUrcService {
 
@@ -712,7 +713,7 @@ public class UrcServiceImpl implements IUrcService {
 
 
     @Override
-    @Log("获取指定平台下的账号站点 数据权限")
+    @Log("获取指定平台下的账号站点数据权限")
     public ResultVO<List<OmsPlatformVO>> appointPlatformShopSite(String json) {
         JSONObject jsonObject = StringUtility.parseString(json);
         String operator = MotanSession.getRequest().getOperator();
@@ -720,5 +721,25 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.appointPlatformShopSite(operator, platformId);
     }
 
+    @Log("删除功能权限树节点")
+    @Override
+    public ResultVO deleteSysPermitNode(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        FuncTreeVO funcTreeVO =StringUtility.parseObject(jsonObject.getJSONObject("data").toString(),FuncTreeVO.class);
+        if (funcTreeVO == null){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        return permissionService.deleteSysPermitNode(funcTreeVO);
+    }
 
+    @Log("修改功能权限名称")
+    @Override
+    public ResultVO updateSysPermitNode(String jsonStr) {
+        JSONObject jsonObject =StringUtility.parseString(jsonStr);
+        FuncTreeVO funcTreeVO =StringUtility.parseObject(jsonObject.getJSONObject("data").toString(),FuncTreeVO.class);
+        if (funcTreeVO == null){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+        }
+        return permissionService.updateSysPermitNode(funcTreeVO);
+    }
 }

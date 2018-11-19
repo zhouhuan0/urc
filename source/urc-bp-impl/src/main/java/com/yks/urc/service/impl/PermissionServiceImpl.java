@@ -9,10 +9,14 @@ import com.yks.common.util.StringUtil;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.mapper.IUserPermitStatMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -32,6 +36,7 @@ import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class PermissionServiceImpl implements IPermissionService {
@@ -68,6 +73,15 @@ public class PermissionServiceImpl implements IPermissionService {
     @Autowired
     private ISessionBp sessionBp;
 
+    @Autowired
+    IPermitStatBp permitStatBp;
+
+    @Autowired
+    IFuncJsonTreeBp funcJsonTreeBp;
+
+    @Autowired
+    private IRoleService roleService;
+
     @Transactional
     @Override
     public ResultVO importSysPermit(String jsonStr) {
@@ -91,15 +105,15 @@ public class PermissionServiceImpl implements IPermissionService {
             if (arr != null && arr.length > 0) {
                 List<PermissionDO> lstPermit = new ArrayList<>(arr.length);
                 for (SystemRootVO root : arr) {
-                    if (root.apiUrlPrefix == null || root.apiUrlPrefix.size() ==0){
-                        return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"apiUrlPrefix 不能为空");
+                    if (root.apiUrlPrefix == null || root.apiUrlPrefix.size() == 0) {
+                        return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "apiUrlPrefix 不能为空");
                     }
                     PermissionDO p = new PermissionDO();
                     p.setApiUrlPrefixJson(StringUtility.toJSONString_NoException(root.apiUrlPrefix));
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
                     // 将API 前缀置为null. 在存入sysContext
-                    root.apiUrlPrefix =null;
+                    root.apiUrlPrefix = null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));
                     p.setCreateTime(new Date());
                     p.setModifiedTime(new Date());
@@ -112,6 +126,10 @@ public class PermissionServiceImpl implements IPermissionService {
 
                 // 更新缓存
                 for (PermissionDO p : lstPermit) {
+                    //更新定义表
+                    if (p==null){
+                        continue;
+                    }
                     PermissionDO pFromDb = permissionMapper.getPermission(p.getSysKey());
                     if (pFromDb == null) {
                         // insert
@@ -124,11 +142,13 @@ public class PermissionServiceImpl implements IPermissionService {
                     cacheBp.insertSysContext(p.getSysKey(), p.getSysContext());
                     //更新API前缀
                     this.updateApiPrefixCache();
+                   /* //更新角色的权限, 角色下的用户 和缓存
+                    if (updateRolePermissionAndCache(p)){ continue;}*/
 
                 }
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
                 rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
-                rslt.msg ="推送成功";
+                rslt.msg = "推送成功";
             } else {
                 rslt.state = CommonMessageCodeEnum.FAIL.getCode();
                 rslt.msg = "没有 data";
@@ -138,6 +158,50 @@ public class PermissionServiceImpl implements IPermissionService {
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
         return rslt;
+    }
+
+    /**
+     *  更新角色的权限, 角色下的用户 和缓存
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/12 12:00
+     */
+    private boolean updateRolePermissionAndCache(PermissionDO p) {
+        List<RolePermissionDO> rolePermissionDOS =rolePermissionMapper.getROlePermissionBySysKey(p.getSysKey());
+        if (CollectionUtils.isEmpty(rolePermissionDOS)){
+            return true;
+        }
+        List<Long> roleIds =new ArrayList<>();
+        rolePermissionDOS.forEach(rolePermissionDO -> {
+            if (rolePermissionDO.getRoleId() == null){
+                return;
+            }
+            //更新角色对应的权限,用户,缓存等
+            RolePermissionDO updatePermission =new RolePermissionDO();
+            updatePermission.setSysKey(rolePermissionDO.getSysKey());
+            updatePermission.setRoleId(rolePermissionDO.getRoleId());
+            updatePermission.setSelectedContext(p.getSysContext());
+            updatePermission.setModifiedBy(sessionBp.getOperator());
+            updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
+            rolePermissionMapper.updateUserRoleByRoleId(updatePermission);
+            //获取所关联的角色id
+            roleIds.add(rolePermissionDO.getRoleId());
+        });
+        //去重
+        roleIds.stream().distinct();
+        Map dataMap =new HashMap();
+        dataMap.put("roleIds", roleIds);
+        /*3、获取roleIds角色对应的用户名*/
+        logger.info(String.format("获取的角色id为%s", roleIds));
+        if (CollectionUtils.isEmpty(roleIds)) {
+            logger.info("roleID 的集合为空");
+        }
+        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        logger.info(String.format("获取的用户名为%s", userNames));
+    /*4、更新用户操作权限冗余表和缓存*/
+        permitStatBp.updateUserPermitCache(userNames);
+        return false;
     }
 
     @Override
@@ -155,12 +219,12 @@ public class PermissionServiceImpl implements IPermissionService {
         } else {
             //业务管理员
             List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
-            if(lstSysKey!=null&&lstSysKey.size()>0){
+            if (lstSysKey != null && lstSysKey.size() > 0) {
                 lstSysKey.remove("004");
                 for (String sysKey : lstSysKey) {
                     // 获取用户sys的功能权限json
                     List<String> lstFuncJson = roleMapper.getBizAdminFuncJsonByUserAndSysKey(userName, sysKey);
-                    if(lstFuncJson!=null&&lstFuncJson.size()>0){
+                    if (lstFuncJson != null && lstFuncJson.size() > 0) {
                         // 合并json树
                         SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
                         PermissionVO permissionVO = new PermissionVO();
@@ -199,10 +263,13 @@ public class PermissionServiceImpl implements IPermissionService {
         PageResultVO pageResultVO = new PageResultVO(userPermitStatVOs, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
-   /* *//**
+   /* */
+
+    /**
      * 更新缓存API前缀
-     * @param:
+     *
      * @return
+     * @param:
      * @Author lwx
      * @Date 2018/7/17 15:44
      *//*
@@ -217,7 +284,6 @@ public class PermissionServiceImpl implements IPermissionService {
            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"更新失败");
         }
     }*/
-
     private List<UserPermitStatVO> convertUserPermitStatDoToVO(List<UserPermitStatDO> userPermitStatDOS) {
         List<UserPermitStatVO> userPermitStatVOS = new ArrayList<>();
         for (UserPermitStatDO userPermitStatDO : userPermitStatDOS) {
@@ -249,7 +315,7 @@ public class PermissionServiceImpl implements IPermissionService {
         if (!(operator.trim().equals(userName.trim()))) {
             Boolean isAdmin = roleMapper.isAdminOrSuperAdmin(operator);
             if (!isAdmin) {
-                throw new URCBizException(String.format("当前用户【%s】不是业务管理员或超级管理员，不能查看他人操作权限",operator), ErrorCode.E_000003);
+                throw new URCBizException(String.format("当前用户【%s】不是业务管理员或超级管理员，不能查看他人操作权限", operator), ErrorCode.E_000003);
             }
         }
         queryMap.put("userName", userName);
@@ -263,8 +329,10 @@ public class PermissionServiceImpl implements IPermissionService {
         queryMap.put("currIndex", (currPage - 1) * pageSize);
         queryMap.put("pageSize", pageSize);
     }
+
     /**
-     *  更新API前缀
+     * 更新API前缀
+     *
      * @param
      * @return
      * @Author lwx
@@ -273,12 +341,52 @@ public class PermissionServiceImpl implements IPermissionService {
     @Override
     public ResultVO updateApiPrefixCache() {
         try {
-            List<PermissionDO> permissionDOList =permissionMapper.getSysApiUrlPrefix();
+            List<PermissionDO> permissionDOList = permissionMapper.getSysApiUrlPrefix();
             cacheBp.setSysApiUrlPrefix(permissionDOList);
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(),"缓存API更新成功");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.SUCCESS.getCode(), "缓存API更新成功");
         } catch (Exception e) {
-            logger.error("未知异常",e);
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"更新失败");
+            logger.error("未知异常", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "更新失败");
         }
     }
+
+    /**
+     * 删除功能权限树节点
+     *
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 10:33
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO deleteSysPermitNode(FuncTreeVO funcTreeVO) {
+        try {
+            return funcJsonTreeBp.deleteSysPermitNode(funcTreeVO);
+        } catch (Exception e) {
+            logger.error("删除节点失败,失败原因:", e);
+        }
+        return null;
+    }
+
+
+    /**
+     * 修改功能权限节点树
+     *
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 15:46
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO) {
+        try {
+            return funcJsonTreeBp.updateSysPermitNode(funcTreeVO);
+        } catch (Exception e) {
+            logger.error("删除节点失败,更新权限出错", e.getMessage());
+        }
+        return null;
+    }
+
 }

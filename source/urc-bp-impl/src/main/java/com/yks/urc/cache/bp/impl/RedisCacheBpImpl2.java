@@ -304,13 +304,13 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
    /**
-    *  获取所有的平台账号 缓存2天
+    *  获取所有的平台账号 缓存2H
     * @param
     * @return
     * @Author lwx
     * @Date 2018/9/4 16:54
     */
     private Cache getPlatformShopCache(String platformShopKey) {
-        return getCache(platformShopKey,172800);
+        return getCache(platformShopKey,7200);
     }
 }
