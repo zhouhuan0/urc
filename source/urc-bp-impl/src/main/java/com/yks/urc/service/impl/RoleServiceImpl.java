@@ -91,25 +91,46 @@ public class RoleServiceImpl implements IRoleService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
+        // 是否是管理员(0 .非管理员,1.管理员)
+        Integer isAuthorizable =jsonObject.getInteger("isAdmin");
+        //是否启用(0.不启用,1.启用)
+        Integer isActive =jsonObject.getInteger("isActive");
+        // 搜索类型(0.角色名称,1.创建人,2.owner)
+        Integer searchType =jsonObject.getInteger("searchType");
+        //搜索内容,多个值用 ','隔开
+        String searchContent =jsonObject.getString("searchContent");
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
+
         /*组装查询条件queryMap*/
         Map<String, Object> queryMap = new HashMap<>();
-        queryMap.put("createBy", operator);
-        //RoleVO roleVO = StringUtility.parseObject(jsonObject.getString("role"), RoleVO.class);
-        RoleVO roleVo = jsonObject.getObject("role", RoleVO.class);
-        if (roleVo != null) {
-            String[] roleNames = roleVo.getRoleName().split(System.getProperty("line.separator"));
-            queryMap.put("roleNames", roleNames);
-            // 正则判断多级搜索框空格
-            Pattern pattern = Pattern.compile("^[\\s\\S]*[a-zA-Z0-9_\\u4e00-\\u9fa5]+[\\s\\S]*$");
-            Matcher matcher = pattern.matcher(roleVo.getRoleName());
-            if (!matcher.matches()) {
-                queryMap.put("roleNames", "");
+        int pageNumber = jsonObject.getInteger("pageNumber");
+        int pageData = jsonObject.getInteger("pageData");
+        if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+            throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
+        }
+        int currPage = pageNumber;
+        int pageSize = pageData;
+        queryMap.put("currIndex", (currPage - 1) * pageSize);
+        queryMap.put("pageSize", pageSize);
+        queryMap.put("isAdmin",isAuthorizable);
+        queryMap.put("isActive",isActive);
+        if (searchType != null) {
+            switch (searchType) {
+                case 0:
+                    queryMap.put("roleNames", splitStr(searchContent));
+                    break;
+                case 1:
+                    queryMap.put("createBys", splitStr(searchContent));
+                    break;
+                case 2:
+                    queryMap.put("owners", splitStr(searchContent));
+                    break;
+                default:
             }
         }
-        /*管理员角色不需要createBy条件，可以查看所有的角色*/
+        /*超级管理员角色不需要createBy条件，可以查看所有的角色*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
         if (isAdmin) {
             queryMap.put("createBy", "");
@@ -123,17 +144,9 @@ public class RoleServiceImpl implements IRoleService {
                     roleIdList.add(ownerDO.getRoleId());
                 }
                 queryMap.put("roleIds", roleIdList);
+                queryMap.put("createBy", operator);
             }
         }
-        int pageNumber = jsonObject.getInteger("pageNumber");
-        int pageData = jsonObject.getInteger("pageData");
-        if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
-            throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
-        }
-        int currPage = pageNumber;
-        int pageSize = pageData;
-        queryMap.put("currIndex", (currPage - 1) * pageSize);
-        queryMap.put("pageSize", pageSize);
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
 
         /* 4、List<DO> 转 List<VO> */
@@ -1096,6 +1109,27 @@ public class RoleServiceImpl implements IRoleService {
         }
     }
 
+    /**
+     * split并去除前后空格，空元素
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/6 14:40
+     */
+    private List<String> splitStr (String strSrc){
+        if (StringUtils.isEmpty(strSrc)) {
+            return Collections.EMPTY_LIST;
+        }
+        String[] arrAcct = strSrc.split("(,)|(\r\n)|(\n)|(\r)");
+        List<String> lstRslt = new ArrayList<>();
+        for (int i=0;i<arrAcct.length;i++){
+            String mem = StringUtility.trimPattern_Private(arrAcct[i], "\\s");
+            if (!StringUtility.isNullOrEmpty(mem)) {
+                lstRslt.add(mem);
+            }
+        }
+        return lstRslt;
+    }
     /**
      * 判断当前操作人是否是角色的owner
      *

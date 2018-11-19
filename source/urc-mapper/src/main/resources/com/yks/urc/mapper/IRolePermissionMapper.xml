@@ -14,7 +14,7 @@
         <result column="selected_context" jdbcType="LONGVARCHAR" property="selectedContext"/>
     </resultMap>
     <sql id="Base_Column_List">
-    role_permission_id, role_id, sys_key, create_time, create_by, modified_time, modified_by
+     role_id, sys_key, create_time, create_by, modified_time, modified_by
   </sql>
     <sql id="Blob_Column_List">
     selected_context
@@ -237,25 +237,35 @@
             <if test="rolePermissionDO.roleId != null and rolePermissionDO.roleId !='' ">
                 role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER},
             </if>
-            <if test="rolePermissionDO.sysKey != null and rolePermissionDO.roleId !='' ">
+            <!--<if test="rolePermissionDO.sysKey != null and rolePermissionDO.roleId !='' ">
                 sys_key = #{rolePermissionDO.sysKey,jdbcType=VARCHAR},
-            </if>
+            </if>-->
             <if test="rolePermissionDO.sysKey != null and rolePermissionDO.roleId !='' ">
                 selected_context = #{rolePermissionDO.selectedContext,jdbcType=VARCHAR},
             </if>
             <if test="rolePermissionDO.createBy != null and rolePermissionDO.createBy != ''">
                 create_by = #{rolePermissionDO.createBy,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.createTime != null and rolePermissionDO.createTime != ''">
-                create_time = #{rolePermissionDO.createTime,jdbcType=TIMESTAMP},
+            <if test="rolePermissionDO.createTime != null ">
+                create_time = #{rolePermissionDO.createTime},
             </if>
             <if test="rolePermissionDO.modifiedBy != null and rolePermissionDO.modifiedBy != ''">
                 modified_by = #{rolePermissionDO.modifiedBy,jdbcType=VARCHAR},
             </if>
-            <if test="rolePermissionDO.modifiedTime != null and rolePermissionDO.modifiedTime !=''">
-                modified_time = #{rolePermissionDO.modifiedTime,jdbcType=TIMESTAMP},
+            <if test="rolePermissionDO.modifiedTime != null">
+                modified_time = #{rolePermissionDO.modifiedTime},
             </if>
         </set>
-        where role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER}
+        where role_id = #{rolePermissionDO.roleId,jdbcType=INTEGER} and  sys_key = #{rolePermissionDO.sysKey,jdbcType=VARCHAR}
     </update>
+
+    <!--获取角色权限-->
+    <select id="getROlePermissionBySysKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT  <include refid="Base_Column_List"/>,<include refid="Blob_Column_List"/> FROM  urc_role_permission WHERE sys_key = #{sysKey}
+    </select>
+
+    <!--根据sysKey删除系统对应的功能权限-->
+    <delete id="deleteBySysKey" >
+         delete from urc_role_permission where sys_key = #{sysKey,jdbcType=VARCHAR}
+    </delete>
 </mapper>

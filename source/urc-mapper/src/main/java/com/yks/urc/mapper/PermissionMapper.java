@@ -79,6 +79,15 @@ public interface PermissionMapper {
      */
     int updateSysContextBySysKey(PermissionDO p);
 
+    /**
+     *  根据sys_key更新sys_context 可选择更新内容
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/12 16:26
+     */
+    int updateSysContextBySysKeyCondition(PermissionDO p);
+
     List<PermissionDO> getAllSysPermit();
 
     /**
@@ -102,5 +111,13 @@ public interface PermissionMapper {
      * @Date 2018/8/13 15:07
      */
     String getSysNameByKey(String sysKey);
+    /**
+     *  根据 sysKey 删除权限
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/12 10:06
+     */
+    int deleteSysPermissionBySysKey(String sysKey);
 
 }

@@ -510,6 +510,20 @@ public interface IUrcService {
      * @return
      */
     ResultVO resetPwdSubmit(String jsonStr);
-
-
+    /**
+     *  删除权限树节点
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 15:38
+     */
+    ResultVO deleteSysPermitNode(String jsonStr);
+    /**
+     *  修改权限树节点
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/2 15:38
+     */
+    ResultVO updateSysPermitNode(String jsonStr);
 }
