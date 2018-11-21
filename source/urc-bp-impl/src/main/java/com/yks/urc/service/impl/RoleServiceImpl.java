@@ -144,8 +144,8 @@ public class RoleServiceImpl implements IRoleService {
                     roleIdList.add(ownerDO.getRoleId());
                 }
                 queryMap.put("roleIds", roleIdList);
-                queryMap.put("createBy", operator);
             }
+            queryMap.put("createBy", operator);
         }
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
 
@@ -225,7 +225,7 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             /* 4.1 非管理员———该角色存在但是不是owner */
             if (opRoleDO != null && !isOwner(operator, roleId)) {
-                throw new URCBizException(String.format("当前用户不是该角色的owner,无法编辑,当前用户:%s ,角色:%s", operator, opRoleDO.getRoleName()), ErrorCode.E_100003);
+                throw new URCBizException(ErrorCode.E_100003.getState(),String.format("当前用户不是该角色的owner,无法编辑,当前用户:%s ,角色:%s", operator, opRoleDO.getRoleName()));
             } else {
                 /* 4.2 非管理员———a.该角色存在且创建人是当前用户或owner；b.该角色不存在 */
                 insertOrUpdateRole(operator, roleVO, opRoleDO);
