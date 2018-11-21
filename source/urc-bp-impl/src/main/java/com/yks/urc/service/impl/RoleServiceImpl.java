@@ -144,8 +144,8 @@ public class RoleServiceImpl implements IRoleService {
                     roleIdList.add(ownerDO.getRoleId());
                 }
                 queryMap.put("roleIds", roleIdList);
-                queryMap.put("createBy", operator);
             }
+            queryMap.put("createBy", operator);
         }
         List<RoleDO> roleDOS = roleMapper.listRolesByPage(queryMap);
 
