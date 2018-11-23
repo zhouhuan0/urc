@@ -742,4 +742,8 @@ public class UrcServiceImpl implements IUrcService {
         }
         return permissionService.updateSysPermitNode(funcTreeVO);
     }
+    @Override
+  public   ResultVO getBasicDataList(String jsonStr){
+     return  userService.getBasicDataList(jsonStr);
+    }
 }
