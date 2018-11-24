@@ -18,6 +18,7 @@ import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.vo.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -370,65 +371,45 @@ public class UserServiceImpl implements IUserService {
                 logger.error("操作人员不能为空");
                 return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
             }
-            response = HttpUtility2.postForm(castInfo,null, null);
+            response = HttpUtility2.postForm(castInfo, null, null);
             JSONArray jsonArray = JSONArray.parseArray(response);
             int size1 = jsonArray.size();
             SkuCategoryVO skuCategoryVO = new SkuCategoryVO();
-            List<BaseSkuInfoVO> baseSkuInfoVOList1 = new ArrayList<>();
+            List<CategoryVO> categoryVOList = new ArrayList<>();
             for (int i = 0; i < size1; i++) {
-                List<BaseSkuInfoVO> baseSkuInfoVOList2 = new ArrayList<>();
-                //一级分类信息
-                JSONObject jsonObject1 = (JSONObject) jsonArray.get(i);
-                String cateId1 = jsonObject1.getString("cateId");
-                String cateNameCn1 = jsonObject1.getString("cateNameCn");
-                JSONArray jsonArray1 = jsonObject1.getJSONArray("subCategorys");
-                //组装一级分类
-                BaseSkuInfoVO baseSkuInfoVO1 = new BaseSkuInfoVO();
-                baseSkuInfoVO1.setCateId(cateId1);
-                baseSkuInfoVO1.setCateNameCn(cateNameCn1);
-                int size2 = jsonArray1.size();
-                for (int j = 0; j < size2; j++) {
-                    List<BaseSkuInfoVO> baseSkuInfoVOList3 = new ArrayList<>();
-                    JSONObject jsonObject2 = (JSONObject) jsonArray1.get(j);
-                    String cateId2 = jsonObject2.getString("cateId");
-                    String cateNameCn2 = jsonObject2.getString("cateNameCn");
-                    JSONArray jsonArray2 = jsonObject2.getJSONArray("subCategorys");
-                    //组装第二级分类
-                    BaseSkuInfoVO baseSkuInfoVO2 = new BaseSkuInfoVO();
-                    baseSkuInfoVO2.setCateId(cateId2);
-                    baseSkuInfoVO2.setCateNameCn(cateNameCn2);
-                    int size3 = jsonArray2.size();
-                    for (int k = 0; k < size3; k++) {
-                        JSONObject jsonObject3 = (JSONObject) jsonArray2.get(k);
-                        String cateId3 = jsonObject3.getString("cateId");
-                        String cateNameCn3 = jsonObject3.getString("cateNameCn");
-                        //组装第三级
-                        BaseSkuInfoVO baseSkuInfoVO3 = new BaseSkuInfoVO();
-                        baseSkuInfoVO3.setCateId(cateId3);
-                        baseSkuInfoVO3.setCateNameCn(cateNameCn3);
-                        baseSkuInfoVOList3.add(baseSkuInfoVO3);
-                    }
-                    baseSkuInfoVO2.setCategory(baseSkuInfoVOList3);
-                    baseSkuInfoVOList2.add(baseSkuInfoVO2);
-                }
-                baseSkuInfoVO1.setCategory(baseSkuInfoVOList2);
-                baseSkuInfoVOList1.add(baseSkuInfoVO1);
+                CategoryVO categoryVO = StringUtility.parseObject(jsonArray.get(i).toString(), CategoryVO.class);
+                categoryVOList.add(categoryVO);
             }
-            skuCategoryVO.setFirstCategory(baseSkuInfoVOList1);
-            Map resultMap = new HashMap();
-            resultMap.put("visiable", "可见");
-            resultMap.put("unvisiable", "不可见");
-            skuCategoryVO.setAvailableStock(resultMap);
-            skuCategoryVO.setChineseName(resultMap);
-            skuCategoryVO.setCostPrice(resultMap);
+            //组装返回数据basicDataVO
+            BasicDataVO basicDataVO = getBasicDataVO(skuCategoryVO, categoryVOList);
             resultVO.msg = "操作成功";
-            resultVO.data = skuCategoryVO;
-            resultVO.state=CommonMessageCodeEnum.SUCCESS.getCode();
+            resultVO.data = basicDataVO;
+            resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
             logger.error("获取sku分类,库存等数据权限失败");
             return VoHelper.getErrorResult();
         }
         return resultVO;
+    }
+
+    @NotNull
+    private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryVO> categoryVOList) {
+        skuCategoryVO.setFirstCategory(categoryVOList);
+        Map resultMapAvailableStock = new HashMap();
+        resultMapAvailableStock.put("visiable", "可见");
+        resultMapAvailableStock.put("unvisiable", "不可见");
+        Map resultMapChineseName = new HashMap();
+        resultMapChineseName.put("visiable", "可见");
+        resultMapChineseName.put("unvisiable", "不可见");
+        Map resultMapCostPrice = new HashMap();
+        resultMapCostPrice.put("visiable", "可见");
+        resultMapCostPrice.put("unvisiable", "不可见");
+        skuCategoryVO.setAvailableStock(resultMapAvailableStock);
+        skuCategoryVO.setChineseName(resultMapChineseName);
+        skuCategoryVO.setCostPrice(resultMapCostPrice);
+        BasicDataVO basicDataVO = new BasicDataVO();
+        basicDataVO.setBasicData(skuCategoryVO);
+        return basicDataVO;
     }
 }
 

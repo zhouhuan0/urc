@@ -2,17 +2,17 @@ package com.yks.urc.vo;
 
 import java.util.List;
 
-public class BaseSkuInfoVO {
-    private List<BaseSkuInfoVO> category;
+public class CategoryVO {
+    private List<CategoryVO> subCategorys;
     private String cateId;
     private String cateNameCn;
 
-    public List<BaseSkuInfoVO> getCategory() {
-        return category;
+    public List<CategoryVO> getSubCategorys() {
+        return subCategorys;
     }
 
-    public void setCategory(List<BaseSkuInfoVO> category) {
-        this.category = category;
+    public void setSubCategorys(List<CategoryVO> subCategorys) {
+        this.subCategorys = subCategorys;
     }
 
     public String getCateId() {

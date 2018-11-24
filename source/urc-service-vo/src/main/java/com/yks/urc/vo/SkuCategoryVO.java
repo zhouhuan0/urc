@@ -5,7 +5,8 @@ import java.util.Map;
 
 public class SkuCategoryVO {
 
-    private List<BaseSkuInfoVO> firstCategory;
+    //private List<BaseSkuInfoVO> firstCategory;
+    private List<CategoryVO> firstCategory;
     private Map<String,String> availableStock;
     private Map<String,String> chineseName;
     private Map<String,String> costPrice;
@@ -35,13 +36,19 @@ public class SkuCategoryVO {
         this.costPrice = costPrice;
     }
 
-    public List<BaseSkuInfoVO> getFirstCategory() {
+  /*  public List<BaseSkuInfoVO> getFirstCategory() {
         return firstCategory;
     }
 
     public void setFirstCategory(List<BaseSkuInfoVO> firstCategory) {
         this.firstCategory = firstCategory;
+    }*/
+
+    public List<CategoryVO> getFirstCategory() {
+        return firstCategory;
     }
 
-
+    public void setFirstCategory(List<CategoryVO> firstCategory) {
+        this.firstCategory = firstCategory;
+    }
 }
