@@ -390,6 +390,7 @@ public class UserServiceImpl implements IUserService {
         return resultVO;
     }
 
+
     private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryVO> categoryVOList) {
         skuCategoryVO.setFirstCategory(categoryVOList);
         Map resultMapAvailableStock = new HashMap();
