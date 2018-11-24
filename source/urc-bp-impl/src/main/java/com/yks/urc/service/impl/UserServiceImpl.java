@@ -1,39 +1,38 @@
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
-import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility2;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
+import com.yks.urc.service.api.IUserService;
+import com.yks.urc.user.bp.api.IUserBp;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.Query;
+import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.fw.constant.StringConstant;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IUserMapper;
-import com.yks.urc.service.api.IUserService;
-import com.yks.urc.user.bp.api.IUserBp;
-import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.helper.Query;
-import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class UserServiceImpl implements IUserService {
