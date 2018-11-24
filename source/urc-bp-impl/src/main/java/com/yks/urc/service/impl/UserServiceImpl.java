@@ -361,14 +361,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public ResultVO getBasicDataList(String jsonStr) {
-
-
         ResultVO resultVO = new ResultVO();
-        //组装请求param
-        Map map = new HashMap();
-        map.put("c", "api_sku");
-        map.put("a", "getCategoryList");
-        map.put("key", "f0940767c6e96e25905a7180a477139d");
         String response;
         try {
             JSONObject jsonObject = StringUtility.parseString(jsonStr);
@@ -377,7 +370,7 @@ public class UserServiceImpl implements IUserService {
                 logger.error("操作人员不能为空");
                 return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
             }
-            response = HttpUtility2.postForm(castInfo, map, null);
+            response = HttpUtility2.postForm(castInfo,null, null);
             JSONArray jsonArray = JSONArray.parseArray(response);
             int size1 = jsonArray.size();
             SkuCategoryVO skuCategoryVO = new SkuCategoryVO();
@@ -430,6 +423,7 @@ public class UserServiceImpl implements IUserService {
             skuCategoryVO.setCostPrice(resultMap);
             resultVO.msg = "操作成功";
             resultVO.data = skuCategoryVO;
+            resultVO.state=CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
             logger.error("获取sku分类,库存等数据权限失败");
             return VoHelper.getErrorResult();
