@@ -10,16 +10,6 @@ import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility2;
-import com.yks.urc.mapper.PlatformMapper;
-import com.yks.urc.mapper.ShopSiteMapper;
-import com.yks.urc.vo.*;
-import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
@@ -394,13 +384,12 @@ public class UserServiceImpl implements IUserService {
             resultVO.data = basicDataVO;
             resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
         } catch (Exception e) {
-            logger.error("获取sku分类,库存等数据权限失败");
+            logger.error("获取sku分类,库存等数据权限失败",e);
             return VoHelper.getErrorResult();
         }
         return resultVO;
     }
 
-    @NotNull
     private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryVO> categoryVOList) {
         skuCategoryVO.setFirstCategory(categoryVOList);
         Map resultMapAvailableStock = new HashMap();

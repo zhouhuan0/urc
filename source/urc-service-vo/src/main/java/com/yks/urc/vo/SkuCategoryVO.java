@@ -1,9 +1,12 @@
 package com.yks.urc.vo;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public class SkuCategoryVO {
+public class SkuCategoryVO  implements Serializable{
+
+    private static final long serialVersionUID = -7413428975523456565L;
 
     //private List<BaseSkuInfoVO> firstCategory;
     private List<CategoryVO> firstCategory;

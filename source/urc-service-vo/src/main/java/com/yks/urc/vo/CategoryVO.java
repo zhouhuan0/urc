@@ -1,8 +1,10 @@
 package com.yks.urc.vo;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class CategoryVO {
+public class CategoryVO  implements Serializable{
+    private static final long serialVersionUID = -8549160579033725751L;
     private List<CategoryVO> subCategorys;
     private String cateId;
     private String cateNameCn;
