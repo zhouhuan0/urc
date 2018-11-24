@@ -44,6 +44,7 @@ import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class PersonServiceImpl implements IPersonService {
@@ -272,7 +273,7 @@ public class PersonServiceImpl implements IPersonService {
 
         try {
             List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName(userName);
-            if (infoVOList == null && infoVOList.size() == 0) {
+            if (CollectionUtils.isEmpty(infoVOList)) {
                 return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "查找的用户不存在");
             } else {
                 for (UserInfoVO userInfoVO : infoVOList) {
