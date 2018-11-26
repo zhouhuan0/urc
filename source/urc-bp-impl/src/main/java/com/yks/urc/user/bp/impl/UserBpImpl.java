@@ -9,7 +9,6 @@ import com.yks.urc.comparator.impl.UserSysVOComparator;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
-import com.yks.urc.entity.UserPermissionCacheDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.exception.URCServiceException;
@@ -24,23 +23,19 @@ import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.user.bp.api.IUserBp;
+import com.yks.urc.user.bp.api.IUserLogBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Component
 public class UserBpImpl implements IUserBp {
@@ -298,6 +293,9 @@ public class UserBpImpl implements IUserBp {
         return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip));
     }
 
+    @Autowired
+    private IUserLogBp userLogBp;
+
     public ResultVO login(String userName,String pwd,String ip) {
         try {
             LoginRespVO resp = new LoginRespVO();
@@ -310,9 +308,10 @@ public class UserBpImpl implements IUserBp {
             loginLog.ip = ip;
             loginLog.ldapCost = endTime - startTime;
             loginLog.loginSuccess = blnOk ? 1 : 0;
-            loginLog.remark = String.format("PWD:%s", pwd);
+
             loginLog.loginTime = new Date();
-            this.insertLoginLog(loginLog);
+            loginLog.createTime =new Date();
+            loginLog.modifiedTime =new Date();
             resp.userName = userName;
             if (blnOk) {
                 resp.ticket = userValidateBp.createTicket(userName, ip);
@@ -323,6 +322,9 @@ public class UserBpImpl implements IUserBp {
                 u.ip = ip;
                 cacheBp.insertUser(u);
                 resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
+
+                loginLog.remark = String.format("登陆操作:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",userName, pwd,ip,u.ticket);
+                this.insertLoginLog(loginLog);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
@@ -364,6 +366,9 @@ public class UserBpImpl implements IUserBp {
      */
     private void insertLoginLog(UserLoginLogDO loginLog) {
         logger.info(StringUtility.toJSONString_NoException(StringUtility.toJSONString_NoException(loginLog)));
+            if (loginLog != null) {
+                userLogBp.insertLog(loginLog);
+            }
 //        fixedThreadPool.execute(new Runnable() {
 //
 //            @Override
@@ -419,6 +424,14 @@ public class UserBpImpl implements IUserBp {
             throw new URCBizException(ErrorCode.E_100002);
         }
         cacheBp.removeUser(strOperator);
+        // 记录登出
+        UserLoginLogDO logDO =new UserLoginLogDO();
+        logDO.userName =strOperator;
+        logDO.remark=String.format("登出操作:登出人:[%s]",strOperator);
+        logDO.loginTime = new Date();
+        logDO.createTime =new Date();
+        logDO.modifiedTime =new Date();
+        this.insertLoginLog(logDO);
         return VoHelper.getSuccessResult("logout success");
     }
 

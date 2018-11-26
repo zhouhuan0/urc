@@ -1,15 +1,8 @@
 package com.yks.urc.userValidate.bp.impl;
 
-import java.io.IOException;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.fw.StringUtility;
@@ -18,15 +11,17 @@ import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.user.bp.api.IUserLogBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.FunctionVO;
-import com.yks.urc.vo.GetAllFuncPermitRespVO;
-import com.yks.urc.vo.MenuVO;
-import com.yks.urc.vo.ModuleVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.SystemRootVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.util.*;
 
 @Component
 public class UserValidateBp implements IUserValidateBp {
@@ -478,6 +473,9 @@ public class UserValidateBp implements IUserValidateBp {
 	private List<String> lstWhiteApiUrl = Arrays.asList("/urc/motan/service/api/IUrcService/getAllFuncPermit",
 			"/urc/motan/service/api/IUrcService/logout");
 
+	@Autowired
+	private IUserLogBp userLogBp;
+
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
 		logger.info(String.format("funcPermitValidate:%s",StringUtility.toJSONString_NoException(map)));
@@ -487,8 +485,22 @@ public class UserValidateBp implements IUserValidateBp {
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
 		String urcVersion = map.get(StringConstant.funcVersion);
+		UserLoginLogDO loginLogDO =new UserLoginLogDO();
+		loginLogDO.userName =operator;
+		loginLogDO.ip=ip;
+		loginLogDO.createTime =new Date();
+		loginLogDO.modifiedTime =new Date();
+		loginLogDO.remark = String.format("funcPermitValidate 权限校验:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",operator,null,ip,ticket);
 
 		UserVO u = cacheBp.getUser(operator);
+		UserLoginLogDO redisUserLogDO =new UserLoginLogDO();
+		redisUserLogDO.userName =u.userName;
+		redisUserLogDO.ip=u.ip;
+		redisUserLogDO.createTime =new Date();
+		redisUserLogDO.modifiedTime =new Date();
+		redisUserLogDO.remark = String.format("funcPermitValidate 权限校验,从redis中获取的信息:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",u.userName,u.pwd,u.ip,u.ticket);
+		userLogBp.insertLog(loginLogDO);
+		userLogBp.insertLog(redisUserLogDO);
 		// 校验ticket
 		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
 			// 100002
