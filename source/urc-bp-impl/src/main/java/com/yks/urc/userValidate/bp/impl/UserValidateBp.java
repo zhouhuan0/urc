@@ -485,25 +485,27 @@ public class UserValidateBp implements IUserValidateBp {
 		String ticket = map.get(StringConstant.ticket);
 		String ip = map.get(StringConstant.ip);
 		String urcVersion = map.get(StringConstant.funcVersion);
-		UserLoginLogDO loginLogDO =new UserLoginLogDO();
-		loginLogDO.userName =operator;
-		loginLogDO.ip=ip;
-		loginLogDO.createTime =new Date();
-		loginLogDO.modifiedTime =new Date();
-		loginLogDO.remark = String.format("funcPermitValidate 权限校验:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",operator,null,ip,ticket);
-
 		UserVO u = cacheBp.getUser(operator);
-		UserLoginLogDO redisUserLogDO =new UserLoginLogDO();
-		redisUserLogDO.userName =u.userName;
-		redisUserLogDO.ip=u.ip;
-		redisUserLogDO.createTime =new Date();
-		redisUserLogDO.modifiedTime =new Date();
-		redisUserLogDO.remark = String.format("funcPermitValidate 权限校验,从redis中获取的信息:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",u.userName,u.pwd,u.ip,u.ticket);
-		userLogBp.insertLog(loginLogDO);
-		userLogBp.insertLog(redisUserLogDO);
 		// 校验ticket
 		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
 			// 100002
+			UserLoginLogDO loginLogDO =new UserLoginLogDO();
+			loginLogDO.userName =operator;
+			loginLogDO.ip=ip;
+			loginLogDO.createTime =new Date();
+			loginLogDO.modifiedTime =new Date();
+			loginLogDO.remark = String.format("funcPermitValidate 权限校验:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",operator,null,ip,ticket);
+
+
+			UserLoginLogDO redisUserLogDO =new UserLoginLogDO();
+			redisUserLogDO.userName =u.userName;
+			redisUserLogDO.ip=u.ip;
+			redisUserLogDO.createTime =new Date();
+			redisUserLogDO.modifiedTime =new Date();
+			redisUserLogDO.remark = String.format("funcPermitValidate 权限校验,从redis中获取的信息:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",u.userName,u.pwd,u.ip,u.ticket);
+
+			userLogBp.insertLog(loginLogDO);
+			userLogBp.insertLog(redisUserLogDO);
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
 

@@ -144,9 +144,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
-        map.put(StringConstant.operator, "panyun");
+        map.put(StringConstant.operator, "linwanxian");
         map.put(StringConstant.ticket, "b29e6a04ca90b74e33630a844315de5e");
-        map.put(StringConstant.ip, "192.168.201.62");
+        map.put(StringConstant.ip, "192.168.121.140");
         map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");
         // map.put(StringConstant.sysKey, "001");
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
@@ -155,10 +155,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void login_Test() {
         Map map = new HashMap();
-        map.put(StringConstant.userName, "panyun");
-        map.put(StringConstant.pwd, "ASDFhjkl1234");
-        map.put(StringConstant.userName, "panyun1");
-        map.put(StringConstant.pwd, "pYKS1234");
+        map.put(StringConstant.userName, "linwanxian");
+        map.put(StringConstant.pwd, "lYKS1234");
+        map.put(StringConstant.userName, "linwanxian");
+        map.put(StringConstant.pwd, "lYKS1234");
         map.put(StringConstant.ip, "pyIP");
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }

@@ -24,7 +24,8 @@ import java.util.concurrent.TimeUnit;
 public class UserLogBpImpl implements IUserLogBp {
 
     private static Logger logger = LoggerFactory.getLogger(UserLogBpImpl.class);
-    ExecutorService service = Executors.newFixedThreadPool(4);
+
+    ExecutorService service = Executors.newFixedThreadPool(2);
 
     @Autowired
     private IUserLoginLogMapper logMapper;
@@ -33,17 +34,16 @@ public class UserLogBpImpl implements IUserLogBp {
     @Override
     public void insertLog(UserLoginLogDO logDO) {
         // 异步入库
-        service.submit(new Runnable() {
-            @Override
-            public void run() {
-                    logMapper.insertLogs(logDO);
-            }
-        });
-        service.shutdown();
         try {
-            service.awaitTermination(1, TimeUnit.DAYS);
-        } catch (InterruptedException e) {
-          logger.error("日志入库执行异常",e);
+            service.submit(new Runnable() {
+                @Override
+                public void run() {
+                    logMapper.insertLogs(logDO);
+                }
+            });
+            service.awaitTermination(5,TimeUnit.SECONDS);
+        } catch (Exception e) {
+            logger.error("线程池关闭出错,出错原因",e);
         }
     }
 }
