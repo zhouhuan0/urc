@@ -420,18 +420,22 @@ public class UserBpImpl implements IUserBp {
         String strOperator = jo.getString(StringConstant.operator);
         String ticket = jo.getString(StringConstant.ticket);
         UserVO u = cacheBp.getUser(strOperator);
-        if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
-            throw new URCBizException(ErrorCode.E_100002);
-        }
-        cacheBp.removeUser(strOperator);
         // 记录登出
+        String redisTicket ="";
+        if (u != null){
+            redisTicket =u.ticket;
+        }
         UserLoginLogDO logDO =new UserLoginLogDO();
         logDO.userName =strOperator;
-        logDO.remark=String.format("登出操作:登出人:[%s]",strOperator);
+        logDO.remark=String.format("登出操作:登出人:[%s],登出ticket:[%s],redis的ticket[%s]",strOperator,ticket,redisTicket);
         logDO.loginTime = new Date();
         logDO.createTime =new Date();
         logDO.modifiedTime =new Date();
         this.insertLoginLog(logDO);
+        if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
+            throw new URCBizException(ErrorCode.E_100002);
+        }
+        cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
     }
 
