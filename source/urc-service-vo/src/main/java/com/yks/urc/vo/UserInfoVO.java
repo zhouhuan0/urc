@@ -27,4 +27,17 @@ public class UserInfoVO implements Serializable {
      * 邮箱
      */
     public String email;
+    /**
+     *  工号
+     */
+    public String jobNumber;
+    /**
+     *  职位
+     */
+    public String position;
+    /**
+     *  男 女
+     */
+    public String gender;
+
 }

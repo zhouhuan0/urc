@@ -366,6 +366,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void fuzzSearchPersonByName() throws Exception {
+        map.put("name","pan");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.fuzzSearchPersonByName(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
