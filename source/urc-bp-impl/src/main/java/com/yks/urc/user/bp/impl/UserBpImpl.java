@@ -425,7 +425,7 @@ public class UserBpImpl implements IUserBp {
         }
         UserLoginLogDO logDO =new UserLoginLogDO();
         logDO.userName =strOperator;
-        logDO.remark=String.format("登出操作:登出人:[%s],登出ticket:[%s],redis的ticket[%s]",strOperator,ticket,redisTicket);
+        logDO.remark=String.format("登出操作:登出人:[%s],登出ticket:[%s],redis可能存在ticket[%s]",strOperator,ticket,redisTicket);
         logDO.loginTime = new Date();
         logDO.createTime =new Date();
         logDO.modifiedTime =new Date();
