@@ -393,18 +393,20 @@ public class UserServiceImpl implements IUserService {
 
     private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryVO> categoryVOList) {
         skuCategoryVO.setFirstCategory(categoryVOList);
-        Map resultMapAvailableStock = new HashMap();
-        resultMapAvailableStock.put("visiable", "可见");
-        resultMapAvailableStock.put("unvisiable", "不可见");
-        Map resultMapChineseName = new HashMap();
-        resultMapChineseName.put("visiable", "可见");
-        resultMapChineseName.put("unvisiable", "不可见");
-        Map resultMapCostPrice = new HashMap();
-        resultMapCostPrice.put("visiable", "可见");
-        resultMapCostPrice.put("unvisiable", "不可见");
-        skuCategoryVO.setAvailableStock(resultMapAvailableStock);
-        skuCategoryVO.setChineseName(resultMapChineseName);
-        skuCategoryVO.setCostPrice(resultMapCostPrice);
+        List<DataColumnVO> dataColumnVOList=new ArrayList<>();
+        DataColumnVO chineseNameDataColumnVO=new DataColumnVO();
+        chineseNameDataColumnVO.setKey("chineseName");
+        chineseNameDataColumnVO.setName("中文名称");
+        DataColumnVO costPriceDataColumnVO=new DataColumnVO();
+        costPriceDataColumnVO.setKey("costPrice");
+        costPriceDataColumnVO.setName("销售价格");
+        DataColumnVO availableStockDataColumnVO=new DataColumnVO();
+        availableStockDataColumnVO.setKey("availableStock");
+        availableStockDataColumnVO.setName("可用库存");
+        dataColumnVOList.add(chineseNameDataColumnVO);
+        dataColumnVOList.add(costPriceDataColumnVO);
+        dataColumnVOList.add(availableStockDataColumnVO);
+        skuCategoryVO.setDataColumn(dataColumnVOList);
         BasicDataVO basicDataVO = new BasicDataVO();
         basicDataVO.setBasicData(skuCategoryVO);
         return basicDataVO;
