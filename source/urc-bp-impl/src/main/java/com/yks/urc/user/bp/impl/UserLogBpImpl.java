@@ -38,10 +38,14 @@ public class UserLogBpImpl implements IUserLogBp {
             service.submit(new Runnable() {
                 @Override
                 public void run() {
-                    logMapper.insertLogs(logDO);
+                    try {
+                        logMapper.insertLogs(logDO);
+                    } catch (Exception e) {
+                       logger.error("任务执行异常",e);
+                    }
                 }
             });
-            service.awaitTermination(5,TimeUnit.SECONDS);
+           // service.awaitTermination(5,TimeUnit.SECONDS);
         } catch (Exception e) {
             logger.error("线程池关闭出错,出错原因",e);
         }

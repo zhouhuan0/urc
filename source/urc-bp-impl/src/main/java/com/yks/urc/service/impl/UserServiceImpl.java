@@ -17,6 +17,7 @@ import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -50,10 +51,14 @@ public class UserServiceImpl implements IUserService {
     private IUserValidateBp userValidateBp;
     @Autowired
     private IRoleMapper roleMapper;
+    @Autowired
+    private ISessionBp sessionBp;
+
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
     @Value("${sku.castInfo}")
     private String castInfo;
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)

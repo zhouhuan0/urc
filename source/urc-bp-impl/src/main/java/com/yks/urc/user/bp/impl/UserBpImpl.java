@@ -324,7 +324,7 @@ public class UserBpImpl implements IUserBp {
                 resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
 
                 loginLog.remark = String.format("登陆操作:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",userName, pwd,ip,u.ticket);
-                this.insertLoginLog(loginLog);
+                userLogBp.insertLog(loginLog);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
                 return VoHelper.getResultVO(ErrorCode.E_100001, "账号密码错误");
@@ -366,9 +366,7 @@ public class UserBpImpl implements IUserBp {
      */
     private void insertLoginLog(UserLoginLogDO loginLog) {
         logger.info(StringUtility.toJSONString_NoException(StringUtility.toJSONString_NoException(loginLog)));
-            if (loginLog != null) {
-                userLogBp.insertLog(loginLog);
-            }
+
 //        fixedThreadPool.execute(new Runnable() {
 //
 //            @Override
