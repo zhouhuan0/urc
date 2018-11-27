@@ -487,18 +487,22 @@ public class UserValidateBp implements IUserValidateBp {
 		String urcVersion = map.get(StringConstant.funcVersion);
 		UserVO u = cacheBp.getUser(operator);
 		// 校验ticket
-		if (u == null || !StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+		UserLoginLogDO loginLogDO =new UserLoginLogDO();
+		loginLogDO.userName =operator;
+		loginLogDO.ip=ip;
+		loginLogDO.createTime =new Date();
+		loginLogDO.modifiedTime =new Date();
+		if(u ==null){
+			loginLogDO.remark = String.format("funcPermitValidate 权限校验,当前登录的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]};redis没有数据",operator,null,ip,ticket);
+			userLogBp.insertLog(loginLogDO);
+			return VoHelper.getResultVO("100002", "登录超时");
+		}
+		if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
 			// 100002
-			UserLoginLogDO loginLogDO =new UserLoginLogDO();
-			loginLogDO.userName =operator;
-			loginLogDO.ip=ip;
-			loginLogDO.createTime =new Date();
-			loginLogDO.modifiedTime =new Date();
 			loginLogDO.remark = String.format("funcPermitValidate 权限校验,当前登录的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]};从redis中获取的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]}",operator,null,ip,ticket,u.userName,u.pwd,u.ip,u.ticket);
 			userLogBp.insertLog(loginLogDO);
 			return VoHelper.getResultVO("100002", "登录超时");
 		}
-
 		if (lstWhiteApiUrl.contains(apiUrl)) {
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 		}
