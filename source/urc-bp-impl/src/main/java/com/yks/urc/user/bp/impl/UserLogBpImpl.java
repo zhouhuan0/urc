@@ -25,7 +25,7 @@ public class UserLogBpImpl implements IUserLogBp {
 
     private static Logger logger = LoggerFactory.getLogger(UserLogBpImpl.class);
 
-    ExecutorService service = Executors.newFixedThreadPool(2);
+    ExecutorService service = Executors.newFixedThreadPool(3);
 
     @Autowired
     private IUserLoginLogMapper logMapper;
@@ -41,13 +41,14 @@ public class UserLogBpImpl implements IUserLogBp {
                     try {
                         logMapper.insertLogs(logDO);
                     } catch (Exception e) {
-                       logger.error("任务执行异常",e);
+                        logger.error("日志任务执行异常", e);
                     }
                 }
             });
-           // service.awaitTermination(5,TimeUnit.SECONDS);
+
+            // service.awaitTermination(5,TimeUnit.SECONDS);
         } catch (Exception e) {
-            logger.error("线程池关闭出错,出错原因",e);
+            logger.error("线程池关闭出错,出错原因", e);
         }
     }
 }

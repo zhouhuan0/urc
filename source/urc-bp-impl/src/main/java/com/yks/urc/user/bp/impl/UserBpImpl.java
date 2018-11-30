@@ -315,6 +315,7 @@ public class UserBpImpl implements IUserBp {
             resp.userName = userName;
             if (blnOk) {
                 resp.ticket = userValidateBp.createTicket(userName, ip);
+               UserVO getU =cacheBp.getUser(userName);
                 // 缓存用户信息
                 UserVO u = new UserVO();
                 u.userName = userName;
@@ -323,7 +324,7 @@ public class UserBpImpl implements IUserBp {
                 cacheBp.insertUser(u);
                 resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
 
-                loginLog.remark = String.format("登陆操作:用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]",userName, pwd,ip,u.ticket);
+                loginLog.remark = String.format("登陆操作:request:[%s,%s,%s],redis 原有的用户信息[%s],redis新增的用户信息[%s]",userName, pwd,ip,StringUtility.toJSONString(getU),StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLog);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
             } else {
@@ -419,13 +420,9 @@ public class UserBpImpl implements IUserBp {
         String ticket = jo.getString(StringConstant.ticket);
         UserVO u = cacheBp.getUser(strOperator);
         // 记录登出
-        String redisTicket ="";
-        if (u != null){
-            redisTicket =u.ticket;
-        }
         UserLoginLogDO logDO =new UserLoginLogDO();
         logDO.userName =strOperator;
-        logDO.remark=String.format("登出操作:登出人:[%s],登出ticket:[%s],redis的ticket[%s]",strOperator,ticket,redisTicket);
+        logDO.remark=String.format("登出操作:request :[%s]redis信息[%S]",jsonStr,StringUtility.toJSONString(u));
         logDO.loginTime = new Date();
         logDO.createTime =new Date();
         logDO.modifiedTime =new Date();

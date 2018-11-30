@@ -9,7 +9,7 @@ public class SkuCategoryVO  implements Serializable{
     private static final long serialVersionUID = -7413428975523456565L;
 
 
-    private List<CategoryVO> firstCategory;
+    private List<CategoryResponseVO> firstCategory;
     private  List<DataColumnVO>   dataColumn;
 
     public List<DataColumnVO> getDataColumn() {
@@ -20,11 +20,11 @@ public class SkuCategoryVO  implements Serializable{
         this.dataColumn = dataColumn;
     }
 
-    public List<CategoryVO> getFirstCategory() {
+    public List<CategoryResponseVO> getFirstCategory() {
         return firstCategory;
     }
 
-    public void setFirstCategory(List<CategoryVO> firstCategory) {
+    public void setFirstCategory(List<CategoryResponseVO> firstCategory) {
         this.firstCategory = firstCategory;
     }
 }

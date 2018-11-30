@@ -362,7 +362,7 @@ public class UserServiceImpl implements IUserService {
         rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
         return rslt;
     }
-
+/*
     @Override
     public ResultVO getBasicDataList(String jsonStr) {
         ResultVO resultVO = new ResultVO();
@@ -393,19 +393,87 @@ public class UserServiceImpl implements IUserService {
             return VoHelper.getErrorResult();
         }
         return resultVO;
+    }*/
+
+    @Override
+    public ResultVO getBasicDataList(String jsonStr) {
+        ResultVO resultVO = new ResultVO();
+        String response;
+        try {
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+            String operator = jsonObject.getString("operator");
+            if (operator == null) {
+                logger.error("操作人员不能为空");
+                return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
+            }
+            response = HttpUtility2.postForm(castInfo, null, null);
+            JSONArray jsonArray = JSONArray.parseArray(response);
+            int size1 = jsonArray.size();
+            SkuCategoryVO skuCategoryVO = new SkuCategoryVO();
+            //  List<CategoryVO> categoryVOList = new ArrayList<>();
+            List<CategoryResponseVO> categoryResponseVOListFirst = new ArrayList<>();
+            String cateId;
+            String cateNameCn;
+            for (int i = 0; i < size1; i++) {
+                CategoryResponseVO categoryResponseVO = new CategoryResponseVO();
+                List<CategoryResponseVO> categoryResponseVOListSecond = new ArrayList<>();
+                //第一级分类
+                JSONObject jsonObjectFirst = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
+                cateId = jsonObjectFirst.getString("cateId");
+                cateNameCn = jsonObjectFirst.getString("cateNameCn");
+                categoryResponseVO.setCateId(cateId);
+                categoryResponseVO.setCateNameCn(cateNameCn);
+                JSONArray jsonArraySceond = jsonObjectFirst.getJSONArray("subCategorys");
+                int size2 = jsonArraySceond.size();
+                for (int j = 0; j < size2; j++) {
+                    CategoryResponseVO categoryResponseVOSecond = new CategoryResponseVO();
+                    List<CategoryResponseVO> categoryResponseVOListThird = new ArrayList<>();
+                    JSONObject jsonObjectSecond = StringUtility.parseString(StringUtility.toJSONString(jsonArraySceond.get(j)));
+                    cateId = jsonObjectSecond.getString("cateId");
+                    cateNameCn = jsonObjectSecond.getString("cateNameCn");
+                    categoryResponseVOSecond.setCateId(cateId);
+                    categoryResponseVOSecond.setCateNameCn(cateNameCn);
+                    JSONArray jsonArrayThird = jsonObjectSecond.getJSONArray("subCategorys");
+                    int size3 = jsonArrayThird.size();
+
+                    for (int k = 0; k < size3; k++) {
+                        CategoryResponseVO categoryResponseVOThird = new CategoryResponseVO();
+                        JSONObject jsonObjectThird = StringUtility.parseString(StringUtility.toJSONString(jsonArrayThird.get(k)));
+                        cateId = jsonObjectThird.getString("cateId");
+                        cateNameCn = jsonObjectThird.getString("cateNameCn");
+                        categoryResponseVOThird.setCateId(cateId);
+                        categoryResponseVOThird.setCateNameCn(cateNameCn);
+                        categoryResponseVOListThird.add(categoryResponseVOThird);
+                    }
+                    categoryResponseVOSecond.setChildren(categoryResponseVOListThird);
+                    categoryResponseVOListSecond.add(categoryResponseVOSecond);
+                }
+                categoryResponseVO.setChildren(categoryResponseVOListSecond);
+                categoryResponseVOListFirst.add(categoryResponseVO);
+            }
+            //组装返回数据basicDataVO
+            BasicDataVO basicDataVO = getBasicDataVO(skuCategoryVO, categoryResponseVOListFirst);
+            resultVO.msg = "操作成功";
+            resultVO.data = basicDataVO;
+            resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
+        } catch (Exception e) {
+            logger.error("获取sku分类,库存等数据权限失败", e);
+            return VoHelper.getErrorResult();
+        }
+        return resultVO;
     }
 
 
-    private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryVO> categoryVOList) {
-        skuCategoryVO.setFirstCategory(categoryVOList);
-        List<DataColumnVO> dataColumnVOList=new ArrayList<>();
-        DataColumnVO chineseNameDataColumnVO=new DataColumnVO();
+    private BasicDataVO getBasicDataVO(SkuCategoryVO skuCategoryVO, List<CategoryResponseVO> categoryResponseVOList) {
+        skuCategoryVO.setFirstCategory(categoryResponseVOList);
+        List<DataColumnVO> dataColumnVOList = new ArrayList<>();
+        DataColumnVO chineseNameDataColumnVO = new DataColumnVO();
         chineseNameDataColumnVO.setKey("chineseName");
         chineseNameDataColumnVO.setName("中文名称");
-        DataColumnVO costPriceDataColumnVO=new DataColumnVO();
+        DataColumnVO costPriceDataColumnVO = new DataColumnVO();
         costPriceDataColumnVO.setKey("costPrice");
         costPriceDataColumnVO.setName("销售价格");
-        DataColumnVO availableStockDataColumnVO=new DataColumnVO();
+        DataColumnVO availableStockDataColumnVO = new DataColumnVO();
         availableStockDataColumnVO.setKey("availableStock");
         availableStockDataColumnVO.setName("可用库存");
         dataColumnVOList.add(chineseNameDataColumnVO);

@@ -5,6 +5,7 @@ import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
@@ -479,48 +480,53 @@ public class UserValidateBp implements IUserValidateBp {
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
 		logger.info(String.format("funcPermitValidate:%s",StringUtility.toJSONString_NoException(map)));
-		String apiUrl = map.get("apiUrl");
-		String moduleUrl = map.get("moduleUrl");
-		String operator = map.get(StringConstant.operator);
-		String ticket = map.get(StringConstant.ticket);
-		String ip = map.get(StringConstant.ip);
-		String urcVersion = map.get(StringConstant.funcVersion);
-		UserVO u = cacheBp.getUser(operator);
-		// 校验ticket
-		UserLoginLogDO loginLogDO =new UserLoginLogDO();
-		loginLogDO.userName =operator;
-		loginLogDO.ip=ip;
-		loginLogDO.createTime =new Date();
-		loginLogDO.modifiedTime =new Date();
-		if(u ==null){
-			loginLogDO.remark = String.format("funcPermitValidate 权限校验,当前登录的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]};redis没有数据",operator,null,ip,ticket);
-			userLogBp.insertLog(loginLogDO);
-			return VoHelper.getResultVO("100002", "登录超时");
-		}
-		if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
-			// 100002
-			loginLogDO.remark = String.format("funcPermitValidate 权限校验,当前登录的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]};从redis中获取的信息:{用户姓名:[%s],密码:[%s],登陆的ip:[%s],此次的ticket:[%s]}",operator,null,ip,ticket,u.userName,u.pwd,u.ip,u.ticket);
-			userLogBp.insertLog(loginLogDO);
-			return VoHelper.getResultVO("100002", "登录超时");
-		}
-		if (lstWhiteApiUrl.contains(apiUrl)) {
+		try {
+			String apiUrl = map.get("apiUrl");
+			String moduleUrl = map.get("moduleUrl");
+			String operator = map.get(StringConstant.operator);
+			String ticket = map.get(StringConstant.ticket);
+			String ip = map.get(StringConstant.ip);
+			String urcVersion = map.get(StringConstant.funcVersion);
+			UserVO u = cacheBp.getUser(operator);
+			// 校验ticket
+			UserLoginLogDO loginLogDO =new UserLoginLogDO();
+			loginLogDO.userName =operator;
+			loginLogDO.ip=ip;
+			loginLogDO.createTime =new Date();
+			loginLogDO.modifiedTime =new Date();
+			if(u ==null){
+                loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
+                userLogBp.insertLog(loginLogDO);
+                return VoHelper.getResultVO("100002", "登录超时");
+            }
+			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+                // 100002
+                loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
+                userLogBp.insertLog(loginLogDO);
+                return VoHelper.getResultVO("100002", "登录超时");
+            }
+			if (lstWhiteApiUrl.contains(apiUrl)) {
+                return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+            }
+
+			// 校验功能权限版本
+			if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator))) {
+                return VoHelper.getResultVO("100007", "功能权限版本错误");
+            }
+
+			// 校验是否有权限
+			String sysKey = getSysKeyByApiUrl(apiUrl);
+			if (StringUtility.isNullOrEmpty(sysKey)) {
+                return VoHelper.getResultVO(ErrorCode.E_100007, String.format("%s don't belong to any system", apiUrl));
+            }
+			if (!hasApiFunc(moduleUrl, apiUrl, operator, sysKey)) {
+                return VoHelper.getResultVO(ErrorCode.E_100003, "没有权限");
+            }
 			return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
+		} catch (Exception e) {
+			logger.error("权限校验异常,原因为",e);
+			throw new URCBizException(ErrorCode.E_000008.getState(),"权限校验异常");
 		}
-
-		// 校验功能权限版本
-		if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator))) {
-			return VoHelper.getResultVO("100007", "功能权限版本错误");
-		}
-
-		// 校验是否有权限
-		String sysKey = getSysKeyByApiUrl(apiUrl);
-		if (StringUtility.isNullOrEmpty(sysKey)) {
-			return VoHelper.getResultVO(ErrorCode.E_100007, String.format("%s don't belong to any system", apiUrl));
-		}
-		if (!hasApiFunc(moduleUrl, apiUrl, operator, sysKey)) {
-			return VoHelper.getResultVO(ErrorCode.E_100003, "没有权限");
-		}
-		return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
 	}
 
 	/**
