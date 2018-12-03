@@ -472,7 +472,7 @@ public class UserServiceImpl implements IUserService {
         chineseNameDataColumnVO.setName("中文名称");
         DataColumnVO costPriceDataColumnVO = new DataColumnVO();
         costPriceDataColumnVO.setKey("costPrice");
-        costPriceDataColumnVO.setName("销售价格");
+        costPriceDataColumnVO.setName("成本价");
         DataColumnVO availableStockDataColumnVO = new DataColumnVO();
         availableStockDataColumnVO.setKey("availableStock");
         availableStockDataColumnVO.setName("可用库存");
