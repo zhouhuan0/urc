@@ -17,7 +17,7 @@
                     serialization="simple" maxServerConnection="80000" maxContentLength="1048576"
                     maxWorkerThread="800" minWorkerThread="20"/>-->
     <motan:protocol id="motan2" default="true" name="motan2" serialization="simple" haStrategy="failover"
-                    loadbalance="roundrobin" maxServerConnection="80000" maxContentLength="1048576"
+                    loadbalance="roundrobin" maxServerConnection="80000" maxContentLength="512000000"
                     maxWorkerThread="800" minWorkerThread="20"/>
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
