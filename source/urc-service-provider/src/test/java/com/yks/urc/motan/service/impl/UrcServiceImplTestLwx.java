@@ -1,22 +1,15 @@
 package com.yks.urc.motan.service.impl;
 
-import com.yks.mq.utils.KafkaProducerSingleton;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
 import com.yks.urc.vo.*;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.*;
 import java.util.*;
-
-import static org.junit.Assert.*;
 
 public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Autowired
@@ -214,6 +207,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void logout() throws Exception {
+
     }
 
     @Test
@@ -372,6 +366,11 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void fuzzSearchPersonByName() throws Exception {
+        map.put("name","pan");
+        String json = StringUtility.toJSONString(map);
+        MotanSession.initialSession(json);
+        resultVO = service.fuzzSearchPersonByName(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test

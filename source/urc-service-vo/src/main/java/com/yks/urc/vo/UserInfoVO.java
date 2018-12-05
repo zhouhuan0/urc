@@ -18,4 +18,26 @@ public class UserInfoVO implements Serializable {
     public String dingUserId;
     public String orgName;
     public String parentOrgName;
+    //增加两个字段返回
+    /**
+     * 手机号
+     */
+    public String phoneNum;
+    /**
+     * 邮箱
+     */
+    public String email;
+    /**
+     *  工号
+     */
+    public String jobNumber;
+    /**
+     *  职位
+     */
+    public String position;
+    /**
+     *  男 女
+     */
+    public String gender;
+
 }

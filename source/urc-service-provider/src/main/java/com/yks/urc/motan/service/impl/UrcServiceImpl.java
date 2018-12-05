@@ -742,4 +742,9 @@ public class UrcServiceImpl implements IUrcService {
         }
         return permissionService.updateSysPermitNode(funcTreeVO);
     }
+    @Log("获取sku分类,库存")
+    @Override
+  public   ResultVO getBasicDataList(String jsonStr){
+     return  userService.getBasicDataList(jsonStr);
+    }
 }

@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
  /**
@@ -27,7 +26,9 @@ public class UserLoginLogMapperTest extends BaseMapperTest{
         UserLoginLogDO userLoginLogDO = new UserLoginLogDO();
         userLoginLogDO.loginTime=new Date();
         userLoginLogDO.userName="admin12122";
-        int rtn = userLoginLogMapper.insertUserLoginLog(userLoginLogDO);
+        userLoginLogDO.ip="111";
+        userLoginLogDO.remark ="1111";
+        int rtn = userLoginLogMapper.insertLogs(userLoginLogDO);
         Assert.assertEquals(1,rtn);
     }
 
@@ -36,5 +37,10 @@ public class UserLoginLogMapperTest extends BaseMapperTest{
         UserLoginLogDO userLoginLogDO = userLoginLogMapper.selectUserLoginLog();
         String dateStr  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(userLoginLogDO.loginTime);
         System.out.println(dateStr);
+    }
+
+    @Test
+    public  void testInst(){
+
     }
 }

@@ -10,4 +10,5 @@ public interface IUserLoginLogMapper {
 
 	UserLoginLogDO selectUserLoginLog();
 
+	int insertLogs(UserLoginLogDO logDO);
 }

@@ -27,6 +27,60 @@
         where id= '11135';
     </select>
 
-
+    <insert id="insertLogs" parameterType="com.yks.urc.entity.UserLoginLogDO" >
+        insert into user_login_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                user_name,
+            </if>
+            <if test="ip != null">
+                ip,
+            </if>
+            <if test="ldapCost != null">
+                ldap_cost,
+            </if>
+            <if test="loginSuccess != null">
+                is_login_success,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+            <if test="loginTime != null">
+                login_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="modifiedTime != null">
+                modified_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userName != null">
+                #{userName},
+            </if>
+            <if test="ip != null">
+                #{ip},
+            </if>
+            <if test="ldapCost != null">
+                #{ldapCost},
+            </if>
+            <if test="loginSuccess != null">
+                #{loginSuccess},
+            </if>
+            <if test="remark != null">
+                #{remark},
+            </if>
+            <if test="loginTime != null">
+                #{loginTime},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+            <if test="modifiedTime != null">
+                #{modifiedTime},
+            </if>
+        </trim>
+    </insert>
 
 </mapper>

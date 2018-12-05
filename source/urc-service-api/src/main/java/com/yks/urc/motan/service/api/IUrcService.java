@@ -498,32 +498,47 @@ public interface IUrcService {
     ResultVO getPlatformShopByEntityCode(String jsonStr);
 
     /**
-     *获取验证码
-     * @param jsonStr
-     * 前端传入的json字符串
+     * 获取验证码
+     *
+     * @param jsonStr 前端传入的json字符串
      * @return
      */
     ResultVO resetPwdGetVerificationCode(String jsonStr);
-     /**
+
+    /**
      * 重置密码-提交重置请求
+     *
      * @param jsonStr
      * @return
      */
     ResultVO resetPwdSubmit(String jsonStr);
+
     /**
-     *  删除权限树节点
+     * 删除权限树节点
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2018/11/2 15:38
      */
     ResultVO deleteSysPermitNode(String jsonStr);
+
     /**
-     *  修改权限树节点
+     * 修改权限树节点
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2018/11/2 15:38
      */
     ResultVO updateSysPermitNode(String jsonStr);
+
+    /**
+     * @Description :获取sku分类,库存等数据权限
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2018/11/23 17:24
+     * @Param:
+     * @return:
+     **/
+    ResultVO getBasicDataList(String jsonStr);
 }

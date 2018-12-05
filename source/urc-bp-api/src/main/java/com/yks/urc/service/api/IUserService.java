@@ -112,5 +112,5 @@ public interface IUserService {
 	 */
 	ResultVO resetPwdSubmit(String mobile,String new_password,String username,String get_code);
 
-
+	ResultVO getBasicDataList(String jsonStr);
 }
