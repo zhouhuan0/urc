@@ -538,6 +538,16 @@ public class UrcServiceTest extends BaseServiceTest {
 		ResultVO resultVO =service.getRoleByRoleId(json);
 		System.out.println(StringUtility.toJSONString(resultVO));
 	}
+	@Test
+	public void testfuzzSearchPersonByName(){
+		String json = "\t\t{\n" +
+				"\t\t\t\"operator\":\"songguanye\",\n" +
+				"\t\t\t\"name\":\"程立夫\"\n" +
+				"\t\t}";
+		MotanSession.initialSession(json);
+		service.fuzzSearchPersonByName(json);
+
+	}
 
 
 }
