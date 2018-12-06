@@ -747,4 +747,9 @@ public class UrcServiceImpl implements IUrcService {
   public   ResultVO getBasicDataList(String jsonStr){
      return  userService.getBasicDataList(jsonStr);
     }
+    @Log("获取仓储数据授权")
+    @Override
+   public  ResultVO  getWarehouse(String jsonStr) throws Exception {
+        return  userService.getWarehouse(jsonStr);
+    }
 }

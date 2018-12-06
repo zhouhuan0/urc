@@ -9,6 +9,7 @@ import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.exception.URCServiceException;
+import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
@@ -58,7 +59,8 @@ public class UserServiceImpl implements IUserService {
     private String resetPwdGetVerificationCode;
     @Value("${sku.castInfo}")
     private String castInfo;
-
+    @Value("${warehouse.warehouseInfo}")
+    private String warehouseInfo;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -483,6 +485,34 @@ public class UserServiceImpl implements IUserService {
         BasicDataVO basicDataVO = new BasicDataVO();
         basicDataVO.setBasicData(skuCategoryVO);
         return basicDataVO;
+    }
+
+    @Override
+    public ResultVO getWarehouse(String jsonStr) throws Exception {
+        ResultVO resultVO=new ResultVO();
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.getString("operator");
+        if (operator == null) {
+            logger.error("操作人员不能为空");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
+        }
+        String response = HttpUtility2.postForm(warehouseInfo, null, null);
+        JSONObject jsonObjectResponse = StringUtility.parseString(response);
+        JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
+        //JSONArray jsonArray=JSONArray.parseArray(response);
+        int size = jsonArray.size();
+        List<Object> list=new ArrayList();
+        for (int i = 0; i < size; i++) {
+            WarehourseResponseVO warehourseResponseVO=new WarehourseResponseVO();
+         JSONObject jsonObjectToWeb = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
+         warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
+         warehourseResponseVO.setValue( jsonObjectToWeb.getString("code"));
+            list.add(warehourseResponseVO);
+        }
+        resultVO.state=CommonMessageCodeEnum.SUCCESS.getCode();
+        resultVO.data=list;
+        resultVO.msg="获取成功";
+        return resultVO;
     }
 }
 
