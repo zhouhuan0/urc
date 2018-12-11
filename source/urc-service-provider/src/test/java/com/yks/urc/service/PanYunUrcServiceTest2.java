@@ -21,6 +21,7 @@ import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.ldap.bp.api.ILdapBp;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
@@ -151,6 +152,16 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         // map.put(StringConstant.sysKey, "001");
         System.out.println(StringUtility.toJSONString(map));
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
+    }
+
+    @Autowired
+    private ILdapBp ldapBp;
+
+    @Test
+    public void ldap_Test() {
+        String userName = "panyun";
+        String pwd = "ASDFhjkl12345";
+        System.out.println("validateUser:" + ldapBp.validateUser(userName, pwd));
     }
 
     @Test

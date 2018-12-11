@@ -9,11 +9,11 @@ import com.yks.urc.ldap.bp.api.ILdapBp;
 @Component
 public class LdapBpImpl implements ILdapBp {
 	@Autowired
-	LDAPUtil ldapUtil;
+	LDAPUtil2 ldapUtil;
 
 	public boolean validateUser(String userName, String pwd) {
 		if (StringUtility.isNullOrEmpty(userName) || StringUtility.isNullOrEmpty(pwd))
 			return false;
-		return ldapUtil.connect(false, userName, pwd, null);
+		return ldapUtil.connect( userName, pwd);
 	}
 }
