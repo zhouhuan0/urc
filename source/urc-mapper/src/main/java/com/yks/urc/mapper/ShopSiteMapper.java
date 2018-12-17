@@ -2,7 +2,6 @@ package com.yks.urc.mapper;
 
 
 import com.yks.urc.entity.ShopSiteDO;
-import com.yks.urc.vo.OmsShopVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -41,6 +40,15 @@ public interface ShopSiteMapper {
     List<String> listShopByPage(Map<String, Object> data);
 
     long listShopByPageCount(Map<String,Object> data);
+
+    /**
+     *   查询所有数据 入缓存
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/12/17 16:19
+     */
+    List<ShopSiteDO> selectAll();
 
 
 }

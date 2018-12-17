@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
@@ -20,23 +21,21 @@ import com.yks.urc.exception.URCBizException;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
-
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,6 +63,16 @@ public class DataAuthorizationImpl implements DataAuthorization {
     private ShopSiteMapper shopSiteMapper;
     @Autowired
     private IOperationBp operationBp;
+    @Autowired
+    private ICacheBp  cacheBp;
+    /**
+     *  ebay entity
+     */
+    private String E_PlsShopAccount ="E_PlsShopAccount";
+    /**
+     *  客服 entity
+     */
+    private String E_CustomerService ="E_CustomerService";
 
     DistributedReentrantLock platformLock = new DistributedReentrantLock("syncPlatform");
 
@@ -166,19 +175,10 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         JSONArray dataArray = shopObject.getJSONArray("data");
                         List<ShopAndSiteResp> shopAndSiteResps = StringUtility.jsonToList(dataArray.toString(), ShopAndSiteResp.class);
                         List<ShopSiteDO> shopSiteDOS = new ArrayList<>();
+
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
-                            ShopSiteDO shopSiteDO = new ShopSiteDO();
-                            shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code,"\\s"));
-                            shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid,"\\s"));
-                            shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system,"\\s"));
-                            shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop,"\\s"));
-                            shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code,"\\s"));
-                            shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name,"\\s"));
-                            shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
-                            shopSiteDO.setCreateBy(operator);
-                            shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
-                            shopSiteDO.setModifiedBy(operator);
-                            shopSiteDOS.add(shopSiteDO);
+                            // 组装数据入库
+                            ShopSiteDO shopSiteDO = assembleShopSiteDO(operator, shopSiteDOS, shopAndSiteResp);
                             if (shopSiteDOS.size() >= 1000) {
                                 //去重
                                 shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
@@ -193,13 +193,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
                         }
                     }
                 }
+                // 入缓存
+                assembleCache();
                 operationBp.addLog(this.getClass().getName(), "同步账号站点数据成功..", null);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步账号站点数据成功..");
             } catch (Exception e) {
                 throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步账号站点数据出错..", e);
             } finally {
                 shopSiteLock.unlock();
-
             }
         } else {
             logger.info("同步userInfo数据正在执行...,");
@@ -213,6 +214,72 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "定时任务正在执行..");
             }
         }
+    }
+
+    /**
+     *  入缓存
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/12/17 16:29
+     */
+    public void assembleCache() {
+        // 入缓存
+        List<PlatformDO> platformDOS = platformMapper.selectAll();
+        if (CollectionUtils.isEmpty(platformDOS)) {
+            return;
+        }
+        List<OmsPlatformVO> customerCache = new ArrayList<>();
+        List<OmsPlatformVO> ebayCache = new ArrayList<>();
+        // 入缓存
+        platformDOS.forEach(platformDO -> {
+            OmsPlatformVO platformVO = new OmsPlatformVO();
+            //ebay只需要 shopee ebay 亚马逊 lazada 速卖通
+            if (platformDO == null) {
+                return;
+            }
+            platformVO.platformId = platformDO.getPlatformId();
+            platformVO.platformName = platformDO.getPlatformName();
+            platformVO.lstShop = new ArrayList<>();
+            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platformDO.getPlatformId());
+            shopSiteDOS.forEach(shopSiteDO -> {
+                OmsShopVO shopVO = new OmsShopVO();
+                shopVO.shopId = shopSiteDO.getShopSystem();
+                shopVO.shopName = shopSiteDO.getShop();
+                platformVO.lstShop.add(shopVO);
+            });
+            customerCache.add(platformVO);
+            if ("shopee".equalsIgnoreCase(platformDO.getPlatformId()) || "ebay".equalsIgnoreCase(platformDO.getPlatformId()) || "亚马逊".equalsIgnoreCase(platformDO.getPlatformId()) || "lazada".equalsIgnoreCase(platformDO.getPlatformId()) || "速卖通".equalsIgnoreCase(platformDO.getPlatformId())) {
+                ebayCache.add(platformVO);
+            }
+        });
+        // 入 ebay缓存
+        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(ebayCache),E_PlsShopAccount);
+        // 入客服缓存
+        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(customerCache),E_CustomerService);
+    }
+
+    /**
+     *   数据组装
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/12/17 16:07
+     */
+    public ShopSiteDO assembleShopSiteDO(String operator, List<ShopSiteDO> shopSiteDOS, ShopAndSiteResp shopAndSiteResp) {
+        ShopSiteDO shopSiteDO = new ShopSiteDO();
+        shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code,"\\s"));
+        shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid,"\\s"));
+        shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system,"\\s"));
+        shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop,"\\s"));
+        shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code,"\\s"));
+        shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name,"\\s"));
+        shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
+        shopSiteDO.setCreateBy(operator);
+        shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
+        shopSiteDO.setModifiedBy(operator);
+        shopSiteDOS.add(shopSiteDO);
+        return shopSiteDO;
     }
 
     @Override
