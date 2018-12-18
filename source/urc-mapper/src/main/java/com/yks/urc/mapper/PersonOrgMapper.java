@@ -13,6 +13,8 @@ public interface PersonOrgMapper {
 
     PersonOrg selectByPrimaryKey(Long id);
 
+    List<String> selectDingUserIdByDingOrgId(Long dingUserId);
+
     int updateByPrimaryKeySelective(PersonOrg record);
 
     int updateByPrimaryKey(PersonOrg record);

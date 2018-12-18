@@ -104,6 +104,13 @@ public interface IUrcService {
     ResultVO getAllOrgTree();
 
     /**
+     * 获取全部用户及组织结构
+     * @param
+     * @return
+     */
+    ResultVO getAllOrgTreeAndUser();
+
+    /**
      * 快速分配数据权限模板给用户
      *
      * @param jsonStr
