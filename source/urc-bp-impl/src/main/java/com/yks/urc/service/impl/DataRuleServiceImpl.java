@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
+import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
@@ -100,6 +101,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ICacheBp cacheBp;
+
+    @Autowired
+    private IOrderManageService orderManageService;
     /**
      * ebay 缓存
      */
@@ -1492,8 +1496,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         //根据entityCode找到对应得platforid
         if (entityCode.equalsIgnoreCase("E_PlatformShopSite")) {
-            //oms
-            return dataRuleService.appointPlatformShopSiteOms(operator, "速卖通");
+            //通过调oms的接口获取销售账号
+            return getSellerIdByOmsInterface();
+//            return dataRuleService.appointPlatformShopSiteOms(operator, "速卖通");
         } else if (entityCode.equalsIgnoreCase("E_ArmShopAccount")) {
             //索赔-->亚马逊 只需要账号
             platformIds.add("亚马逊");
@@ -1521,5 +1526,46 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return VoHelper.getSuccessResult((Object) "待配置!......");
         }
 
+    }
+
+    private ResultVO getSellerIdByOmsInterface() {
+        ResultVO resultVO;
+        try{
+            //oms
+            resultVO = orderManageService.getAllSellerId();
+        }catch (Exception e){
+            logger.error("throw Exception when retrieve oms interface ",e);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"调取oms接口获取销售账号出错",new ArrayList<>());
+        }
+        List<OmsPlatformVO> omsPlatformVOList = new ArrayList<>();
+        try{
+            //组装数据
+            JSONArray data = (JSONArray) resultVO.data;
+            if(data != null && data.size() > 0){
+                for (int i=0; i < data.size(); i++) {
+                    OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+                    List<OmsShopVO> omsShopVOList = new ArrayList<>();
+                    JSONObject jsonObject = (JSONObject) data.get(i);
+                    omsPlatformVO.platformName = jsonObject.getString("platformName");
+                    omsPlatformVO.platformId = jsonObject.getString("platformCode");
+                    List lstSellerId = StringUtility.jsonToList(jsonObject.getString("lstSellerId"),String.class) ;
+                    if(lstSellerId != null && lstSellerId.size() > 0){
+                        for (int i1=0; i1 < lstSellerId.size(); i1++) {
+                            OmsShopVO omsShopVO = new OmsShopVO();
+                            omsShopVO.shopName = (String) lstSellerId.get(i1);
+                            omsShopVO.shopId = omsShopVO.shopName;
+                            omsShopVOList.add(omsShopVO);
+                        }
+                    }
+                    omsPlatformVO.lstShop = omsShopVOList;
+                    omsPlatformVOList.add(omsPlatformVO);
+                }
+            }
+
+        }catch (Exception e){
+            logger.error("Handle data Exception",e);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"处理数据异常",new ArrayList<>());
+        }
+        return VoHelper.getSuccessResult(omsPlatformVOList);
     }
 }

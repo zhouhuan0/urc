@@ -533,4 +533,14 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         resultVO=service.updateSysPermitNode(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
+    @Test
+    public void testGetPlatformShopByEntityCode(){
+        String json = "{\n" +
+                "\"operator\":\"songguanye\",\n" +
+                "\"entityCode\":\"E_PlatformShopSite\"\n" +
+                "}";
+        MotanSession.initialSession(json);
+        service.getPlatformShopByEntityCode(json);
+
+    }
 }
