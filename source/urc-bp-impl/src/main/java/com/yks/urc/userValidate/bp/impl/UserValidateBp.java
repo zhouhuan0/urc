@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -486,6 +487,7 @@ public class UserValidateBp implements IUserValidateBp {
 			String operator = map.get(StringConstant.operator);
 			String ticket = map.get(StringConstant.ticket);
 			String ip = map.get(StringConstant.ip);
+			String deviceName=map.get(StringConstant.deviceName);
 			String urcVersion = map.get(StringConstant.funcVersion);
 			UserVO u = cacheBp.getUser(operator);
 			// 校验ticket
@@ -499,12 +501,19 @@ public class UserValidateBp implements IUserValidateBp {
                 userLogBp.insertLog(loginLogDO);
                 return VoHelper.getResultVO("100002", "登录超时");
             }
-			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
+			String loginTimeString=simpleDateFormat.format(u.loginTime);
+			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
                 // 100002
                 loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLogDO);
                 return VoHelper.getResultVO("100002", "登录超时");
             }
+            if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
+				userLogBp.insertLog(loginLogDO);
+				return VoHelper.getResultVO("101003",String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
+			}
 			if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
             }
