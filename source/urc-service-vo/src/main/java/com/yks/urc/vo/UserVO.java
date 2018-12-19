@@ -112,13 +112,5 @@ public class UserVO implements Serializable {
      *  角色
      */
     public List<RoleVO> roles;
-    /**
-     *  设备名称
-     */
-    public  String 	deviceName;
-    /**
-     *  登录时间
-     */
-    public  Date loginTime;
 
 }

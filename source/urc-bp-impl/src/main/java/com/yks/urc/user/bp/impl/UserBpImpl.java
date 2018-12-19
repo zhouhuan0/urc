@@ -290,13 +290,13 @@ public class UserBpImpl implements IUserBp {
 
     @Override
     public ResultVO login(Map<String, String> map) {
-        return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip),map.get(StringConstant.deviceName));
+        return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip));
     }
 
     @Autowired
     private IUserLogBp userLogBp;
 
-    public ResultVO login(String userName,String pwd,String ip,String deviceName) {
+    public ResultVO login(String userName,String pwd,String ip) {
         try {
             LoginRespVO resp = new LoginRespVO();
             long startTime = System.currentTimeMillis();
@@ -321,8 +321,6 @@ public class UserBpImpl implements IUserBp {
                 u.userName = userName;
                 u.ticket = resp.ticket;
                 u.ip = ip;
-                u.deviceName=deviceName;
-                u.loginTime=new Date();
                 cacheBp.insertUser(u);
                 resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
 
