@@ -981,15 +981,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (dataRuleVOS == null || dataRuleVOS.isEmpty()) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
-
-        String lstUserNameStr = jsonObject.getString("lstUserName");
+        // 注释掉不需要上线的代码
+       /* String lstUserNameStr = jsonObject.getString("lstUserName");
         List<String> lstUserName = StringUtility.parseObject(lstUserNameStr,List.class);
         if (CollectionUtils.isEmpty(lstUserName)){
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
-        }
-     /*   for (DataRuleVO dataRuleVO : dataRuleVOS) {
-            lstUserName.add(dataRuleVO.getUserName());
         }*/
+
+        List<String> lstUserName = new ArrayList<>();
+        for (DataRuleVO dataRuleVO : dataRuleVOS) {
+            lstUserName.add(dataRuleVO.getUserName());
+        }
 
         //分批量操作
         List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
