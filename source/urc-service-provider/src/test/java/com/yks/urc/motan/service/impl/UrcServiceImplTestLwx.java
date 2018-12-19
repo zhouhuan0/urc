@@ -232,8 +232,8 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void addOrUpdateDataRule() throws Exception {
-        String json = StringUtility.convertStreamToString(new FileInputStream(new File("F:\\Gitrepository\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\dataRule.json")));
-        MotanSession.initialSession(json);
+        String json = StringUtility.inputStream2String(new FileInputStream(new File("F:\\feature\\urc-sgy_dev\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\addDataRule.json")));
+        System.out.println(json);
         resultVO = service.addOrUpdateDataRule(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
@@ -532,5 +532,15 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         System.out.println(json);
         resultVO=service.updateSysPermitNode(json);
         System.out.println(StringUtility.toJSONString(resultVO));
+    }
+    @Test
+    public void testGetPlatformShopByEntityCode(){
+        String json = "{\n" +
+                "\"operator\":\"songguanye\",\n" +
+                "\"entityCode\":\"E_PlatformShopSite\"\n" +
+                "}";
+        MotanSession.initialSession(json);
+        service.getPlatformShopByEntityCode(json);
+
     }
 }
