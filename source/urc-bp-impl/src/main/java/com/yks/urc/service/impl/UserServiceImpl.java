@@ -488,30 +488,34 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultVO getWarehouse(String jsonStr) throws Exception {
-        ResultVO resultVO=new ResultVO();
+    public ResultVO getWarehouse(String jsonStr) {
+        ResultVO resultVO = new ResultVO();
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         if (operator == null) {
             logger.error("操作人员不能为空");
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
         }
-        String response = HttpUtility2.postForm(warehouseInfo, null, null);
-        JSONObject jsonObjectResponse = StringUtility.parseString(response);
-        JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
-        //JSONArray jsonArray=JSONArray.parseArray(response);
-        int size = jsonArray.size();
-        List<Object> list=new ArrayList();
-        for (int i = 0; i < size; i++) {
-            WarehourseResponseVO warehourseResponseVO=new WarehourseResponseVO();
-         JSONObject jsonObjectToWeb = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
-         warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
-         warehourseResponseVO.setValue( jsonObjectToWeb.getString("code"));
-            list.add(warehourseResponseVO);
+        List<Object> list = new ArrayList();
+        try {
+            String response = HttpUtility2.postForm(warehouseInfo, null, null);
+            JSONObject jsonObjectResponse = StringUtility.parseString(response);
+            JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
+            int size = jsonArray.size();
+            for (int i = 0; i < size; i++) {
+                WarehourseResponseVO warehourseResponseVO = new WarehourseResponseVO();
+                JSONObject jsonObjectToWeb = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
+                warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
+                warehourseResponseVO.setValue(jsonObjectToWeb.getString("code"));
+                list.add(warehourseResponseVO);
+            }
+        } catch (Exception e) {
+            logger.error(String.format("Failed to get warehousing data authorization:%s",jsonStr),e);
+            return  VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"获取仓储数据授权失败！");
         }
-        resultVO.state=CommonMessageCodeEnum.SUCCESS.getCode();
-        resultVO.data=list;
-        resultVO.msg="获取成功";
+        resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
+        resultVO.data = list;
+        resultVO.msg = "获取成功";
         return resultVO;
     }
 }

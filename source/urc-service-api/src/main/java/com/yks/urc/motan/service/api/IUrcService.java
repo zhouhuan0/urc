@@ -543,6 +543,6 @@ public interface IUrcService {
     ResultVO getBasicDataList(String jsonStr);
 
 
-    ResultVO  getWarehouse(String jsonStr) throws Exception;
+    ResultVO  getWarehouse(String jsonStr);
 
 }

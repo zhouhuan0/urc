@@ -114,5 +114,5 @@ public interface IUserService {
 
 	ResultVO getBasicDataList(String jsonStr);
 
-	ResultVO  getWarehouse(String josnStr) throws Exception;
+	ResultVO  getWarehouse(String josnStr) ;
 }
