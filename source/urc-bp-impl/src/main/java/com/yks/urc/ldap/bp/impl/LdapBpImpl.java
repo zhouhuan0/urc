@@ -23,9 +23,14 @@ public class LdapBpImpl implements ILdapBp {
 			if (ldapUtil.connect(userName, pwd)) {
 				return true;
 			}
+			try {
+				Thread.sleep(1000);
+			}catch(Exception ex){
+				logger.error(String.format("loginFailure for sleep:%s|%s", userName, pwd), ex);
+			}
 			i++;
 		}
-		logger.info(String.format("loginFailure:%s|%s", userName, pwd));
+		logger.error(String.format("loginFailure:%s|%s", userName, pwd));
 		return false;
 	}
 }

@@ -487,6 +487,7 @@ public class UserValidateBp implements IUserValidateBp {
 			String ticket = map.get(StringConstant.ticket);
 			String ip = map.get(StringConstant.ip);
 			String urcVersion = map.get(StringConstant.funcVersion);
+			String deviceName=map.get(StringConstant.deviceName);
 			UserVO u = cacheBp.getUser(operator);
 			// 校验ticket
 			UserLoginLogDO loginLogDO =new UserLoginLogDO();
@@ -499,20 +500,36 @@ public class UserValidateBp implements IUserValidateBp {
                 userLogBp.insertLog(loginLogDO);
                 return VoHelper.getResultVO("100002", "登录超时");
             }
-			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket) || !StringUtility.stringEqualsIgnoreCase(u.ip, ip)) {
+			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
                 // 100002
                 loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLogDO);
                 return VoHelper.getResultVO("100002", "登录超时");
             }
+			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
+				loginLogDO.remark=String.format("您的账号在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",u.ip,u.deviceName);
+				userLogBp.insertLog(loginLogDO);
+				return VoHelper.getResultVO("101003","您的账号在另一设备登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。");
+			}
+		/*	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
+			String loginTimeString=simpleDateFormat.format(u.loginTime);*/
+
+/*			if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
+				userLogBp.insertLog(loginLogDO);
+				return VoHelper.getResultVO("101003",String.format("您的账号在:%s 在另一设备（IP：%s %s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
+			}*/
 			if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
             }
 
 			// 校验功能权限版本
-			if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator))) {
-                return VoHelper.getResultVO("100007", "功能权限版本错误");
-            }
+			String newFuncVersion = getFuncVersionFromDbOrCache(operator);
+			if (!StringUtility.stringEqualsIgnoreCase(urcVersion,newFuncVersion)) {
+				Map<String,String> dataMap =new HashMap<>();
+				dataMap.put("newFuncVersion",newFuncVersion);
+				return VoHelper.getResultVO("100007", "功能权限版本错误",dataMap);
+			}
 
 			// 校验是否有权限
 			String sysKey = getSysKeyByApiUrl(apiUrl);

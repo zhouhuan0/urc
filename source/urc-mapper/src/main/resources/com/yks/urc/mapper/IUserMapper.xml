@@ -12,8 +12,8 @@
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
     </resultMap>
-    
-    
+
+
     <resultMap id="BaseUserResultMap" type="com.yks.urc.entity.UserDO">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
@@ -39,108 +39,117 @@
         where exists
         (select user_name from urc_user_role where role_id=#{roleId,jdbcType=BIGINT})
     </select>
-    
-    
-    
-    <select id="fuzzySearchUsersByUserName"  resultMap="BaseUserResultMap">
+
+
+    <select id="fuzzySearchUsersByUserName" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
         <where>
-        	<if test=" userName !=null and userName != '' ">
-        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
-        	</if>
-        	<if test=" createBy !=null and createBy != '' ">
-        		  and  create_by = #{createBy}
-        	</if>
-        		 and is_active=1  
+            <if test=" userName !=null and userName != '' ">
+                user_name LIKE CONCAT(CONCAT('%',#{userName},'%'))
+            </if>
+            <if test=" createBy !=null and createBy != '' ">
+                and create_by = #{createBy}
+            </if>
+            and is_active=1
         </where>
-        
-         limit #{offset},#{limit}
+
+        limit #{offset},#{limit}
     </select>
-    
-        
-    <select id="fuzzySearchUsersByUserNameCount"  resultType="java.lang.Integer">
-        select count(1)  from urc_user 
+
+
+    <select id="fuzzySearchUsersByUserNameCount" resultType="java.lang.Integer">
+        select count(1) from urc_user
         <where>
-        	<if test=" userName !=null and userName != '' ">
-        		  user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
-        	</if>
-        	<if test=" createBy !=null and createBy != '' ">
-        		  and  create_by = #{createBy}
-        	</if>
-        		  and is_active=1 
+            <if test=" userName !=null and userName != '' ">
+                user_name LIKE CONCAT(CONCAT('%',#{userName},'%'))
+            </if>
+            <if test=" createBy !=null and createBy != '' ">
+                and create_by = #{createBy}
+            </if>
+            and is_active=1
         </where>
     </select>
-    
-    
+
+
     <select id="getUserInfoByDingUserId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
-        from urc_user 
+        from urc_user
         where ding_user_id = #{userId,jdbcType=VARCHAR}
     </select>
-    
-    
-     <select id="getUserByRoleId" parameterType="com.yks.urc.entity.UserRoleDO" resultMap="BaseUserResultMap">
-			SELECT uu.* from urc_user uu 
-			 INNER JOIN urc_user_role uur ON uu.user_name=uur.user_name
-			 <where>
-			 		<if test="roleId != null ">
-			 			uur.role_id=#{roleId,jdbcType=VARCHAR} 
-			 		</if>
-			 		
-			 		<if test="createBy != null and createBy != '' ">
-			 			and uur.create_by=#{createBy,jdbcType=VARCHAR} 
-			 		</if>
-			 </where>
-    </select>
-    
-<!--    <select id="queryUserDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_user 
-        where  user_name  in 
-        ( SELECT user_name from urc_data_rule 
-          <where>
-     		 <if test="dataRuleId != null and dataRuleId != '' ">
-     		 	data_rule_id = #{dataRuleId,jdbcType=BIGINT} 
-     		 </if>
-    		 </where> 
-       )
-    </select>
-    
-    <select id="queryUserNoDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
-        select
-        <include refid="Base_Column_List"/>
-        from urc_user 
-        where  user_name  not in 
-        ( SELECT user_name from urc_data_rule 
-          <where>
-     		 <if test="dataRuleId != null and dataRuleId != '' ">
-     		 	data_rule_id = #{dataRuleId,jdbcType=BIGINT} 
-     		 </if>
-    	  </where> 
-       )
-        <if test="userName != null and userName != '' ">
- 		 	 and user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
- 		</if>
-       
-    </select> -->
 
 
-	<select id="listAllUsersUserName"  resultType="java.lang.String">
+    <select id="getUserByRoleId" parameterType="com.yks.urc.entity.UserRoleDO" resultMap="BaseUserResultMap">
+        SELECT uu.* from urc_user uu
+        INNER JOIN urc_user_role uur ON uu.user_name=uur.user_name
+        <where>
+            <if test="roleId != null ">
+                uur.role_id=#{roleId,jdbcType=VARCHAR}
+            </if>
+
+            <if test="createBy != null and createBy != '' ">
+                and uur.create_by=#{createBy,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <!--    <select id="queryUserDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
+            select
+            <include refid="Base_Column_List"/>
+            from urc_user
+            where  user_name  in
+            ( SELECT user_name from urc_data_rule
+              <where>
+                  <if test="dataRuleId != null and dataRuleId != '' ">
+                      data_rule_id = #{dataRuleId,jdbcType=BIGINT}
+                  </if>
+                 </where>
+           )
+        </select>
+
+        <select id="queryUserNoDataByRuleId" parameterType="com.yks.urc.entity.DataRuleDO" resultMap="BaseUserResultMap">
+            select
+            <include refid="Base_Column_List"/>
+            from urc_user
+            where  user_name  not in
+            ( SELECT user_name from urc_data_rule
+              <where>
+                  <if test="dataRuleId != null and dataRuleId != '' ">
+                      data_rule_id = #{dataRuleId,jdbcType=BIGINT}
+                  </if>
+              </where>
+           )
+            <if test="userName != null and userName != '' ">
+                   and user_name  LIKE CONCAT(CONCAT('%',#{userName},'%'))
+             </if>
+
+        </select> -->
+
+
+    <select id="listAllUsersUserName" resultType="java.lang.String">
         select
         user_name as userName 
         from urc_user 
     </select>
-    
+
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseUserResultMap">
         select
         <include refid="Base_Column_List"/>
         from urc_user
         where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="selectUserNameByDingUserId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
+        select
+        user_name,id
+        from urc_user
+        where
+        ding_user_id in
+        <foreach collection="personOrgs" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
     <select id="getPersonNameByUserName" resultType="java.lang.String">
@@ -149,15 +158,15 @@
         where u.user_name=#{userName}
         limit 1
     </select>
-    
-   <select id="listUsersUserNameByRoleId"  parameterType="java.lang.Long"  resultType="java.lang.String">
+
+    <select id="listUsersUserNameByRoleId" parameterType="java.lang.Long" resultType="java.lang.String">
         select
         uu.user_name as userName
         from urc_user uu  left JOIN urc_user_role ur ON ur.user_name=uu.user_name
     	where ur.role_id  = #{roleId,jdbcType=BIGINT}
     </select>
-    
-    
+
+
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from urc_user
     where id = #{id,jdbcType=BIGINT}
@@ -297,17 +306,18 @@
     </delete>
     <!--用户管理搜索用户分页-->
     <select id="getUsersByUserInfo" parameterType="com.yks.urc.vo.helper.Query" resultType="com.yks.urc.vo.UserVO">
-        select DISTINCT (u.user_name) AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active AS isActive
+        select DISTINCT (u.user_name) AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active
+        AS isActive
         from urc_user u
         LEFT JOIN urc_person p on u.ding_user_id = p.ding_user_id
         LEFT JOIN urc_user_role r on u.user_name=r.user_name
         <where>
-        <if test="list.size >0">
-         AND   u.user_name  IN
-            <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
-                      #{userName}
-             </foreach>
-        </if>
+            <if test="list.size >0">
+                AND u.user_name IN
+                <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
+                    #{userName}
+                </foreach>
+            </if>
         </where>
         ORDER BY u.user_name ASC
         limit #{query.offset},#{query.limit}
@@ -319,34 +329,36 @@
         LEFT JOIN urc_person p on u.ding_user_id = p.ding_user_id
         LEFT JOIN urc_user_role r on u.user_name=r.user_name
         <where>
-        <if test="list.size >0">
-            AND   u.user_name  IN
-            <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
-                #{userName}
-            </foreach>
-        </if>
+            <if test="list.size >0">
+                AND u.user_name IN
+                <foreach collection="list" index="index" item="userName" open="(" separator="," close=")">
+                    #{userName}
+                </foreach>
+            </if>
         </where>
     </select>
     <select id="getUserByName" resultType="com.yks.urc.entity.UserDO">
-        SELECT <include refid="Base_Column_List"/>
-        FROM  urc_user WHERE  user_name =#{userName}
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM urc_user WHERE user_name =#{userName}
     </select>
-    
-    
+
+
     <select id="getUserByUserName" resultMap="BaseResultMap">
-        SELECT <include refid="Base_Column_List"/>
+        SELECT
+        <include refid="Base_Column_List"/>
         FROM urc_user
-        	<where>
-        		<if test="userVO.userName != null and userVO.userName != '' ">
-        			 user_name =#{userVO.userName}
-        		</if>
-        		
-        		<if test="userVO.createBy != null and userVO.createBy  != '' ">
-        			 and create_by =#{userVO.createBy}
-        		</if>
-        		
-        		
-        	</where>
+        <where>
+            <if test="userVO.userName != null and userVO.userName != '' ">
+                user_name =#{userVO.userName}
+            </if>
+
+            <if test="userVO.createBy != null and userVO.createBy  != '' ">
+                and create_by =#{userVO.createBy}
+            </if>
+
+
+        </where>
     </select>
 
     <select id="fuzzSearchUserByName" resultType="com.yks.urc.vo.UserInfoVO">
@@ -354,5 +366,5 @@
       FROM urc_user u LEFT JOIN urc_person p ON  u.ding_user_id = p.ding_user_id
       WHERE u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
     </select>
-    
+
 </mapper>
