@@ -510,11 +510,16 @@ public class UserValidateBp implements IUserValidateBp {
 
 			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
 			String loginTimeString=simpleDateFormat.format(u.loginTime);
-			if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
 				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
 				userLogBp.insertLog(loginLogDO);
-				return VoHelper.getResultVO("101003",String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
+				return VoHelper.getResultVO("101003","您的账号在另一设备登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。");
 			}
+/*			if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
+				userLogBp.insertLog(loginLogDO);
+				return VoHelper.getResultVO("101003",String.format("您的账号在:%s 在另一设备（IP：%s %s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
+			}*/
 			if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
             }
