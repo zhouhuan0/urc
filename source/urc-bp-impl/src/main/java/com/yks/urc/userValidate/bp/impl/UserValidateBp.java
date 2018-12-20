@@ -520,9 +520,12 @@ public class UserValidateBp implements IUserValidateBp {
             }
 
 			// 校验功能权限版本
-			if (!StringUtility.stringEqualsIgnoreCase(urcVersion, getFuncVersionFromDbOrCache(operator))) {
-                return VoHelper.getResultVO("100007", "功能权限版本错误");
-            }
+			String newFuncVersion = getFuncVersionFromDbOrCache(operator);
+			if (!StringUtility.stringEqualsIgnoreCase(urcVersion,newFuncVersion)) {
+				Map<String,String> dataMap =new HashMap<>();
+				dataMap.put("newFuncVersion",newFuncVersion);
+				return VoHelper.getResultVO("100007", "功能权限版本错误",dataMap);
+			}
 
 			// 校验是否有权限
 			String sysKey = getSysKeyByApiUrl(apiUrl);
