@@ -145,17 +145,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
-<<<<<<< HEAD
         map.put(StringConstant.operator, "songguanye");
         map.put(StringConstant.ticket, "b29e6a04ca90b74e33630a844315de5e");
         map.put(StringConstant.ip, "192.168.93.176");
         map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");
-=======
-        map.put(StringConstant.operator, "linwanxian");
-        map.put(StringConstant.ticket, "862f2e84989c38463af95afae930f557");
-        map.put(StringConstant.ip, "192.168.58.45");
-        map.put(StringConstant.funcVersion, "999f7e17655abe2f917a7b667f741d3c");
->>>>>>> 8c59fc5bf96b896833cef682ebfbf16c74ae0435
         // map.put(StringConstant.sysKey, "001");
         System.out.println(StringUtility.toJSONString(map));
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));

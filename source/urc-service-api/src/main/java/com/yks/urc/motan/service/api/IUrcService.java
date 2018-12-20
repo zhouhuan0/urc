@@ -105,6 +105,7 @@ public interface IUrcService {
 
     /**
      * 获取全部用户及组织结构
+     *
      * @param
      * @return
      */
@@ -549,7 +550,13 @@ public interface IUrcService {
      **/
     ResultVO getBasicDataList(String jsonStr);
 
-
-    ResultVO  getWarehouse(String jsonStr) throws Exception;
+    /**
+     * @Description :仓储的数据授权
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2018/12/20 16:10
+     * @Param:
+     * @return:
+     **/
+    ResultVO getWarehouse(String jsonStr);
 
 }

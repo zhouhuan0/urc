@@ -754,7 +754,7 @@ public class UrcServiceImpl implements IUrcService {
     }
     @Log("获取仓储数据授权")
     @Override
-   public  ResultVO  getWarehouse(String jsonStr) throws Exception {
+   public  ResultVO  getWarehouse(String jsonStr)  {
         return  userService.getWarehouse(jsonStr);
     }
 }
