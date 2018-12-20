@@ -12,6 +12,7 @@ public class StringConstant {
     public final static String sysKey = "sysKey";
     public final static String funcVersion = "funcVersion";
     public final static String STATE_100006 = "100006";
+    public final static String deviceName="deviceName";
 
     public final static String userName = "userName";
 }
