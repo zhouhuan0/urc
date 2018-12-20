@@ -548,4 +548,8 @@ public interface IUrcService {
      * @return:
      **/
     ResultVO getBasicDataList(String jsonStr);
+
+
+    ResultVO  getWarehouse(String jsonStr) throws Exception;
+
 }

@@ -36,6 +36,7 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	IOperationBp operationBp;
 
+	@Override
 	public List<String> getFuncJsonLstByUserAndSysKey(String userName, String sysKey) {
 		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
 	}
@@ -48,6 +49,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月12日 下午3:56:19
 	 */
+	@Override
 	public String calcFuncVersion(String strFuncJson) {
 		return StringUtility.md5_NoException(strFuncJson);
 	}
@@ -60,6 +62,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @param userName
 	 * @date 2018年6月12日 下午7:22:38
 	 */
+	@Override
 	public List<UserPermitStatDO> plainSys(SystemRootVO sys1, String userName) {
 		if (sys1 == null) return Collections.emptyList();
 		List<MenuVO> lstMenu = sys1.menu;
@@ -184,6 +187,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月15日 上午8:26:43
 	 */
+	@Override
 	public String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest) {
 		SystemRootVO sysOld = StringUtility.parseObject(strFuncJsonOld, SystemRootVO.class);
 		SystemRootVO sysNewest = StringUtility.parseObject(strFuncJsonNewest, SystemRootVO.class);
