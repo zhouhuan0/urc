@@ -503,12 +503,14 @@ public class UserValidateBp implements IUserValidateBp {
 			if(u ==null){
                 loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
                 userLogBp.insertLog(loginLogDO);
+                logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
                 return VoHelper.getResultVO("100002", "登录超时");
             }
 			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
                 // 100002
                 loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLogDO);
+				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u)));
                 return VoHelper.getResultVO("100002", "登录超时");
             }
 			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
@@ -520,6 +522,7 @@ public class UserValidateBp implements IUserValidateBp {
 			if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
 				userLogBp.insertLog(loginLogDO);
+				logger.error(String.format("funcPermitValidate login other where  request = %s, loginTimeString =%s,ip=%s,deviceName =%s ",StringUtility.toJSONString(map),loginTimeString,u.ip,u.deviceName));
 				return VoHelper.getResultVO("101003",String.format("您的账号在:%s 在另一设备（IP：%s %s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
 			}
 			if (lstWhiteApiUrl.contains(apiUrl)) {
@@ -531,6 +534,7 @@ public class UserValidateBp implements IUserValidateBp {
 			if (!StringUtility.stringEqualsIgnoreCase(urcVersion,newFuncVersion)) {
 				Map<String,String> dataMap =new HashMap<>();
 				dataMap.put("newFuncVersion",newFuncVersion);
+				logger.error(String.format("funcPermitValidate func error  request =%s ,newFuncVersion =%s",StringUtility.toJSONString(map),newFuncVersion));
 				return VoHelper.getResultVO("100007", "功能权限版本错误",dataMap);
 			}
 
