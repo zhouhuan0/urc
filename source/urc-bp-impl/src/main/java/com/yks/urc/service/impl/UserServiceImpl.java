@@ -505,13 +505,15 @@ public class UserServiceImpl implements IUserService {
             for (int i = 0; i < size; i++) {
                 WarehourseResponseVO warehourseResponseVO = new WarehourseResponseVO();
                 JSONObject jsonObjectToWeb = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
-                warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
-                warehourseResponseVO.setValue(jsonObjectToWeb.getString("code"));
-                list.add(warehourseResponseVO);
+                if (!StringUtility.isNullOrEmpty(jsonObjectToWeb.getString("code"))) {
+                    warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
+                    warehourseResponseVO.setValue(jsonObjectToWeb.getString("code"));
+                    list.add(warehourseResponseVO);
+                }
             }
         } catch (Exception e) {
-            logger.error(String.format("Failed to get warehousing data authorization:%s",jsonStr),e);
-            return  VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"获取仓储数据授权失败！");
+            logger.error(String.format("Failed to get warehousing data authorization:%s", jsonStr), e);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "获取仓储数据授权失败！");
         }
         resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
         resultVO.data = list;
