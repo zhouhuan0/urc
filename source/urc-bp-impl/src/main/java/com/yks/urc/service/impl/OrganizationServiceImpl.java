@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.yks.urc.entity.PersonOrg;
+import com.yks.urc.entity.UserAndPersonDO;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
@@ -137,13 +138,13 @@ public class OrganizationServiceImpl implements IOrganizationService {
                     //去urc_person_org去查找ding_user_id
                     List<String> dingUserIds = personOrgMapper.selectDingUserIdByDingOrgId(id);
                     //去urc_user去查找user_name
-                    List<UserDO> userDOS = iUserMapper.selectUserNameByDingUserId(dingUserIds);
+                   List<UserAndPersonDO> userAndPersonDOS =iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
                     List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
-                    for (UserDO userDO : userDOS) {
+                    for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
                         OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
                         orgTreeAndUserVO.isUser = 1;
-                        orgTreeAndUserVO.key = userDO.getId().toString();
-                        orgTreeAndUserVO.title = userDO.getUserName();
+                        orgTreeAndUserVO.key = userAndPersonDO.userName;
+                        orgTreeAndUserVO.title = userAndPersonDO.personName;
                         orgTreeAndUsers.add(orgTreeAndUserVO);
                     }
                     jsonMenu.put("children", orgTreeAndUsers);
