@@ -35,7 +35,7 @@
 		<dependency>
 			<groupId>com.yks.oms.order.manage</groupId>
 			<artifactId>oms-order-manage-service-api</artifactId>
-			<version>1.0.0</version>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 </project>
