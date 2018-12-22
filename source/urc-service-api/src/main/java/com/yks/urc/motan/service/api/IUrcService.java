@@ -558,5 +558,12 @@ public interface IUrcService {
      * @return:
      **/
     ResultVO getWarehouse(String jsonStr);
-
+       /**
+        * @Description :搜索用户上网账号和用户名
+        * @Author: tangjianbo@youkeshu.com
+        * @Date: 2018/12/22 9:27
+        * @Param:
+        * @return:
+        **/
+       ResultVO searchUserPerson(String jsonStr);
 }

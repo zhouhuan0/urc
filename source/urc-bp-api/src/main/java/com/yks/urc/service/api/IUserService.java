@@ -115,4 +115,6 @@ public interface IUserService {
 	ResultVO getBasicDataList(String jsonStr);
 
 	ResultVO  getWarehouse(String josnStr) ;
+
+	ResultVO searchUserPerson(String jsonStr);
 }

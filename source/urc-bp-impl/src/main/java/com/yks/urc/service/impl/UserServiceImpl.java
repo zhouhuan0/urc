@@ -520,6 +520,20 @@ public class UserServiceImpl implements IUserService {
         resultVO.msg = "获取成功";
         return resultVO;
     }
+    @Override
+  public  ResultVO  searchUserPerson(String jsonStr){
+        JSONObject jsonObject=StringUtility.parseString(jsonStr);
+        String searchContext=jsonObject.getString("searchContext");
+        Integer pageData=jsonObject.getInteger("pageData");
+        if (pageData==null){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"每页的条数不能为空");
+        }
+        Integer pageNumber=jsonObject.getInteger("pageNumber");
+        if (pageNumber==null){
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),"每页的条数不能为空");
+        }
+        return  null;
+  }
 }
 
 

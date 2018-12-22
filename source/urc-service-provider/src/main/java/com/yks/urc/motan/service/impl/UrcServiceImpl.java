@@ -757,4 +757,9 @@ public class UrcServiceImpl implements IUrcService {
    public  ResultVO  getWarehouse(String jsonStr)  {
         return  userService.getWarehouse(jsonStr);
     }
+    @Log("搜索用户上网账号和用户名")
+    @Override
+    public  ResultVO  searchUserPerson(String jsonStr)  {
+        return  userService.searchUserPerson(jsonStr);
+    }
 }
