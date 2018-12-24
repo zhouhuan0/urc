@@ -63,6 +63,8 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             mapUser.put(StringConstant.ip, u.ip);
             mapUser.put(StringConstant.ticket, u.ticket);
             mapUser.put(StringConstant.userName, u.userName);
+            mapUser.put(StringConstant.deviceName,u.deviceName);
+            mapUser.put(StringConstant.loginTime,u.loginTime.toString());
             getUserLoginCache(u.userName).put(u.userName, StringUtility.toJSONString_NoException(mapUser));
         } catch (Exception ex) {
             logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
