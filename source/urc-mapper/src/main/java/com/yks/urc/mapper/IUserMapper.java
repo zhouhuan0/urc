@@ -19,6 +19,8 @@ public interface IUserMapper {
 
     List<UserAndPersonDO>  selectUserNameAndPeronNameByDingUserId(@Param("personOrgs") List<String> personOrgs);
 
+    List<UserAndPersonDO>  selectUserNameAndPeronNameByUserName(UserPersonParamDO userPersonParamDO);
+
     int updateByPrimaryKeySelective(UserDO record);
 
     int updateByPrimaryKey(UserDO record);
