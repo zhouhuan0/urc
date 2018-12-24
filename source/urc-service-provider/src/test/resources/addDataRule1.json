@@ -2,18 +2,17 @@
   "data": {
     "lstUserName": ["chenglifu1"],
     "lstDataRuleSys": [{
-      "sysKey": "001",
-      "sysName": "订单",
+      "sysKey": "009",
+      "sysName": "客服",
       "row": {
         "isAnd": 1,
         "subWhereClause": [{
-          "entityCode": "E_PlatformShopSite",
+          "entityCode": "E_CustomerService",
           "entityName": "【平台】【账号】【站点】",
-          "expressionId": 1543478899178001200,
-          "fieldCode": "F_PlatformShopSite",
-          "oper": "in",
-          "operValuesArr": ["\"{\\\"platformId\\\":\\\"速卖通\\\",\\\"platformName\\\":\\\"速卖通\\\",\\\"lstShop\\\":[{\\\"shopId\\\":\\\"cn1001444475\\\",\\\"shopName\\\":\\\"cn1001444475\\\"}]}\""],
-          "parentExpressionId": 1543478899177001200
+          "expressionId": 1544756653767003000,
+          "fieldCode": "F_CustomerService",
+          "operValuesArr": ["\"\\\"{\\\\\\\"platformId\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"platformName\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"lstShop\\\\\\\":[{\\\\\\\"shopId\\\\\\\":\\\\\\\"12deeping\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"12deeping\\\\\\\"},{\\\\\\\"shopId\\\\\\\":\\\\\\\"19tulip\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"19tulip\\\\\\\"}]}\\\"\""],
+          "parentExpressionId": 1544756653766002700
         }]
       }
     }]
