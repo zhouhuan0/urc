@@ -494,7 +494,7 @@ public class UserServiceImpl implements IUserService {
         ResultVO resultVO = new ResultVO();
         List<UserAndPersonDO> userAndPersonDOS = new ArrayList<>();
         try {
-            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             String searchContext = jsonObject.getString("searchContext");
             Integer pageData = jsonObject.getInteger("pageData");
             if (pageData == null) {
@@ -504,10 +504,10 @@ public class UserServiceImpl implements IUserService {
             if (pageNumber == null) {
                 return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "页码不能为空");
             }
-            if (pageData <= 0) {
+            if (pageData <= 0||pageData==null) {
                 pageData = 10;
             }
-            if (pageNumber <= 0) {
+            if (pageNumber <= 0||pageNumber==null) {
                 pageNumber = 1;
             }
             int currIndex = (pageNumber - 1) * pageData;
