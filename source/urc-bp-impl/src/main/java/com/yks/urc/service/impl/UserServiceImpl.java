@@ -7,10 +7,10 @@ import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.URCServiceException;
-import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.log.Log;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.PlatformMapper;
@@ -183,7 +183,7 @@ public class UserServiceImpl implements IUserService {
             return rslt;
         }
     }
-
+    @Log("getAllFuncPermit")
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
         try {
@@ -196,7 +196,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-
+    @Log("funcPermitValidate")
     @Override
     public ResultVO funcPermitValidate(Map<String, String> map) {
         return userValidateBp.funcPermitValidate(map);
