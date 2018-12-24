@@ -101,8 +101,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ICacheBp cacheBp;
 
-  /*  @Autowired
-    private IOrderManageService orderManageService;*/
+    @Autowired
+    private IOrderManageService orderManageService;
     /**
      * ebay 缓存
      */
@@ -1527,7 +1527,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         ResultVO resultVO = null;
         try{
             //oms
-         //   resultVO = orderManageService.getAllSellerId();
+            resultVO = orderManageService.getAllSellerId();
         }catch (Exception e){
             logger.error("throw Exception when retrieve oms interface ",e);
             return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"调取oms接口获取销售账号出错",new ArrayList<>());
