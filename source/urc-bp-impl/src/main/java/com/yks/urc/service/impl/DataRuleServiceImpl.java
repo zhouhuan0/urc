@@ -971,13 +971,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
-        JSONObject dataJson =StringUtility.parseString(jsonObject.getString("data"));
-        List<String> lstUserName =StringUtility.parseObject(dataJson.getJSONArray("lstUserName").toString(),List.class);
+        JSONObject dataJson = jsonObject.getJSONObject("data");
+        List<String> lstUserName =StringUtility.parseObject(dataJson.getString("lstUserName").toString(),List.class);
         if (CollectionUtils.isEmpty(lstUserName)){
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
         //DataRuleSysVO
-        List<DataRuleSysVO> dataRuleSys =StringUtility.parseObject(dataJson.getJSONArray("lstDataRuleSys").toString(),List.class);
+
+        List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
+        System.out.println(StringUtility.toJSONString(dataRuleSys));
         if (CollectionUtils.isEmpty(dataRuleSys)) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
@@ -1046,7 +1048,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
 
             /*新增urc_data_rule_sys*/
-            if (dataRuleSys != null) {
+         if (!CollectionUtils.isEmpty(dataRuleSys)) {
                 assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSys, dataRuleId, operator);
             }
             // 组装下发消息

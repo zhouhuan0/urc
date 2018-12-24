@@ -1,6 +1,6 @@
 {
   "data": {
-    "lstUserName": ["chaozhaohui"],
+    "lstUserName": ["chenglifu1"],
     "lstDataRuleSys": [{
       "sysKey": "001",
       "sysName": "订单",
@@ -9,33 +9,18 @@
         "subWhereClause": [{
           "entityCode": "E_PlatformShopSite",
           "entityName": "【平台】【账号】【站点】",
-          "expressionId": 1545459187638000000,
+          "expressionId": 1543478899178001200,
           "fieldCode": "F_PlatformShopSite",
-          "operValuesArr": ["{\"platformId\":\"SM\",\"platformName\":\"速卖通\",\"lstShop\":[{\"shopId\":\"cn1500502124\",\"shopName\":\"cn1500502124\"},{\"shopId\":\"cn1518458889glfu\",\"shopName\":\"cn1518458889glfu\"},{\"shopId\":\"cn1518584963qanm\",\"shopName\":\"cn1518584963qanm\"}]}"],
-          "parentExpressionId": 1545459187637000200
+          "oper": "in",
+          "operValuesArr": ["\"{\\\"platformId\\\":\\\"速卖通\\\",\\\"platformName\\\":\\\"速卖通\\\",\\\"lstShop\\\":[{\\\"shopId\\\":\\\"cn1001444475\\\",\\\"shopName\\\":\\\"cn1001444475\\\"}]}\""],
+          "parentExpressionId": 1543478899177001200
         }]
       }
-    },
-      {
-        "sysKey": "011",
-        "sysName": "基础资料",
-        "row": {
-          "isAnd": 1,
-          "subWhereClause": [{
-            "entityCode": "E_StatisticsSystem",
-            "entityName": "[品类][中文名称][可用库存][成本价]",
-            "expressionId": 1545459187640000000,
-            "fieldCode": "F_StatisticsSystem",
-            "operValuesArr": ["{\"value\":\"firstCategory\",\"name\":\"品类\",\"data\":[{\"cateId\":\"11058\",\"cateNameCn\":\"包材\",\"children\":[{\"cateId\":\"11059\",\"cateNameCn\":\"仓库包材\",\"children\":[{\"cateId\":\"11060\",\"cateNameCn\":\"配送包材\"}]}]}],\"checkedKeys\":[\"11058\",\"11059\",\"11060\"]}",
-              "{\"value\":\"dataColumn\",\"name\":\"数据列\",\"data\":[{\"key\":\"chineseName\",\"name\":\"中文名称\",\"visiable\":\"可见\"},{\"key\":\"costPrice\",\"name\":\"成本价\",\"visiable\":\"不可见\"},{\"key\":\"availableStock\",\"name\":\"可用库存\",\"visiable\":\"可见\"}],\"checkedKeys\":[\"availableStock\",\"chineseName\"]}"],
-            "parentExpressionId": 1545459187639000000
-          }]
-        }
-      }]
+    }]
   },
-  "ticket": "43aa56d8bdf338d5411dfd16760ed8a9",
-  "operator": "tangjianbo",
+  "ticket": "8f616a5c80d66b2971d0871dc3095449",
+  "operator": "linwanxian",
   "funcVersion": "41840097e25268aa3f6f1113d9d2bc27",
   "moduleUrl": "/user/usermanagementlist/datapauthorization/",
-  "personName": "tangjianbo"
+  "personName": "蔺万先"
 }
