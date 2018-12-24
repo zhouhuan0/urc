@@ -119,6 +119,6 @@ public class UserVO implements Serializable {
     /**
      *  登录时间
      */
-    public  Date loginTime;
+    public  Long loginTime;
 
 }

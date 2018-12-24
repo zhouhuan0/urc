@@ -29,6 +29,13 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void login() throws Exception {
+        map.put("userName", "linwanxian");
+        map.put("pwd", "lYKS1234");
+        map.put("ip", "127.0.0.1");
+        map.put("deviceName", "谷歌浏览器");
+        System.out.println(StringUtility.toJSONString(map));
+        ResultVO<LoginRespVO>  resultVO = service.login(map);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test
@@ -113,6 +120,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void funcPermitValidate() throws Exception {
+
     }
 
     @Test
