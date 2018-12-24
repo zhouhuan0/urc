@@ -232,7 +232,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void addOrUpdateDataRule() throws Exception {
-        String json = StringUtility.inputStream2String(new FileInputStream(new File("F:\\feature\\urc-sgy_dev\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\addDataRule.json")));
+        String json = StringUtility.inputStream2String(new FileInputStream(new File("F:\\feature\\urc-func_dev\\urcenter\\source\\urc-service-provider\\src\\test\\resources\\addDataRule1.json")));
         System.out.println(json);
         resultVO = service.addOrUpdateDataRule(json);
         System.out.println(StringUtility.toJSONString(resultVO));
