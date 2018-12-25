@@ -526,12 +526,12 @@ public class UserValidateBp implements IUserValidateBp {
 				logger.info(String.format("Your account has been successfully logged in at :%s another (IP :%s). Please log in again and check whether your account password has been leaked. Please modify your password in time 。",loginTimeString,u.ip));
 				return VoHelper.getResultVO("101003",String.format("您的账号于:%s 另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
 			}
-			if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+			/*if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号于:[%s] 在另一设备（[%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName);
 				userLogBp.insertLog(loginLogDO);
 				logger.info(String.format("Your account has been successfully logged in to another device (%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.deviceName));
 				return VoHelper.getResultVO("101003",String.format("您的账号于:%s 在另外一台设备（%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.deviceName));
-			}
+			}*/
 			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
 				// 100002
 				loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
