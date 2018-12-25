@@ -1,0 +1,25 @@
+{
+  "data": {
+    "lstUserName": ["chenglifu1"],
+    "lstDataRuleSys": [{
+      "sysKey": "009",
+      "sysName": "客服",
+      "row": {
+        "isAnd": 1,
+        "subWhereClause": [{
+          "entityCode": "E_CustomerService",
+          "entityName": "【平台】【账号】【站点】",
+          "expressionId": 1544756653767003000,
+          "fieldCode": "F_CustomerService",
+          "operValuesArr": ["\"\\\"{\\\\\\\"platformId\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"platformName\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"lstShop\\\\\\\":[{\\\\\\\"shopId\\\\\\\":\\\\\\\"12deeping\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"12deeping\\\\\\\"},{\\\\\\\"shopId\\\\\\\":\\\\\\\"19tulip\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"19tulip\\\\\\\"}]}\\\"\""],
+          "parentExpressionId": 1544756653766002700
+        }]
+      }
+    }]
+  },
+  "ticket": "8f616a5c80d66b2971d0871dc3095449",
+  "operator": "linwanxian",
+  "funcVersion": "41840097e25268aa3f6f1113d9d2bc27",
+  "moduleUrl": "/user/usermanagementlist/datapauthorization/",
+  "personName": "蔺万先"
+}

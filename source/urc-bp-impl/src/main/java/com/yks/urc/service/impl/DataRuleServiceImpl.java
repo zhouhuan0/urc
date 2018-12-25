@@ -972,44 +972,35 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
-        String lstDataRuleStr = jsonObject.getString("lstDataRule");
-        if (StringUtil.isEmpty(lstDataRuleStr)) {
-            throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
-        }
-        List<JSONObject> sourceDataRuleVOS = StringUtility.parseObject(lstDataRuleStr, List.class);
-        List<DataRuleVO> dataRuleVOS = convertList(sourceDataRuleVOS);
-        if (dataRuleVOS == null || dataRuleVOS.isEmpty()) {
-            throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
-        }
-        // 注释掉不需要上线的代码
-        String lstUserNameStr = jsonObject.getString("lstUserName");
-        List<String> lstUserName = StringUtility.parseObject(lstUserNameStr,List.class);
+        JSONObject dataJson = jsonObject.getJSONObject("data");
+        List<String> lstUserName =StringUtility.parseObject(dataJson.getString("lstUserName").toString(),List.class);
         if (CollectionUtils.isEmpty(lstUserName)){
             throw new URCBizException("parameter lstUserName is null", ErrorCode.E_000002);
         }
+        //DataRuleSysVO
 
-       /* List<String> lstUserName = new ArrayList<>();
-        for (DataRuleVO dataRuleVO : dataRuleVOS) {
-            lstUserName.add(dataRuleVO.getUserName());
-        }*/
+        List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
+        System.out.println(StringUtility.toJSONString(dataRuleSys));
+        if (CollectionUtils.isEmpty(dataRuleSys)) {
+            throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
+        }
 
         //分批量操作
         List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
-        if (dataRuleVOS != null && dataRuleVOS.size() > 1) {
-            for (DataRuleVO dataRuleVo : dataRuleVOS) {
+        if (lstUserName != null && lstUserName.size() > 1) {
+            for (String  userName : lstUserName) {
                 DataRuleDO dataRuleDO = new DataRuleDO();
-                dataRuleDO.setUserName(dataRuleVo.getUserName());
+                dataRuleDO.setUserName(userName);
                 DataRuleDO dataRule = dataRuleMapper.getDataRule(dataRuleDO);
                 //记下dataRuleId
                 dataBatchRuleIds.add(dataRule);
                 if (dataRule != null && dataRule.getDataRuleId() != null) {
-                    List<DataRuleSysVO> dataRuleSys = dataRuleVo.getLstDataRuleSys();
-                    if (dataRuleSys != null && dataRuleSys.size() > 0) {
+                    if (!CollectionUtils.isEmpty(dataRuleSys)) {
                         List<String> sysKeys = new ArrayList<>();
                         for (DataRuleSysVO dataRuleSysVo : dataRuleSys) {
                             sysKeys.add(dataRuleSysVo.getSysKey());
                             //增加创建时间
-                            dataRuleSysVo.t = String.valueOf(new Date().getTime());
+                            dataRuleSysVo.t = String.valueOf(System.currentTimeMillis());
                         }
                         dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
                     }
@@ -1033,14 +1024,22 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleColDO> dataRuleColCache = new ArrayList<>();
         /*行权限数据列表*/
         List<ExpressionDO> expressionCache = new ArrayList<>();
+        //组装下发数据
+        List<DataRuleVO> dataRuleVOS =new ArrayList<>();
         /*2、新增用户-操作权限关系数据 dataRule*/
-        for (int i = 0; i < dataRuleVOS.size(); i++) {
-            DataRuleVO dataRuleVO = dataRuleVOS.get(i);
+        for (int i = 0; i < lstUserName.size(); i++) {
+            // 组装 dataRuleVO
+            DataRuleVO dataRuleVO = new DataRuleVO();
+            dataRuleVO.t = String.valueOf(System.currentTimeMillis());
+            dataRuleVO.lstDataRuleSys =dataRuleSys;
+            dataRuleVO.userName =lstUserName.get(i);
+
+            // 组装入库数据
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
             dataRuleDO.setCreateTime(new Date());
             Long dataRuleId = null;
-            dataRuleDO.setUserName(dataRuleVO.getUserName());
+            dataRuleDO.setUserName(lstUserName.get(i));
             if (dataBatchRuleIds.isEmpty() || dataBatchRuleIds.get(i) == null) {
                 dataRuleId = seqBp.getNextDataRuleId();
                 dataRuleDO.setDataRuleId(dataRuleId);
@@ -1050,10 +1049,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
 
             /*新增urc_data_rule_sys*/
-            List<DataRuleSysVO> dataRuleSysVOS = dataRuleVO.getLstDataRuleSys();
-            if (dataRuleSysVOS != null) {
-                assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSysVOS, dataRuleId, operator);
+         if (!CollectionUtils.isEmpty(dataRuleSys)) {
+                assembleDataRuleSysDatas(dataRuleSysCache, dataRuleColCache, expressionCache, dataRuleSys, dataRuleId, operator);
             }
+            // 组装下发消息
+            dataRuleVOS.add(dataRuleVO);
         }
         /*批量新增用户-数据权限关系*/
         if (dataRuleDOSCache != null && !dataRuleDOSCache.isEmpty()) {
@@ -1074,17 +1074,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*发送MQ*/
         sendToMq(dataRuleVOS);
         return VoHelper.getSuccessResult();
-    }
-
-
-    private List<DataRuleVO> convertList(List<JSONObject> sourceDataRuleVOS) {
-        List<DataRuleVO> dataRuleVOS = new ArrayList<>();
-        for (JSONObject jsonObject : sourceDataRuleVOS) {
-            DataRuleVO dataRuleVO = new DataRuleVO();
-            dataRuleVO = StringUtility.parseObject(jsonObject.toJSONString(), DataRuleVO.class);
-            dataRuleVOS.add(dataRuleVO);
-        }
-        return dataRuleVOS;
     }
 
     @Override
@@ -1559,10 +1548,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     private ResultVO getSellerIdByOmsInterface() {
-        ResultVO resultVO;
+        ResultVO resultVO = null;
         try{
             //oms
-            resultVO = orderManageService.getAllSellerId();
+          //  resultVO = orderManageService.getAllSellerId();
         }catch (Exception e){
             logger.error("throw Exception when retrieve oms interface ",e);
             return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"调取oms接口获取销售账号出错",new ArrayList<>());

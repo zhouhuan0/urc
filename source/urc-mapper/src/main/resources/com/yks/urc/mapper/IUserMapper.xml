@@ -142,14 +142,27 @@
         where id = #{id,jdbcType=BIGINT}
     </select>
 
-    <select id="selectUserNameAndPeronNameByDingUserId" parameterType="java.lang.String" resultType="com.yks.urc.entity.UserAndPersonDO">
+    <select id="selectUserNameAndPeronNameByDingUserId" parameterType="java.lang.String"
+            resultType="com.yks.urc.entity.UserAndPersonDO">
         select
-       uu.user_name as userName,up.person_name as personName
-        from urc_user uu LEFT JOIN  urc_person up ON uu.ding_user_id=up.ding_user_id
+        uu.user_name as userName,up.person_name as personName
+        from urc_user uu LEFT JOIN urc_person up ON uu.ding_user_id=up.ding_user_id
         where uu.ding_user_id in
         <foreach collection="personOrgs" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+    <select id="selectUserNameAndPeronNameByUserName" parameterType="com.yks.urc.entity.UserPersonParamDO"
+            resultType="com.yks.urc.entity.UserAndPersonDO">
+        select
+        uu.user_name as userName,up.person_name as personName
+        from urc_user uu LEFT JOIN urc_person up ON uu.ding_user_id=up.ding_user_id
+        WHERE
+        <if test="searchContext!=null and searchContext!=''">
+            uu.user_name LIKE #{searchContext}"%" OR up.person_name LIKE #{searchContext}"%" OR up.person_name_collage LIKE
+            #{searchContext}"%"
+        </if>
+        LIMIT #{currIndex},#{currSize}
     </select>
     <select id="getPersonNameByUserName" resultType="java.lang.String">
         select  distinct p.person_name
