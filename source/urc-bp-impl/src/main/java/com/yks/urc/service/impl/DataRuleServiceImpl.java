@@ -1496,6 +1496,25 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
+    public ResultVO getPlatFormForLogistics(List<PlatformDO> platformDOS) {
+            List<OmsPlatformVO> omsPlatformVOList = new ArrayList<>();
+        try {
+            if (platformDOS != null && platformDOS.size() > 0) {
+                platformDOS.forEach(platformDO -> {
+                    OmsPlatformVO omsPlatformVO=new OmsPlatformVO();
+                    omsPlatformVO.platformId=platformDO.getPlatformId();
+                    omsPlatformVO.platformName=platformDO.getPlatformName();
+                    omsPlatformVOList.add(omsPlatformVO);
+                });
+            }
+        }catch (Exception e){
+            logger.error("Handle data exception",e);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"处理数据异常",new ArrayList<>());
+        }
+        return VoHelper.getSuccessResult(omsPlatformVOList);
+    }
+
+    @Override
     public ResultVO getPlatformShopByEntityCode(String operator, String entityCode) {
         List<String> platformIds = new ArrayList<>();
         if (StringUtility.isNullOrEmpty(entityCode)) {
@@ -1528,7 +1547,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         } else  if(entityCode.equalsIgnoreCase("E_CsOrg")){
             //客服--【职级】---范围
             return  dataRuleService.getCsPlatformCodeName(operator);
-        } else {
+        } else  if(entityCode.equalsIgnoreCase("E_Logistics")){
+            //物流--【平台】
+            List<PlatformDO> platformDOS = platformMapper.selectAll();
+            return  dataRuleService.getPlatFormForLogistics(platformDOS);
+        }else {
             //待定后续....
             return VoHelper.getSuccessResult((Object) "待配置!......");
         }
