@@ -159,8 +159,8 @@
         from urc_user uu LEFT JOIN urc_person up ON uu.ding_user_id=up.ding_user_id
         WHERE
         <if test="searchContext!=null and searchContext!=''">
-            uu.user_name LIKE "%"#{searchContext}"%" OR up.person_name LIKE "%"#{searchContext}"%" OR up.person_name_collage LIKE
-            "%"#{searchContext}"%"
+            uu.user_name LIKE #{searchContext}"%" OR up.person_name LIKE #{searchContext}"%" OR up.person_name_collage LIKE
+            #{searchContext}"%"
         </if>
         LIMIT #{currIndex},#{currSize}
     </select>
