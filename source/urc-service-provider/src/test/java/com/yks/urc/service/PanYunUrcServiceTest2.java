@@ -28,6 +28,7 @@ import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.user.bp.api.IUserBp;
@@ -382,4 +383,14 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString_NoException(role));
     }
 
+
+    @Autowired
+    private IOrganizationService organizationService;
+
+    @Test
+    public void org_Test(){
+
+        ResultVO rslt= organizationService.getAllOrgTreeAndUser();
+        System.out.println(StringUtility.toJSONString_NoException(rslt));
+    }
 }
