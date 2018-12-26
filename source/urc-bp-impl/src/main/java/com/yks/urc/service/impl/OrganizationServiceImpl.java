@@ -29,6 +29,7 @@ import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.vo.OrgVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrganizationServiceImpl implements IOrganizationService {
@@ -73,7 +74,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
 
     @Override
     public ResultVO getAllOrgTreeAndUser() {
-        JSONArray deptJosn = null;
+        List<OrgTreeAndUserVO> deptJosn = null;
         try {
             List<Organization> orgList = organizationMapper.queryAllDept();
             List<OrgTreeAndUserVO> orgTreeAndUserVOList = new ArrayList<>();
@@ -86,8 +87,10 @@ public class OrganizationServiceImpl implements IOrganizationService {
                 orgTreeAndUserVO.parentDingOrgId = org.getParentDingOrgId();
                 orgTreeAndUserVOList.add(orgTreeAndUserVO);
             }
-            deptJosn = treeDingDeptAndUserList(orgTreeAndUserVOList, 0);
+            deptJosn = treeDingDeptAndUserList2(orgTreeAndUserVOList, 0);
+            recursionSetUser(deptJosn);
         } catch (Exception e) {
+            logger.error("getAllOrgTreeAndUser ERROR:", e);
             VoHelper.getErrorResult();
         }
         return VoHelper.getSuccessResult(deptJosn);
@@ -124,6 +127,48 @@ public class OrganizationServiceImpl implements IOrganizationService {
         return childMenu;
     }
 
+    private void recursionSetUser(List<OrgTreeAndUserVO> deptJosn) {
+        if (CollectionUtils.isEmpty(deptJosn)) return;
+        for (OrgTreeAndUserVO mem : deptJosn) {
+            if (mem == null) continue;
+            if (mem.children == null) mem.children = new ArrayList<>();
+            recursionSetUser(mem.children);
+
+            //去urc_person_org去查找ding_user_id
+            List<String> dingUserIds = personOrgMapper.selectDingUserIdByDingOrgId(StringUtility.convertToLong(mem.key));
+            //去urc_user去查找user_name
+            if (!CollectionUtils.isEmpty(dingUserIds)) {
+                List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
+                List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
+                for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
+                    OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
+                    orgTreeAndUserVO.isUser = 1;
+                    orgTreeAndUserVO.key = userAndPersonDO.userName;
+                    orgTreeAndUserVO.title = userAndPersonDO.personName;
+                    orgTreeAndUsers.add(orgTreeAndUserVO);
+                }
+                mem.children.addAll(orgTreeAndUsers);
+            }
+        }
+    }
+
+    private List<OrgTreeAndUserVO> treeDingDeptAndUserList2(List<OrgTreeAndUserVO> orgTreeAndUserVOList, long parentId) {
+        List<OrgTreeAndUserVO> childMenu = new ArrayList<>();
+        for (OrgTreeAndUserVO dept1 : orgTreeAndUserVOList) {
+            OrgTreeAndUserVO dept = StringUtility.parseObject(StringUtility.toJSONString_NoException(dept1), OrgTreeAndUserVO.class);
+            long id = StringUtility.convertToLong(dept.key);
+            long pid = StringUtility.convertToLong(dept.parentDingOrgId);
+            if (parentId == pid) {
+                List<OrgTreeAndUserVO> c_node = treeDingDeptAndUserList2(orgTreeAndUserVOList, id);
+                //判断当最底层的children的size()为0时，则应该组装这个组织的人员结构，即组装成员
+                if (!CollectionUtils.isEmpty(c_node))
+                    dept.children = c_node;
+                childMenu.add(dept);
+            }
+        }
+        return childMenu;
+    }
+
     //迭代组装菜单树
     private JSONArray treeDingDeptAndUserList(List<OrgTreeAndUserVO> orgTreeAndUserVOList, long parentId) {
         JSONArray childMenu = new JSONArray();
@@ -138,16 +183,18 @@ public class OrganizationServiceImpl implements IOrganizationService {
                     //去urc_person_org去查找ding_user_id
                     List<String> dingUserIds = personOrgMapper.selectDingUserIdByDingOrgId(id);
                     //去urc_user去查找user_name
-                   List<UserAndPersonDO> userAndPersonDOS =iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
-                    List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
-                    for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
-                        OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
-                        orgTreeAndUserVO.isUser = 1;
-                        orgTreeAndUserVO.key = userAndPersonDO.userName;
-                        orgTreeAndUserVO.title = userAndPersonDO.personName;
-                        orgTreeAndUsers.add(orgTreeAndUserVO);
+                    if(!CollectionUtils.isEmpty(dingUserIds)) {
+                        List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
+                        List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
+                        for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
+                            OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
+                            orgTreeAndUserVO.isUser = 1;
+                            orgTreeAndUserVO.key = userAndPersonDO.userName;
+                            orgTreeAndUserVO.title = userAndPersonDO.personName;
+                            orgTreeAndUsers.add(orgTreeAndUserVO);
+                        }
+                        jsonMenu.put("children", orgTreeAndUsers);
                     }
-                    jsonMenu.put("children", orgTreeAndUsers);
                 }
                 //否则就组装菜单树
                 else {

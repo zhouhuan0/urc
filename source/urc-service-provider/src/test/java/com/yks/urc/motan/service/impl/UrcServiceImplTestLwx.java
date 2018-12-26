@@ -550,6 +550,23 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
                 "}";
         MotanSession.initialSession(json);
         service.getPlatformShopByEntityCode(json);
+    }
+    @Test
+    public void test_searchUserPerson() {
+        String string = "{\n" +
+                "\t\"data\":{\n" +
+                "\t\t\"searchContext\":\"\",\n" +
+                "\t\t\"pageData\":10,\n" +
+                "\t\t\"pageNumber\":0\n" +
+                "\t},\n" +
+                "    \"ticket\":\"e883f46659e7a4d4e6e804778c9ecedf\",\n" +
+                "    \"operator\":\"tangjianbo\",\n" +
+                "    \"funcVersion\":\"17cf4017ca9212b53d96d172e94a2177\",\n" +
+                "    \"moduleUrl\":\"/order/\",\n" +
+                "    \"personName\":\"tangjianbo\",\n" +
+                "    \"deviceName\":\"Chrome浏览器\"\n" +
+                "}";
+        System.out.println(StringUtility.toJSONString(service.searchUserPerson(string)));
+    }
 
     }
-}

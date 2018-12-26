@@ -1,6 +1,7 @@
 package com.yks.urc.vo;
 
 import java.io.Serializable;
+import java.util.List;
 
 public class OrgTreeAndUserVO implements Serializable {
 
@@ -9,4 +10,5 @@ public class OrgTreeAndUserVO implements Serializable {
     public String key;
     public String title;
     public String parentDingOrgId;
+    public List<OrgTreeAndUserVO> children;
 }
