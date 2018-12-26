@@ -5,13 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
-import com.yks.urc.entity.PlatformDO;
-import com.yks.urc.entity.ShopSiteDO;
-import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.*;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility2;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.log.Log;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.PlatformMapper;
@@ -53,12 +52,15 @@ public class UserServiceImpl implements IUserService {
     private IRoleMapper roleMapper;
     @Autowired
     private ISessionBp sessionBp;
+    @Autowired
+    private IUserMapper iUserMapper;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
     @Value("${sku.castInfo}")
     private String castInfo;
-
+    @Value("${warehouse.warehouseInfo}")
+    private String warehouseInfo;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -181,7 +183,7 @@ public class UserServiceImpl implements IUserService {
             return rslt;
         }
     }
-
+    @Log("getAllFuncPermit")
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
         try {
@@ -194,7 +196,7 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-
+    @Log("funcPermitValidate")
     @Override
     public ResultVO funcPermitValidate(Map<String, String> map) {
         return userValidateBp.funcPermitValidate(map);
@@ -362,38 +364,6 @@ public class UserServiceImpl implements IUserService {
         rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
         return rslt;
     }
-/*
-    @Override
-    public ResultVO getBasicDataList(String jsonStr) {
-        ResultVO resultVO = new ResultVO();
-        String response;
-        try {
-            JSONObject jsonObject = StringUtility.parseString(jsonStr);
-            String operator = jsonObject.getString("operator");
-            if (operator == null) {
-                logger.error("操作人员不能为空");
-                return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
-            }
-            response = HttpUtility2.postForm(castInfo, null, null);
-            JSONArray jsonArray = JSONArray.parseArray(response);
-            int size1 = jsonArray.size();
-            SkuCategoryVO skuCategoryVO = new SkuCategoryVO();
-            List<CategoryVO> categoryVOList = new ArrayList<>();
-            for (int i = 0; i < size1; i++) {
-                CategoryVO categoryVO = StringUtility.parseObject(jsonArray.get(i).toString(), CategoryVO.class);
-                categoryVOList.add(categoryVO);
-            }
-            //组装返回数据basicDataVO
-            BasicDataVO basicDataVO = getBasicDataVO(skuCategoryVO, categoryVOList);
-            resultVO.msg = "操作成功";
-            resultVO.data = basicDataVO;
-            resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
-        } catch (Exception e) {
-            logger.error("获取sku分类,库存等数据权限失败",e);
-            return VoHelper.getErrorResult();
-        }
-        return resultVO;
-    }*/
 
     @Override
     public ResultVO getBasicDataList(String jsonStr) {
@@ -483,6 +453,78 @@ public class UserServiceImpl implements IUserService {
         BasicDataVO basicDataVO = new BasicDataVO();
         basicDataVO.setBasicData(skuCategoryVO);
         return basicDataVO;
+    }
+
+    @Override
+    public ResultVO getWarehouse(String jsonStr) {
+        ResultVO resultVO = new ResultVO();
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.getString("operator");
+        if (operator == null) {
+            logger.error("操作人员不能为空");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
+        }
+        List<Object> list = new ArrayList();
+        try {
+            String response = HttpUtility2.postForm(warehouseInfo, null, null);
+            JSONObject jsonObjectResponse = StringUtility.parseString(response);
+            JSONArray jsonArray = jsonObjectResponse.getJSONArray("data");
+            int size = jsonArray.size();
+            for (int i = 0; i < size; i++) {
+                WarehourseResponseVO warehourseResponseVO = new WarehourseResponseVO();
+                JSONObject jsonObjectToWeb = StringUtility.parseString(StringUtility.toJSONString(jsonArray.get(i)));
+                if (!StringUtility.isNullOrEmpty(jsonObjectToWeb.getString("code"))) {
+                    warehourseResponseVO.setLabel(jsonObjectToWeb.getString("name"));
+                    warehourseResponseVO.setValue(jsonObjectToWeb.getString("code"));
+                    list.add(warehourseResponseVO);
+                }
+            }
+        } catch (Exception e) {
+            logger.error(String.format("Failed to get warehousing data authorization:%s", jsonStr), e);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "获取仓储数据授权失败！");
+        }
+        resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
+        resultVO.data = list;
+        resultVO.msg = "获取成功";
+        return resultVO;
+    }
+
+    @Override
+    public ResultVO searchUserPerson(String jsonStr) {
+        ResultVO resultVO = new ResultVO();
+        List<UserAndPersonDO> userAndPersonDOS = new ArrayList<>();
+        try {
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            String searchContext = jsonObject.getString("searchContext");
+            Integer pageData = jsonObject.getInteger("pageData");
+            if (pageData == null) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "每页的条数不能为空");
+            }
+            Integer pageNumber = jsonObject.getInteger("pageNumber");
+            if (pageNumber == null) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "页码不能为空");
+            }
+            if (pageData <= 0||pageData==null) {
+                pageData = 10;
+            }
+            if (pageNumber <= 0||pageNumber==null) {
+                pageNumber = 1;
+            }
+            int currIndex = (pageNumber - 1) * pageData;
+            int currSize = pageData;
+            UserPersonParamDO userPersonParamDO = new UserPersonParamDO();
+            userPersonParamDO.currIndex = currIndex;
+            userPersonParamDO.currSize = currSize;
+            userPersonParamDO.searchContext = searchContext;
+            userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByUserName(userPersonParamDO);
+        } catch (Exception e) {
+            logger.error(String.format("搜索用户上网账号和用户名失败:%s", jsonStr), e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), String.format("Search user online account and user name failed:%s", jsonStr));
+        }
+        resultVO.data = userAndPersonDOS;
+        resultVO.msg = "搜索用户上网账号和用户名成功";
+        resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
+        return resultVO;
     }
 }
 

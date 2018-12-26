@@ -1,9 +1,6 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.entity.PersonOrg;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.entity.*;
 import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
@@ -20,7 +17,9 @@ public interface IUserMapper {
 
     UserDO selectByPrimaryKey(Long id);
 
-    List<UserDO> selectUserNameByDingUserId(@Param("personOrgs") List<String> personOrgs);
+    List<UserAndPersonDO>  selectUserNameAndPeronNameByDingUserId(@Param("personOrgs") List<String> personOrgs);
+
+    List<UserAndPersonDO>  selectUserNameAndPeronNameByUserName(UserPersonParamDO userPersonParamDO);
 
     int updateByPrimaryKeySelective(UserDO record);
 

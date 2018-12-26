@@ -1,7 +1,7 @@
 #!/bin/bash
 export JAVA_HOME=/jdk1.8.0_151
 ###启动urc-service-provider服务
-/opt/urc-service-provider/bin/service-provider-shutdown.sh
+/opt/urc-service-provider/bin/shutdown.sh
 sleep 2
 cd /opt
 rm -rf /opt/urc-service-provider/
@@ -13,7 +13,7 @@ cd urc-service-provider/bin
 ###启动urc-taskScheduler服务
 sleep 2
 cd /opt
-/opt/urc-taskScheduler/bin/taskScheduler-shutdown.sh
+/opt/urc-taskScheduler/bin/shutdown.sh
 sleep 2
 rm -rf /opt/urc-taskScheduler/
 tar -xvf urc-taskScheduler-assembly.tar.gz

@@ -105,6 +105,7 @@ public interface IUrcService {
 
     /**
      * 获取全部用户及组织结构
+     *
      * @param
      * @return
      */
@@ -548,4 +549,21 @@ public interface IUrcService {
      * @return:
      **/
     ResultVO getBasicDataList(String jsonStr);
+
+    /**
+     * @Description :仓储的数据授权
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2018/12/20 16:10
+     * @Param:
+     * @return:
+     **/
+    ResultVO getWarehouse(String jsonStr);
+       /**
+        * @Description :搜索用户上网账号和用户名
+        * @Author: tangjianbo@youkeshu.com
+        * @Date: 2018/12/22 9:27
+        * @Param:
+        * @return:
+        **/
+       ResultVO searchUserPerson(String jsonStr);
 }

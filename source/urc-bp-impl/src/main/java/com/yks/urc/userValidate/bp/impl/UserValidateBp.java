@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -36,6 +37,7 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	IOperationBp operationBp;
 
+	@Override
 	public List<String> getFuncJsonLstByUserAndSysKey(String userName, String sysKey) {
 		return roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
 	}
@@ -48,6 +50,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月12日 下午3:56:19
 	 */
+	@Override
 	public String calcFuncVersion(String strFuncJson) {
 		return StringUtility.md5_NoException(strFuncJson);
 	}
@@ -60,6 +63,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @param userName
 	 * @date 2018年6月12日 下午7:22:38
 	 */
+	@Override
 	public List<UserPermitStatDO> plainSys(SystemRootVO sys1, String userName) {
 		if (sys1 == null) return Collections.emptyList();
 		List<MenuVO> lstMenu = sys1.menu;
@@ -184,6 +188,7 @@ public class UserValidateBp implements IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月15日 上午8:26:43
 	 */
+	@Override
 	public String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest) {
 		SystemRootVO sysOld = StringUtility.parseObject(strFuncJsonOld, SystemRootVO.class);
 		SystemRootVO sysNewest = StringUtility.parseObject(strFuncJsonNewest, SystemRootVO.class);
@@ -498,27 +503,42 @@ public class UserValidateBp implements IUserValidateBp {
 			if(u ==null){
                 loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
                 userLogBp.insertLog(loginLogDO);
+                logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
                 return VoHelper.getResultVO("100002", "登录超时");
             }
-			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
-                // 100002
-                loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
-                userLogBp.insertLog(loginLogDO);
-                return VoHelper.getResultVO("100002", "登录超时");
-            }
-			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
-				loginLogDO.remark=String.format("您的账号在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",u.ip,u.deviceName);
-				userLogBp.insertLog(loginLogDO);
-				return VoHelper.getResultVO("101003","您的账号在另一设备登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。");
+			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+			String loginTimeString = "";
+			if (u.loginTime != null) {
+				 loginTimeString = simpleDateFormat.format(u.loginTime);
 			}
-		/*	SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
-			String loginTimeString=simpleDateFormat.format(u.loginTime);*/
 
-/*			if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+		/*	if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
 				userLogBp.insertLog(loginLogDO);
+				logger.error(String.format("funcPermitValidate login other where  request = %s, loginTimeString =%s,ip=%s,deviceName =%s ",StringUtility.toJSONString(map),loginTimeString,u.ip,u.deviceName));
 				return VoHelper.getResultVO("101003",String.format("您的账号在:%s 在另一设备（IP：%s %s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip,u.deviceName));
+			}
+*/
+
+			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
+				loginLogDO.remark=String.format("您的账号于:%s 在（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip);
+				userLogBp.insertLog(loginLogDO);
+				logger.info(String.format("Your account has been successfully logged in at :%s another (IP :%s). Please log in again and check whether your account password has been leaked. Please modify your password in time 。",loginTimeString,u.ip));
+				return VoHelper.getResultVO("101003",String.format("您的账号于%s在另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
+			}
+			/*if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+				loginLogDO.remark=String.format("您的账号于:[%s] 在另一设备（[%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName);
+				userLogBp.insertLog(loginLogDO);
+				logger.info(String.format("Your account has been successfully logged in to another device (%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.deviceName));
+				return VoHelper.getResultVO("101003",String.format("您的账号于:%s 在另外一台设备（%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.deviceName));
 			}*/
+			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
+				// 100002
+				loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
+				userLogBp.insertLog(loginLogDO);
+				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u)));
+				return VoHelper.getResultVO("100002", "登录超时");
+			}
 			if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
             }
@@ -528,6 +548,7 @@ public class UserValidateBp implements IUserValidateBp {
 			if (!StringUtility.stringEqualsIgnoreCase(urcVersion,newFuncVersion)) {
 				Map<String,String> dataMap =new HashMap<>();
 				dataMap.put("newFuncVersion",newFuncVersion);
+				logger.error(String.format("funcPermitValidate func error  request =%s ,newFuncVersion =%s",StringUtility.toJSONString(map),newFuncVersion));
 				return VoHelper.getResultVO("100007", "功能权限版本错误",dataMap);
 			}
 

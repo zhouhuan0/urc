@@ -322,7 +322,7 @@ public class UserBpImpl implements IUserBp {
                 u.ticket = resp.ticket;
                 u.ip = ip;
                 u.deviceName=deviceName;
-                u.loginTime=new Date();
+                u.loginTime=System.currentTimeMillis();
                 cacheBp.insertUser(u);
                 resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
 
