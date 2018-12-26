@@ -518,8 +518,8 @@ public class UserServiceImpl implements IUserService {
             userPersonParamDO.searchContext = searchContext;
             userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByUserName(userPersonParamDO);
         } catch (Exception e) {
-            logger.error(String.format("搜索用户上网账号和用户名失败:%s", jsonStr), e);
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), String.format("Search user online account and user name failed:%s", jsonStr));
+            logger.error(String.format("Search user online account and user name failed:%s", jsonStr), e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"搜索用户上网账号和用户名失败" );
         }
         resultVO.data = userAndPersonDOS;
         resultVO.msg = "搜索用户上网账号和用户名成功";
