@@ -506,7 +506,7 @@ public class UserValidateBp implements IUserValidateBp {
                 logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
                 return VoHelper.getResultVO("100002", "登录超时");
             }
-			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy:MM:dd  HH:mm:ss");
+			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
 			String loginTimeString = "";
 			if (u.loginTime != null) {
 				 loginTimeString = simpleDateFormat.format(u.loginTime);
@@ -524,7 +524,7 @@ public class UserValidateBp implements IUserValidateBp {
 				loginLogDO.remark=String.format("您的账号于:%s 在（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip);
 				userLogBp.insertLog(loginLogDO);
 				logger.info(String.format("Your account has been successfully logged in at :%s another (IP :%s). Please log in again and check whether your account password has been leaked. Please modify your password in time 。",loginTimeString,u.ip));
-				return VoHelper.getResultVO("101003",String.format("您的账号于:%s 另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
+				return VoHelper.getResultVO("101003",String.format("您的账号于%s在另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
 			}
 			/*if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号于:[%s] 在另一设备（[%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName);
