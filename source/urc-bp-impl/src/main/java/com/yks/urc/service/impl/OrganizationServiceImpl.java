@@ -29,6 +29,7 @@ import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.vo.OrgVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class OrganizationServiceImpl implements IOrganizationService {
@@ -138,16 +139,18 @@ public class OrganizationServiceImpl implements IOrganizationService {
                     //去urc_person_org去查找ding_user_id
                     List<String> dingUserIds = personOrgMapper.selectDingUserIdByDingOrgId(id);
                     //去urc_user去查找user_name
-                   List<UserAndPersonDO> userAndPersonDOS =iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
-                    List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
-                    for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
-                        OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
-                        orgTreeAndUserVO.isUser = 1;
-                        orgTreeAndUserVO.key = userAndPersonDO.userName;
-                        orgTreeAndUserVO.title = userAndPersonDO.personName;
-                        orgTreeAndUsers.add(orgTreeAndUserVO);
+                    if(!CollectionUtils.isEmpty(dingUserIds)) {
+                        List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
+                        List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
+                        for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
+                            OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
+                            orgTreeAndUserVO.isUser = 1;
+                            orgTreeAndUserVO.key = userAndPersonDO.userName;
+                            orgTreeAndUserVO.title = userAndPersonDO.personName;
+                            orgTreeAndUsers.add(orgTreeAndUserVO);
+                        }
+                        jsonMenu.put("children", orgTreeAndUsers);
                     }
-                    jsonMenu.put("children", orgTreeAndUsers);
                 }
                 //否则就组装菜单树
                 else {
