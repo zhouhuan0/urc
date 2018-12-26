@@ -873,7 +873,7 @@ public class RoleServiceImpl implements IRoleService {
                 List<UserRoleDO> userRoleDOS = new ArrayList<>();
                 List<String> userNameList = roleVO.getLstUserName();
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
-                    throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
+                    throw new URCBizException("请至少勾择一个用户",ErrorCode.E_000003);
                 }
 
                 userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
