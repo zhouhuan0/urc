@@ -89,6 +89,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
             }
             deptJosn = treeDingDeptAndUserList(orgTreeAndUserVOList, 0);
         } catch (Exception e) {
+            logger.error("getAllOrgTreeAndUser ERROR:", e);
             VoHelper.getErrorResult();
         }
         return VoHelper.getSuccessResult(deptJosn);
