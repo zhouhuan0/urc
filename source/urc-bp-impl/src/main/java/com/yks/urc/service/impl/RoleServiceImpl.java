@@ -17,9 +17,6 @@ import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
-import jdk.nashorn.internal.ir.Block;
-import jdk.nashorn.internal.ir.BlockStatement;
-import jdk.nashorn.internal.ir.Terminal;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.function.Predicate;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static com.yks.urc.fw.constant.StringConstant.operator;
 
 /**
  * 角色操作service实现类
@@ -873,7 +864,8 @@ public class RoleServiceImpl implements IRoleService {
                 List<UserRoleDO> userRoleDOS = new ArrayList<>();
                 List<String> userNameList = roleVO.getLstUserName();
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
-                    throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
+                    //throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
+                    throw new URCBizException("请至少选择一个用户",ErrorCode.E_000000);
                 }
 
                 userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));

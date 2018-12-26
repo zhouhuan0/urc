@@ -211,6 +211,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void updateRolePermission() throws Exception {
+
     }
 
     @Test

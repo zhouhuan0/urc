@@ -980,7 +980,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //DataRuleSysVO
 
         List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
-        System.out.println(StringUtility.toJSONString(dataRuleSys));
+        logger.info(String.format("dataRuleSys =%s",StringUtility.toJSONString(dataRuleSys)));
         if (CollectionUtils.isEmpty(dataRuleSys)) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }

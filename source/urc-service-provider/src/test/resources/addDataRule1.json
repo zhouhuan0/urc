@@ -1,25 +1,26 @@
 {
   "data": {
-    "lstUserName": ["chenglifu1"],
+    "lstUserName": ["hpq01",
+      "hpq02"],
     "lstDataRuleSys": [{
-      "sysKey": "009",
-      "sysName": "客服",
+      "sysKey": "011",
+      "sysName": "基础资料",
       "row": {
         "isAnd": 1,
         "subWhereClause": [{
-          "entityCode": "E_CustomerService",
-          "entityName": "【平台】【账号】【站点】",
-          "expressionId": 1544756653767003000,
-          "fieldCode": "F_CustomerService",
-          "operValuesArr": ["\"\\\"{\\\\\\\"platformId\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"platformName\\\\\\\":\\\\\\\"eBay\\\\\\\",\\\\\\\"lstShop\\\\\\\":[{\\\\\\\"shopId\\\\\\\":\\\\\\\"12deeping\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"12deeping\\\\\\\"},{\\\\\\\"shopId\\\\\\\":\\\\\\\"19tulip\\\\\\\",\\\\\\\"shopName\\\\\\\":\\\\\\\"19tulip\\\\\\\"}]}\\\"\""],
-          "parentExpressionId": 1544756653766002700
+          "entityCode": "E_StatisticsSystem",
+          "entityName": "[品类][中文名称][可用库存][成本价]",
+          "operValuesArr": ["{\"value\":\"firstCategory\",\"name\":\"品类\",\"data\":[{\"cateId\":\"11058\",\"cateNameCn\":\"包材\",\"children\":[{\"cateId\":\"11059\",\"cateNameCn\":\"仓库包材\",\"children\":[{\"cateId\":\"11060\",\"cateNameCn\":\"配送包材\"}]}]}],\"checkedKeys\":[\"11058\",\"11059\",\"11060\"]}",
+            "{\"value\":\"dataColumn\",\"name\":\"数据列\",\"data\":[{\"key\":\"chineseName\",\"name\":\"中文名称\",\"visiable\":\"不可见\"},{\"key\":\"costPrice\",\"name\":\"成本价\",\"visiable\":\"不可见\"},{\"key\":\"availableStock\",\"name\":\"可用库存\",\"visiable\":\"不可见\"}],\"checkedKeys\":[]}"],
+          "fieldCode": "F_StatisticsSystem"
         }]
       }
     }]
   },
-  "ticket": "8f616a5c80d66b2971d0871dc3095449",
-  "operator": "linwanxian",
-  "funcVersion": "41840097e25268aa3f6f1113d9d2bc27",
+  "ticket": "e628a99348695a016acd494d43a9dba2",
+  "operator": "huangpeiqin",
+  "funcVersion": "b7403d197d3bfc11f0ee2b68af597ebd",
   "moduleUrl": "/user/usermanagementlist/datapauthorization/",
-  "personName": "蔺万先"
+  "personName": "huangpeiqin",
+  "deviceName": "Chrome浏览器"
 }

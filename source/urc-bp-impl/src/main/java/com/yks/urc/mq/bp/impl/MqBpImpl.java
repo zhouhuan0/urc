@@ -1,16 +1,15 @@
 package com.yks.urc.mq.bp.impl;
 
-import com.yks.urc.service.impl.DataRuleServiceImpl;
-import org.apache.kafka.clients.producer.Callback;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 import com.yks.mq.utils.KafkaProducerSingleton;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.DataRuleVO;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -57,9 +56,7 @@ public class MqBpImpl implements IMqBp {
                 if (StringUtility.isNullOrEmpty(drSys.sysKey)) {
                     continue;
                 }
-                if(StringUtility.isNullOrEmpty(drSys.getUserName())){
-                    drSys.setUserName(dataRuleVO.getUserName());
-                }
+                drSys.setUserName(dataRuleVO.getUserName());
                 String sysKey = drSys.sysKey;
                 String topic = getDataRuleTopic(sysKey);
                 String value = StringUtility.toJSONString_NoException(drSys);
