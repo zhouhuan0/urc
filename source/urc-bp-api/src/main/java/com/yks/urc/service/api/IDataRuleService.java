@@ -3,6 +3,7 @@ package com.yks.urc.service.api;
 import java.util.Date;
 import java.util.List;
 
+import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.vo.*;
 
 public interface IDataRuleService {
@@ -99,4 +100,11 @@ public interface IDataRuleService {
 
 
     ResultVO getCsPlatformCodeName(String operator);
+
+    /**
+     * 获取所有平台
+     * @param platformDOS
+     * @return
+     */
+    ResultVO getPlatFormForLogistics(List<PlatformDO> platformDOS);
 }
