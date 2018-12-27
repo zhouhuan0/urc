@@ -143,7 +143,8 @@ public class OrganizationServiceImpl implements IOrganizationService {
                 for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
                     OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
                     orgTreeAndUserVO.isUser = 1;
-                    orgTreeAndUserVO.key = userAndPersonDO.userName+"_"+"部门ID"+mem.key;
+                 //   orgTreeAndUserVO.key = userAndPersonDO.userName+"_"+"部门ID"+mem.key;
+                    orgTreeAndUserVO.key = userAndPersonDO.userName;
                     orgTreeAndUserVO.title = userAndPersonDO.personName;
                     orgTreeAndUsers.add(orgTreeAndUserVO);
                 }
