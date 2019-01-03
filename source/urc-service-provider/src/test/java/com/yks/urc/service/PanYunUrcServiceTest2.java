@@ -146,7 +146,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
-        map.put(StringConstant.operator, "linwanxian");
+        map.put(StringConstant.operator, "songguanye");
         map.put(StringConstant.ticket, "b29e6a04ca90b74e33630a844315de5e");
         map.put(StringConstant.ip, "192.168.93.176");
         map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");

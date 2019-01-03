@@ -490,14 +490,14 @@ public class UserValidateBp implements IUserValidateBp {
 			String moduleUrl = map.get("moduleUrl");
 			String operator = map.get(StringConstant.operator);
 			String ticket = map.get(StringConstant.ticket);
-			String ip = map.get(StringConstant.ip);
+//			String ip = map.get(StringConstant.ip);
 			String urcVersion = map.get(StringConstant.funcVersion);
 			String deviceName=map.get(StringConstant.deviceName);
 			UserVO u = cacheBp.getUser(operator);
 			// 校验ticket
 			UserLoginLogDO loginLogDO =new UserLoginLogDO();
 			loginLogDO.userName =operator;
-			loginLogDO.ip=ip;
+//			loginLogDO.ip=ip;
 			loginLogDO.createTime =new Date();
 			loginLogDO.modifiedTime =new Date();
 			if(u ==null){
@@ -520,12 +520,12 @@ public class UserValidateBp implements IUserValidateBp {
 			}
 */
 
-			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
-				loginLogDO.remark=String.format("您的账号于:%s 在（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip);
-				userLogBp.insertLog(loginLogDO);
-				logger.info(String.format("Your account has been successfully logged in at :%s another (IP :%s). Please log in again and check whether your account password has been leaked. Please modify your password in time 。",loginTimeString,u.ip));
-				return VoHelper.getResultVO("101003",String.format("您的账号于%s在另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
-			}
+//			if (!StringUtility.stringEqualsIgnoreCase(u.ip, ip)){
+//				loginLogDO.remark=String.format("您的账号于:%s 在（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码。",loginTimeString,u.ip);
+//				userLogBp.insertLog(loginLogDO);
+//				logger.info(String.format("Your account has been successfully logged in at :%s another (IP :%s). Please log in again and check whether your account password has been leaked. Please modify your password in time 。",loginTimeString,u.ip));
+//				return VoHelper.getResultVO("101003",String.format("您的账号于%s在另一（IP：%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.ip));
+//			}
 			/*if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号于:[%s] 在另一设备（[%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName);
 				userLogBp.insertLog(loginLogDO);
