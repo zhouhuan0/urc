@@ -59,6 +59,7 @@ public class LDAPUtil2 {
 		} catch (Exception e) {
 			logger.error(String.format("connect:%s %s", username, password), e);
 			String exceptionString = e.toString();
+			//出现data 532是账号有效、密码有效但是密码过期了
 			if(exceptionString.contains("data 532")){
 				//改为登录失败后调账号管理系统的接口 判断账号密码是否有误 正确则登录成功 错误则登录失败（更新日志）
 				Map<String, String> map = new HashMap<>(15);
