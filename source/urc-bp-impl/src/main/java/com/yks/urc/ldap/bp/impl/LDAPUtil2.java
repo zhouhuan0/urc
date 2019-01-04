@@ -69,7 +69,7 @@ public class LDAPUtil2 {
 				try {
 					response = HttpUtility2.postForm(getTokenUrl, map, null);
 				}catch (Exception e2){
-					logger.error(String.format("Call the userInfo management system to get the token interface to keep the error.userName:%s,passWord:%s",username,password),e);
+					logger.error(String.format("Call the userInfo management system to get the token interface to keep the error.userName:%s,passWord:%s",username,password),e2);
 					return false;
 				}
 				if(response != null){
