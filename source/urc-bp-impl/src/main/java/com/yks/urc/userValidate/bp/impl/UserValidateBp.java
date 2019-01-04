@@ -506,11 +506,11 @@ public class UserValidateBp implements IUserValidateBp {
                 logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
                 return VoHelper.getResultVO("100002", "登录超时");
             }
-			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
-			String loginTimeString = "";
-			if (u.loginTime != null) {
-				 loginTimeString = simpleDateFormat.format(u.loginTime);
-			}
+//			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+//			String loginTimeString = "";
+//			if (u.loginTime != null) {
+//				 loginTimeString = simpleDateFormat.format(u.loginTime);
+//			}
 
 		/*	if ( !StringUtility.stringEqualsIgnoreCase(u.ip, ip)||!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
 				loginLogDO.remark=String.format("您的账号在:[%s]在另一设备（IP：[%s] [%s]）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.ip,u.deviceName);
