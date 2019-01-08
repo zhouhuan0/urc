@@ -183,6 +183,7 @@ public class UserServiceImpl implements IUserService {
             return rslt;
         }
     }
+
     @Log("getAllFuncPermit")
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String jsonStr) {
@@ -446,9 +447,13 @@ public class UserServiceImpl implements IUserService {
         DataColumnVO availableStockDataColumnVO = new DataColumnVO();
         availableStockDataColumnVO.setKey("availableStock");
         availableStockDataColumnVO.setName("可用库存");
+        DataColumnVO logisticsPropertiesDataColumnVO = new DataColumnVO();
+        logisticsPropertiesDataColumnVO.setKey("logisticsProperties");
+        logisticsPropertiesDataColumnVO.setName("物流属性");
         dataColumnVOList.add(chineseNameDataColumnVO);
         dataColumnVOList.add(costPriceDataColumnVO);
         dataColumnVOList.add(availableStockDataColumnVO);
+        dataColumnVOList.add(logisticsPropertiesDataColumnVO);
         skuCategoryVO.setDataColumn(dataColumnVOList);
         BasicDataVO basicDataVO = new BasicDataVO();
         basicDataVO.setBasicData(skuCategoryVO);
@@ -504,10 +509,10 @@ public class UserServiceImpl implements IUserService {
             if (pageNumber == null) {
                 return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "页码不能为空");
             }
-            if (pageData <= 0||pageData==null) {
+            if (pageData <= 0 || pageData == null) {
                 pageData = 10;
             }
-            if (pageNumber <= 0||pageNumber==null) {
+            if (pageNumber <= 0 || pageNumber == null) {
                 pageNumber = 1;
             }
             int currIndex = (pageNumber - 1) * pageData;
@@ -519,7 +524,7 @@ public class UserServiceImpl implements IUserService {
             userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByUserName(userPersonParamDO);
         } catch (Exception e) {
             logger.error(String.format("Search user online account and user name failed:%s", jsonStr), e);
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"搜索用户上网账号和用户名失败");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "搜索用户上网账号和用户名失败");
         }
         resultVO.data = userAndPersonDOS;
         resultVO.msg = "搜索用户上网账号和用户名成功";
