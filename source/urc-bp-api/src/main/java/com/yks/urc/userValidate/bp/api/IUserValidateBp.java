@@ -39,7 +39,7 @@ public interface IUserValidateBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月13日 上午9:57:37
 	 */
-	String createTicket(String strUserName, String ip);
+	String createTicket(String strUserName);
 
 	/**
 	 * 合并为一个sys树

@@ -1,15 +1,18 @@
 package com.yks.urc.userValidate.bp.impl;
 
+import com.yks.common.util.StringUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermitStatDO;
+import com.yks.urc.entity.UserTicketDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.mapper.UserTicketMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.user.bp.api.IUserLogBp;
@@ -22,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Component
@@ -441,8 +443,8 @@ public class UserValidateBp implements IUserValidateBp {
 	}
 
 	@Override
-	public String createTicket(String strUserName, String ip) {
-		return StringUtility.md5_NoException(String.format("%s%s%s", strUserName, ip, StringUtility.getUUIDLowercase_Dt()));
+	public String createTicket(String strUserName) {
+		return StringUtility.md5_NoException(String.format("%s%s", strUserName,StringUtility.getUUIDLowercase_Dt()));
 
 	}
 
@@ -481,6 +483,8 @@ public class UserValidateBp implements IUserValidateBp {
 
 	@Autowired
 	private IUserLogBp userLogBp;
+	@Autowired
+	private UserTicketMapper userTicketMapper;
 
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
@@ -489,6 +493,9 @@ public class UserValidateBp implements IUserValidateBp {
 			String apiUrl = map.get("apiUrl");
 			String moduleUrl = map.get("moduleUrl");
 			String operator = map.get(StringConstant.operator);
+			if(StringUtility.isNullOrEmpty(operator)){
+				return VoHelper.getResultVO("100002", "登录超时:operator参数为空");
+			}
 			String ticket = map.get(StringConstant.ticket);
 //			String ip = map.get(StringConstant.ip);
 			String urcVersion = map.get(StringConstant.funcVersion);
@@ -500,12 +507,39 @@ public class UserValidateBp implements IUserValidateBp {
 //			loginLogDO.ip=ip;
 			loginLogDO.createTime =new Date();
 			loginLogDO.modifiedTime =new Date();
-			if(u ==null){
-                loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
-                userLogBp.insertLog(loginLogDO);
-                logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
-                return VoHelper.getResultVO("100002", "登录超时");
-            }
+			UserTicketDO userTicketDO;
+			if(u == null){
+				//如果缓存的用户信息为null 从数据库里获取用户ticket信息
+				userTicketDO = userTicketMapper.selectUserTicketByUserName(operator);
+				if(StringUtil.isEmpty(userTicketDO)){
+					loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
+					userLogBp.insertLog(loginLogDO);
+					logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
+					return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
+				}
+				//根据过期时间判断ticket是否过期
+				Date now = new Date();
+				if (now.after(userTicketDO.getExpiredTime()) || !StringUtility.stringEqualsIgnoreCase(userTicketDO.getTicket(), ticket)) {
+					// 100002
+					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
+					userLogBp.insertLog(loginLogDO);
+					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
+					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
+				}
+			}else if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
+				// 100002
+				loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u.ticket));
+				userLogBp.insertLog(loginLogDO);
+				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u.ticket)));
+				return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
+			}
+
+//			else{
+//                loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
+//                userLogBp.insertLog(loginLogDO);
+//                logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
+//                return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
+//            }
 //			SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
 //			String loginTimeString = "";
 //			if (u.loginTime != null) {
@@ -532,13 +566,6 @@ public class UserValidateBp implements IUserValidateBp {
 				logger.info(String.format("Your account has been successfully logged in to another device (%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.deviceName));
 				return VoHelper.getResultVO("101003",String.format("您的账号于:%s 在另外一台设备（%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.deviceName));
 			}*/
-			if (!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
-				// 100002
-				loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u));
-				userLogBp.insertLog(loginLogDO);
-				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u)));
-				return VoHelper.getResultVO("100002", "登录超时");
-			}
 			if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
             }

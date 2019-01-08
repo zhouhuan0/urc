@@ -3,12 +3,14 @@ package com.yks.urc.user.bp.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
+import com.yks.common.util.StringUtil;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.comparator.impl.UserSysVOComparator;
 import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserInfo;
 import com.yks.urc.entity.UserLoginLogDO;
+import com.yks.urc.entity.UserTicketDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.exception.URCServiceException;
@@ -16,10 +18,7 @@ import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IUserLoginLogMapper;
-import com.yks.urc.mapper.IUserMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.mapper.*;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.user.bp.api.IUserBp;
@@ -49,6 +48,9 @@ public class UserBpImpl implements IUserBp {
 
     @Autowired
     IUserLoginLogMapper userLoginLogMapper;
+
+    @Autowired
+    private UserTicketMapper userTicketMapper;
     /**
      * token 请求地址
      */
@@ -314,7 +316,7 @@ public class UserBpImpl implements IUserBp {
             loginLog.modifiedTime =new Date();
             resp.userName = userName;
             if (blnOk) {
-                resp.ticket = userValidateBp.createTicket(userName, ip);
+                resp.ticket = userValidateBp.createTicket(userName);
                UserVO getU =cacheBp.getUser(userName);
                 // 缓存用户信息
                 UserVO u = new UserVO();
@@ -324,7 +326,9 @@ public class UserBpImpl implements IUserBp {
                 u.deviceName=deviceName;
                 u.loginTime=System.currentTimeMillis();
                 cacheBp.insertUser(u);
-                resp.personName = getPersonNameFromCacheOrDb(u.userName);// userMapper.getPersonNameByUserName(u.userName);
+                //缓存的同时备份到数据库
+                backupUserTicketToDB(u);
+                resp.personName = getPersonNameFromCacheOrDb(u.userName);
 
                 loginLog.remark = String.format("登陆操作:request:[%s,%s,%s],redis 原有的用户信息[%s],redis新增的用户信息[%s]",userName, pwd,ip,StringUtility.toJSONString(getU),StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLog);
@@ -336,6 +340,39 @@ public class UserBpImpl implements IUserBp {
             logger.error(String.format("login ERROR:%s %s %s", userName, pwd, ip), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
+    }
+
+    /**
+     * 备份用户ticket到数据库
+     * @param u 用户信息
+     */
+    private void backupUserTicketToDB(UserVO u) {
+        Map map = new HashMap(10);
+        try {
+            //先查询用户记录是否存在
+            UserTicketDO userTicketDO = userTicketMapper.selectUserTicketByUserName(u.userName);
+            map.put("userName",u.userName);
+            map.put("ticket",u.ticket);
+            Date now = new Date();
+            map.put("modifiedTime",now);
+            //获取当前时间
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(now);
+            //两个小时之后过期
+            calendar.add(Calendar.HOUR,+2);
+            map.put("expiredTime",calendar.getTime());
+            if(StringUtil.isEmpty(userTicketDO)){
+                //插入一条用户ticket记录
+                map.put("createdTime",now);
+                userTicketMapper.insertUserTicket(map);
+            }else{
+                //更新用户的ticket信息
+                userTicketMapper.updateUserTicket(map);
+            }
+        } catch (Exception e) {
+            logger.error(String.format("Backup user ticket data failed.user:%s", StringUtility.toJSONString(u)),e);
+        }
+
     }
 
     /**
