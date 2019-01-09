@@ -38,5 +38,11 @@
       UPDATE urc_user_ticket set expired_time = #{expiredTime},modified_time = now(3)
       where user_name = #{userName}
     </update>
+  <delete id="deleteUserTicketByUserName" parameterType="java.lang.String">
+    DELETE FROM urc_user_ticket
+    <where>
+      user_name = #{userName}
+    </where>
+  </delete>
 
 </mapper>

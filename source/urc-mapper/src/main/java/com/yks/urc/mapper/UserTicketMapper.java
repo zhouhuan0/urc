@@ -40,4 +40,10 @@ public interface UserTicketMapper {
      * @Date 2019/1/9 10:40
      */
     void updateExpiredTime(@Param("userName") String userName, @Param("expiredTime") Date expiredTime);
+
+    /**
+     * 根据用户名删除用户ticket信息
+     * @param userName 用户名
+     */
+    void deleteUserTicketByUserName(String userName);
 }

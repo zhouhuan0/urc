@@ -180,8 +180,8 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void logout_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/logout");
-        map.put(StringConstant.operator, "linwanxian");
-        map.put(StringConstant.ticket, "5a0304642ef8624767d315a0e84398bb");
+        map.put(StringConstant.operator, "songguanye");
+        map.put(StringConstant.ticket, "d8d4009eb438cf644fcb088602d0db04");
         map.put(StringConstant.ip, "192.168.121.140");
         map.put(StringConstant.funcVersion, "999f7e17655abe2f917a7b667f741d3c");
         String jsonStr = StringUtility.toJSONString_NoException(map);
