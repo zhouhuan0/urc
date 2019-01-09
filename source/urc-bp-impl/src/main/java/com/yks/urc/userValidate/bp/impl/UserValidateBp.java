@@ -518,18 +518,18 @@ public class UserValidateBp implements IUserValidateBp {
 					logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
 					return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
 				}
-				//根据过期时间ExpiredTime 或 ticket是否一样 来判断ticket是否过期
 				Date now = new Date();
 				if(now.before(userTicketDO.getExpiredTime())){
 					//如果ticket没过期且缓存为null 则更新缓存
 					UserVO userVO = new UserVO();
 					userVO.ticket = userTicketDO.getTicket();
 					userVO.userName = userTicketDO.getUserName();
-					userVO.loginTime = userTicketDO.getCreatedTime().getTime();
+					userVO.loginTime = userTicketDO.getModifiedTime().getTime();
 					userVO.ip = map.get(StringConstant.ip);
 					userVO.deviceName = map.get(StringConstant.deviceName);
 					cacheBp.insertUser(userVO);
 				}
+				//根据过期时间ExpiredTime 或 ticket是否一样 来判断ticket是否过期
 				if (now.after(userTicketDO.getExpiredTime()) || !StringUtility.stringEqualsIgnoreCase(userTicketDO.getTicket(), ticket)) {
 					// 100002
 					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从数据库中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
