@@ -458,7 +458,6 @@ public class UserBpImpl implements IUserBp {
         String strOperator = jo.getString(StringConstant.operator);
         String ticket = jo.getString(StringConstant.ticket);
         UserVO u = cacheBp.getUser(strOperator);
-        UserTicketDO userTicketDO = userTicketMapper.selectUserTicketByUserName(strOperator);
         // 记录登出
         UserLoginLogDO logDO =new UserLoginLogDO();
         logDO.userName =strOperator;
@@ -468,9 +467,7 @@ public class UserBpImpl implements IUserBp {
         logDO.modifiedTime =new Date();
         this.insertLoginLog(logDO);
         //删除数据库的用户ticket信息
-        if (userTicketDO != null) {
-            userTicketMapper.deleteUserTicketByUserName(strOperator);
-        }
+        userTicketMapper.deleteUserTicketByUserName(strOperator);
         if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
             throw new URCBizException(ErrorCode.E_100002);
         }
