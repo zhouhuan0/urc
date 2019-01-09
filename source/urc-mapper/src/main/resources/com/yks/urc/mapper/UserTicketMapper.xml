@@ -30,8 +30,13 @@
       <if test="createdTime != null">
         created_time = #{createdTime},
       </if>
-      user_name = #{userName},ticket = #{ticket},expired_time = #{expiredTime},modified_time = #{modifiedTime}
+      ticket = #{ticket},expired_time = #{expiredTime},modified_time = #{modifiedTime}
     </set>
+    where user_name = #{userName}
   </update>
+    <update id="updateExpiredTime">
+      UPDATE urc_user_ticket set expired_time = #{expiredTime},modified_time = now(3)
+      where user_name = #{userName}
+    </update>
 
 </mapper>

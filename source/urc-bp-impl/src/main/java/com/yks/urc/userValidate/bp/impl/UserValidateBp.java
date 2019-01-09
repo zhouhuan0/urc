@@ -16,6 +16,7 @@ import com.yks.urc.mapper.UserTicketMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.user.bp.api.IUserLogBp;
+import com.yks.urc.userValidate.bp.api.ITicketUpdateBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
@@ -486,6 +487,9 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	private UserTicketMapper userTicketMapper;
 
+	@Autowired
+	private ITicketUpdateBp ticketUpdateBp;
+
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
 		logger.info(String.format("funcPermitValidate:%s",StringUtility.toJSONString_NoException(map)));
@@ -499,7 +503,7 @@ public class UserValidateBp implements IUserValidateBp {
 			String ticket = map.get(StringConstant.ticket);
 //			String ip = map.get(StringConstant.ip);
 			String urcVersion = map.get(StringConstant.funcVersion);
-			String deviceName=map.get(StringConstant.deviceName);
+//			String deviceName=map.get(StringConstant.deviceName);
 			UserVO u = cacheBp.getUser(operator);
 			// 校验ticket
 			UserLoginLogDO loginLogDO =new UserLoginLogDO();
@@ -515,7 +519,7 @@ public class UserValidateBp implements IUserValidateBp {
 					loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};数据库没有数据",StringUtility.toJSONString(map),ticket);
 					userLogBp.insertLog(loginLogDO);
 					logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
-					return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
+					return VoHelper.getResultVO("100002", "登录超时:数据库用户信息为空");
 				}
 				//根据过期时间判断ticket是否过期
 				Date now = new Date();
@@ -524,7 +528,7 @@ public class UserValidateBp implements IUserValidateBp {
 					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从数据库中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
 					userLogBp.insertLog(loginLogDO);
 					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
-					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
+					return VoHelper.getResultVO("100002", "登录超时:数据库ticket已过期");
 				}
 			}else if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
 				// 100002
@@ -533,6 +537,9 @@ public class UserValidateBp implements IUserValidateBp {
 				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u.ticket)));
 				return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
 			}
+			// 刷新数据库ticket过期时间
+			ticketUpdateBp.refreshExpiredTime(operator,ticket);
+
 
 //			else{
 //                loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};redis没有数据",StringUtility.toJSONString(map),ticket);
