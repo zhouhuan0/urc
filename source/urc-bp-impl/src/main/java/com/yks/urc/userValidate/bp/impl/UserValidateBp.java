@@ -539,7 +539,7 @@ public class UserValidateBp implements IUserValidateBp {
 					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从数据库中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
 					userLogBp.insertLog(loginLogDO);
 					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
-					return VoHelper.getResultVO("100002", "登录超时:数据库ticket已过期");
+					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
 				}
 
 			}else if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
