@@ -1,6 +1,9 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.UserTicketDO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -29,4 +32,12 @@ public interface UserTicketMapper {
      * @param map
      */
     void updateUserTicket(Map map);
+
+    /**
+     * 更新最后过期时间为2小时
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2019/1/9 10:40
+     */
+    void updateExpiredTime(@Param("userName") String userName, @Param("expiredTime") Date expiredTime);
 }
