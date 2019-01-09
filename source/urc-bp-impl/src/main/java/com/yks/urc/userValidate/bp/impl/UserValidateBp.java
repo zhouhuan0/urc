@@ -516,13 +516,24 @@ public class UserValidateBp implements IUserValidateBp {
 				//如果缓存的用户信息为null 从数据库里获取用户ticket信息
 				userTicketDO = userTicketMapper.selectUserTicketByUserName(operator);
 				if(StringUtil.isEmpty(userTicketDO)){
+					//数据库也没有此用户的ticket信息
 					loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};数据库没有数据",StringUtility.toJSONString(map),ticket);
 					userLogBp.insertLog(loginLogDO);
 					logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
 					return VoHelper.getResultVO("100002", "登录超时:数据库用户信息为空");
 				}
-				//根据过期时间判断ticket是否过期
+				//根据过期时间ExpiredTime 或 ticket是否一样 来判断ticket是否过期
 				Date now = new Date();
+				if(now.before(userTicketDO.getExpiredTime())){
+					//如果ticket没过期且缓存为null 则更新缓存
+					UserVO userVO = new UserVO();
+					userVO.ticket = userTicketDO.getTicket();
+					userVO.userName = userTicketDO.getUserName();
+					userVO.loginTime = userTicketDO.getCreatedTime().getTime();
+					userVO.ip = map.get(StringConstant.ip);
+					userVO.deviceName = map.get(StringConstant.deviceName);
+					cacheBp.insertUser(userVO);
+				}
 				if (now.after(userTicketDO.getExpiredTime()) || !StringUtility.stringEqualsIgnoreCase(userTicketDO.getTicket(), ticket)) {
 					// 100002
 					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从数据库中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
@@ -530,8 +541,9 @@ public class UserValidateBp implements IUserValidateBp {
 					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
 					return VoHelper.getResultVO("100002", "登录超时:数据库ticket已过期");
 				}
+
 			}else if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
-				// 100002
+				// 缓存不为null
 				loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u.ticket));
 				userLogBp.insertLog(loginLogDO);
 				logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(u.ticket)));
