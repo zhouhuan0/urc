@@ -32,10 +32,5 @@
 			<artifactId>urc-mapper</artifactId>
 			<version>${urc.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.yks.oms.order.manage</groupId>
-			<artifactId>oms-order-manage-service-api</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 </project>
