@@ -31,7 +31,7 @@ public class TicketUpdateBpImpl implements ITicketUpdateBp {
             cacheBp.refreshUserExpiredTime(userName);
         }
         catch(Exception ex){
-            logger.error(String.format("referesh redis ERROR:%s %s", userName, ticket), ex);
+            logger.error(String.format("refresh redis ERROR:%s %s", userName, ticket), ex);
         }
 
         // 如果map中有，则表示还没入库，不需要处理
