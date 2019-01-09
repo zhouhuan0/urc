@@ -1,5 +1,6 @@
 package com.yks.urc.userValidate.bp.impl;
 
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.UserTicketMapper;
 import com.yks.urc.userValidate.bp.api.ITicketUpdateBp;
@@ -19,9 +20,20 @@ public class TicketUpdateBpImpl implements ITicketUpdateBp {
 
     Map<String, String> mapUser = new ConcurrentHashMap<>();
 
+    @Autowired
+    ICacheBp cacheBp;
+
     @Override
     public void refreshExpiredTime(String userName, String ticket) {
         if (StringUtility.isNullOrEmpty(userName)) return;
+
+        try {
+            cacheBp.refreshUserExpiredTime(userName);
+        }
+        catch(Exception ex){
+            logger.error(String.format("referesh redis ERROR:%s %s", userName, ticket), ex);
+        }
+
         // 如果map中有，则表示还没入库，不需要处理
         if (mapUser.containsKey(userName)) return;
         mapUser.put(userName, ticket);

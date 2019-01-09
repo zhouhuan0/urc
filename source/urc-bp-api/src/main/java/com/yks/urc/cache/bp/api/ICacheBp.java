@@ -100,4 +100,6 @@ public interface ICacheBp {
 	 * @Date 2018/9/4 16:43
 	 */
 	void  setAllPlatformShop(String allPlatformShopJson,String entityCode);
+
+    void refreshUserExpiredTime(String userName);
 }
