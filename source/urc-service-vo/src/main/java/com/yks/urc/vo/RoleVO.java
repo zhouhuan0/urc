@@ -91,6 +91,10 @@ public class RoleVO implements Serializable {
      *  此角色的拥有者
      */
     public List<String> lstOwner;
+    /**
+     *   此角色拥有者的中文名和域名
+     */
+    public List<NameVO> lstOwnerInfo;
 
     public Integer getId() {
         return id;
@@ -258,5 +262,13 @@ public class RoleVO implements Serializable {
 
     public void setLstOwner(List<String> lstOwner) {
         this.lstOwner = lstOwner;
+    }
+
+    public List<NameVO> getLstOwnerInfo() {
+        return lstOwnerInfo;
+    }
+
+    public void setLstOwnerInfo(List<NameVO> lstOwnerInfo) {
+        this.lstOwnerInfo = lstOwnerInfo;
     }
 }
