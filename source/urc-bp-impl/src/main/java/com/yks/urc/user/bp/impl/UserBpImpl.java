@@ -353,6 +353,9 @@ public class UserBpImpl implements IUserBp {
             UserTicketDO userTicketDO = userTicketMapper.selectUserTicketByUserName(u.userName);
             map.put("userName",u.userName);
             map.put("ticket",u.ticket);
+            map.put("loginIp",u.ip);
+            map.put("loginTime",u.loginTime);
+            map.put("deviceName",u.deviceName);
             Date now = new Date();
             map.put("modifiedTime",now);
             //获取当前时间
@@ -362,11 +365,11 @@ public class UserBpImpl implements IUserBp {
             calendar.add(Calendar.HOUR,+2);
             map.put("expiredTime",calendar.getTime());
             if(StringUtil.isEmpty(userTicketDO)){
-                //插入一条用户ticket记录
+                //插入一条用户登录记录
                 map.put("createdTime",now);
                 userTicketMapper.insertUserTicket(map);
             }else{
-                //更新用户的ticket信息
+                //更新用户登录信息
                 userTicketMapper.updateUserTicket(map);
             }
         } catch (Exception e) {

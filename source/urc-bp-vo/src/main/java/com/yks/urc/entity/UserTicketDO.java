@@ -14,9 +14,37 @@ public class UserTicketDO {
     private Long id;
     private String userName;
     private String ticket;
+    private String loginIp;
+    private String deviceName;
+
+    public String getLoginIp() {
+        return loginIp;
+    }
+
+    public void setLoginIp(String loginIp) {
+        this.loginIp=loginIp;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName=deviceName;
+    }
+
+    public Date getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(Date loginTime) {
+        this.loginTime=loginTime;
+    }
+
     private Date expiredTime;
     private Date createdTime;
     private Date modifiedTime;
+    private Date loginTime;
 
     public Long getId() {
         return id;

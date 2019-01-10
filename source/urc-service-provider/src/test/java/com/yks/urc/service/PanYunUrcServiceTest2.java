@@ -169,9 +169,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void login_Test() {
         Map map = new HashMap();
         map.put(StringConstant.userName, "songguanye");
-        map.put(StringConstant.pwd, "670317483sgy???");
+        map.put(StringConstant.pwd, "670317483sgy??");
         map.put(StringConstant.userName, "songguanye");
-        map.put(StringConstant.pwd, "670317483sgy???");
+//        map.put(StringConstant.pwd, "670317483sgy???");
         map.put(StringConstant.ip, "songguanyeIP");
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }
