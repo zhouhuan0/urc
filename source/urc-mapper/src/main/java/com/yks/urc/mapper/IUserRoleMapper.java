@@ -64,10 +64,10 @@ public interface IUserRoleMapper {
 
 	List<String> getUserNameByRoleId(UserRoleDO userRoleDO);
 	/**
-	 *   获取 用户名和域账号
+	 *   获取 用户名和域账号 getNameVOByRoleId
 	 * @param
 	 * @return 
-	 * @Author lwxgetNameVOByRoleId
+	 * @Author lwx
 	 * @Date 2019/1/10 11:15
 	 */
 	List<NameVO> getNameVOByRoleId(UserRoleDO userRoleDO);

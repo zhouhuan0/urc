@@ -379,4 +379,16 @@
       WHERE u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
     </select>
 
+    <select id="getUserPersonByUserNames" resultType="com.yks.urc.vo.NameVO">
+         select u.user_name AS userName,p.person_name AS personName
+          FROM urc_user u LEFT JOIN urc_person p ON  u.ding_user_id = p.ding_user_id
+          <where>
+              <if test="lstUserName != null and lstUserName.size() >0">
+                  u.user_name IN 
+                  <foreach collection="lstUserName" open="(" separator="," close=")" item="userName">
+                      #{userName}
+                  </foreach>
+              </if>
+          </where>
+    </select>
 </mapper>
