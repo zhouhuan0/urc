@@ -133,6 +133,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void getRoleUser() throws Exception {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("getRoleUser.json"));
+        MotanSession.initialSession(strJson1);
+        resultVO =service.getRoleUser(strJson1);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 
     @Test

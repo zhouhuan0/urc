@@ -827,8 +827,16 @@ public class RoleServiceImpl implements IRoleService {
                     roleVO.setRoleId(roleDO.getRoleId().toString());
                     UserRoleDO userRoleDO = new UserRoleDO();
                     userRoleDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                    List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
+                    List<String> lstUserName = new ArrayList<>();
+                    List<NameVO> lstUser = userRoleMapper.getNameVOByRoleId(userRoleDO);
+                    roleVO.setLstUser(lstUser);
+                    if (!CollectionUtils.isEmpty(lstUser)) {
+                        lstUser.forEach(nameVO -> {
+                            lstUserName.add(nameVO.userName);
+                        });
+                    }
                     roleVO.setLstUserName(lstUserName);
+
                     roleList.add(roleVO);
                 }
             }
