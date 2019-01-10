@@ -522,7 +522,10 @@ public class RoleServiceImpl implements IRoleService {
         for (UserRoleDO userRoleDO : userRoleDOS) {
             lstUserName.add(userRoleDO.getUserName());
         }
+
         roleVO.setLstUserName(lstUserName);
+        List<NameVO> lstUser =userMapper.getUserPersonByUserNames(lstUserName);
+        roleVO.setLstUser(lstUser);
         //组装roleVO里面的 owner,
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);
         roleVO.lstOwner = new ArrayList<>();

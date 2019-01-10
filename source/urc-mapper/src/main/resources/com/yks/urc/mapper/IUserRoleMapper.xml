@@ -205,7 +205,7 @@
     </select>
 
     <select id="getUserNameByRoleId" resultType="java.lang.String" parameterType="com.yks.urc.entity.UserRoleDO">
-        SELECT user_name from urc_user_role LEFT
+        SELECT user_name from urc_user_role
         <where>
                 role_id=#{roleId}
             <if test="createBy != null and createBy != '' ">
@@ -242,7 +242,7 @@
         </where>
     </select>
 
-    
+
     <select id="getUserOwnSysByUserName" resultType="java.lang.String">
         select sys_key from urc_user_role uur
         left join urc_role ur on uur.role_id=ur.role_id

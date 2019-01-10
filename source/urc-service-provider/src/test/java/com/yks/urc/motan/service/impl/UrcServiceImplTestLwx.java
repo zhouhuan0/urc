@@ -309,7 +309,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRoleByRoleId() throws Exception {
         map.put("operator", operator);
-        map.put("roleId", "1539221477917000013");
+        map.put("roleId", "1546939778294000003");
         String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         System.out.println(json);
