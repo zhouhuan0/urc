@@ -519,7 +519,7 @@ public class UserValidateBp implements IUserValidateBp {
 				userTicketDO = userTicketMapper.selectUserTicketByUserName(operator);
 				if(StringUtil.isEmpty(userTicketDO)){
 					//数据库也没有此用户的ticket信息
-					loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s]};数据库没有数据",StringUtility.toJSONString(map),ticket);
+					loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s];(数据库没有数据)",StringUtility.toJSONString(map),ticket);
 					userLogBp.insertLog(loginLogDO);
 					logger.error(String.format("funcPermitValidate login timeout request = %s",StringUtility.toJSONString(map)));
 					return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
@@ -543,9 +543,9 @@ public class UserValidateBp implements IUserValidateBp {
 				//根据过期时间ExpiredTime 或 ticket是否一样 来判断ticket是否过期
 				if (now.after(userTicketDO.getExpiredTime()) || !StringUtility.stringEqualsIgnoreCase(userTicketDO.getTicket(), ticket)) {
 					// 100002
-					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从数据库中获取的信息:[%s]",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
+					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s];(从数据库中获取的ticket信息:[%s])",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
 					userLogBp.insertLog(loginLogDO);
-					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
+					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s;(从数据库中获取的ticket信息:[%s])",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket())));
 					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
 				}
 
@@ -558,9 +558,9 @@ public class UserValidateBp implements IUserValidateBp {
 				//校验ticket
 				if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
 					// 缓存不为null
-					loginLogDO.remark=String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket));
+					loginLogDO.remark=String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket));
 					userLogBp.insertLog(loginLogDO);
-					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s, u =%s", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket)));
+					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s;从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket)));
 					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
 				}
 
