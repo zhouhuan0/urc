@@ -354,10 +354,10 @@ public class UserBpImpl implements IUserBp {
             map.put("userName",u.userName);
             map.put("ticket",u.ticket);
             map.put("loginIp",u.ip);
-            map.put("loginTime",u.loginTime);
             map.put("deviceName",u.deviceName);
             Date now = new Date();
             map.put("modifiedTime",now);
+            map.put("loginTime",now);
             //获取当前时间
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(now);

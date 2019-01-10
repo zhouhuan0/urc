@@ -33,6 +33,9 @@
       <if test="createdTime != null">
         created_time = #{createdTime},
       </if>
+      <if test="loginTime != null">
+        login_time = #{loginTime},
+      </if>
       ticket = #{ticket},expired_time = #{expiredTime},modified_time = #{modifiedTime},login_time = #{loginTime},device_name = #{deviceName},login_ip = #{loginIp}
     </set>
     where user_name = #{userName}
