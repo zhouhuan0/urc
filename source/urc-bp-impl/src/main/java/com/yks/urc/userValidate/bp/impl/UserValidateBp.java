@@ -492,6 +492,8 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
 	private ITicketUpdateBp ticketUpdateBp;
 
+	private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+
 	@Override
 	public ResultVO funcPermitValidate(Map<String, String> map) {
 		logger.info(String.format("funcPermitValidate:%s",StringUtility.toJSONString_NoException(map)));
@@ -504,14 +506,12 @@ public class UserValidateBp implements IUserValidateBp {
 			}
 			String ticket = map.get(StringConstant.ticket);
 			String urcVersion = map.get(StringConstant.funcVersion);
-			String deviceName=map.get(StringConstant.deviceName);
 			UserVO u = cacheBp.getUser(operator);
 			// 校验ticket
 			UserLoginLogDO loginLogDO =new UserLoginLogDO();
 			loginLogDO.userName =operator;
 			loginLogDO.createTime = new Date();
 			loginLogDO.modifiedTime = new Date();
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
 			String loginTimeString = "";
 			UserTicketDO userTicketDO;
 			if(u == null){
@@ -525,7 +525,7 @@ public class UserValidateBp implements IUserValidateBp {
 					return VoHelper.getResultVO("100002", "登录超时:用户信息为空");
 				}
 				//校验设备
-				ResultVO deviceChange = checkDeviceFromDB(deviceName, userTicketDO, loginLogDO, simpleDateFormat, loginTimeString);
+				ResultVO deviceChange = checkDeviceFromDB(userTicketDO,loginLogDO, loginTimeString,ticket);
 				if (deviceChange != null){
 					return deviceChange;
 				}
@@ -540,8 +540,8 @@ public class UserValidateBp implements IUserValidateBp {
 					userVO.deviceName = map.get(StringConstant.deviceName);
 					cacheBp.insertUser(userVO);
 				}
-				//根据过期时间ExpiredTime 或 ticket是否一样 来判断ticket是否过期
-				if (now.after(userTicketDO.getExpiredTime()) || !StringUtility.stringEqualsIgnoreCase(userTicketDO.getTicket(), ticket)) {
+				//根据过期时间ExpiredTime来判断ticket是否过期
+				if (now.after(userTicketDO.getExpiredTime())) {
 					// 100002
 					loginLogDO.remark = String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s];(从数据库中获取的ticket信息:[%s])",StringUtility.toJSONString(map),ticket,StringUtility.toJSONString(userTicketDO.getTicket()));
 					userLogBp.insertLog(loginLogDO);
@@ -551,18 +551,18 @@ public class UserValidateBp implements IUserValidateBp {
 
 			}else{
 				//校验设备
-				ResultVO deviceChange = checkDeviceFromCache(deviceName, u, loginLogDO, simpleDateFormat, loginTimeString);
+				ResultVO deviceChange = checkDeviceFromCache(u,loginLogDO,loginTimeString,ticket);
 				if (deviceChange != null){
 					return deviceChange;
 				}
 				//校验ticket
-				if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
-					// 缓存不为null
-					loginLogDO.remark=String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket));
-					userLogBp.insertLog(loginLogDO);
-					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s;从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket)));
-					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
-				}
+//				if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
+//					// 缓存不为null
+//					loginLogDO.remark=String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket));
+//					userLogBp.insertLog(loginLogDO);
+//					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s;从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket)));
+//					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
+//				}
 
 			}
 			// 刷新数据库ticket过期时间
@@ -597,11 +597,11 @@ public class UserValidateBp implements IUserValidateBp {
 	}
 
 	@Nullable
-	private ResultVO checkDeviceFromCache(String deviceName, UserVO u, UserLoginLogDO loginLogDO, SimpleDateFormat simpleDateFormat, String loginTimeString) {
+	private ResultVO checkDeviceFromCache(UserVO u, UserLoginLogDO loginLogDO, String loginTimeString,String ticket) {
 		if (u.loginTime != null) {
             loginTimeString = simpleDateFormat.format(u.loginTime);
         }
-		if (!StringUtility.stringEqualsIgnoreCase(u.deviceName,deviceName)){
+		if (!StringUtility.stringEqualsIgnoreCase(u.ticket,ticket)){
             loginLogDO.remark = String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName,u.ip);
             userLogBp.insertLog(loginLogDO);
             logger.info(String.format("Your account has been successfully logged in to another device (%s;IP:%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.deviceName,u.ip));
@@ -610,11 +610,11 @@ public class UserValidateBp implements IUserValidateBp {
 		return null;
 	}
 	@Nullable
-	private ResultVO checkDeviceFromDB(String deviceName, UserTicketDO u, UserLoginLogDO loginLogDO, SimpleDateFormat simpleDateFormat, String loginTimeString) {
+	private ResultVO checkDeviceFromDB(UserTicketDO u, UserLoginLogDO loginLogDO, String loginTimeString,String ticket) {
 		if (u.getLoginTime() != null) {
 			loginTimeString = simpleDateFormat.format(u.getLoginTime());
 		}
-		if (!StringUtility.stringEqualsIgnoreCase(u.getDeviceName(),deviceName)){
+		if (!StringUtility.stringEqualsIgnoreCase(u.getTicket(),ticket)){
 			loginLogDO.remark=String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.getDeviceName(),u.getLoginIp());
 			userLogBp.insertLog(loginLogDO);
 			logger.info(String.format("Your account has been successfully logged in to another device (%s;IP:%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.getDeviceName(),u.getLoginIp()));
