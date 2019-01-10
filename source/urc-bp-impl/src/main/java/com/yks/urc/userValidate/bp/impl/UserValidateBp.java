@@ -602,10 +602,10 @@ public class UserValidateBp implements IUserValidateBp {
             loginTimeString = simpleDateFormat.format(u.loginTime);
         }
 		if (!StringUtility.stringEqualsIgnoreCase(u.ticket,ticket)){
-            loginLogDO.remark = String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName,u.ip);
+            loginLogDO.remark = String.format("您的账号于%s 在另一设备（%s;IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName,u.ip);
             userLogBp.insertLog(loginLogDO);
             logger.info(String.format("Your account has been successfully logged in to another device (%s;IP:%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.deviceName,u.ip));
-            return VoHelper.getResultVO("101003",String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.deviceName,u.ip));
+            return VoHelper.getResultVO("101003",String.format("您的账号于%s 在另一设备（%s;IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.deviceName,u.ip));
         }
 		return null;
 	}
@@ -615,10 +615,10 @@ public class UserValidateBp implements IUserValidateBp {
 			loginTimeString = simpleDateFormat.format(u.getLoginTime());
 		}
 		if (!StringUtility.stringEqualsIgnoreCase(u.getTicket(),ticket)){
-			loginLogDO.remark=String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.getDeviceName(),u.getLoginIp());
+			loginLogDO.remark=String.format("您的账号于%s 在另一设备（%s;IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.getDeviceName(),u.getLoginIp());
 			userLogBp.insertLog(loginLogDO);
 			logger.info(String.format("Your account has been successfully logged in to another device (%s;IP:%s) at :%s. Please log in again and check whether your account password has been leaked, and modify the password in time。",loginTimeString,u.getDeviceName(),u.getLoginIp()));
-			return VoHelper.getResultVO("101003",String.format("您的账号于[%s] 在另一设备（[%s];IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时修改密码",loginTimeString,u.getDeviceName(),u.getLoginIp()));
+			return VoHelper.getResultVO("101003",String.format("您的账号于%s 在另一设备（%s;IP:%s）登录成功，请重新登录并检查您的账号密码是否泄漏，并及时",loginTimeString,u.getDeviceName(),u.getLoginIp()));
 		}
 		return null;
 	}
