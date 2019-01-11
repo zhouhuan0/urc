@@ -394,4 +394,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         ResultVO rslt= organizationService.getAllOrgTreeAndUser();
         System.out.println(StringUtility.toJSONString_NoException(rslt));
     }
+    @Test
+    public void testResetPwdGetVerificationCode(){
+        String json = "{\"userName\":\"songguanye\",\"mobile\":\"18376740674\",\"ticket\":\"\",\"operator\":\"\",\"personName\":\"\",\"funcVersion\":\"\",\"moduleUrl\":\"/login/forget/\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(json);
+        service.resetPwdGetVerificationCode(json);
+    }
 }
