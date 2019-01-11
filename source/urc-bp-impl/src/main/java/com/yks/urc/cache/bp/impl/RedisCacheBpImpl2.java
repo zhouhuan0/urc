@@ -60,11 +60,21 @@ public class RedisCacheBpImpl2 implements ICacheBp {
                 StringUtility.isNullOrEmpty(u.userName)) return;
         try {
             Map<String, String> mapUser = new HashMap<>();
-            mapUser.put(StringConstant.ip, u.ip);
-            mapUser.put(StringConstant.ticket, u.ticket);
-            mapUser.put(StringConstant.userName, u.userName);
-            mapUser.put(StringConstant.deviceName,u.deviceName);
-            mapUser.put(StringConstant.loginTime,u.loginTime.toString());
+            if (!StringUtility.isNullOrEmpty(u.ip)) {
+                mapUser.put(StringConstant.ip, u.ip);
+            }
+            if (!StringUtility.isNullOrEmpty(u.ticket)) {
+                mapUser.put(StringConstant.ticket, u.ticket);
+            }
+            if (!StringUtility.isNullOrEmpty(u.userName)) {
+                mapUser.put(StringConstant.userName, u.userName);
+            }
+            if (!StringUtility.isNullOrEmpty(u.deviceName)) {
+                mapUser.put(StringConstant.deviceName, u.deviceName);
+            }
+            if (u.loginTime != null) {
+                mapUser.put(StringConstant.loginTime, u.loginTime.toString());
+            }
             getUserLoginCache(u.userName).put(u.userName, StringUtility.toJSONString_NoException(mapUser));
         } catch (Exception ex) {
             logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
@@ -305,7 +315,12 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         }
     }
 
-   /**
+    @Override
+    public void refreshUserExpiredTime(String userName) {
+        insertUser(getUser(userName));
+    }
+
+    /**
     *  获取所有的平台账号 缓存2H
     * @param
     * @return

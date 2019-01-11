@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.*;
+import com.yks.urc.vo.NameVO;
 import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
@@ -152,4 +153,12 @@ public interface IUserMapper {
      * @Date 2018/7/9 20:52
      */
     List<UserInfoVO> fuzzSearchUserByName(@Param("name") String name);
+    /**
+     *   通过userName 拿personName
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2019/1/10 14:17
+     */
+    List<NameVO> getUserPersonByUserNames(@Param("lstUserName") List<String> lstUserName);
 }

@@ -146,10 +146,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void funcPermitValidate_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/getMavenPackageTime");
-        map.put(StringConstant.operator, "linwanxian");
-        map.put(StringConstant.ticket, "b29e6a04ca90b74e33630a844315de5e");
+        map.put(StringConstant.operator, "songguanye");
+        map.put(StringConstant.ticket, "75f2b8637088e9abed918ec74640ecba");
         map.put(StringConstant.ip, "192.168.93.176");
-        map.put(StringConstant.funcVersion, "005265f657258efd827472b3e8aed645");
+        map.put(StringConstant.funcVersion, "d8f7cf702a69da5f5c2a878adc8e9cf2");
+        map.put(StringConstant.deviceName, "Chrome浏览器");
         // map.put(StringConstant.sysKey, "001");
         System.out.println(StringUtility.toJSONString(map));
         System.out.println("----------------------" + StringUtility.toJSONString_NoException(userService.funcPermitValidate(map)));
@@ -171,8 +172,8 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         map.put(StringConstant.userName, "songguanye");
         map.put(StringConstant.pwd, "670317483sgy???");
         map.put(StringConstant.userName, "songguanye");
-        map.put(StringConstant.pwd, "670317483sgy???");
-        map.put(StringConstant.ip, "songguanyeIP");
+        map.put(StringConstant.ip, "192.168.93.176");
+        map.put(StringConstant.deviceName, "Chrome浏览器");
         System.out.println("------LOGIN-----------------" + StringUtility.toJSONString_NoException(userService.login(map)));
     }
 
@@ -180,8 +181,8 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     public void logout_Test() {
         Map<String, String> map = new HashMap<>();
         map.put("apiUrl", "/urc/motan/service/api/IUrcService/logout");
-        map.put(StringConstant.operator, "linwanxian");
-        map.put(StringConstant.ticket, "5a0304642ef8624767d315a0e84398bb");
+        map.put(StringConstant.operator, "songguanye");
+        map.put(StringConstant.ticket, "d8d4009eb438cf644fcb088602d0db04");
         map.put(StringConstant.ip, "192.168.121.140");
         map.put(StringConstant.funcVersion, "999f7e17655abe2f917a7b667f741d3c");
         String jsonStr = StringUtility.toJSONString_NoException(map);

@@ -143,6 +143,8 @@ public class OrganizationServiceImpl implements IOrganizationService {
                 for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {
                     OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
                     orgTreeAndUserVO.isUser = 1;
+                    // StringBuilder stringBuilder=new StringBuilder();
+                    //orgTreeAndUserVO.key = stringBuilder.append(userAndPersonDO.userName).append("__").append(mem.key).toString();
                     orgTreeAndUserVO.key = userAndPersonDO.userName;
                     orgTreeAndUserVO.title = userAndPersonDO.personName;
                     orgTreeAndUsers.add(orgTreeAndUserVO);
@@ -183,7 +185,7 @@ public class OrganizationServiceImpl implements IOrganizationService {
                     //去urc_person_org去查找ding_user_id
                     List<String> dingUserIds = personOrgMapper.selectDingUserIdByDingOrgId(id);
                     //去urc_user去查找user_name
-                    if(!CollectionUtils.isEmpty(dingUserIds)) {
+                    if (!CollectionUtils.isEmpty(dingUserIds)) {
                         List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronNameByDingUserId(dingUserIds);
                         List<OrgTreeAndUserVO> orgTreeAndUsers = new ArrayList<>();
                         for (UserAndPersonDO userAndPersonDO : userAndPersonDOS) {

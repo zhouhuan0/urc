@@ -1,7 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.UserRoleDO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.NameVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -63,6 +63,14 @@ public interface IUserRoleMapper {
     Integer deleteByRoleId(Long roleId);
 
 	List<String> getUserNameByRoleId(UserRoleDO userRoleDO);
+	/**
+	 *   获取 用户名和域账号 getNameVOByRoleId
+	 * @param
+	 * @return 
+	 * @Author lwx
+	 * @Date 2019/1/10 11:15
+	 */
+	List<NameVO> getNameVOByRoleId(UserRoleDO userRoleDO);
 
 	/**
 	 * 根据userName删除用与角色的关联表
