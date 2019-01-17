@@ -231,8 +231,8 @@
     <select id="getNameVOByRoleId" resultType="com.yks.urc.vo.NameVO" parameterType="com.yks.urc.entity.UserRoleDO">
         SELECT uu.user_name as userName,up.person_name as personName
         FROM
-        urc_user_role uur
-        LEFT JOIN urc_user uu ON uur.user_name = uu.user_name
+         urc_user uu
+        LEFT JOIN urc_user_role uur  ON uur.user_name = uu.user_name
         LEFT JOIN urc_person up ON uu.ding_user_id = up.ding_user_id
         <where>
             uur.role_id=#{roleId}
