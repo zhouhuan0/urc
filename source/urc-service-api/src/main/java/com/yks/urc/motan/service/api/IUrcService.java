@@ -558,12 +558,31 @@ public interface IUrcService {
      * @return:
      **/
     ResultVO getWarehouse(String jsonStr);
-       /**
-        * @Description :搜索用户上网账号和用户名
-        * @Author: tangjianbo@youkeshu.com
-        * @Date: 2018/12/22 9:27
-        * @Param:
-        * @return:
-        **/
-       ResultVO searchUserPerson(String jsonStr);
+
+    /**
+     * @Description :搜索用户上网账号和用户名
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2018/12/22 9:27
+     * @Param:
+     * @return:
+     **/
+    ResultVO searchUserPerson(String jsonStr);
+
+    /**
+     * @Description :新增用户中心白名单
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2019/01/19 9:27
+     * @Param:
+     * @return:
+     **/
+    ResultVO addUrcWhiteApi(String json);
+
+    /**
+     * @Description :删除用户中心白名单
+     * @Author: tangjianbo@youkeshu.com
+     * @Date: 2019/01/19 9:27
+     * @Param:
+     * @return:
+     **/
+    ResultVO deleteWhiteApi(String json);
 }
