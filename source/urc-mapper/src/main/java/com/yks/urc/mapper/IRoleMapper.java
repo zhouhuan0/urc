@@ -202,4 +202,10 @@ public interface IRoleMapper {
      * @Date 2018/6/13 17:27
      */
     boolean isSysAdminAccount(@Param("userName") String userName,@Param("sysKey") String sysKey);
+
+    /**
+     * 查询所有的超级管理员 获取roleId
+     * @return
+     */
+    Long selectAllSuperAdministrator();
 }

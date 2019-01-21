@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -66,6 +67,9 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private RoleOwnerMapper ownerMapper;
+    @Autowired
+    private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
+
 
     /**
      * Description: 1、根据多个条件获取角色列表 2、admin可以查看所有角色；业务人员只能查看自己创建的角色
@@ -235,10 +239,12 @@ public class RoleServiceImpl implements IRoleService {
         if (newRelationUsers != null && !newRelationUsers.isEmpty()) {
             lstUserName.addAll(newRelationUsers);
         }
-        if (lstUserName != null && !lstUserName.isEmpty()) {
+        if (!lstUserName.isEmpty()) {
             /*去重*/
             lstUserName = removeDuplicate(lstUserName);
-            permitStatBp.updateUserPermitCache(lstUserName);
+            //保存权限改变的用户
+            updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
+//            permitStatBp.updateUserPermitCache(lstUserName); //改为由定时任务执行
         }
         return VoHelper.getSuccessResult();
     }
@@ -658,8 +664,10 @@ public class RoleServiceImpl implements IRoleService {
         roleMapper.deleteBatchRoleDatas(dataMap);
         //删除角色的owner
         lstRoleId.stream().forEach(s -> ownerMapper.deleteOwnerByRoleId(s));
+        //删除一个或多个角色时，将角色下的用户保存到urc_user_change(等待定时updateUserPermitCache)
+        updateAffectedUserPermitCache.saveAffectedUser(userNames);
         /*5、更新用户操作权限冗余表和缓存*/
-        permitStatBp.updateUserPermitCache(userNames);
+//        permitStatBp.updateUserPermitCache(userNames);
 
         return VoHelper.getSuccessResult();
     }
@@ -801,7 +809,8 @@ public class RoleServiceImpl implements IRoleService {
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
             logger.info(String.format("获取的用户名为%s", userNames));
         /*4、更新用户操作权限冗余表和缓存*/
-            permitStatBp.updateUserPermitCache(userNames);
+            updateAffectedUserPermitCache.saveAffectedUser(userNames);
+//            permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } else {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
@@ -1085,7 +1094,8 @@ public class RoleServiceImpl implements IRoleService {
         UserRoleDO userRoleDO = new UserRoleDO();
         userRoleDO.setRoleId(roleId);
         List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
-        permitStatBp.updateUserPermitCache(lstUserName);
+        updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
+//        permitStatBp.updateUserPermitCache(lstUserName);
         return VoHelper.getSuccessResult();
     }
 
@@ -1105,7 +1115,8 @@ public class RoleServiceImpl implements IRoleService {
                 operationBp.addLog(logger.getName(), String.format("设置角色过期:%s", StringUtility.toJSONString_NoException(lstRole)), null);
 
                 // 更新用户的权限：冗余表、缓存
-                permitStatBp.updateUserPermitCache(lstUserName);
+                updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
+//                permitStatBp.updateUserPermitCache(lstUserName);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "处理完成");
             } else {
                 operationBp.addLog(logger.getName(), "没有角色过期", null);

@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -81,6 +82,8 @@ public class PermissionServiceImpl implements IPermissionService {
 
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
 
     @Transactional
     @Override
@@ -121,9 +124,6 @@ public class PermissionServiceImpl implements IPermissionService {
                     p.setModifiedBy(sessionBp.getOperator());
                     lstPermit.add(p);
                 }
-//				permissionMapper.deleteSyspermitDefine(lstPermit);
-//				permissionMapper.insertSysPermitDefine(lstPermit);
-
                 // 更新缓存
                 for (PermissionDO p : lstPermit) {
                     //更新定义表
@@ -157,7 +157,22 @@ public class PermissionServiceImpl implements IPermissionService {
             logger.error(String.format("importSysPermit:%s", jsonStr), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
+        //推送菜单树完成 将超级管理员存入urc_role_user_affected 调assignAllPermit2Role()刷新超级管理员权限
+        saveSuperAdministrator();
         return rslt;
+    }
+
+    /**
+     * 推送菜单树时将超级管理员存入urc_role_user_affected
+     */
+    private void saveSuperAdministrator() {
+        List<String> userNames = new ArrayList<>();
+        userNames.add("superAdministrator");
+        try {
+            updateAffectedUserPermitCache.saveAffectedUser(userNames);
+        } catch (Exception e) {
+            logger.error("Save super administrator to urc_role_user_affected exception when pushing menu tree",e);
+        }
     }
 
     /**
@@ -200,7 +215,8 @@ public class PermissionServiceImpl implements IPermissionService {
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
     /*4、更新用户操作权限冗余表和缓存*/
-        permitStatBp.updateUserPermitCache(userNames);
+        updateAffectedUserPermitCache.saveAffectedUser(userNames);
+//        permitStatBp.updateUserPermitCache(userNames);
         return false;
     }
 

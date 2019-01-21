@@ -37,6 +37,7 @@ import com.yks.urc.vo.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.TestExecutionListeners;
 
 import java.io.IOException;
 import java.util.*;
@@ -399,5 +400,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String json = "{\"userName\":\"songguanye\",\"mobile\":\"18376740674\",\"ticket\":\"\",\"operator\":\"\",\"personName\":\"\",\"funcVersion\":\"\",\"moduleUrl\":\"/login/forget/\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         service.resetPwdGetVerificationCode(json);
+    }
+    @Test
+    public void testDeletRoles(){
+        String json = "{\"lstRoleId\":[\"1547792785689000003\",\"1547799690862000005\"],\"ticket\":\"0b5aa9af43fc58338723a44d174a5107\",\"operator\":\"songguanye\",\"funcVersion\":\"684a5791a07040c3c4d7721b2e083a22\",\"moduleUrl\":\"/user/rolemanagement/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(json);
+        service.deleteRoles(json);
     }
 }

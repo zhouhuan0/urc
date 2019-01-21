@@ -273,44 +273,10 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void addOrUpdateRoleInfo() throws Exception {
-//        map.put("operator", "panyun");
-//        PermissionVO permissionVO = new PermissionVO();
-//        List<PermissionVO> permissionVOS = new ArrayList<>();
-//        permissionVO.setSysKey("000");
-//        permissionVO.setSysContext("{\"menu\":[{\"key\":\"000-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001\",\"module\":[{\"function\":[],\"key\":\"000-000001-000001-000001\",\"name\":\"我的操作权限\",\"pageFullPathName\":\"\",\"show\":0,\"url\":\"/permissionlist/\"}],\"name\":\"数据走势\",\"pageFullPathName\":\"\",\"show\":1,\"url\":\"/\"}],\"name\":\"首页\",\"url\":\"/\"}],\"system\":{\"key\":\"000\",\"name\":\"首页\",\"url\":\"/\"}}");
-//        permissionVOS.add(permissionVO);
-//        RoleVO roleVO = new RoleVO();
-//        roleVO.roleName = "test_bug_3";
-//        roleVO.setRemark("test");
-//        roleVO.setSelectedContext(permissionVOS);
-//        // roleVO.roleId="1539221185095000011";
-//        roleVO.isForever = true;
-//        roleVO.setActive(Boolean.TRUE);
-//        roleVO.setAuthorizable(Boolean.FALSE);
-//        roleVO.setEffectiveTime(new Date());
-//        roleVO.setExpireTime(new Date());
-//        roleVO.setCreateBy("linwanxian");
-//        roleVO.setExpireTime(new Date());
-//        roleVO.lstUserName = new ArrayList<>();
-//        roleVO.lstUserName.add("houyunfeng");
-//        roleVO.lstUserName.add("hexiaopeng");
-//        roleVO.lstOwner = new ArrayList<>();
-//        roleVO.lstOwner.add("linwanxian");
-//        roleVO.lstOwner.add("huanghongfei");
-//
-//        map.put("role", roleVO);
-//        String json = StringUtility.toJSONString(map);
-//        MotanSession.initialSession(json);
-//        System.out.println(json);
-        File file = new File("D:\\testAddOrUpdateRoleInfo.txt");
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
-        BufferedReader bufferedReader = new BufferedReader(reader);
-        StringBuilder stringBuilder = new StringBuilder();
-        String b;
-        while ((b = bufferedReader.readLine()) != null){
-            stringBuilder.append(b);
-        }
-        resultVO = service.addOrUpdateRoleInfo(stringBuilder.toString());
+
+        String json = "{\"role\":{\"isActive\":true,\"isAuthorizable\":false,\"isForever\":true,\"roleName\":\"songguanyetest\",\"remark\":\"\",\"effectiveTime\":\"\",\"expireTime\":\"\",\"selectedContext\":[{\"sysKey\":\"000\",\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"000-000001\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"000-000001-000001-001\\\",\\\"name\\\":\\\"查看\\\"},{\\\"key\\\":\\\"000-000001-000001-002\\\",\\\"name\\\":\\\"待审批的订单/查看\\\"},{\\\"key\\\":\\\"000-000001-000001-003\\\",\\\"name\\\":\\\"待核查的任务/查看\\\"},{\\\"key\\\":\\\"000-000001-000001-004\\\",\\\"name\\\":\\\"待审批的订单-处理\\\"},{\\\"key\\\":\\\"000-000001-000001-005\\\",\\\"name\\\":\\\"待审批的订单-更多\\\"},{\\\"key\\\":\\\"000-000001-000001-006\\\",\\\"name\\\":\\\"待核查的任务-核价\\\"},{\\\"key\\\":\\\"000-000001-000001-007\\\",\\\"name\\\":\\\"待核查的任务-任务转移\\\"}],\\\"key\\\":\\\"000-000001-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"我的待办\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/console/myupcoming/\\\"},{\\\"function\\\":[{\\\"key\\\":\\\"000-000001-000002-001\\\",\\\"name\\\":\\\"查看\\\"},{\\\"key\\\":\\\"000-000001-000002-002\\\",\\\"name\\\":\\\"我收到的消息/查看\\\"},{\\\"key\\\":\\\"000-000001-000002-003\\\",\\\"name\\\":\\\"我发出的消息/查看\\\"},{\\\"key\\\":\\\"000-000001-000002-004\\\",\\\"name\\\":\\\"我收到的消息-创建消息\\\"},{\\\"key\\\":\\\"000-000001-000002-005\\\",\\\"name\\\":\\\"我收到的消息-导出\\\"},{\\\"key\\\":\\\"000-000001-000002-006\\\",\\\"name\\\":\\\"我收到的消息-查看\\\"},{\\\"key\\\":\\\"000-000001-000002-007\\\",\\\"name\\\":\\\"我发出的消息-导出\\\"},{\\\"key\\\":\\\"000-000001-000002-008\\\",\\\"name\\\":\\\"我发出的消息-详情\\\"}],\\\"key\\\":\\\"000-000001-000002\\\",\\\"module\\\":[],\\\"name\\\":\\\"消息通知\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/console/messagenotification/\\\"}],\\\"name\\\":\\\"工作台\\\",\\\"url\\\":\\\"/console/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"000\\\",\\\"name\\\":\\\"首页\\\",\\\"url\\\":\\\"/console/\\\"}}\"}],\"lstUserName\":[\"songguanye\"],\"lstOwner\":[\"songguanye\"]},\"ticket\":\"48afa83551aa766f1bca3ddb0414b313\",\"operator\":\"songguanye\",\"personName\":\"songguanye\",\"funcVersion\":\"308380a918d68c2ca2d1664174310bf2\",\"moduleUrl\":\"/user/rolemanagement/addupdaterole/\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(json);
+        resultVO = service.addOrUpdateRoleInfo(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 
@@ -327,13 +293,6 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void deleteRoles() throws Exception {
-//        map.put("operator", "chenjiangxin");
-//        List<String> lstRoleId = new ArrayList<>();
-//        lstRoleId.add("1539597354603000085");
-//        map.put("lstRoleId", lstRoleId);
-//        String json = StringUtility.toJSONString(map);
-//        MotanSession.initialSession(json);
-//        System.out.println(json);
         String json = "{\"lstRoleId\":[\"1547177430854000004\"],\"ticket\":\"664281f3fe93e77a12316f72294eb9d7\",\"operator\":\"songguanye\",\"funcVersion\":\"3fe890a9611eab0f81226bc7215710b4\",\"moduleUrl\":\"/user/rolemanagement/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
         resultVO = service.deleteRoles(json);
         System.out.println(StringUtility.toJSONString(resultVO));
