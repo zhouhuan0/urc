@@ -10,6 +10,8 @@ public interface ICacheBp {
 	long getNextSeq(String strKey);
 	UserVO getUser(String userName);
 
+	String getWhiteApi(String str);
+
 	/**
 	 * 获取用户所有系统的功能权限
 	 * @param userName
@@ -20,6 +22,8 @@ public interface ICacheBp {
 	GetAllFuncPermitRespVO getUserFunc(String userName);
 
 	void insertUser(UserVO u);
+     //存入白名单到redis
+	void insertWhiteApi(String apiStr);
 	void removeUser(String userName);
 
 	/**
@@ -33,7 +37,7 @@ public interface ICacheBp {
 
 	/**
 	 * 获取某个user的功能权限版本
-	 * 
+	 *
 	 * @param userName
 	 * @return
 	 * @author panyun@youkeshu.com
@@ -43,7 +47,7 @@ public interface ICacheBp {
 
 	/**
 	 * 获取sys功能权限json,null表示缓存中没有，需要查db;Empty则不需要查db
-	 * 
+	 *
 	 * @param sysKey
 	 * @return
 	 * @author panyun@youkeshu.com
@@ -53,7 +57,7 @@ public interface ICacheBp {
 
 	/**
 	 * 获取用户某个sys功能权限json
-	 * 
+	 *
 	 * @param operator
 	 * @param sysKey
 	 * @return
@@ -66,9 +70,9 @@ public interface ICacheBp {
 
 	List<PermissionDO> getSysApiUrlPrefix();
 	void setSysApiUrlPrefix(List<PermissionDO> lst);
-	
+
 	String getDingAccessToken(String accessTokeTime);
-	
+
 	void setDingAccessToken(String accessTokeTime,String accessTokeValue);
 
 	/**

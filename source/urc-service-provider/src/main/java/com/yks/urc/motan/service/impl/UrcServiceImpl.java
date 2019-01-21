@@ -14,6 +14,8 @@ import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
+import com.yks.urc.userValidate.bp.impl.UserValidateBp;
 import com.yks.urc.vo.*;
 
 import java.util.Date;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
 
 public class UrcServiceImpl implements IUrcService {
@@ -55,6 +58,8 @@ public class UrcServiceImpl implements IUrcService {
 
     @Autowired
     private ICsService csService;
+    @Autowired
+    private IUserValidateBp userValidateBp;
 
     @Override
     @Log(value = "同步数据", level = LogLevel.INFO)
@@ -762,4 +767,25 @@ public class UrcServiceImpl implements IUrcService {
     public  ResultVO  searchUserPerson(String jsonStr)  {
         return  userService.searchUserPerson(jsonStr);
     }
+    @Log("新增用户中心白名单")
+    @Override
+    public ResultVO addUrcWhiteApi(String json) {
+        try {
+            return userValidateBp.addUrcWhiteApi(json);
+        } catch (Exception e) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"新增用户中心白名单失败.");
+        }
+    }
+    @Log("删除用户中心白名单失败")
+    @Override
+    public ResultVO deleteWhiteApi(String json){
+      try{
+          return userValidateBp.deleteWhiteApi(json);
+      }
+      catch (Exception e){
+          return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"删除用户中心白名单失败");
+      }
+    }
+
+
 }

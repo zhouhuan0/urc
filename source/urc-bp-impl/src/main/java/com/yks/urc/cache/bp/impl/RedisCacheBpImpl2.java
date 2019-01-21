@@ -9,16 +9,12 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
-import com.yks.urc.user.bp.impl.UserBpImpl;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import redis.clients.jedis.ShardedJedis;
-import redis.clients.jedis.ShardedJedisPool;
 
 import java.util.*;
 
@@ -80,7 +76,16 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
         }
     }
+      @Override
+    public void insertWhiteApi(String apiStr){
+        try {
+            //getCache("white_api").clear();
+            getCache("white_api").put("api", apiStr);
+        }catch (Exception e){
+            logger.error(String.format("Cache whitelisting failed",apiStr),e);
+        }
 
+      }
     public long getNextSeq(String strKey) {
         try {
             return (long) getCache("urc_seq").incrSequence(strKey);
@@ -108,7 +113,18 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             return null;
         }
     }
-
+    public String getWhiteApi(String str){
+        String api=null;
+        try{
+            Object object=getCache("white_api",7200).get("api");
+            if (object!=null ){
+                api=object.toString();
+            }
+        }catch (Exception e){
+            logger.error(String.format("getWhiteApi:%s",str),e);
+        }
+        return api;
+    }
     private static final String NA = "NA";
 
     public void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache) {
