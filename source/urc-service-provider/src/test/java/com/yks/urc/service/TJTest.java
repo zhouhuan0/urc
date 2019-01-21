@@ -74,5 +74,9 @@ public class TJTest extends BaseServiceTest {
         MotanSession.initialSession(json);
         System.out.println(StringUtility.toJSONString(iUrcService.deleteWhiteApi(json)));
     }
+    @Test
+    public void test_(){
+        
+    }
 
 }
