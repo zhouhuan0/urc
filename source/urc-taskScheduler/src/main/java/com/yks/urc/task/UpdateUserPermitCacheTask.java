@@ -1,11 +1,9 @@
 package com.yks.urc.task;
 
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserAffectedMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 版权：Copyright by www.youkeshu.com
@@ -36,17 +35,17 @@ public class UpdateUserPermitCacheTask {
     private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
     @Autowired
     private IRoleMapper roleMapper;
-    @Autowired
-    private IUserRoleMapper userRoleMapper;
 
     /**
      * 定时刷新UserPermitCache
      */
     @Scheduled(cron = "0 0/1 * * * ?")
     public void updateUserPermitCache(){
-        List<String> userNameList = userAffectedMapper.selectAffectedUserList();
+        List<String> userNames = userAffectedMapper.selectAffectedUserList();
         try {
-            if (!CollectionUtils.isEmpty(userNameList)) {
+            if (!CollectionUtils.isEmpty(userNames)) {
+                //去重
+                List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
                 logger.info("Start updateUserPermitCache");
                 if(userNameList.contains(SUPER_ADMINISTRATOR)){
                     /*
@@ -67,7 +66,7 @@ public class UpdateUserPermitCacheTask {
             }
 
         } catch (Exception e) {
-            logger.error(String.format("updateUserPermitCache affectedUserList fail.affectedUserList:%s", StringUtility.toJSONString(userNameList)),e);
+            logger.error(String.format("updateUserPermitCache affectedUserList fail.affectedUserList:%s", StringUtility.toJSONString(userNames)),e);
         }
 
     }

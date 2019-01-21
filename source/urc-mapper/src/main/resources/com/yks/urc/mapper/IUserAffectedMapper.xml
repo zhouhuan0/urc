@@ -29,11 +29,11 @@
         FROM urc_role_user_affected
         LIMIT 100
     </select>
-    <select id="deleteAffectedUserByUserNameList" parameterType="java.util.List" >
+    <select id="deleteAffectedUserByUserNameList" parameterType="java.lang.String">
         DELETE FROM urc_role_user_affected
         <where>
             user_name in
-            <foreach collection="userName" open="(" separator="," close=")" item="item" index="index">
+            <foreach collection="userList" open="(" separator="," close=")" item="item" index="index">
                 #{item}
             </foreach>
         </where>

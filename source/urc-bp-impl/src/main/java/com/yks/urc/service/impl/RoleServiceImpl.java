@@ -664,7 +664,7 @@ public class RoleServiceImpl implements IRoleService {
         roleMapper.deleteBatchRoleDatas(dataMap);
         //删除角色的owner
         lstRoleId.stream().forEach(s -> ownerMapper.deleteOwnerByRoleId(s));
-        //删除一个或多个角色时，将角色下的用户保存到urc_user_change(等待定时updateUserPermitCache)
+        //删除一个或多个角色时，将角色下的用户保存到urc_role_user_affected(等待定时updateUserPermitCache)
         updateAffectedUserPermitCache.saveAffectedUser(userNames);
         /*5、更新用户操作权限冗余表和缓存*/
 //        permitStatBp.updateUserPermitCache(userNames);
@@ -902,9 +902,12 @@ public class RoleServiceImpl implements IRoleService {
                         userRoleMapper.deleteUserRole(userRole);
                     }
                     if (userList != null && userList.size() > 0) {
+                        List<String> userNames = new ArrayList<>();
                         for (int q = 0; q < userList.size(); q++) {
-                            permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                            userNames.add(userList.get(q).getUserName());
+//                            permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                         }
+                        updateAffectedUserPermitCache.saveAffectedUser(userNames);
                     }
                     for (int j = 0; j < userNameList.size(); j++) {
                         UserRoleDO userRoleDO = new UserRoleDO();
@@ -926,9 +929,12 @@ public class RoleServiceImpl implements IRoleService {
                             userRoleMapper.deleteUserRole(userRole);
                         }
                         if (userList != null && userList.size() > 0) {
+                            List<String> userNames = new ArrayList<>();
                             for (int q = 0; q < userList.size(); q++) {
-                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                                userNames.add(userList.get(q).getUserName());
+//                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                             }
+                            updateAffectedUserPermitCache.saveAffectedUser(userNames);
                         }
                         for (int j = 0; j < userNameList.size(); j++) {
                             UserRoleDO userRoleDO = new UserRoleDO();
@@ -944,9 +950,12 @@ public class RoleServiceImpl implements IRoleService {
                 }
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
                     userRoleMapper.insertBatch(userRoleDOS);
+                    List<String> userNames = new ArrayList<>();
                     for (int j = 0; j < userRoleDOS.size(); j++) {
-                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+                        userNames.add(userRoleDOS.get(j).getUserName());
+//                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
                     }
+                    updateAffectedUserPermitCache.saveAffectedUser(userNames);
 
                 }
             }

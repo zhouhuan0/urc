@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 版权：Copyright by www.youkeshu.com
@@ -53,24 +54,29 @@ public class UpdateAffectedUserPermitCacheimpl implements IUpdateAffectedUserPer
     @Override
     public void saveAffectedUser(List<String> userNames) {
             if (!CollectionUtils.isEmpty(userNames)) {
+                List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
                 String createBy = sessionBp.getOperator();
                 Date now = new Date();
                 Map map = new HashMap(10);
-                map.put("userNames",userNames);
+                map.put("userNames",userNameList);
                 map.put("createBy",createBy);
                 map.put("createTime", now);
                 try {
                     //批量插入 考虑不能超过一个数量限制
-                    if (userNames.size() < BATCH_INSERT_LIMIT) {
+                    if (userNameList.size() < BATCH_INSERT_LIMIT) {
                         userAffectedMapper.saveAffectedUser(map);
                     }else{
                         //分批插入
                         List<String> userNamesPagination;
-                        while (!CollectionUtils.isEmpty(userNames)){
-                            userNamesPagination = userNames.subList(0,BATCH_INSERT_LIMIT);
+                        while (!CollectionUtils.isEmpty(userNameList)){
+                            if (userNameList.size() >= BATCH_INSERT_LIMIT) {
+                                userNamesPagination = userNameList.subList(0,BATCH_INSERT_LIMIT);
+                            }else{
+                                userNamesPagination = userNameList.subList(0,userNameList.size());
+                            }
                             map.put("userNames",userNamesPagination);
                             userAffectedMapper.saveAffectedUser(map);
-                            userNames.removeAll(userNamesPagination);
+                            userNameList.removeAll(userNamesPagination);
                         }
                     }
                 } catch (Exception e) {

@@ -102,7 +102,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Autowired
     private ICacheBp cacheBp;
 
-    @Autowired
+    @Autowired(required = false)
     private IOrderManageService orderManageService;
     /**
      * ebay 缓存

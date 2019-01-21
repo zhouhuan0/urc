@@ -228,8 +228,8 @@
         SELECT role_id
         FROM urc_role
         <where>
-            r.is_authorizable = 2 and r.is_active = 1
-            and (r.is_forever = 1 or (NOW() BETWEEN effective_time and expire_time))
+            is_authorizable = 2 and is_active = 1
+            and (is_forever = 1 or (NOW() BETWEEN effective_time and expire_time))
         </where>
         limit 1
     </select>
