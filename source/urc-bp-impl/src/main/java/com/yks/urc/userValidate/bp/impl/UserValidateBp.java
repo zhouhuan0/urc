@@ -505,10 +505,18 @@ public class UserValidateBp implements IUserValidateBp {
             "/urc/motan/service/api/IUrcService/logout");*/
 
     private List<String> lstWhiteApiUrl() {
-        List<String> whiteApi = urcWhiteApiUrlMapper.selectWhiteApi();
-        if (whiteApi == null) {
-            whiteApi = new ArrayList<>();
+        List<String> whiteApi = new ArrayList<>();
+        String whiteApiCash = cacheBp.getWhiteApi("api");
+        if (whiteApiCash == null) {
+            whiteApi = urcWhiteApiUrlMapper.selectWhiteApi();
+            if (whiteApi == null) {
+                whiteApi = new ArrayList<>();
+            }
         }
+        else {
+            whiteApi = StringUtility.jsonToList(whiteApiCash, String.class);
+        }
+
         return whiteApi;
 
     }
@@ -779,7 +787,10 @@ public class UserValidateBp implements IUserValidateBp {
         iUrcWhiteApiVO.setModifiedBy(sessionBp.getOperator());
         iUrcWhiteApiVO.setModifiedTime(new Date());
         urcWhiteApiUrlMapper.insert(iUrcWhiteApiVO);
+        List<String> ListApi = urcWhiteApiUrlMapper.selectWhiteApi();
+        String apiStr = StringUtility.toJSONString(ListApi);
 
+        cacheBp.insertWhiteApi(apiStr);
         return VoHelper.getSuccessResult();
 
     }
@@ -796,6 +807,9 @@ public class UserValidateBp implements IUserValidateBp {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "需要删除的api在数据库中不存在");
         }
         urcWhiteApiUrlMapper.deleteApi(whiteApi);
+        //将所有的白名单放入缓存
+
+        // cacheBp.insertWhiteApi(String apiStr);
         return VoHelper.getSuccessResult();
     }
 }

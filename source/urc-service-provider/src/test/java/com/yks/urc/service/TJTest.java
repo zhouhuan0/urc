@@ -42,7 +42,7 @@ public class TJTest extends BaseServiceTest {
         String json="{\n" +
                 "    \"data\":\n" +
                 "        {\n" +
-                "            \"whiteApiUrl\":\"/urc/motan/service/api/IUrcService/getAllPermit\"\n" +
+                "            \"whiteApiUrl\":\"/urc/motan/service/api/IUrcService/TJBtest\"\n" +
                 "           \n" +
                 "        },\n" +
                 "    \"ticket\":\"aeb00772e1596dcaa8faa0c82c843562\",\n" +
