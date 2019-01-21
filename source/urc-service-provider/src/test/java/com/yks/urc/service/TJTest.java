@@ -76,7 +76,7 @@ public class TJTest extends BaseServiceTest {
     }
     @Test
     public void test_(){
-        
+        return;
     }
 
 }
