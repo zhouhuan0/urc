@@ -1,5 +1,6 @@
 package com.yks.urc.userValidate.bp.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
@@ -512,8 +513,7 @@ public class UserValidateBp implements IUserValidateBp {
             if (whiteApi == null) {
                 whiteApi = new ArrayList<>();
             }
-        }
-        else {
+        } else {
             whiteApi = StringUtility.jsonToList(whiteApiCash, String.class);
         }
 
@@ -772,24 +772,30 @@ public class UserValidateBp implements IUserValidateBp {
     @Override
     public ResultVO addUrcWhiteApi(String json) {
         JSONObject jsonObject = StringUtility.parseString(json).getJSONObject("data");
+        String whiteApiUrl = jsonObject.getString("whiteApiUrl");
         IUrcWhiteApiVO iUrcWhiteApiVO = new IUrcWhiteApiVO();
-        String whiteApi = jsonObject.getString("whiteApiUrl");
-        if (StringUtility.isNullOrEmpty(whiteApi)) {
+        List<String> apiList = JSONArray.parseArray(whiteApiUrl, String.class);
+        if (apiList.size() == 0 || apiList == null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "api不能为空");
         }
-        Integer count = urcWhiteApiUrlMapper.selectWhiteApiByWiteApi(whiteApi);
-        if (count != 0) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "新增的api已经存在不需新增");
+
+        for (String whiteApi : apiList) {
+//如果新增的api已经在数据库中存在，那么不会新增
+            Integer count = urcWhiteApiUrlMapper.selectWhiteApiByWiteApi(whiteApi);
+            if (count != 0) {
+                continue;
+            }
+            iUrcWhiteApiVO.setWhiteApiUrl(whiteApi);
+            iUrcWhiteApiVO.setCreateBy(sessionBp.getOperator());
+            iUrcWhiteApiVO.setCreateTime(new Date());
+            iUrcWhiteApiVO.setModifiedBy(sessionBp.getOperator());
+            iUrcWhiteApiVO.setModifiedTime(new Date());
+            urcWhiteApiUrlMapper.insert(iUrcWhiteApiVO);
         }
-        iUrcWhiteApiVO.setWhiteApiUrl(whiteApi);
-        iUrcWhiteApiVO.setCreateBy(sessionBp.getOperator());
-        iUrcWhiteApiVO.setCreateTime(new Date());
-        iUrcWhiteApiVO.setModifiedBy(sessionBp.getOperator());
-        iUrcWhiteApiVO.setModifiedTime(new Date());
-        urcWhiteApiUrlMapper.insert(iUrcWhiteApiVO);
+
         List<String> ListApi = urcWhiteApiUrlMapper.selectWhiteApi();
         String apiStr = StringUtility.toJSONString(ListApi);
-
+//缓存api
         cacheBp.insertWhiteApi(apiStr);
         return VoHelper.getSuccessResult();
 
@@ -807,9 +813,10 @@ public class UserValidateBp implements IUserValidateBp {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "需要删除的api在数据库中不存在");
         }
         urcWhiteApiUrlMapper.deleteApi(whiteApi);
+        List<String> ListApi = urcWhiteApiUrlMapper.selectWhiteApi();
+        String apiStr = StringUtility.toJSONString(ListApi);
         //将所有的白名单放入缓存
-
-        // cacheBp.insertWhiteApi(String apiStr);
+        cacheBp.insertWhiteApi(apiStr);
         return VoHelper.getSuccessResult();
     }
 }

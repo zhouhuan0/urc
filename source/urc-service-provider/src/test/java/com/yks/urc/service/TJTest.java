@@ -40,18 +40,19 @@ public class TJTest extends BaseServiceTest {
     @Test
     public  void test_addUrcWhiteApi(){
         String json="{\n" +
-                "    \"data\":\n" +
-                "        {\n" +
-                "            \"whiteApiUrl\":\"/urc/motan/service/api/IUrcService/TJBtest\"\n" +
-                "           \n" +
-                "        },\n" +
+                "    \"data\":{\n" +
+                "        \"whiteApiUrl\":[\n" +
+                "            \"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\",\n" +
+                "            \"fsjkladhflkas/fkasd\"\n" +
+                "        ]\n" +
+                "    },\n" +
                 "    \"ticket\":\"aeb00772e1596dcaa8faa0c82c843562\",\n" +
                 "    \"operator\":\"tangjianbo\",\n" +
                 "    \"funcVersion\":\"d7a3cada5b3a770a89cd097b564f664a\",\n" +
                 "    \"moduleUrl\":\"/order/basicdata/tracknumbermanage/\",\n" +
                 "    \"personName\":\"tangjianbo\",\n" +
                 "    \"deviceName\":\"Chrome浏览器\"\n" +
-                "}\n";
+                "}";
         MotanSession.initialSession(json);
         System.out.println(StringUtility.toJSONString(iUrcService.addUrcWhiteApi(json)));
     }
@@ -60,7 +61,7 @@ public class TJTest extends BaseServiceTest {
         String json="{\n" +
                 "    \"data\":\n" +
                 "        {\n" +
-                "            \"whiteApiUrl\":\"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet\"\n" +
+                "            \"whiteApiUrl\":\"/urc/motan/service/api/IUrcService/TJBtest\"\n" +
                 "           \n" +
                 "        },\n" +
                 "    \"ticket\":\"aeb00772e1596dcaa8faa0c82c843562\",\n" +
