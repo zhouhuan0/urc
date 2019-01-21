@@ -93,4 +93,7 @@ public interface IUserValidateBp {
 	 * @date 2018年6月15日 上午10:21:38
 	 */
 	String cleanDeletedNode(String strFuncJsonOld, String strFuncJsonNewest);
+
+	ResultVO addUrcWhiteApi(String json);
+	ResultVO deleteWhiteApi(String json);
 }
