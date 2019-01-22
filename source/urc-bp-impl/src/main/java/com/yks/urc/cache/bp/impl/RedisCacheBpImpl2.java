@@ -80,9 +80,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     public void insertWhiteApi(String apiStr){
         try {
             //getCache("white_api").clear();
-            getCache("white_api").put("api", apiStr);
+            getCache("white_api",7200).put("api", apiStr);
         }catch (Exception e){
-            logger.error(String.format("Cache whitelisting failed",apiStr),e);
+            logger.error(String.format("Cache whitelisting failed:%s",apiStr),e);
         }
 
       }

@@ -5,7 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.IUrcWhiteApiVO;
+import com.yks.urc.entity.UrcWhiteApiVO;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermitStatDO;
@@ -773,7 +773,7 @@ public class UserValidateBp implements IUserValidateBp {
     public ResultVO addUrcWhiteApi(String json) {
         JSONObject jsonObject = StringUtility.parseString(json).getJSONObject("data");
         String whiteApiUrl = jsonObject.getString("whiteApiUrl");
-        IUrcWhiteApiVO iUrcWhiteApiVO = new IUrcWhiteApiVO();
+        UrcWhiteApiVO urcWhiteApiVO = new UrcWhiteApiVO();
         List<String> apiList = JSONArray.parseArray(whiteApiUrl, String.class);
         if (apiList.size() == 0 || apiList == null) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "api不能为空");
@@ -785,12 +785,12 @@ public class UserValidateBp implements IUserValidateBp {
             if (count != 0) {
                 continue;
             }
-            iUrcWhiteApiVO.setWhiteApiUrl(whiteApi);
-            iUrcWhiteApiVO.setCreateBy(sessionBp.getOperator());
-            iUrcWhiteApiVO.setCreateTime(new Date());
-            iUrcWhiteApiVO.setModifiedBy(sessionBp.getOperator());
-            iUrcWhiteApiVO.setModifiedTime(new Date());
-            urcWhiteApiUrlMapper.insert(iUrcWhiteApiVO);
+            urcWhiteApiVO.setWhiteApiUrl(whiteApi);
+            urcWhiteApiVO.setCreateBy(sessionBp.getOperator());
+            urcWhiteApiVO.setCreateTime(new Date());
+            urcWhiteApiVO.setModifiedBy(sessionBp.getOperator());
+            urcWhiteApiVO.setModifiedTime(new Date());
+            urcWhiteApiUrlMapper.insert(urcWhiteApiVO);
         }
 
         List<String> ListApi = urcWhiteApiUrlMapper.selectWhiteApi();

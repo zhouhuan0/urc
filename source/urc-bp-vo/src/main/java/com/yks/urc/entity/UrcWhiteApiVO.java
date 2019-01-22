@@ -8,7 +8,7 @@ import java.util.Date;
  * @author tangjianbo
  * @date 2019/1/19 10:31
  */
-public class IUrcWhiteApiVO {
+public class UrcWhiteApiVO {
 
     private String whiteApiUrl;
     private String createBy;
