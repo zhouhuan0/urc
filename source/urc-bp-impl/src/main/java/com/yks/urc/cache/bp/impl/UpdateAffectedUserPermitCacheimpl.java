@@ -80,7 +80,7 @@ public class UpdateAffectedUserPermitCacheimpl implements IUpdateAffectedUserPer
                         }
                     }
                 } catch (Exception e) {
-                    logger.error("Fail to save the related user when deleted whose own role",e);
+                    logger.error("Fail to save the related user when related roles change",e);
                 }
             }
         }
