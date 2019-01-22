@@ -49,7 +49,7 @@ public class UpdateUserPermitCacheTask {
                 //获取用户名并去重
                 List<String> userNameList = userAffectedDOList.stream().map(UserAffectedDO::getUserName).distinct().collect(Collectors.toList());
                 //获取主键id
-                List<Long> idList = userAffectedDOList.stream().map(UserAffectedDO::getId).distinct().collect(Collectors.toList());
+                List<Long> idList = userAffectedDOList.stream().map(UserAffectedDO::getId).collect(Collectors.toList());
                 logger.info("Start updateUserPermitCache");
                 if(userNameList.contains(SUPER_ADMINISTRATOR)){
                     /*
