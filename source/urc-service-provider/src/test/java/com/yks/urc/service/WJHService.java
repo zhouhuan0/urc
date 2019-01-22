@@ -3,6 +3,8 @@ package com.yks.urc.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.yks.urc.motan.MotanSession;
+import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import org.drools.compiler.lang.DRL5Expressions.literal_return;
 import org.junit.Test;
@@ -37,6 +39,8 @@ public class WJHService extends BaseServiceTest {
 	
 	@Autowired
 	private IUserService userService;
+	@Autowired
+    private IUrcService urcService;
 	
 	
 	@Autowired
@@ -204,15 +208,10 @@ public class WJHService extends BaseServiceTest {
     public void updateUsersOfRole() throws Exception{
     	//String jsonStr="{\"lstRole\":[{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh3\",\"wjh2\"]},{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh4\",\"wjh5\"]}],\"operator\":\"wujianghui\"}";
 
-        String jsonStr="{\"lstRole\":[{\"roleId\":\"1629649147479000002\",\"lstUserName\":[\"wjh3\"]},{\"roleId\":\"1629649147479000001\",\"lstUserName\":[\"wjh3\"]}],\"operator\":\"wujianghui\"}";
-        JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        String operator = jsonObject.getString("operator");
-        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
-        List<String> userList=lstRole.get(0).getLstUserName();
-/*        for (int i = 0; i < userList.size(); i++) {
-			System.out.println(userList.get(i));
-		}*/
-    	System.out.println(StringUtility.toJSONString(roleService.updateUsersOfRole(lstRole, operator)));
+        String jsonStr="{\"lstRole\":[{\"roleId\":\"1548061463810000015\",\"lstUserName\":[\"songguanye\",\"tangjianbo\",\"linwanxian\"]}],\"ticket\":\"d6c7367691d79cca35a8711da935a947\",\"operator\":\"songguanye\",\"funcVersion\":\"15184e8647c6d5f9e68cbfc9b06bd98d\",\"moduleUrl\":\"/user/rolemanagement/allocUser/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(jsonStr);
+        urcService.updateUsersOfRole(jsonStr);
+
 
 
     }

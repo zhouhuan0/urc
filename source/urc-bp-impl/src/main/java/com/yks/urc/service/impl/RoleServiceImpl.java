@@ -531,8 +531,10 @@ public class RoleServiceImpl implements IRoleService {
 
         roleVO.setLstUserName(lstUserName);
         // 组装userName 的personName
-        List<NameVO> lstUser =userMapper.getUserPersonByUserNames(lstUserName);
-        roleVO.setLstUser(lstUser);
+        if (!CollectionUtils.isEmpty(lstUserName)) {
+            List<NameVO> lstUser = userMapper.getUserPersonByUserNames(lstUserName);
+            roleVO.setLstUser(lstUser);
+        }
         //组装roleVO里面的 owner,
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);
         roleVO.lstOwner = new ArrayList<>();
@@ -546,9 +548,11 @@ public class RoleServiceImpl implements IRoleService {
             roleVO.lstOwner.add(ownerVO.owner);
         }
         roleVO.lstOwner =roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
-        //组装owner  下的 中文名
-        List<NameVO> lstOwnerInfo = userMapper.getUserPersonByUserNames(roleVO.lstOwner);
-        roleVO.setLstOwnerInfo(lstOwnerInfo);
+        if (!CollectionUtils.isEmpty(roleVO.lstOwner)) {
+            //组装owner  下的 中文名
+            List<NameVO> lstOwnerInfo = userMapper.getUserPersonByUserNames(roleVO.lstOwner);
+            roleVO.setLstOwnerInfo(lstOwnerInfo);
+        }
 
         return VoHelper.getSuccessResult(roleVO);
     }
