@@ -1,6 +1,7 @@
 package com.yks.urc.task;
 
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
+import com.yks.urc.entity.UserAffectedDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserAffectedMapper;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -41,11 +43,13 @@ public class UpdateUserPermitCacheTask {
      */
     @Scheduled(cron = "0 0/1 * * * ?")
     public void updateUserPermitCache(){
-        List<String> userNames = userAffectedMapper.selectAffectedUserList();
+        List<UserAffectedDO> userAffectedDOList = userAffectedMapper.selectAffectedUserList();
         try {
-            if (!CollectionUtils.isEmpty(userNames)) {
-                //去重
-                List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
+            if (!CollectionUtils.isEmpty(userAffectedDOList)) {
+                //获取用户名并去重
+                List<String> userNameList = userAffectedDOList.stream().map(UserAffectedDO::getUserName).distinct().collect(Collectors.toList());
+                //获取主键id
+                List<Long> idList = userAffectedDOList.stream().map(UserAffectedDO::getId).distinct().collect(Collectors.toList());
                 logger.info("Start updateUserPermitCache");
                 if(userNameList.contains(SUPER_ADMINISTRATOR)){
                     /*
@@ -54,19 +58,26 @@ public class UpdateUserPermitCacheTask {
                     //查询超级管理员的rodeId
                     Long roleId = roleMapper.selectAllSuperAdministrator();
                     updateAffectedUserPermitCache.assignAllPermit2SuperAdministrator(roleId);
-                    userAffectedMapper.deleteAffectedUserByUserName(SUPER_ADMINISTRATOR);
+                    //获取超级管理员的id
+                    Optional<UserAffectedDO> superAdministrator = userAffectedDOList.stream().filter(userAffectedDO -> userAffectedDO.getUserName().equals(SUPER_ADMINISTRATOR)).findFirst();
+                    Long superAdministratorId = null;
+                    if(superAdministrator.isPresent()) {
+                        superAdministratorId = superAdministrator.get().getId();
+                    }
+                    userAffectedMapper.deleteAffectedUserByUserName(superAdministratorId);
                     userNameList.remove(SUPER_ADMINISTRATOR);
+                    idList.remove(superAdministratorId);
 
                 }
                 // 更新角色下的用户的权限缓存
                 permitStatBp.updateUserPermitCache(userNameList);
                 logger.info("End updateUserPermitCache");
                 //更新成功 删除更新了的用户
-                userAffectedMapper.deleteAffectedUserByUserNameList(userNameList);
+                userAffectedMapper.deleteAffectedUserByUserNameList(idList);
             }
 
         } catch (Exception e) {
-            logger.error(String.format("updateUserPermitCache affectedUserList fail.affectedUserList:%s", StringUtility.toJSONString(userNames)),e);
+            logger.error(String.format("updateUserPermitCache affectedUserList fail.affectedUserList:%s", StringUtility.toJSONString(userAffectedDOList)),e);
         }
 
     }

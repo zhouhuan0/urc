@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 
+import com.yks.urc.entity.UserAffectedDO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -26,16 +27,16 @@ public interface IUserAffectedMapper {
      * 查询urc_role_user_affected里的用户
      * @return
      */
-    List<String> selectAffectedUserList();
+    List<UserAffectedDO> selectAffectedUserList();
 
     /**
      * 根据用户名删除受角色变化影响的用户
-     * @param userList 用户名
+     * @param idList 用户名
      */
-    void deleteAffectedUserByUserNameList(@Param("userList") List<String> userList);
+    void deleteAffectedUserByUserNameList(@Param("idList") List<Long> idList);
     /**
      * 根据用户名删除受角色变化影响的用户
-     * @param userName 用户名
+     * @param id 主键
      */
-    void deleteAffectedUserByUserName(String userName);
+    void deleteAffectedUserByUserName(Long id);
 }

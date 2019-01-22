@@ -10,7 +10,7 @@ import java.util.Date;
  * 修改理由：
  * 修改内容：
  */
-public class UserAffected {
+public class UserAffectedDO {
     private Long id;
     private String userName;
     private String createBy;
