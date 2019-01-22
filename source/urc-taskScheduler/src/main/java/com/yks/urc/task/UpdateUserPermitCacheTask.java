@@ -59,7 +59,7 @@ public class UpdateUserPermitCacheTask {
                     Long roleId = roleMapper.selectAllSuperAdministrator();
                     updateAffectedUserPermitCache.assignAllPermit2SuperAdministrator(roleId);
                     //获取超级管理员的id
-                    Optional<UserAffectedDO> superAdministrator = userAffectedDOList.stream().filter(userAffectedDO -> userAffectedDO.getUserName().equals(SUPER_ADMINISTRATOR)).findFirst();
+                    Optional<UserAffectedDO> superAdministrator = userAffectedDOList.stream().filter(userAffectedDO -> SUPER_ADMINISTRATOR.equals(userAffectedDO.getUserName())).findFirst();
                     Long superAdministratorId = null;
                     if(superAdministrator.isPresent()) {
                         superAdministratorId = superAdministrator.get().getId();
