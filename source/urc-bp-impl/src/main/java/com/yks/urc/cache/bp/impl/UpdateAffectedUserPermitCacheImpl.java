@@ -28,8 +28,8 @@ import java.util.stream.Collectors;
  * 修改内容：
  */
 @Component
-public class UpdateAffectedUserPermitCacheimpl implements IUpdateAffectedUserPermitCache {
-    private Logger logger = LoggerFactory.getLogger(UpdateAffectedUserPermitCacheimpl.class);
+public class UpdateAffectedUserPermitCacheImpl implements IUpdateAffectedUserPermitCache {
+    private Logger logger = LoggerFactory.getLogger(UpdateAffectedUserPermitCacheImpl.class);
     private static final Integer BATCH_INSERT_LIMIT = 2000;
 
     @Autowired
