@@ -17,12 +17,14 @@ import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -35,6 +37,8 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.TestExecutionListeners;
@@ -235,6 +239,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         service.assignAllPermit2Role(jsonStr);
     }
 
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Test
     public void updateUserPermitCache_Test() {
         List<String> lstUserName = new ArrayList<>();
@@ -255,9 +264,15 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         lstUserName.add("houyunfeng");
         lstUserName.add("panxi");
 
-        lstUserName.clear();
+//        lstUserName.clear();
         lstUserName.add("chenglifu1");
+        UserRoleDO ur=new UserRoleDO();
+        ur.setRoleId(1547612297943000005L);
+        lstUserName=userRoleMapper.getUserNameByRoleId(ur);
+        Date dtStart=new Date();
         permitStatBp.updateUserPermitCache(lstUserName);
+        Date dtEnd=new Date();
+        logger.error(String.format("updateUserPermitCache 总耗时:%s ms", (dtEnd.getTime() - dtStart.getTime())));
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
 
