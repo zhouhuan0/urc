@@ -1,16 +1,10 @@
 package com.yks.urc.service.api;
 
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UserInfoDO;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.SystemRootVO;
-import com.yks.urc.vo.UserVO;
 
-import java.lang.reflect.MalformedParameterizedTypeException;
 import java.util.List;
-import java.util.Map;
 
 public interface IRoleService {
 
@@ -18,7 +12,7 @@ public interface IRoleService {
 
     ResultVO addOrUpdateRoleInfo(String jsonStr);
 
-    ResultVO<RoleVO> getRoleByRoleId(String jsonStr);
+    ResultVO getRoleByRoleId(String jsonStr);
 
     ResultVO getUserByRoleId(String operator,String roleId);
 

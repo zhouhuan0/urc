@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.yks.urc.mapper.IUserAffectedMapper">
-    <resultMap id="BaseResultMap" type="com.yks.urc.entity.UserAffected">
+    <resultMap id="BaseResultMap" type="com.yks.urc.entity.UserAffectedDO">
         <id column="id" jdbcType="BIGINT" property="id"/>
         <result column="user_name" jdbcType="VARCHAR" property="userName"/>
         <result column="create_by" jdbcType="VARCHAR" property="createBy"/>
@@ -24,24 +24,24 @@
            </if>
 
     </insert>
-    <select id="selectAffectedUserList" resultType="java.lang.String">
-        SELECT user_name
+    <select id="selectAffectedUserList" resultMap="BaseResultMap">
+        SELECT user_name,id
         FROM urc_role_user_affected
         LIMIT 100
     </select>
-    <select id="deleteAffectedUserByUserNameList" parameterType="java.lang.String">
+    <select id="deleteAffectedUserByUserNameList" parameterType="java.lang.Long">
         DELETE FROM urc_role_user_affected
         <where>
-            user_name in
-            <foreach collection="userList" open="(" separator="," close=")" item="item" index="index">
+            id in
+            <foreach collection="idList" open="(" separator="," close=")" item="item" index="index">
                 #{item}
             </foreach>
         </where>
     </select>
-    <select id="deleteAffectedUserByUserName" parameterType="java.lang.String" >
+    <select id="deleteAffectedUserByUserName" parameterType="java.lang.Long" >
         DELETE FROM urc_role_user_affected
         <where>
-            user_name = #{userName}
+            id = #{id}
         </where>
     </select>
 </mapper>

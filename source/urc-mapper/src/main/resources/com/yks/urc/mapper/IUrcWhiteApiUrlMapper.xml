@@ -13,7 +13,7 @@
         white_api_url=#{whiteApi}
     </if>
     </select>
-    <insert id="insert" parameterType="com.yks.urc.entity.IUrcWhiteApiVO">
+    <insert id="insert" parameterType="com.yks.urc.entity.UrcWhiteApiVO">
         INSERT  INTO  urc_white_api_url
         ( white_api_url,create_by,create_time,modified_time,modified_by)
         VALUES (#{whiteApiUrl},#{createBy},#{createTime},#{modifiedTime},#{modifiedBy})
