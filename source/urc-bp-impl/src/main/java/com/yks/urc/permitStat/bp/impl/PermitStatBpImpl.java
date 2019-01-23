@@ -72,7 +72,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		try {
 			fixedThreadPool.awaitTermination(1, TimeUnit.HOURS);
 		} catch (InterruptedException e) {
-			e.printStackTrace();
+			logger.error("updateUserPermitCache Exception",e);
 		}
 	}
 
