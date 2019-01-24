@@ -50,24 +50,14 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		if (lstUserName == null || lstUserName.size() == 0)
 			return;
 		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(20);
-		// fixedThreadPool.execute(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		//
-		// }
-		// });
-		Long startTime = System.currentTimeMillis();
 		for (String userName : lstUserName) {
 			fixedThreadPool.submit(() -> {
-                Long startTime2 = System.currentTimeMillis();
+                Long startTime = System.currentTimeMillis();
                 updateUserPermitCache(userName);
-                Long endTime2 = System.currentTimeMillis();
-                logger.info(String.format("updateUserPermitCache One 耗时 %s:%s ms", userName, (endTime2 - startTime2)));
+                Long endTime = System.currentTimeMillis();
+                logger.info(String.format("updateUserPermitCache One 耗时 %s:%s ms", userName, (endTime - startTime)));
             });
 		}
-		Long endTime = System.currentTimeMillis();
-		logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
 		fixedThreadPool.shutdown();
 		try {
 			fixedThreadPool.awaitTermination(1, TimeUnit.HOURS);

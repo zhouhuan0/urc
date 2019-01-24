@@ -244,7 +244,11 @@ public class RoleServiceImpl implements IRoleService {
             lstUserName = removeDuplicate(lstUserName);
             //保存权限改变的用户
 //            updateAffectedUserPermitCache.saveAffectedUser(lstUserName); //改为由定时任务执行
+            Long startTime = System.currentTimeMillis();
             permitStatBp.updateUserPermitCache(lstUserName);
+            Long endTime = System.currentTimeMillis();
+            logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
+
         }
         return VoHelper.getSuccessResult();
     }
