@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.mapper.PermissionMapper;
@@ -42,12 +43,13 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private PermissionMapper permissionMapper;
 
-	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
+//	ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);
 
 	@Override
 	public void updateUserPermitCache(List<String> lstUserName) {
 		if (lstUserName == null || lstUserName.size() == 0)
 			return;
+		ExecutorService fixedThreadPool = Executors.newFixedThreadPool(20);
 		// fixedThreadPool.execute(new Runnable() {
 		//
 		// @Override
@@ -55,8 +57,22 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		//
 		// }
 		// });
+		Long startTime = System.currentTimeMillis();
 		for (String userName : lstUserName) {
-			updateUserPermitCache(userName);
+			fixedThreadPool.submit(() -> {
+                Long startTime2 = System.currentTimeMillis();
+                updateUserPermitCache(userName);
+                Long endTime2 = System.currentTimeMillis();
+                logger.info(String.format("updateUserPermitCache One 耗时 %s:%s ms", userName, (endTime2 - startTime2)));
+            });
+		}
+		Long endTime = System.currentTimeMillis();
+		logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
+		fixedThreadPool.shutdown();
+		try {
+			fixedThreadPool.awaitTermination(1, TimeUnit.HOURS);
+		} catch (InterruptedException e) {
+			logger.error("updateUserPermitCache Exception",e);
 		}
 	}
 

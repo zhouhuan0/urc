@@ -243,8 +243,8 @@ public class RoleServiceImpl implements IRoleService {
             /*去重*/
             lstUserName = removeDuplicate(lstUserName);
             //保存权限改变的用户
-            updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
-//            permitStatBp.updateUserPermitCache(lstUserName); //改为由定时任务执行
+//            updateAffectedUserPermitCache.saveAffectedUser(lstUserName); //改为由定时任务执行
+            permitStatBp.updateUserPermitCache(lstUserName);
         }
         return VoHelper.getSuccessResult();
     }
