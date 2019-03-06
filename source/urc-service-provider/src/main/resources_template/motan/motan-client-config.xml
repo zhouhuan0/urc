@@ -20,7 +20,7 @@
     <!--application="omsOrderManage" protocol="motan2" registry="zkRegistry"-->
     <!--id="motanClientBasicConfig" throwException="true" check="true"/>-->
     <motan:basicReferer requestTimeout="200" accessLog="false"
-                        retries="2" group="rpc-service-group-test" module="yks-oms-order-manage"
+                        retries="2" group="$[oms_motan_group]$" module="yks-oms-order-manage"
                         application="omsOrderManage" protocol="motan2" registry="clientZkRegistry"
                         id="motanClientBasicConfig" throwException="true" check="false"/>
 
