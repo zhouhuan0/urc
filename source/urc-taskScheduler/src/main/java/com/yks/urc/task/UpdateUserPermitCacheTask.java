@@ -41,7 +41,7 @@ public class UpdateUserPermitCacheTask {
     /**
      * 定时刷新UserPermitCache
      */
-    @Scheduled(cron = "0 0/1 * * * ?")
+//    @Scheduled(cron = "0 0/1 * * * ?")
     public void updateUserPermitCache(){
         List<UserAffectedDO> userAffectedDOList = userAffectedMapper.selectAffectedUserList();
         try {
