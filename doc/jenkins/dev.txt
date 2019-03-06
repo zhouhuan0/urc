@@ -9,8 +9,16 @@ stage '拉取代码'
 
 stage '同步配置文件'
  sh '''
-   # 替换配置模板,test环境的配置文件直接从doc目录cp
-   cp -rf `pwd`/doc/config文件/urcenter-test1/urcenter/source/* ./source/
+   # 替换配置模板
+   curEnv=urcenterdev
+   #/usr/bin/python3 /var/lib/jenkins/replace_config.py $curEnv
+   cmdstr=`pwd`/doc/jenkins/replace_config_py.py
+   echo $cmdstr
+   chmod 777 $cmdstr
+   /usr/bin/python3 $cmdstr $curEnv `pwd`
+   
+   chmod 777 ./cover_config.sh
+   bash ./cover_config.sh
    
    echo "is Ok!!!"
  '''
@@ -23,16 +31,16 @@ stage 'MVN编译'
 
 stage '部署应用'
 sh '''
-    confPath=urcenter-test1
+    confPath=urcenter-dev
 	
-    POD_NAME=urcentertest1
+    POD_NAME=urcenterdev
     for IP in `/var/lib/jenkins/list_pod.sh |grep -wi ${POD_NAME}|awk '{print $NF}'`
     do
       ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'	  
 	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
 	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
-      echo "is Ok"
+	  echo "is Ok"
     done
   '''
 }
