@@ -53,36 +53,39 @@ public class UpdateAffectedUserPermitCacheImpl implements IUpdateAffectedUserPer
      */
     @Override
     public void saveAffectedUser(List<String> userNames) {
-            if (!CollectionUtils.isEmpty(userNames)) {
-                List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
-                String createBy = sessionBp.getOperator();
-                Date now = new Date();
-                Map map = new HashMap(10);
-                map.put("userNames",userNameList);
-                map.put("createBy",createBy);
-                map.put("createTime", now);
-                try {
-                    //批量插入 考虑不能超过一个数量限制
-                    if (userNameList.size() < BATCH_INSERT_LIMIT) {
-                        userAffectedMapper.saveAffectedUser(map);
-                    }else{
-                        //分批插入
-                        List<String> userNamesPagination;
-                        while (!CollectionUtils.isEmpty(userNameList)){
-                            if (userNameList.size() >= BATCH_INSERT_LIMIT) {
-                                userNamesPagination = userNameList.subList(0,BATCH_INSERT_LIMIT);
-                            }else{
-                                userNamesPagination = userNameList.subList(0,userNameList.size());
-                            }
-                            map.put("userNames",userNamesPagination);
-                            userAffectedMapper.saveAffectedUser(map);
-                            userNameList.removeAll(userNamesPagination);
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("Fail to save the related user when related roles change",e);
-                }
-            }
+//            if (!CollectionUtils.isEmpty(userNames)) {
+//                List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
+//                String createBy = sessionBp.getOperator();
+//                Date now = new Date();
+//                Map map = new HashMap(10);
+//                map.put("userNames",userNameList);
+//                map.put("createBy",createBy);
+//                map.put("createTime", now);
+//                try {
+//                    //批量插入 考虑不能超过一个数量限制
+//                    if (userNameList.size() < BATCH_INSERT_LIMIT) {
+//                        userAffectedMapper.saveAffectedUser(map);
+//                    }else{
+//                        //分批插入
+//                        List<String> userNamesPagination;
+//                        while (!CollectionUtils.isEmpty(userNameList)){
+//                            if (userNameList.size() >= BATCH_INSERT_LIMIT) {
+//                                userNamesPagination = userNameList.subList(0,BATCH_INSERT_LIMIT);
+//                            }else{
+//                                userNamesPagination = userNameList.subList(0,userNameList.size());
+//                            }
+//                            map.put("userNames",userNamesPagination);
+//                            userAffectedMapper.saveAffectedUser(map);
+//                            userNameList.removeAll(userNamesPagination);
+//                        }
+//                    }
+//                } catch (Exception e) {
+//                    logger.error("Fail to save the related user when related roles change",e);
+//                }
+//            }
+        // 更新角色下的用户的权限缓存
+        List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
+        permitStatBp.updateUserPermitCache(userNameList);
         }
 
     /**

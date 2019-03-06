@@ -170,6 +170,23 @@
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
     </select>
+    <select id="getFuncJsonListByUserAndSysKey" resultType="com.yks.urc.vo.SystemKeyContext">
+        select rp.selected_context,rp.sys_key
+        from urc_user_role ur
+            inner join urc_role r ON ur.role_id=r.role_id
+            inner join urc_role_permission rp ON rp.role_id=r.role_id
+        <where>
+            ur.user_name=#{userName}
+            AND r.is_active=1
+            AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
+            <if test="sysKeyList != null and sysKeyList.size() > 0">
+                and rp.sys_key in
+                <foreach collection="sysKeyList" item="item" open="(" separator="," close=")" index="index">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
     
      <!--根据username/syskey获取业务员角色功能权限, owner 所需的权限树-->
     <select id="getBizAdminFuncJsonByUserAndSysKey" resultType="java.lang.String">
