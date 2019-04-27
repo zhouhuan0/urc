@@ -251,6 +251,15 @@
         limit 1
     </select>
 
+    <select id="getAllAdminRoleId" resultType="string">
+        SELECT role_id
+        FROM urc_role
+        <where>
+            is_authorizable = 2 and is_active = 1
+            and (is_forever = 1 or (NOW() BETWEEN effective_time and expire_time))
+        </where>
+    </select>
+
 
 
     <!--根据角色名获取角色信息-->
