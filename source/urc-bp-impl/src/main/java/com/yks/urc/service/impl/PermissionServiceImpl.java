@@ -1,22 +1,26 @@
 package com.yks.urc.service.impl;
 
-import java.util.*;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.*;
+import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
-import com.yks.urc.mapper.IUserPermitStatMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.*;
+import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,20 +28,11 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IRolePermissionMapper;
-import com.yks.urc.mapper.IUserPermissionCacheMapper;
-import com.yks.urc.mapper.PermissionMapper;
-import com.yks.urc.operation.bp.api.IOperationBp;
-import com.yks.urc.service.api.IPermissionService;
-import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PermissionServiceImpl implements IPermissionService {
@@ -105,6 +100,17 @@ public class PermissionServiceImpl implements IPermissionService {
                 return VoHelper.getErrorResult();
             }
             SystemRootVO[] arr = StringUtility.parseObject(data, new SystemRootVO[0].getClass());
+            // 若是key重复，则不让推
+            List<String>   keys =new ArrayList<>();
+            if (this.duplicateKey(arr,keys)){
+                if (!CollectionUtils.isEmpty(keys)){
+                    //找出重复元素
+                    Set<String>  duplicateKeys = keys.stream().filter(key ->Collections.frequency(keys,key) >1).collect(Collectors.toSet());
+                    if (!CollectionUtils.isEmpty(duplicateKeys)){
+                      return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("推送的菜单树里有重复的key值，keys =%s",duplicateKeys.toString()));
+                    }
+                }
+            }
             if (arr != null && arr.length > 0) {
                 List<PermissionDO> lstPermit = new ArrayList<>(arr.length);
                 for (SystemRootVO root : arr) {
@@ -160,6 +166,61 @@ public class PermissionServiceImpl implements IPermissionService {
         //推送菜单树完成 将超级管理员存入urc_role_user_affected 调assignAllPermit2Role()刷新超级管理员权限
         saveSuperAdministrator();
         return rslt;
+    }
+    /**
+     *    重复key值
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2019/4/27 10:00
+     */
+    private Boolean duplicateKey(SystemRootVO[] arr,List<String> keys) {
+        if (arr == null || arr.length == 0) {
+            return true;
+        }
+
+        for (int i = 0,size =arr.length; i <size ; i++) {
+            SystemRootVO systemRootVO = arr[i];
+            if (systemRootVO == null || CollectionUtils.isEmpty(systemRootVO.menu)){
+                return true;
+            }
+            systemRootVO.menu.forEach(menuVO -> {
+                if(StringUtils.isNotEmpty(menuVO.key)) {
+                    keys.add(menuVO.key);
+                }
+                if (CollectionUtils.isEmpty(menuVO.module)){
+                    return;
+                }
+                this.foreachModule(menuVO.module,keys);
+            });
+        }
+        return true;
+    }
+
+    private void foreachModule(List<ModuleVO> module,List<String> keys){
+        module.forEach(moduleVO -> {
+            if (StringUtils.isNotEmpty(moduleVO.key)){
+                keys.add(moduleVO.key);
+            }
+            if (!CollectionUtils.isEmpty(moduleVO.function)){
+                this.foreachModule(moduleVO.module,keys);
+            }
+            if (!CollectionUtils.isEmpty(moduleVO.function)) {
+                this.foreachFunction(moduleVO.function,keys);
+            }
+        });
+
+    }
+
+    private void foreachFunction(List<FunctionVO> function,List<String> keys){
+        function.forEach(functionVO -> {
+            if (StringUtils.isNotEmpty(functionVO.key)){
+                keys.add(functionVO.key);
+            }
+            if (!CollectionUtils.isEmpty(functionVO.function)){
+                foreachFunction(functionVO.function,keys);
+            }
+        });
     }
 
     /**

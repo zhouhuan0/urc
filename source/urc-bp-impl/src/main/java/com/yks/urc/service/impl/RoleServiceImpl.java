@@ -70,6 +70,8 @@ public class RoleServiceImpl implements IRoleService {
     @Autowired
     private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
 
+    private static final String ADMIN ="1529635932385000001";
+
 
     /**
      * Description: 1、根据多个条件获取角色列表 2、admin可以查看所有角色；业务人员只能查看自己创建的角色
@@ -173,6 +175,8 @@ public class RoleServiceImpl implements IRoleService {
                 }
             }
         }
+        //超级管理员不显示
+        roleVOS.removeIf(roleVO -> ADMIN.equalsIgnoreCase(roleVO.roleId));
         return roleVOS;
     }
 
