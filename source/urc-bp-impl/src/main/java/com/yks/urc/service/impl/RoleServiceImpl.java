@@ -176,7 +176,9 @@ public class RoleServiceImpl implements IRoleService {
         }
         //超级管理员不显示
         List<String> adminRoleIds = roleMapper.getAllAdminRoleId();
-        roleVOS.removeAll(adminRoleIds);
+        if (!CollectionUtils.isEmpty(adminRoleIds)) {
+            roleVOS.removeIf(roleVO -> adminRoleIds.contains(roleVO.roleId));
+        }
         return roleVOS;
     }
 

@@ -259,7 +259,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     @Test
     public void getRolesByInfo() throws Exception {
         map.put("pageNumber", pageNumber);
-        map.put("pageData", pageData);
+        map.put("pageData", 100);
         map.put("operator", operator);
         map.put("isActive",1);
         map.put("isAdmin",0);
