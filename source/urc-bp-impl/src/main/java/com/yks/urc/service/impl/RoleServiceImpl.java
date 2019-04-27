@@ -89,13 +89,13 @@ public class RoleServiceImpl implements IRoleService {
         /* 2、获取参数并校验 */
         String operator = jsonObject.getString("operator");
         // 是否是管理员(0 .非管理员,1.管理员)
-        Integer isAuthorizable =jsonObject.getInteger("isAdmin");
+        Integer isAuthorizable = jsonObject.getInteger("isAdmin");
         //是否启用(0.不启用,1.启用)
-        Integer isActive =jsonObject.getInteger("isActive");
+        Integer isActive = jsonObject.getInteger("isActive");
         // 搜索类型(0.角色名称,1.创建人,2.owner)
-        Integer searchType =jsonObject.getInteger("searchType");
+        Integer searchType = jsonObject.getInteger("searchType");
         //搜索内容,多个值用 ','隔开
-        String searchContent =jsonObject.getString("searchContent");
+        String searchContent = jsonObject.getString("searchContent");
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
@@ -111,8 +111,8 @@ public class RoleServiceImpl implements IRoleService {
         int pageSize = pageData;
         queryMap.put("currIndex", (currPage - 1) * pageSize);
         queryMap.put("pageSize", pageSize);
-        queryMap.put("isAdmin",isAuthorizable);
-        queryMap.put("isActive",isActive);
+        queryMap.put("isAdmin", isAuthorizable);
+        queryMap.put("isActive", isActive);
         if (searchType != null) {
             switch (searchType) {
                 case 0:
@@ -224,7 +224,7 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             /* 4.1 非管理员———该角色存在但是不是owner */
             if (opRoleDO != null && !isOwner(operator, roleId)) {
-                throw new URCBizException(ErrorCode.E_100003.getState(),String.format("当前用户不是该角色的owner,无法编辑,当前用户:%s ,角色:%s", operator, opRoleDO.getRoleName()));
+                throw new URCBizException(ErrorCode.E_100003.getState(), String.format("当前用户不是该角色的owner,无法编辑,当前用户:%s ,角色:%s", operator, opRoleDO.getRoleName()));
             } else {
                 /* 4.2 非管理员———a.该角色存在且创建人是当前用户或owner；b.该角色不存在 */
                 insertOrUpdateRole(operator, roleVO, opRoleDO);
@@ -292,10 +292,10 @@ public class RoleServiceImpl implements IRoleService {
      */
     private void insertOrUpdateRole(String operator, RoleVO roleVO, RoleDO opRoleDO) {
         if (opRoleDO == null) {
-           RoleDO role = roleMapper.getByRoleName(roleVO.roleName);
-           if (roleMapper.checkDuplicateRoleName(roleVO.roleName,null)){
-               throw new URCBizException(ErrorCode.E_101001.getState(), "已存在相同的角色名称");
-           }
+            RoleDO role = roleMapper.getByRoleName(roleVO.roleName);
+            if (roleMapper.checkDuplicateRoleName(roleVO.roleName, null)) {
+                throw new URCBizException(ErrorCode.E_101001.getState(), "已存在相同的角色名称");
+            }
             logger.info("add role");
             RoleDO roleDO = new RoleDO();
             BeanUtils.copyProperties(roleVO, roleDO);
@@ -308,7 +308,7 @@ public class RoleServiceImpl implements IRoleService {
             checkEffective(roleDO);
             int rtn = roleMapper.insert(roleDO);
             //owner 入库操作
-            insetOwnerDO(roleVO,roleId,operator);
+            insetOwnerDO(roleVO, roleId, operator);
              /*批量新增角色-操作权限关系数据 ,  将创建者的操作权限复制给owner*/
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
@@ -332,10 +332,10 @@ public class RoleServiceImpl implements IRoleService {
             ownerMapper.deleteOwnerByRoleId(Long.valueOf(roleVO.roleId));
             logger.info(String.format("清除roleId 为:[%s] 的owner", roleVO.roleId));
             //owner 入库操作, 插入创建者
-            if (StringUtils.isEmpty(role.getCreateBy())){
-                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"该角色的创建人不存在");
+            if (StringUtils.isEmpty(role.getCreateBy())) {
+                throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "该角色的创建人不存在");
             }
-            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId),role.getCreateBy());
+            insetOwnerDO(roleVO, Long.valueOf(roleVO.roleId), role.getCreateBy());
             logger.info(String.format("更新roleId 为:[%s] 的owner", roleVO.roleId));
               /*删除原有角色-权限关系数据*/
             rolePermissionMapper.deleteByRoleId(roleDO.getRoleId());
@@ -356,13 +356,13 @@ public class RoleServiceImpl implements IRoleService {
      * @Author lwx
      * @Date 2018/7/27 18:41
      */
-    public void insetOwnerDO(RoleVO roleVO,Long roleId,String createBy) {
+    public void insetOwnerDO(RoleVO roleVO, Long roleId, String createBy) {
         // 编辑角色时,如果有owner ,则需要插入owner
         if (roleVO.lstOwner != null && roleVO.lstOwner.size() != 0) {
             //添加创建者
             roleVO.lstOwner.add(createBy);
             //去重
-           roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
+            roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
             for (String owner1 : roleVO.lstOwner) {
                 RoleOwnerDO ownerDO = new RoleOwnerDO();
                 ownerDO.setRoleId(roleId);
@@ -428,7 +428,7 @@ public class RoleServiceImpl implements IRoleService {
     private void insertBatchUserRole(RoleVO roleVO, String operator, Long roleId) {
         List<String> lstUserName = roleVO.getLstUserName();
         //去重
-        lstUserName =lstUserName.stream().distinct().collect(Collectors.toList());
+        lstUserName = lstUserName.stream().distinct().collect(Collectors.toList());
         if (lstUserName != null && !lstUserName.isEmpty()) {
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             for (String userName : lstUserName) {
@@ -498,8 +498,8 @@ public class RoleServiceImpl implements IRoleService {
 
         Long roleId = Long.valueOf(roleIdStr);
         RoleDO roleDO = roleMapper.getRoleDatasByRoleId(roleId);
-        if (StringUtils.isEmpty(roleDO.getCreateBy())){
-            throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"该角色的创建人不存在");
+        if (StringUtils.isEmpty(roleDO.getCreateBy())) {
+            throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "该角色的创建人不存在");
         }
         /*获取系统集合*/
         if (roleDO == null) {
@@ -538,7 +538,8 @@ public class RoleServiceImpl implements IRoleService {
         }
 
         roleVO.setLstUserName(lstUserName);
-        // 组装userName 的personName
+
+        // 组装userName 的personName, lstUserName not null
         if (!CollectionUtils.isEmpty(lstUserName)) {
             List<NameVO> lstUser = userMapper.getUserPersonByUserNames(lstUserName);
             roleVO.setLstUser(lstUser);
@@ -550,18 +551,18 @@ public class RoleServiceImpl implements IRoleService {
             RoleOwnerVO ownerVO = new RoleOwnerVO();
             ownerVO.owner = ownerDO.getOwner();
             //创建者放在第一位, 去重, 从role 表获取创建者
-            if (StringUtility.stringEqualsIgnoreCase(ownerDO.getOwner(),roleDO.getCreateBy())){
-                roleVO.lstOwner.add(0,ownerVO.owner);
+            if (StringUtility.stringEqualsIgnoreCase(ownerDO.getOwner(), roleDO.getCreateBy())) {
+                roleVO.lstOwner.add(0, ownerVO.owner);
             }
             roleVO.lstOwner.add(ownerVO.owner);
         }
-        roleVO.lstOwner =roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
+        roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
+        //组装owner  下的 中文名 ,roleVO.lstOwner not null
         if (!CollectionUtils.isEmpty(roleVO.lstOwner)) {
             //组装owner  下的 中文名
             List<NameVO> lstOwnerInfo = userMapper.getUserPersonByUserNames(roleVO.lstOwner);
             roleVO.setLstOwnerInfo(lstOwnerInfo);
         }
-
         return VoHelper.getSuccessResult(roleVO);
     }
 
@@ -660,10 +661,10 @@ public class RoleServiceImpl implements IRoleService {
         if (roleMapper.isSuperAdminAccount(operator)) {
             dataMap.put("owner", "");
         } else {
-            lstRoleId.forEach(roleId ->{
+            lstRoleId.forEach(roleId -> {
                 RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
-                if (!StringUtils.equalsIgnoreCase(operator,roleDO1.getCreateBy())){
-                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择",roleDO1.getRoleName()));
+                if (!StringUtils.equalsIgnoreCase(operator, roleDO1.getCreateBy())) {
+                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择", roleDO1.getRoleName()));
                 }
             });
             // 通过owner  查看 角色下的用户
@@ -902,7 +903,7 @@ public class RoleServiceImpl implements IRoleService {
                 List<String> userNameList = roleVO.getLstUserName();
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
                     //throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
-                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),"请至少选择一个用户");
+                    throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "请至少选择一个用户");
                 }
 
                 userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
@@ -933,7 +934,7 @@ public class RoleServiceImpl implements IRoleService {
                     }
                 } else {
                     // 如果不是超级管理员 的话 owner  可以分配用户
-                    if (this.isOwner(operator,roleDO.getRoleId())) {
+                    if (this.isOwner(operator, roleDO.getRoleId())) {
                         userRole.setCreateBy(roleDO.getCreateBy());
                         if (lstRole.size() > 1) {
                             userRoleMapper.deleteUserRoleInUserName(userRole, userNameList);
@@ -1019,7 +1020,7 @@ public class RoleServiceImpl implements IRoleService {
             if (StringUtility.isNullOrEmpty(sourceOwnerDO.getOwner())) {
                 continue;
             }
-            if (sourceOwnerDO.getOwner() ==sourceOwnerDO.getCreateBy()){
+            if (sourceOwnerDO.getOwner() == sourceOwnerDO.getCreateBy()) {
                 //如果查找到角色的原创建者,则将其改为当前的创建者,再插入
                 sourceOwnerDO.setOwner(operator);
             }
@@ -1093,7 +1094,9 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO assignAllPermit2Role() {
         Long roleId = sessionBp.getLong("roleId");
         RoleDO roleFromDb = roleMapper.getRoleByRoleId(String.valueOf(roleId));
-        if (roleFromDb == null){ throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);}
+        if (roleFromDb == null) {
+            throw new URCBizException(String.format("roleId:%s不存在", roleId), ErrorCode.E_000000);
+        }
         List<RolePermissionDO> lstRolePermit = new ArrayList<>();
         List<PermissionDO> lstPermit = permitMapper.getAllSysPermit();
         if (lstPermit != null && lstPermit.size() > 0) {
@@ -1151,18 +1154,19 @@ public class RoleServiceImpl implements IRoleService {
 
     /**
      * split并去除前后空格，空元素
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2018/11/6 14:40
      */
-    private List<String> splitStr (String strSrc){
+    private List<String> splitStr(String strSrc) {
         if (StringUtils.isEmpty(strSrc)) {
             return Collections.EMPTY_LIST;
         }
         String[] arrAcct = strSrc.split("(,)|(\r\n)|(\n)|(\r)");
         List<String> lstRslt = new ArrayList<>();
-        for (int i=0;i<arrAcct.length;i++){
+        for (int i = 0; i < arrAcct.length; i++) {
             String mem = StringUtility.trimPattern_Private(arrAcct[i], "\\s");
             if (!StringUtility.isNullOrEmpty(mem)) {
                 lstRslt.add(mem);
@@ -1170,6 +1174,7 @@ public class RoleServiceImpl implements IRoleService {
         }
         return lstRslt;
     }
+
     /**
      * 判断当前操作人是否是角色的owner
      *
@@ -1180,8 +1185,8 @@ public class RoleServiceImpl implements IRoleService {
      */
     public boolean isOwner(String operator, Long roleId) {
         // 先判断是否是创建人 , 若是, 则肯定是owner
-        RoleDO roleDO =roleMapper.getRoleByRoleId(String.valueOf(roleId));
-        if (roleDO !=null && StringUtility.stringEqualsIgnoreCase(operator,roleDO.getCreateBy())){
+        RoleDO roleDO = roleMapper.getRoleByRoleId(String.valueOf(roleId));
+        if (roleDO != null && StringUtility.stringEqualsIgnoreCase(operator, roleDO.getCreateBy())) {
             return true;
         }
         int result = ownerMapper.judgeOwnerByOwnerAndId(operator, roleId);
