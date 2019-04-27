@@ -175,10 +175,9 @@ public class PermissionServiceImpl implements IPermissionService {
      * @Date 2019/4/27 10:00
      */
     private Boolean duplicateKey(SystemRootVO[] arr,List<String> keys) {
-        if (arr == null || arr.length == 0) {
+        if (arr == null || arr.length == 0 || keys ==null ) {
             return true;
         }
-
         for (int i = 0,size =arr.length; i <size ; i++) {
             SystemRootVO systemRootVO = arr[i];
             if (systemRootVO == null || CollectionUtils.isEmpty(systemRootVO.menu)){
@@ -198,9 +197,10 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     private void foreachModule(List<ModuleVO> module,List<String> keys){
-        if (CollectionUtils.isEmpty(module)){
+        if (CollectionUtils.isEmpty(module) || keys ==null){
             return;
         }
+
         module.forEach(moduleVO -> {
             if (StringUtils.isNotEmpty(moduleVO.key)){
                 keys.add(moduleVO.key);
@@ -216,7 +216,7 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     private void foreachFunction(List<FunctionVO> function,List<String> keys){
-        if (CollectionUtils.isEmpty(function)){
+        if (CollectionUtils.isEmpty(function)|| keys ==null){
             return;
         }
         function.forEach(functionVO -> {
