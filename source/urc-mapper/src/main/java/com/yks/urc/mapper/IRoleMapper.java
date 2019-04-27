@@ -1,8 +1,6 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.RolePermissionDO;
-import com.yks.urc.vo.RoleVO;
 import com.yks.urc.vo.SystemKeyContext;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -210,4 +208,6 @@ public interface IRoleMapper {
      * @return
      */
     Long selectAllSuperAdministrator();
+
+    List<String> getAllAdminRoleId();
 }

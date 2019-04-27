@@ -70,7 +70,6 @@ public class RoleServiceImpl implements IRoleService {
     @Autowired
     private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
 
-    private static final String ADMIN ="1529635932385000001";
 
 
     /**
@@ -176,7 +175,8 @@ public class RoleServiceImpl implements IRoleService {
             }
         }
         //超级管理员不显示
-        roleVOS.removeIf(roleVO -> ADMIN.equalsIgnoreCase(roleVO.roleId));
+        List<String> adminRoleIds = roleMapper.getAllAdminRoleId();
+        roleVOS.removeAll(adminRoleIds);
         return roleVOS;
     }
 
