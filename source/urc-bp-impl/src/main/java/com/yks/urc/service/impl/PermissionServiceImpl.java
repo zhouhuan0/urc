@@ -102,12 +102,12 @@ public class PermissionServiceImpl implements IPermissionService {
             SystemRootVO[] arr = StringUtility.parseObject(data, new SystemRootVO[0].getClass());
             // 若是key重复，则不让推
             List<String>   keys =new ArrayList<>();
-            if (this.duplicateKey(arr,keys)){
-                if (!CollectionUtils.isEmpty(keys)){
+            if (this.duplicateKey(arr, keys)) {
+                if (!CollectionUtils.isEmpty(keys)) {
                     //找出重复元素
-                    Set<String>  duplicateKeys = keys.stream().filter(key ->Collections.frequency(keys,key) >1).collect(Collectors.toSet());
-                    if (!CollectionUtils.isEmpty(duplicateKeys)){
-                      return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(),String.format("推送的菜单树里有重复的key值，keys =%s",duplicateKeys.toString()));
+                    Set<String> duplicateKeys = keys.stream().filter(key -> Collections.frequency(keys, key) > 1).collect(Collectors.toSet());
+                    if (!CollectionUtils.isEmpty(duplicateKeys)) {
+                        return VoHelper.getErrorResult(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("推送的菜单树里有重复的key值，keys =%s", duplicateKeys.toString()));
                     }
                 }
             }
@@ -198,6 +198,9 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     private void foreachModule(List<ModuleVO> module,List<String> keys){
+        if (CollectionUtils.isEmpty(module)){
+            return;
+        }
         module.forEach(moduleVO -> {
             if (StringUtils.isNotEmpty(moduleVO.key)){
                 keys.add(moduleVO.key);
@@ -213,6 +216,9 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     private void foreachFunction(List<FunctionVO> function,List<String> keys){
+        if (CollectionUtils.isEmpty(function)){
+            return;
+        }
         function.forEach(functionVO -> {
             if (StringUtils.isNotEmpty(functionVO.key)){
                 keys.add(functionVO.key);
