@@ -1,3 +1,16 @@
+*.iml
+**/target/**
+*.prefs
+*.project
+*.jsdtscope
+*.log
+*.classpath
+**b/.settings/**
+**/.settings/**
+#忽略子文件下的.gitignore文件
+/**/.gitignore
+!/.gitignore
+
 yks-crud-error.log
 yks-crud-error.log.2018-06-13
 yks-crud-error.log.2018-06-19

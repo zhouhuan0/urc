@@ -144,4 +144,13 @@
     </select>
 
 
+	<select id="selectShopSiteByPlatformIdAndKeys" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM urc_shop_site WHERE platform_id = #{platformId} and shop_system != ''
+         <if test="keys != null and keys !='' ">
+            AND shop_system LIKE CONCAT(#{keys},'%')
+        </if>
+    </select>
+
 </mapper>

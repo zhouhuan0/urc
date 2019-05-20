@@ -19,6 +19,8 @@ import com.yks.urc.service.api.IUserService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1512,7 +1514,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //根据entityCode找到对应得platforid
         if (entityCode.equalsIgnoreCase("E_PlatformShopSite")) {
             //通过调oms的接口获取销售账号
-            return getSellerIdByOmsInterface();
+            return getSellerIdByOmsInterface(null,null);
 //            return dataRuleService.appointPlatformShopSiteOms(operator, "速卖通");
         } else if (entityCode.equalsIgnoreCase("E_ArmShopAccount")) {
             //索赔-->亚马逊 只需要账号
@@ -1547,11 +1549,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     }
 
-    private ResultVO getSellerIdByOmsInterface() {
+    private ResultVO getSellerIdByOmsInterface(String platformCode, String keys) {
         ResultVO resultVO = null;
         try{
             //oms
-           resultVO = orderManageService.getAllSellerId();
+        	if(StringUtils.isEmpty(platformCode)){
+        		resultVO = orderManageService.getAllSellerId();
+        	}else{
+        		resultVO = orderManageService.getAllSellerIdByConditions(platformCode,keys);
+        	}
         }catch (Exception e){
             logger.error("throw Exception when retrieve oms interface ",e);
             return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(),"调取oms接口获取销售账号出错",new ArrayList<>());
@@ -1587,4 +1593,142 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         return VoHelper.getSuccessResult(omsPlatformVOList);
     }
+
+	@Override
+	public ResultVO getPlatformShopByConditions(JSONObject jsonObject) {
+		String operator = jsonObject.getString("operator");
+		String entityCode = jsonObject.getString("entityCode");//实体code【必填】例如oms为E_PlatformShopSite
+    	String platformCode = jsonObject.getString("platformCode");//平台2字code【必填】 跟entityCode对应
+    	String keys = jsonObject.getString("keys");//关键字,不传默认查所有账号，左匹配搜索 for searchSellerId
+    	List<Object> lstSellerId = jsonObject.getJSONArray("lstSellerId");//要检测的销售账号【必填】for checkSellerId
+    	
+    	List<String> platformIds = new ArrayList<>();
+        //根据entityCode找到对应得platforid
+        if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
+            //通过调oms的接口获取销售账号
+            return getSellerIdByOmsInterface(platformCode,keys);
+        } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
+            // 刊登--->ebyay 只需要账号, 目前返回这4个平台
+           /* platformIds.add("shopee");
+            platformIds.add("ebay");
+            platformIds.add("亚马逊");
+            platformIds.add("lazada");
+            platformIds.add("速卖通");*/
+            return dataRuleService.appointPlatformShopSiteBykeys(operator, platformCode,keys);
+        } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
+            //客服系统 --> 平台账号  站点
+            return dataRuleService.appointPlatformShopSiteBykeys(operator, platformCode,keys);
+        } else  if(entityCode.equalsIgnoreCase("E_CsOrg")){
+            //客服--【职级】---范围
+            return  dataRuleService.getCsPlatformCodeName(operator);
+        } else  if(entityCode.equalsIgnoreCase("E_Logistics")){
+            //物流--【平台】
+            List<PlatformDO> platformDOS = platformMapper.selectAll();
+            return  dataRuleService.getPlatFormForLogistics(platformDOS);
+        }else {
+            //待定后续....
+            return VoHelper.getSuccessResult((Object) "待配置!......");
+        }
+	}
+
+
+	@Override
+	public ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteBykeys(String operator, String platformId,
+			String keys) {
+		 try {
+	            List<OmsPlatformVO> omsPlatformVOS = new ArrayList<>();
+	            OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
+	            omsPlatformVO.platformId = platformId;
+	            omsPlatformVO.platformName = platformId;
+	            omsPlatformVO.lstShop = new ArrayList<>();
+	            List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSiteByPlatformIdAndKeys(platformId,keys);
+
+	            //组装账号
+	            for (ShopSiteDO shopSiteDO : shopSiteDOS) {
+	                if (StringUtility.isNullOrEmpty(shopSiteDO.getShopSystem())) {
+	                    continue;
+	                }
+	                OmsShopVO omsShopVO = new OmsShopVO();
+	                omsShopVO.shopId = shopSiteDO.getShopSystem();
+	                omsShopVO.shopName = shopSiteDO.getShop();
+	                omsPlatformVO.lstShop.add(omsShopVO);
+
+	                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteId() )) {
+
+	                    omsShopVO.lstSite = null;
+	                } else {
+	                    omsShopVO.lstSite = new ArrayList<>();
+	                    OmsSiteVO siteVO = new OmsSiteVO();
+	                    siteVO.siteId = shopSiteDO.getSiteId();
+
+	                    if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+
+	                        siteVO.siteName = siteVO.siteId;
+	                    } else {
+	                        siteVO.siteName = shopSiteDO.getSiteName();
+	                    }
+	                    omsShopVO.lstSite.add(siteVO);
+	                }
+	            }
+	            //组装平台
+	            omsPlatformVOS.add(omsPlatformVO);
+	            return VoHelper.getSuccessResult(omsPlatformVOS);
+	        } catch (Exception e) {
+	            logger.error("未知异常", e);
+	            return VoHelper.getErrorResult();
+	        }
+	}
+
+	@Override
+	public ResultVO getPlatformByConditions(JSONObject jsonObject) {
+		String operator = jsonObject.getString("operator");
+		String entityCode = jsonObject.getString("entityCode");//实体code【必填】例如oms为E_PlatformShopSite
+		List<PlatformCodeVO4GetPlatformCode> platformCodes = new ArrayList<>();
+		GetPlatformCodeRespVO getPlatformCodeRespVO = new GetPlatformCodeRespVO();
+    	List<String> platformIds = new ArrayList<>();
+        //根据entityCode找到对应得platforid
+        if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
+            //通过调oms的接口获取销售账号
+        	ResultVO resultVO =  orderManageService.getAllOnlinePlatformCode();
+        	getPlatformCodeRespVO.setList((List<PlatformCodeVO4GetPlatformCode>) resultVO.data);
+        	return VoHelper.getSuccessResult(getPlatformCodeRespVO);
+        } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
+            // 刊登--->ebyay 只需要账号, 目前返回这4个平台
+        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode1 = new PlatformCodeVO4GetPlatformCode();
+        	platformCodeVO4GetPlatformCode1.setPlatformCode("shopee");
+        	platformCodeVO4GetPlatformCode1.setPlatformName("shopee");
+        	platformCodes.add(platformCodeVO4GetPlatformCode1);
+        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode2 = new PlatformCodeVO4GetPlatformCode();
+        	platformCodeVO4GetPlatformCode2.setPlatformCode("ebay");
+        	platformCodeVO4GetPlatformCode2.setPlatformName("ebay");
+        	platformCodes.add(platformCodeVO4GetPlatformCode2);
+        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode3 = new PlatformCodeVO4GetPlatformCode();
+        	platformCodeVO4GetPlatformCode3.setPlatformCode("亚马逊");
+        	platformCodeVO4GetPlatformCode3.setPlatformName("亚马逊");
+        	platformCodes.add(platformCodeVO4GetPlatformCode3);
+        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode4 = new PlatformCodeVO4GetPlatformCode();
+        	platformCodeVO4GetPlatformCode4.setPlatformCode("lazada");
+        	platformCodeVO4GetPlatformCode4.setPlatformName("lazada");
+        	platformCodes.add(platformCodeVO4GetPlatformCode4);
+        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode5 = new PlatformCodeVO4GetPlatformCode();
+        	platformCodeVO4GetPlatformCode5.setPlatformCode("速卖通");
+        	platformCodeVO4GetPlatformCode5.setPlatformName("速卖通");
+        	platformCodes.add(platformCodeVO4GetPlatformCode5);
+        	getPlatformCodeRespVO.setList(platformCodes);
+            return VoHelper.getSuccessResult(getPlatformCodeRespVO);
+        } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
+        	List<PlatformDO> platformDOS = platformMapper.selectAll();
+        	for (PlatformDO platformDO : platformDOS) {
+        		PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode = new PlatformCodeVO4GetPlatformCode();
+        		platformCodeVO4GetPlatformCode.setPlatformCode(platformDO.getPlatformId());
+        		platformCodeVO4GetPlatformCode.setPlatformName(platformDO.getPlatformName());
+        		platformCodes.add(platformCodeVO4GetPlatformCode);
+			}
+        	getPlatformCodeRespVO.setList(platformCodes);
+            return VoHelper.getSuccessResult(getPlatformCodeRespVO);
+        } else {
+            //待定后续....
+            return VoHelper.getSuccessResult((Object) "待配置!......");
+        }
+	}
 }

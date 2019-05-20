@@ -21,6 +21,16 @@ public interface ShopSiteMapper {
      */
     List<ShopSiteDO> selectShopSiteByPlatformId(@Param("platformId") String platformId);
 
+    
+    /**
+     * @Description: 查询卖家id不为空的账号站点 通过模糊查询keys
+     * @author: zengzheng
+     * @param platformId
+     * @param keys
+     * @return
+     * @version: 2019年5月20日 上午10:46:10
+     */
+    List<ShopSiteDO> selectShopSiteByPlatformIdAndKeys(@Param("platformId") String platformId,@Param("keys") String keys);
     /**
      * 查询账号站点
      * @param:
