@@ -1695,20 +1695,20 @@ public class DataRuleServiceImpl implements IDataRuleService {
         } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
             // 刊登--->ebyay 只需要账号, 目前返回这4个平台
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode1 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode1.setPlatformCode("shopee");
-        	platformCodeVO4GetPlatformCode1.setPlatformName("shopee");
+        	platformCodeVO4GetPlatformCode1.setPlatformCode("SHOPEE");
+        	platformCodeVO4GetPlatformCode1.setPlatformName("SHOPEE");
         	platformCodes.add(platformCodeVO4GetPlatformCode1);
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode2 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode2.setPlatformCode("ebay");
-        	platformCodeVO4GetPlatformCode2.setPlatformName("ebay");
+        	platformCodeVO4GetPlatformCode2.setPlatformCode("eBay");
+        	platformCodeVO4GetPlatformCode2.setPlatformName("eBay");
         	platformCodes.add(platformCodeVO4GetPlatformCode2);
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode3 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode3.setPlatformCode("亚马逊");
         	platformCodeVO4GetPlatformCode3.setPlatformName("亚马逊");
         	platformCodes.add(platformCodeVO4GetPlatformCode3);
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode4 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode4.setPlatformCode("lazada");
-        	platformCodeVO4GetPlatformCode4.setPlatformName("lazada");
+        	platformCodeVO4GetPlatformCode4.setPlatformCode("LAZADA");
+        	platformCodeVO4GetPlatformCode4.setPlatformName("LAZADA");
         	platformCodes.add(platformCodeVO4GetPlatformCode4);
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode5 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode5.setPlatformCode("速卖通");
