@@ -1144,6 +1144,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                             }
 
                             BeanUtils.copyProperties(expressionDO, expression);
+                            expression.setOperValues(null);
                             expressionVOList.add(expression);
                         }
 
