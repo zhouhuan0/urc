@@ -3,6 +3,7 @@ package com.yks.urc.service.api;
 import java.util.Date;
 import java.util.List;
 
+import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.vo.*;
 
@@ -107,4 +108,34 @@ public interface IDataRuleService {
      * @return
      */
     ResultVO getPlatFormForLogistics(List<PlatformDO> platformDOS);
+    
+
+    /**
+     * @Description: TODO
+     * @author: zengzheng
+     * @param jsonObject
+     * @return
+     * @version: 2019年5月20日 上午10:05:33
+     */
+	ResultVO getPlatformShopByConditions(JSONObject jsonObject);
+	
+	
+	/**
+	 * @Description: TODO
+	 * @author: zengzheng
+	 * @param jsonObject
+	 * @return
+	 * @version: 2019年5月20日 上午11:47:20
+	 */
+	ResultVO getPlatformByConditions(JSONObject jsonObject);
+	
+	/**
+	 * @Description: TODO
+	 * @author: zengzheng
+	 * @param operator
+	 * @param platformId
+	 * @return
+	 * @version: 2019年5月20日 上午10:44:50
+	 */
+	ResultVO<List<OmsPlatformVO>> appointPlatformShopSiteBykeys(String operator,String platformId,String keys );
 }

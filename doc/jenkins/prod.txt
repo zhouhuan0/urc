@@ -1,0 +1,55 @@
+node {
+stage '拉取代码' 
+  sh '''
+   # 删除之前workspace中的缓存文件
+   rm -rf ./*
+  '''
+
+  checkout([$class: 'GitSCM', branches: [[name: 'panyun_config']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@git.kokoerp.com:YKSproject/urcenter.git']]])
+
+stage '同步配置文件'
+ sh '''
+   # 替换配置模板
+   curEnv=urcenterprod
+   #/usr/bin/python3 /var/lib/jenkins/replace_config.py $curEnv
+   cmdstr=`pwd`/doc/jenkins/replace_config_py.py
+   echo $cmdstr
+   chmod 777 $cmdstr
+   /usr/bin/python3 $cmdstr $curEnv `pwd`
+   
+   chmod 777 ./cover_config.sh
+   bash ./cover_config.sh
+   
+   echo "is Ok!!!"
+ '''
+
+stage 'MVN编译' 
+ dir('./source'){
+  sh "/opt/apache-maven-3.3.9/bin/mvn clean install -am  -e -U -Dmaven.test.skip=true"
+  sh "echo ok"
+ }
+
+stage '部署应用'
+sh '''
+    confPath=urcenter-prod
+	
+      IP=10.90.1.190
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'	  
+  	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
+  	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-taskScheduler/target/urc-taskScheduler-assembly.tar.gz root@${IP}:/opt
+  	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
+      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
+
+      IP=10.90.1.191
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'   
+      rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
+      scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
+      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
+
+      IP=10.90.1.192
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'   
+      rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
+      scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
+      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
+  '''
+}

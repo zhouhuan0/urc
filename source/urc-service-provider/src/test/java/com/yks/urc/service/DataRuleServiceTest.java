@@ -12,6 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,7 +160,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
 
     @Test
-    public void  addOrUpdateDataRule(){
+    public void  addOrUpdateDataRule() throws IOException {
         /*列权限1*/
         List<DataRuleColVO> dataRuleColVOS = new ArrayList<>();
         DataRuleColVO calJsonObj1 = new DataRuleColVO();
@@ -242,7 +243,10 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
         json.put("operator","panyun");
         json.put("lstDataRule",lstDataRule);
-        ResultVO resultVO = dataRuleService.addOrUpdateDataRule(json.toString());
+
+        String strData = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("dataRuleBody.json"));
+        List<String> lstData = StringUtility.parseObject(strData, new ArrayList<String>().getClass());
+        ResultVO resultVO = dataRuleService.addOrUpdateDataRule(lstData.get(0));
     }
 
     /*@Test

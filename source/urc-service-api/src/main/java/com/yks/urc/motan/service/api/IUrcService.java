@@ -585,4 +585,33 @@ public interface IUrcService {
      * @return:
      **/
     ResultVO deleteWhiteApi(String json);
+    
+    
+    /**
+     * @Description: 搜索指定系统的销售账号
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年5月17日 下午4:39:36
+     */
+    ResultVO searchSellerId(String jsonStr);
+    
+    
+    /**
+     * @Description: 匹配正确的销售账号
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年5月17日 下午4:39:59
+     */
+    ResultVO checkSellerId(String jsonStr);
+    
+    /**
+     * @Description:  获取指定系统的平台编码
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年5月20日 上午11:29:03
+     */
+    ResultVO getPlatformCode(String jsonStr);
 }

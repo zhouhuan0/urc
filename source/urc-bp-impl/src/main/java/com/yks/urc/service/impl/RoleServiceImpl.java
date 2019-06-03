@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -66,6 +67,10 @@ public class RoleServiceImpl implements IRoleService {
 
     @Autowired
     private RoleOwnerMapper ownerMapper;
+    @Autowired
+    private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
+
+
 
     /**
      * Description: 1、根据多个条件获取角色列表 2、admin可以查看所有角色；业务人员只能查看自己创建的角色
@@ -169,6 +174,11 @@ public class RoleServiceImpl implements IRoleService {
                 }
             }
         }
+        //超级管理员不显示
+        List<String> adminRoleIds = roleMapper.getAllAdminRoleId();
+        if (!CollectionUtils.isEmpty(adminRoleIds)) {
+            roleVOS.removeIf(roleVO -> adminRoleIds.contains(roleVO.roleId));
+        }
         return roleVOS;
     }
 
@@ -235,10 +245,16 @@ public class RoleServiceImpl implements IRoleService {
         if (newRelationUsers != null && !newRelationUsers.isEmpty()) {
             lstUserName.addAll(newRelationUsers);
         }
-        if (lstUserName != null && !lstUserName.isEmpty()) {
+        if (!lstUserName.isEmpty()) {
             /*去重*/
             lstUserName = removeDuplicate(lstUserName);
+            //保存权限改变的用户
+//            updateAffectedUserPermitCache.saveAffectedUser(lstUserName); //改为由定时任务执行
+            Long startTime = System.currentTimeMillis();
             permitStatBp.updateUserPermitCache(lstUserName);
+            Long endTime = System.currentTimeMillis();
+            logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
+
         }
         return VoHelper.getSuccessResult();
     }
@@ -524,6 +540,7 @@ public class RoleServiceImpl implements IRoleService {
         }
 
         roleVO.setLstUserName(lstUserName);
+
         // 组装userName 的personName, lstUserName not null
         if (!CollectionUtils.isEmpty(lstUserName)) {
             List<NameVO> lstUser = userMapper.getUserPersonByUserNames(lstUserName);
@@ -544,6 +561,7 @@ public class RoleServiceImpl implements IRoleService {
         roleVO.lstOwner = roleVO.lstOwner.stream().distinct().collect(Collectors.toList());
         //组装owner  下的 中文名 ,roleVO.lstOwner not null
         if (!CollectionUtils.isEmpty(roleVO.lstOwner)) {
+            //组装owner  下的 中文名
             List<NameVO> lstOwnerInfo = userMapper.getUserPersonByUserNames(roleVO.lstOwner);
             roleVO.setLstOwnerInfo(lstOwnerInfo);
         }
@@ -661,8 +679,10 @@ public class RoleServiceImpl implements IRoleService {
         roleMapper.deleteBatchRoleDatas(dataMap);
         //删除角色的owner
         lstRoleId.stream().forEach(s -> ownerMapper.deleteOwnerByRoleId(s));
+        //删除一个或多个角色时，将角色下的用户保存到urc_role_user_affected(等待定时updateUserPermitCache)
+        updateAffectedUserPermitCache.saveAffectedUser(userNames);
         /*5、更新用户操作权限冗余表和缓存*/
-        permitStatBp.updateUserPermitCache(userNames);
+//        permitStatBp.updateUserPermitCache(userNames);
 
         return VoHelper.getSuccessResult();
     }
@@ -804,7 +824,8 @@ public class RoleServiceImpl implements IRoleService {
             List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
             logger.info(String.format("获取的用户名为%s", userNames));
         /*4、更新用户操作权限冗余表和缓存*/
-            permitStatBp.updateUserPermitCache(userNames);
+            updateAffectedUserPermitCache.saveAffectedUser(userNames);
+//            permitStatBp.updateUserPermitCache(userNames);
             return VoHelper.getSuccessResult();
         } else {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
@@ -896,9 +917,12 @@ public class RoleServiceImpl implements IRoleService {
                         userRoleMapper.deleteUserRole(userRole);
                     }
                     if (userList != null && userList.size() > 0) {
+                        List<String> userNames = new ArrayList<>();
                         for (int q = 0; q < userList.size(); q++) {
-                            permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                            userNames.add(userList.get(q).getUserName());
+//                            permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                         }
+                        updateAffectedUserPermitCache.saveAffectedUser(userNames);
                     }
                     for (int j = 0; j < userNameList.size(); j++) {
                         UserRoleDO userRoleDO = new UserRoleDO();
@@ -920,9 +944,12 @@ public class RoleServiceImpl implements IRoleService {
                             userRoleMapper.deleteUserRole(userRole);
                         }
                         if (userList != null && userList.size() > 0) {
+                            List<String> userNames = new ArrayList<>();
                             for (int q = 0; q < userList.size(); q++) {
-                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
+                                userNames.add(userList.get(q).getUserName());
+//                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                             }
+                            updateAffectedUserPermitCache.saveAffectedUser(userNames);
                         }
                         for (int j = 0; j < userNameList.size(); j++) {
                             UserRoleDO userRoleDO = new UserRoleDO();
@@ -938,9 +965,12 @@ public class RoleServiceImpl implements IRoleService {
                 }
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
                     userRoleMapper.insertBatch(userRoleDOS);
+                    List<String> userNames = new ArrayList<>();
                     for (int j = 0; j < userRoleDOS.size(); j++) {
-                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
+                        userNames.add(userRoleDOS.get(j).getUserName());
+//                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
                     }
+                    updateAffectedUserPermitCache.saveAffectedUser(userNames);
 
                 }
             }
@@ -1090,7 +1120,8 @@ public class RoleServiceImpl implements IRoleService {
         UserRoleDO userRoleDO = new UserRoleDO();
         userRoleDO.setRoleId(roleId);
         List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
-        permitStatBp.updateUserPermitCache(lstUserName);
+        updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
+//        permitStatBp.updateUserPermitCache(lstUserName);
         return VoHelper.getSuccessResult();
     }
 
@@ -1110,7 +1141,8 @@ public class RoleServiceImpl implements IRoleService {
                 operationBp.addLog(logger.getName(), String.format("设置角色过期:%s", StringUtility.toJSONString_NoException(lstRole)), null);
 
                 // 更新用户的权限：冗余表、缓存
-                permitStatBp.updateUserPermitCache(lstUserName);
+                updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
+//                permitStatBp.updateUserPermitCache(lstUserName);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "处理完成");
             } else {
                 operationBp.addLog(logger.getName(), "没有角色过期", null);

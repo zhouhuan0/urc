@@ -1,5 +1,6 @@
 package com.yks.urc.motan.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
@@ -18,9 +19,12 @@ import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.userValidate.bp.impl.UserValidateBp;
 import com.yks.urc.vo.*;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -786,6 +790,115 @@ public class UrcServiceImpl implements IUrcService {
           return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"删除用户中心白名单失败");
       }
     }
+
+    @Log("搜索指定系统的销售账号")
+	@Override
+	public ResultVO searchSellerId(String jsonStr) {
+    	try {
+    		JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        	
+        	if(null == jsonObject){
+        		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+        	}
+        	String entityCode = jsonObject.getString("entityCode");
+        	String platformCode = jsonObject.getString("platformCode");
+        	if (StringUtility.isNullOrEmpty(entityCode)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+            }
+            if (StringUtility.isNullOrEmpty(platformCode)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "platformCode为空");
+            }
+            String operator = MotanSession.getRequest().getOperator();
+            jsonObject.put("operator", operator);
+            
+            ResultVO resultVOTemp =  dataRuleService.getPlatformShopByConditions(jsonObject);
+            List<OmsPlatformVO> omsPlatformVOList = (List<OmsPlatformVO>) resultVOTemp.data;
+            SearchSellerIdRespVO searchSellerIdRespVO = new SearchSellerIdRespVO();
+            List<String> list = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(omsPlatformVOList)){
+            	List<OmsShopVO> lstShop = omsPlatformVOList.get(0).lstShop;
+                for (OmsShopVO omsShopVO : lstShop) {
+                	list.add(omsShopVO.shopId);
+                }
+            }
+            searchSellerIdRespVO.setList(list);
+            return VoHelper.getSuccessResult(searchSellerIdRespVO);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"搜索指定系统的销售账号失败.");
+		}
+    	
+	}
+
+    @Log("匹配正确的销售账号")
+	@Override
+	public ResultVO checkSellerId(String jsonStr) {
+    	try {
+    		JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        	
+        	if(null == jsonObject){
+        		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+        	}
+        	String entityCode = jsonObject.getString("entityCode");
+        	String platformCode = jsonObject.getString("platformCode");
+        	String keys = jsonObject.getString("keys");
+        	List<String> lstSellerId = JSONArray.parseArray(jsonObject.getString("lstSellerId"), String.class);//要检测的销售账号【必填】for checkSellerId
+        	if (StringUtility.isNullOrEmpty(entityCode)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+            }
+            if (StringUtility.isNullOrEmpty(platformCode)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "platformCode为空");
+            }
+            if (CollectionUtils.isEmpty(lstSellerId)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstSellerId为空");
+            }
+            String operator = MotanSession.getRequest().getOperator();
+            jsonObject.put("operator", operator);
+            
+            ResultVO resultVOTemp =  dataRuleService.getPlatformShopByConditions(jsonObject);
+            List<OmsPlatformVO> omsPlatformVOList = (List<OmsPlatformVO>) resultVOTemp.data;
+            CheckSellerIdRespVO checkSellerIdRespVO = new CheckSellerIdRespVO();
+            Set<String> notOkSellerId = new HashSet<>();
+            Set<String> okSellerId = new HashSet<>();
+            if(CollectionUtils.isEmpty(omsPlatformVOList)){
+            	notOkSellerId.addAll(lstSellerId);
+            }
+            List<OmsShopVO> lstShop = omsPlatformVOList.get(0).lstShop;
+            for (String sellerId : lstSellerId) {
+            	for (OmsShopVO omsShopVO : lstShop) {
+            		if(null !=sellerId && sellerId.equalsIgnoreCase(omsShopVO.shopId)){
+    					okSellerId.add(sellerId);
+    					break;
+    				}
+        		}
+			}
+            lstSellerId.removeAll(new ArrayList<>(okSellerId));
+            checkSellerIdRespVO.setNotOkSellerId(lstSellerId);
+            checkSellerIdRespVO.setOkSellerId(new ArrayList<>(okSellerId));
+            return VoHelper.getSuccessResult(checkSellerIdRespVO);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"匹配正确的销售账号失败.");
+		}
+	}
+
+    @Log("获取指定系统的平台编码")
+	@Override
+	public ResultVO getPlatformCode(String jsonStr) {
+		try {
+			JSONObject jsonObject = StringUtility.parseString(jsonStr);
+	    	
+	    	if(null == jsonObject){
+	    		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+	    	}
+	    	String entityCode = jsonObject.getString("entityCode");
+	    	if (StringUtility.isNullOrEmpty(entityCode)) {
+	            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+	        }
+	    	return dataRuleService.getPlatformByConditions(jsonObject);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取指定系统的平台编码失败.");
+		}
+		
+	}
 
 
 }

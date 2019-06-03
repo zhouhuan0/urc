@@ -60,34 +60,8 @@ public class LDAPUtil2 {
 			logger.error(String.format("connect:%s %s", username, password), e);
 //			String exceptionString = e.getMessage();
 			//出现data 532是账号有效、密码有效但是密码过期了
-			if(true){
-				//改为登录失败后调账号管理系统的接口 判断账号密码是否有误 正确则登录成功 错误则登录失败（更新日志）
-				Map<String, String> map = new HashMap<>(15);
-				map.put("username",username);
-				map.put("password",password);
-				String response;
-				try {
-					response = HttpUtility2.postForm(getTokenUrl, map, null);
-				}catch (Exception e2){
-					logger.error(String.format("Call the userInfo management system to get the token interface to keep the error.userName:%s,passWord:%s",username,password),e2);
-					return false;
-				}
-				if(response != null){
-					JSONObject tokenObject = StringUtility.parseString(response);
-					String token = tokenObject.getString("token");
-					if(token != null && !"".equals(token)){
-						//*---------记录到日志------*/
-						loginLog.loginSuccess = 1;
-						loginLog.userName = username;
-						loginLog.remark = "账号密码正确，但是ldap方式登录失败";
-						loginLog.createTime =new Date();
-						loginLog.modifiedTime =new Date();
-						userLogBp.insertLog(loginLog);
-						//*----------------------------*/
-						return true;
-					}
-				}
-			}
+			//改为登录失败后调账号管理系统的接口 判断账号密码是否有误 正确则登录成功 错误则登录失败（更新日志）
+			return loginWishUserInfo(username, password);
 		}
 		finally {
 			try {
@@ -97,6 +71,41 @@ public class LDAPUtil2 {
 			} catch (Exception e) {
 				logger.error("LdapContext close ERROR",e);
 			}
+		}
+	}
+
+	/**
+	 * 使用userinfo接口校验用户密码
+	 * @return a
+	 *@Author panyun@youkeshu.com
+	 * @Date 2019/5/21 9:10
+	 */
+	private boolean loginWishUserInfo(String username, String password) {
+		String response = null;
+		try {
+			Map<String, String> map = new HashMap<>(2);
+			map.put("username", username);
+			map.put("password", password);
+			response = HttpUtility2.postForm(getTokenUrl, map, null);
+
+			if (response != null) {
+				JSONObject tokenObject = StringUtility.parseString(response);
+				String token = tokenObject.getString("token");
+				if (token != null && !"".equals(token)) {
+					UserLoginLogDO loginLog = new UserLoginLogDO();
+					//*---------记录到日志------*/
+					loginLog.loginSuccess = 1;
+					loginLog.userName = username;
+					loginLog.remark = "账号密码正确，但是ldap方式登录失败";
+					loginLog.createTime = new Date();
+					loginLog.modifiedTime = new Date();
+					userLogBp.insertLog(loginLog);
+					//*----------------------------*/
+					return true;
+				}
+			}
+		} catch (Exception e2) {
+			logger.error(String.format("Call userInfo error.userName:%s,passWord:%s,response=%s", username, password, response), e2);
 		}
 		return false;
 	}

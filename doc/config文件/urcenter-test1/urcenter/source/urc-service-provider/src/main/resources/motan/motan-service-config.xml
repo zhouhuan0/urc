@@ -9,7 +9,7 @@
                     <!--address="192.168.201.211:2181,192.168.201.212:2181,192.168.201.213:2181"-->
                     <!--connectTimeout="2000"/>-->
     <motan:registry regProtocol="zookeeper" name="zkRegistry"
-                    address="10.90.1.199:2181,10.90.1.198:2181,10.90.1.197:2181"
+                    address="10.90.1.231:2181,10.90.1.232:2181,10.90.1.233:2181"
                     connectTimeout="2000"/>
 
     <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。 -->
@@ -22,8 +22,8 @@
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
     <motan:basicService id="serviceBasicConfig"
-                        registry="zkRegistry" export="motan2:8002" group="rpc-service-group-test"
-                        version="2.0" accessLog="true" shareChannel="true" module="urc-service-provider-module-test"
+                        registry="zkRegistry" export="motan2:8002" group="rpc-service-group-test1"
+                        version="1.0" accessLog="true" shareChannel="true" module="urc-service-provider-module-test"
                         application="urc-service-provider-test"/>
 
     <!-- 业务具体实现类 -->

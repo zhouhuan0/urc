@@ -17,12 +17,14 @@ import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.mq.bp.api.IMqBp;
@@ -35,10 +37,13 @@ import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.test.context.TestExecutionListeners;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 //@Component
@@ -234,6 +239,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         service.assignAllPermit2Role(jsonStr);
     }
 
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Test
     public void updateUserPermitCache_Test() {
         List<String> lstUserName = new ArrayList<>();
@@ -254,9 +264,15 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         lstUserName.add("houyunfeng");
         lstUserName.add("panxi");
 
-        lstUserName.clear();
+//        lstUserName.clear();
         lstUserName.add("chenglifu1");
+        UserRoleDO ur=new UserRoleDO();
+        ur.setRoleId(1547612297943000005L);
+        lstUserName=userRoleMapper.getUserNameByRoleId(ur);
+        Date dtStart=new Date();
         permitStatBp.updateUserPermitCache(lstUserName);
+        Date dtEnd=new Date();
+        logger.error(String.format("updateUserPermitCache 总耗时:%s ms", (dtEnd.getTime() - dtStart.getTime())));
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
 
@@ -366,15 +382,23 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String jsonStr = StringUtility.toJSONString_NoException(map);
         System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
     }
-
+    @Test
     public void createRole_Test() {
-        Map<String, Object> map = new HashMap<>();
-        map.put(StringConstant.operator, "panyun");
-        RoleVO role = new RoleVO();
-        role.roleName = "panyunTest2";
-        map.put("role", role);
-        String jsonStr = StringUtility.toJSONString_NoException(map);
-        service.addOrUpdateRoleInfo(jsonStr);
+        File file = new File("C:\\Users\\A0103000228\\Desktop\\test.txt");
+        String json = null;
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(fileInputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            try {
+                json = bufferedReader.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        service.addOrUpdateRoleInfo(json);
     }
 
     @Test
@@ -399,5 +423,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String json = "{\"userName\":\"songguanye\",\"mobile\":\"18376740674\",\"ticket\":\"\",\"operator\":\"\",\"personName\":\"\",\"funcVersion\":\"\",\"moduleUrl\":\"/login/forget/\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         service.resetPwdGetVerificationCode(json);
+    }
+    @Test
+    public void testDeletRoles(){
+        String json = "{\"lstRoleId\":[\"1548057616163000011\",\"1548057639017000012\"],\"ticket\":\"0b5aa9af43fc58338723a44d174a5107\",\"operator\":\"songguanye\",\"funcVersion\":\"684a5791a07040c3c4d7721b2e083a22\",\"moduleUrl\":\"/user/rolemanagement/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(json);
+        service.deleteRoles(json);
     }
 }

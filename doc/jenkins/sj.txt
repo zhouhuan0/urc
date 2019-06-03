@@ -1,0 +1,37 @@
+node {
+stage '拉取代码' 
+  sh '''
+   # 删除之前workspace中的缓存文件
+   rm -rf ./*
+  '''
+
+  checkout([$class: 'GitSCM', branches: [[name: 'panyun_config']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@git.kokoerp.com:YKSproject/urcenter.git']]])
+
+stage '同步配置文件'
+ sh '''
+   # 替换配置模板,test环境的配置文件直接从doc目录cp
+   cp -rf `pwd`/doc/config文件/urcenter-sj/urcenter/source/* ./source/
+   
+   echo "is Ok!!!"
+ '''
+
+stage 'MVN编译' 
+ dir('./source'){
+  sh "/opt/apache-maven-3.3.9/bin/mvn clean install -am  -e -U -Dmaven.test.skip=true"
+  sh "echo ok"
+ }
+
+stage '部署应用'
+sh '''
+    confPath=urcenter-sj
+	
+	IP=10.90.1.101
+    
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'	  
+	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
+	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
+      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
+      echo "is Ok"
+    
+  '''
+}

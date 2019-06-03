@@ -1,6 +1,6 @@
 package com.yks.urc.mapper;
 
-import com.yks.urc.entity.IUrcWhiteApiVO;
+import com.yks.urc.entity.UrcWhiteApiVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -17,7 +17,7 @@ public interface IUrcWhiteApiUrlMapper {
 
    Integer selectWhiteApiByWiteApi(@Param("whiteApi") String whiteApi);
 
-   int insert(IUrcWhiteApiVO iUrcWhiteApiVO);
+   int insert(UrcWhiteApiVO iUrcWhiteApiVO);
 
    int deleteApi(@Param("whiteApi") String whiteApi);
 }

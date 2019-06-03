@@ -9,6 +9,7 @@
 package com.yks.urc.funcjsontree.bp.impl;
 
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.exception.URCBizException;
@@ -46,6 +47,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
     private PermissionMapper permissionMapper;
     @Autowired
     private ISessionBp sessionBp;
+    @Autowired
+    private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
 
 
     /**
@@ -204,7 +207,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
                 /*3、更新用户操作权限冗余表和缓存*/
         if (!CollectionUtils.isEmpty(userNames)) {
-            permitStatBp.updateUserPermitCache(userNames);
+            updateAffectedUserPermitCache.saveAffectedUser(userNames);
+//            permitStatBp.updateUserPermitCache(userNames);
         }
         return true;
     }
@@ -323,7 +327,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         logger.info(String.format("获取的用户名为%s", userNames));
         userNames = userNames.stream().distinct().collect(Collectors.toList());
     /*4、更新用户操作权限冗余表和缓存*/
-        permitStatBp.updateUserPermitCache(userNames);
+        updateAffectedUserPermitCache.saveAffectedUser(userNames);
+//        permitStatBp.updateUserPermitCache(userNames);
     }
 
     /**

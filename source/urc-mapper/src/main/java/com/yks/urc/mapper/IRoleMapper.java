@@ -1,8 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.RolePermissionDO;
-import com.yks.urc.vo.RoleVO;
+import com.yks.urc.vo.SystemKeyContext;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
@@ -94,6 +93,7 @@ public interface IRoleMapper {
 
     List<String> selectRoleNameByUserName(@Param("userName") String userName);
     List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
+    List<SystemKeyContext> getFuncJsonListByUserAndSysKey(@Param("userName") String userName, @Param("sysKeyList") List<String> sysKey);
 
     /**
      * 给定角色名的数据是否已存在
@@ -202,4 +202,12 @@ public interface IRoleMapper {
      * @Date 2018/6/13 17:27
      */
     boolean isSysAdminAccount(@Param("userName") String userName,@Param("sysKey") String sysKey);
+
+    /**
+     * 查询所有的超级管理员 获取roleId
+     * @return
+     */
+    Long selectAllSuperAdministrator();
+
+    List<String> getAllAdminRoleId();
 }
