@@ -16,6 +16,7 @@ import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
@@ -103,6 +104,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ICacheBp cacheBp;
+    
+    @Autowired
+    IUrcLogBp iUrcLogBp;
 
     @Autowired(required = false)
     private IOrderManageService orderManageService;
@@ -964,6 +968,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/20 16:10
      * @see
      */
+    
     @Override
     @Transactional
     public ResultVO addOrUpdateDataRule(String jsonStr) {
@@ -1028,6 +1033,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<ExpressionDO> expressionCache = new ArrayList<>();
         //组装下发数据
         List<DataRuleVO> dataRuleVOS =new ArrayList<>();
+        
         /*2、新增用户-操作权限关系数据 dataRule*/
         for (int i = 0; i < lstUserName.size(); i++) {
             // 组装 dataRuleVO
@@ -1035,7 +1041,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVO.t = String.valueOf(System.currentTimeMillis());
             dataRuleVO.lstDataRuleSys =dataRuleSys;
             dataRuleVO.userName =lstUserName.get(i);
-
+            
             // 组装入库数据
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
@@ -1075,6 +1081,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         /*发送MQ*/
         sendToMq(dataRuleVOS);
+        
+      //保存操作日志
+      //  UrcLog urcLog = new UrcLog(operator, "用户管理", "分配数据权限", lstUserName.toString(), jsonStr);
+      //  iUrcLogBp.insertUrcLog(urcLog);
+        
         return VoHelper.getSuccessResult();
     }
 
