@@ -127,6 +127,6 @@ public class RoleServiceTest extends BaseServiceTest {
     }
     @Test
     public void copyRole(){
-        roleService.copyRole("dcadmin","复制角色","1529550145551000001");
+        roleService.copyRole("dcadmin","复制角色","1539164355294000010");
     }
 }

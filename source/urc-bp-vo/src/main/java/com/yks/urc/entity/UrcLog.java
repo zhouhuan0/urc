@@ -11,7 +11,7 @@ public class UrcLog {
 
     private String computerIp;
 
-    private String moduleName;
+    private Integer moduleCode;
 
     private String operateAction;
 
@@ -32,11 +32,11 @@ public class UrcLog {
 	 * @param operateJson
 	*/
 		
-	public UrcLog(String userName, String moduleName, String operateAction, String operateObject,
+	public UrcLog(String userName, Integer moduleCode, String operateAction, String operateObject,
 			String operateJson) {
 		super();
 		this.userName = userName;
-		this.moduleName = moduleName;
+		this.moduleCode = moduleCode;
 		this.operateAction = operateAction;
 		this.operateObject = operateObject;
 		this.operateJson = operateJson;
@@ -74,15 +74,16 @@ public class UrcLog {
         this.computerIp = computerIp == null ? null : computerIp.trim();
     }
 
-    public String getModuleName() {
-        return moduleName;
-    }
 
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName == null ? null : moduleName.trim();
-    }
+    public Integer getModuleCode() {
+		return moduleCode;
+	}
 
-    public String getOperateAction() {
+	public void setModuleCode(Integer moduleCode) {
+		this.moduleCode = moduleCode;
+	}
+
+	public String getOperateAction() {
         return operateAction;
     }
 
@@ -117,7 +118,7 @@ public class UrcLog {
 	@Override
 	public String toString() {
 		return "UrcLog [id=" + id + ", userName=" + userName + ", operateTime=" + operateTime + ", computerIp="
-				+ computerIp + ", moduleName=" + moduleName + ", operateAction=" + operateAction + ", operateObject="
+				+ computerIp + ", moduleCode=" + moduleCode + ", operateAction=" + operateAction + ", operateObject="
 				+ operateObject + ", modifyTime=" + modifyTime + ", operateJson=" + operateJson + "]";
 	}
     

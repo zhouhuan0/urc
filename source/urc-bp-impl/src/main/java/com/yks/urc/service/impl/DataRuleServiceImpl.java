@@ -1,11 +1,13 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
@@ -486,6 +488,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVOS.add(dataRuleVO);
         }
         sendToMq(dataRuleVOS);
+        
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配数据权限模板给用户",String.format("%s -> %s", templId,lstUserName.toString()), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
 
@@ -834,6 +840,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplDO.setModifiedTime(new Date());
             dataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.insert(dataRuleTemplDO);
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "新增数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(dataRuleTemplDO));
+            iUrcLogBp.insertUrcLog(urcLog);
         } else {
             DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),null);
             if(dataRuleTemplDO!=null){
@@ -850,6 +859,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             orgDataRuleTemplDO.setModifiedTime(new Date());
             orgDataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.updateDataRuleTemplById(orgDataRuleTemplDO);
+            //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "更新数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(orgDataRuleTemplDO));
+            iUrcLogBp.insertUrcLog(urcLog);
 
         }
 
@@ -951,11 +963,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
             //dataRuleTemplMapper.delTemplDatasByIds(lstTemplId);
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, null);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, null);
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTemplId.toString(), jsonStr);
+            iUrcLogBp.insertUrcLog(urcLog);
         } else {
              /*4.2、根据templId列表和创建人批量删除数据权限方案模板*/
             //dataRuleTemplMapper.delTemplDatasByIdsAndCreatBy(lstTemplId, operator);
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, operator);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, operator);
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTemplId.toString(), jsonStr);
+            iUrcLogBp.insertUrcLog(urcLog);
         }
         return VoHelper.getSuccessResult();
     }
@@ -1082,9 +1100,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*发送MQ*/
         sendToMq(dataRuleVOS);
         
-      //保存操作日志
-      //  UrcLog urcLog = new UrcLog(operator, "用户管理", "分配数据权限", lstUserName.toString(), jsonStr);
-      //  iUrcLogBp.insertUrcLog(urcLog);
+        //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "分配数据权限", lstUserName.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
         
         return VoHelper.getSuccessResult();
     }

@@ -6,7 +6,7 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
     <result column="computer_ip" jdbcType="VARCHAR" property="computerIp" />
-    <result column="module_name" jdbcType="VARCHAR" property="moduleName" />
+    <result column="module_code" jdbcType="INTEGER" property="moduleCode" />
     <result column="operate_action" jdbcType="VARCHAR" property="operateAction" />
     <result column="operate_object" jdbcType="VARCHAR" property="operateObject" />
     <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
@@ -15,7 +15,7 @@
     <result column="operate_json" jdbcType="LONGVARCHAR" property="operateJson" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, user_name, operate_time, computer_ip, module_name, operate_action, operate_object, 
+    id, user_name, operate_time, computer_ip, module_code, operate_action, operate_object, 
     modify_time
   </sql>
   <sql id="Blob_Column_List">
@@ -35,11 +35,11 @@
   </delete>
   <insert id="insert" parameterType="com.yks.urc.entity.UrcLog">
     insert into urc_log (id, user_name, operate_time, 
-      computer_ip, module_name, operate_action, 
+      computer_ip, module_code, operate_action, 
       operate_object, modify_time, operate_json
       )
     values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{operateTime,jdbcType=TIMESTAMP}, 
-      #{computerIp,jdbcType=VARCHAR}, #{moduleName,jdbcType=VARCHAR}, #{operateAction,jdbcType=VARCHAR}, 
+      #{computerIp,jdbcType=VARCHAR}, #{moduleCode,jdbcType=INTEGER}, #{operateAction,jdbcType=VARCHAR}, 
       #{operateObject,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, #{operateJson,jdbcType=LONGVARCHAR}
       )
   </insert>
@@ -58,8 +58,8 @@
       <if test="computerIp != null">
         computer_ip,
       </if>
-      <if test="moduleName != null">
-        module_name,
+      <if test="moduleCode != null">
+        module_code,
       </if>
       <if test="operateAction != null">
         operate_action,
@@ -87,8 +87,8 @@
       <if test="computerIp != null">
         #{computerIp,jdbcType=VARCHAR},
       </if>
-      <if test="moduleName != null">
-        #{moduleName,jdbcType=VARCHAR},
+      <if test="moduleCode != null">
+        #{moduleCode,jdbcType=INTEGER},
       </if>
       <if test="operateAction != null">
         #{operateAction,jdbcType=VARCHAR},
@@ -116,8 +116,8 @@
       <if test="computerIp != null">
         computer_ip = #{computerIp,jdbcType=VARCHAR},
       </if>
-      <if test="moduleName != null">
-        module_name = #{moduleName,jdbcType=VARCHAR},
+      <if test="moduleCode != null">
+        module_code = #{moduleCode,jdbcType=INTEGER},
       </if>
       <if test="operateAction != null">
         operate_action = #{operateAction,jdbcType=VARCHAR},
@@ -139,7 +139,7 @@
     set user_name = #{userName,jdbcType=VARCHAR},
       operate_time = #{operateTime,jdbcType=TIMESTAMP},
       computer_ip = #{computerIp,jdbcType=VARCHAR},
-      module_name = #{moduleName,jdbcType=VARCHAR},
+      module_code = #{moduleCode,jdbcType=INTEGER},
       operate_action = #{operateAction,jdbcType=VARCHAR},
       operate_object = #{operateObject,jdbcType=VARCHAR},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP},
@@ -151,7 +151,7 @@
     set user_name = #{userName,jdbcType=VARCHAR},
       operate_time = #{operateTime,jdbcType=TIMESTAMP},
       computer_ip = #{computerIp,jdbcType=VARCHAR},
-      module_name = #{moduleName,jdbcType=VARCHAR},
+      module_code = #{moduleCode,jdbcType=INTEGER},
       operate_action = #{operateAction,jdbcType=VARCHAR},
       operate_object = #{operateObject,jdbcType=VARCHAR},
       modify_time = #{modifyTime,jdbcType=TIMESTAMP}
