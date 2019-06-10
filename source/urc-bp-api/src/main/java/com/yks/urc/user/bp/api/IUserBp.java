@@ -45,4 +45,6 @@ public interface IUserBp {
 
 	ResultVO logout(String jsonStr);
 
+	List<String> getUserName(String userName);
+
 }

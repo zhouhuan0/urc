@@ -161,4 +161,13 @@ public interface IUserMapper {
      * @Date 2019/1/10 14:17
      */
     List<NameVO> getUserPersonByUserNames(@Param("lstUserName") List<String> lstUserName);
+    
+    /**
+     * @Description: 通过userName模糊查询
+     * @author: zengzheng
+     * @param userName
+     * @return
+     * @version: 2019年6月10日 上午9:55:14
+     */
+    List<String> getUserNameByFuzzy(@Param("userName") String userName);
 }

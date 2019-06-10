@@ -23,6 +23,7 @@ import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UrcLog;
 import com.yks.urc.mapper.UrcLogMapper;
 import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.vo.LogListReqVo;
 import com.yks.urc.vo.UserVO;
 
 @Component
@@ -40,6 +41,7 @@ public class UrcLogBpImpl implements IUrcLogBp {
 	@Override
 	public void insertUrcLog(UrcLog urcLog) {
 		try {
+			logger.info("insertUrcLog:{}",urcLog.toString());
 			UserVO getU =cacheBp.getUser(urcLog.getUserName());
 			urcLog.setComputerIp(null != getU?getU.ip:"");
 			urcLog.setOperateTime(new Date());
@@ -61,9 +63,10 @@ public class UrcLogBpImpl implements IUrcLogBp {
 		
 	}
 
-
 	@Override
-	public List<UrcLog> selectUrcLogByConditions(Map<String, Object> conditionsMap) {
-		return urcLogMapper.selectUrcLogByConditions(conditionsMap);
+	public List<UrcLog> selectUrcLogByConditions(LogListReqVo logListReqVo) {
+		// TODO Auto-generated method stub
+		return urcLogMapper.selectUrcLogByConditions(logListReqVo);
 	}
+
 }

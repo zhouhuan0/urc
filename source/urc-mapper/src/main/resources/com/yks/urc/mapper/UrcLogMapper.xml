@@ -159,15 +159,23 @@
   </update>
   
   
-  <select id="selectUrcLogByConditions"  resultMap="ResultMapWithBLOBs">
+  <select id="selectUrcLogByConditions"  resultMap="ResultMapWithBLOBs" parameterType="com.yks.urc.vo.LogListReqVo">
     select 
     <include refid="Base_Column_List" />
-    ,
-    <include refid="Blob_Column_List" />
     from urc_log
     where 1 = 1
-    <if test="operateTime != null">
-       and operate_time = #{operateTime,jdbcType=TIMESTAMP},
+    <if test="moduleCode4Select != null">
+       and module_code = #{moduleCode,jdbcType=INTEGER}
     </if>
+    <if test="userName != null and userName != ''">
+       and user_name = #{userName,jdbcType=INTEGER}
+    </if>
+    <if test="operateTimeStart != null and operateTimeEnd != null">
+       and <![CDATA[operate_time > #{operateTimeStart}]]> and <![CDATA[operate_time < #{operateTimeEnd}]]> 
+    </if>
+    <if test="pageData != null and pageNumber != null ">
+     limit #{offset},#{pageData}
+    </if>
+    
   </select>
 </mapper>

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yks.urc.entity.UrcLog;
+import com.yks.urc.vo.LogListReqVo;
 
 /**
  * @Description: 用户系统操作日志
@@ -35,5 +36,5 @@ public interface IUrcLogBp {
      * @return
      * @version: 2019年6月4日 上午9:38:58
      */
-    List<UrcLog> selectUrcLogByConditions(Map<String,Object> conditionsMap);
+    List<UrcLog> selectUrcLogByConditions(LogListReqVo logListReqVo);
 }

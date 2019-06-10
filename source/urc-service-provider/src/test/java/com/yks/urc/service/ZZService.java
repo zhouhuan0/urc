@@ -62,6 +62,22 @@ public class ZZService extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
 	}
 	 
+	
+	@Test
+	public void testUrcLogApi(){
+		String jsonStr = "{\"data\":{\"userName\":\"\"},\"operator\":\"zengzheng\"}";
+		ResultVO resultVO=urcService.getUserName(jsonStr);
+        System.out.println(StringUtility.toJSONString(resultVO));
+        
+        jsonStr = null;
+        resultVO=urcService.getLogModuleList(jsonStr);
+        
+        System.out.println(StringUtility.toJSONString(resultVO));
+        
+        jsonStr = "{\"data\":{\"moduleCode\":\"1\",\"operateTimeRange\":[1560096000000, 1563206399000],\"pageData\":20,\"pageNumber\":1,\"userName\":\"chencanwei\"},\"operator\":\"zengzheng\"}";
+        resultVO=urcService.getLogList(jsonStr);
+        System.out.println(StringUtility.toJSONString(resultVO));
+	}
     
     
     

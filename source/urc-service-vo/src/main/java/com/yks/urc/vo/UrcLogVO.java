@@ -1,8 +1,8 @@
-package com.yks.urc.entity;
+package com.yks.urc.vo;
 
 import java.util.Date;
 
-public class UrcLog {
+public class UrcLogVO {
     private Long id;
 
     private String userName;
@@ -17,39 +17,10 @@ public class UrcLog {
 
     private String operateObject;
 
-    private Date modifyTime;
-
-    private String operateJson;
     
-    
+    private String moduleName;
 
     
-    /**
-	 * 
-	*/
-		
-	public UrcLog() {
-		super();
-	}
-
-	/**
-	 * @param id
-	 * @param userName
-	 * @param moduleName
-	 * @param operateAction
-	 * @param operateObject
-	 * @param operateJson
-	*/
-		
-	public UrcLog(String userName, Integer moduleCode, String operateAction, String operateObject,
-			String operateJson) {
-		super();
-		this.userName = userName;
-		this.moduleCode = moduleCode;
-		this.operateAction = operateAction;
-		this.operateObject = operateObject;
-		this.operateJson = operateJson;
-	}
 
 	public Long getId() {
         return id;
@@ -108,27 +79,19 @@ public class UrcLog {
         this.operateObject = operateObject == null ? null : operateObject.trim();
     }
 
-    public Date getModifyTime() {
-        return modifyTime;
-    }
+	public String getModuleName() {
+		return moduleName;
+	}
 
-    public void setModifyTime(Date modifyTime) {
-        this.modifyTime = modifyTime;
-    }
-
-    public String getOperateJson() {
-        return operateJson;
-    }
-
-    public void setOperateJson(String operateJson) {
-        this.operateJson = operateJson == null ? null : operateJson.trim();
-    }
+	public void setModuleName(String moduleName) {
+		this.moduleName = moduleName;
+	}
 
 	@Override
 	public String toString() {
-		return "UrcLog [id=" + id + ", userName=" + userName + ", operateTime=" + operateTime + ", computerIp="
+		return "UrcLogVO [id=" + id + ", userName=" + userName + ", operateTime=" + operateTime + ", computerIp="
 				+ computerIp + ", moduleCode=" + moduleCode + ", operateAction=" + operateAction + ", operateObject="
-				+ operateObject + ", modifyTime=" + modifyTime + ", operateJson=" + operateJson + "]";
+				+ operateObject + ", moduleName=" + moduleName + "]";
 	}
-    
+
 }

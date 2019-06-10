@@ -478,4 +478,9 @@ public class UserBpImpl implements IUserBp {
         return VoHelper.getSuccessResult("logout success");
     }
 
+	@Override
+	public List<String> getUserName(String userName) {
+		return userMapper.getUserNameByFuzzy(userName);
+	}
+
 }

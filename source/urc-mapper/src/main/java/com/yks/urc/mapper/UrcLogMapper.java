@@ -1,9 +1,9 @@
 package com.yks.urc.mapper;
 
 import java.util.List;
-import java.util.Map;
 
 import com.yks.urc.entity.UrcLog;
+import com.yks.urc.vo.LogListReqVo;
 
 public interface UrcLogMapper {
     int deleteByPrimaryKey(Long id);
@@ -27,5 +27,6 @@ public interface UrcLogMapper {
      * @return
      * @version: 2019年6月4日 上午9:43:42
      */
-    List<UrcLog> selectUrcLogByConditions(Map<String,Object> conditionsMap);
+    List<UrcLog> selectUrcLogByConditions(LogListReqVo logListReqVo);
+
 }
