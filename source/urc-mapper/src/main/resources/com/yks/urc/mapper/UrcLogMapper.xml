@@ -173,6 +173,7 @@
     <if test="operateTimeStart != null and operateTimeEnd != null">
        and <![CDATA[operate_time > #{operateTimeStart}]]> and <![CDATA[operate_time < #{operateTimeEnd}]]> 
     </if>
+    order by operate_time desc
     <if test="pageData != null and pageNumber != null ">
      limit #{offset},#{pageData}
     </if>

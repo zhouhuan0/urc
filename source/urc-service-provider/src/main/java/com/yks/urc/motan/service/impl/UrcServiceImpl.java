@@ -992,10 +992,21 @@ public class UrcServiceImpl implements IUrcService {
 	    	if (null == userVO) {
 	            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "data为空");
 	        }
-	    	List<String> userNameList4Return = new ArrayList<>();
-	    	userNameList4Return.add("全部");
+	    	List<GetUserNameRespVo> userNameList4Return = new ArrayList<>();
+	    	GetUserNameRespVo getUserNameRespVoAll = new GetUserNameRespVo();
+	    	getUserNameRespVoAll.setUserName("全部");
+	    	userNameList4Return.add(getUserNameRespVoAll);
 	    	List<String> userNameList = userBp.getUserName(userVO.userName);
-	    	userNameList4Return.addAll(userNameList);
+	    	List<GetUserNameRespVo> getUserNameRespVoList = new ArrayList<>();
+	    	if(!CollectionUtils.isEmpty(userNameList)){
+	    		for (String userName : userNameList) {
+	    			GetUserNameRespVo getUserNameRespVo = new GetUserNameRespVo();
+		    		getUserNameRespVo.setUserName(userName);
+		    		getUserNameRespVoList.add(getUserNameRespVo);
+				}
+	    		
+	    	}
+	    	userNameList4Return.addAll(getUserNameRespVoList);
 	    	return VoHelper.getSuccessResult(userNameList4Return);
 		} catch (Exception e) {
 			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取用户名失败.");
