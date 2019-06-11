@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,7 +26,6 @@ import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RoleOwnerDO;
@@ -947,19 +947,22 @@ public class RoleServiceImpl implements IRoleService {
     public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
     	StringBuilder logStr = new StringBuilder();
         if (lstRole != null && lstRole.size() > 0) {
+        	Set<String> roleNameList4Log = new HashSet<>();
+        	Set<String> userNameList4Log = new HashSet<>();
             for (int i = 0; i < lstRole.size(); i++) {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
+                roleNameList4Log.add(roleDO.getRoleName());
                 //判断传入的operator 是否是owner
                 if (roleDO != null) {
                     if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, roleDO.getRoleId())) {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不属于该角色的owner" + lstRole.get(i), ErrorCode.E_000003);
                     }
                 }
-
                 UserRoleDO userRole = new UserRoleDO();
                 List<UserRoleDO> userRoleDOS = new ArrayList<>();
                 List<String> userNameList = roleVO.getLstUserName();
+                userNameList4Log.addAll(userNameList);
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
                     //throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "请至少选择一个用户");
@@ -1021,26 +1024,20 @@ public class RoleServiceImpl implements IRoleService {
                     }
                 }
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
+                	 List<String> userNames = new ArrayList<>();
                     userRoleMapper.insertBatch(userRoleDOS);
-                    List<String> userNames = new ArrayList<>();
                     for (int j = 0; j < userRoleDOS.size(); j++) {
                         userNames.add(userRoleDOS.get(j).getUserName());
 //                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
-                        try {
-                        	logStr.append(roleMapper.getRoleByRoleId(userRoleDOS.get(j).getRoleId().toString()).getRoleName()).append("->").append(userRoleDOS.get(j).getUserName()).append(";");
-						} catch (Exception e) {
-							logger.error("log error! e:{}",e);
-						}
-                        
                     }
                     updateAffectedUserPermitCache.saveAffectedUser(userNames);
-
                 }
             }
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s -> %s", roleNameList4Log,userNameList4Log), JSON.toJSONString(lstRole));
+            iUrcLogBp.insertUrcLog(urcLog);
         }
-      //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", logStr.toString(), JSON.toJSONString(lstRole));
-        iUrcLogBp.insertUrcLog(urcLog);
+      
         return VoHelper.getSuccessResult();
     }
 

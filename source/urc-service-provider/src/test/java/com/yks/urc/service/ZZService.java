@@ -93,11 +93,12 @@ public class ZZService extends BaseServiceTest {
 	public void testUrcLog(){
 		List<Long> roleIds = new ArrayList<>();
 		roleIds.add(1539160322094000002L);
+		roleIds.add(1535359122340000047L);
 		List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
         List<String> roleNames = new ArrayList<>();
         roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
       //保存操作日志
-        UrcLog urcLog = new UrcLog("zengzheng", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "批量分配角色功能权限", String.format("%s->%s",roleNames,"zengzheng"), JSON.toJSONString(roleNames));
+        UrcLog urcLog = new UrcLog("zz", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s 分配给：(用户)%s", roleIds,roleNames), JSON.toJSONString(roleIds));
         iUrcLogBp.insertUrcLog(urcLog);
 	}
     
