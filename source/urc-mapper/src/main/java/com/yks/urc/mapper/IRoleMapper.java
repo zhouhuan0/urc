@@ -68,6 +68,15 @@ public interface IRoleMapper {
      * @see
      */
     RoleDO getRoleByRoleId(@Param("roleId") String roleId);
+    
+    /**
+     * @Description: TODO
+     * @author: zengzheng
+     * @param roleIds
+     * @return
+     * @version: 2019年6月11日 上午8:44:56
+     */
+    List<RoleDO> getRoleByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     /**
      * Description: 根据roleId获取角色详情信息 包括角色-权限  用户-角色关系

@@ -53,6 +53,17 @@
             </if>
         </where>
     </select>
+    
+     <select id="selectByTemplIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_data_rule_templ
+        
+        where templ_id in
+        <foreach collection="lstTemplIds" item="templId" open="(" separator="," close=")">
+            #{templId}
+        </foreach>
+    </select>
     <!--分页-->
     <select id="listDataRuleTemplDOsByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
         select

@@ -31,6 +31,8 @@ public interface IDataRuleTemplMapper {
      * @see
      */
     DataRuleTemplDO selectByTemplId(@Param("templId") Long id, @Param("createBy") String createBy);
+    
+    List<DataRuleTemplDO> selectByTemplIds(@Param("lstTemplIds") List<Long> lstTemplIds);
 
     /**
      * Description: 根据条件分页获取 dataRuleTempDOs List数据

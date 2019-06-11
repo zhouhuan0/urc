@@ -25,6 +25,7 @@ import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
+import com.yks.urc.entity.DataRuleTemplDO;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.RoleOwnerDO;
@@ -720,9 +721,15 @@ public class RoleServiceImpl implements IRoleService {
 //        permitStatBp.updateUserPermitCache(userNames);
 
         
-      //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", logStr.toString(), jsonStr);
-        iUrcLogBp.insertUrcLog(urcLog);
+        if(!CollectionUtils.isEmpty(lstRoleId)){
+        	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(lstRoleId);
+            List<String> roleNames = new ArrayList<>();
+            roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", roleNames.toString(), jsonStr);
+            iUrcLogBp.insertUrcLog(urcLog);
+        }
+      
         return VoHelper.getSuccessResult();
     }
 
@@ -866,9 +873,15 @@ public class RoleServiceImpl implements IRoleService {
             updateAffectedUserPermitCache.saveAffectedUser(userNames);
 //            permitStatBp.updateUserPermitCache(userNames);
             
-          //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "批量分配角色功能权限", String.format("%s->%s",roleIds.toString(),userNames), JSON.toJSONString(lstRole));
-            iUrcLogBp.insertUrcLog(urcLog);
+            if(!CollectionUtils.isEmpty(roleIds)){
+            	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
+                List<String> roleNames = new ArrayList<>();
+                roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+              //保存操作日志
+                UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "批量分配角色功能权限", String.format("%s->%s",roleNames,userNames), JSON.toJSONString(lstRole));
+                iUrcLogBp.insertUrcLog(urcLog);
+            }
+          
             return VoHelper.getSuccessResult();
         } else {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
@@ -1013,7 +1026,12 @@ public class RoleServiceImpl implements IRoleService {
                     for (int j = 0; j < userRoleDOS.size(); j++) {
                         userNames.add(userRoleDOS.get(j).getUserName());
 //                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
-                        logStr.append(userRoleDOS.get(j).getUserName()).append("->").append(userRoleDOS.get(j).getRoleId()).append(" ");
+                        try {
+                        	logStr.append(userRoleDOS.get(j).getUserName()).append("->").append(roleMapper.getRoleByRoleId(userRoleDOS.get(j).getRoleId().toString()).getRoleName()).append(" ");
+						} catch (Exception e) {
+							logger.error("log error! e:{}",e);
+						}
+                        
                     }
                     updateAffectedUserPermitCache.saveAffectedUser(userNames);
 

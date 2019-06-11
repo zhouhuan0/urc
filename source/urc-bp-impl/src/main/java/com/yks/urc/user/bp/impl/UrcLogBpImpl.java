@@ -10,7 +10,6 @@ package com.yks.urc.user.bp.impl;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -42,20 +41,20 @@ public class UrcLogBpImpl implements IUrcLogBp {
 	public void insertUrcLog(UrcLog urcLog) {
 		try {
 			logger.info("insertUrcLog:{}",urcLog.toString());
-			UserVO getU =cacheBp.getUser(urcLog.getUserName());
-			urcLog.setComputerIp(null != getU?getU.ip:"");
-			urcLog.setOperateTime(new Date());
-			urcLogMapper.insert(urcLog);
-			/*service.submit(new Runnable() {
+			
+			service.submit(new Runnable() {
 	            @Override
 	            public void run() {
 	                try {
-	                	urcLogMapper.insert(urcLog);
+	                	UserVO getU =cacheBp.getUser(urcLog.getUserName());
+	        			urcLog.setComputerIp(null != getU?getU.ip:"");
+	        			urcLog.setOperateTime(new Date());
+	        			urcLogMapper.insert(urcLog);
 	                } catch (Exception e) {
-	                    logger.error("UrcLogBpImpl insertUrcLog error! urcLog:{},e:{}",urcLog.toString(), e);
+	                    logger.error("insertUrcLog error! urcLog:{},e:{}",urcLog.toString(), e);
 	                }
 	            }
-	        });*/
+	        });
 		} catch (Exception e) {
 			logger.error("insertUrcLog error! urclog:{},e:{}",urcLog.toString(),e);
 		}

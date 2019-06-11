@@ -12,9 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.dingding.client.DingApiProxy;
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UrcLog;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
@@ -81,9 +85,10 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void updateRolePermission() throws Exception{
 
+    	
         List<RoleVO> lstRole = new ArrayList<>();
         RoleVO roleVO=new RoleVO();
-        roleVO.setRoleId("1530772562805000305");
+        roleVO.setRoleId("1539160322094000002");
         lstRole.add(roleVO);
         roleService.updateRolePermission("wujianghui", lstRole);
     }

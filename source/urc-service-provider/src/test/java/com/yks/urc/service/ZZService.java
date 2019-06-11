@@ -6,16 +6,23 @@ import java.util.List;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+
 import org.drools.compiler.lang.DRL5Expressions.literal_return;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.dingding.client.DingApiProxy;
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.UrcLog;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.RoleVO;
@@ -78,7 +85,21 @@ public class ZZService extends BaseServiceTest {
         resultVO=urcService.getLogList(jsonStr);
         System.out.println(StringUtility.toJSONString(resultVO));
 	}
-    
+	@Autowired
+    private IRoleMapper roleMapper;
+	@Autowired
+    IUrcLogBp iUrcLogBp;
+	@Test
+	public void testUrcLog(){
+		List<Long> roleIds = new ArrayList<>();
+		roleIds.add(1539160322094000002L);
+		List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
+        List<String> roleNames = new ArrayList<>();
+        roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+      //保存操作日志
+        UrcLog urcLog = new UrcLog("zengzheng", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "批量分配角色功能权限", String.format("%s->%s",roleNames,"zengzheng"), JSON.toJSONString(roleNames));
+        iUrcLogBp.insertUrcLog(urcLog);
+	}
     
     
 }

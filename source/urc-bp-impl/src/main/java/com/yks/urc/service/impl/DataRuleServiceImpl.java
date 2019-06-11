@@ -489,8 +489,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         sendToMq(dataRuleVOS);
         
+        DataRuleTemplDO dataRuleTemplDO= dataRuleTemplMapper.selectByTemplId(templId,null);
       //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配数据权限模板给用户",String.format("%s -> %s", templId,lstUserName.toString()), jsonStr);
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配数据权限模板给用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
@@ -963,18 +964,22 @@ public class DataRuleServiceImpl implements IDataRuleService {
             //dataRuleTemplMapper.delTemplDatasByIds(lstTemplId);
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, null);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, null);
-          //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTemplId.toString(), jsonStr);
-            iUrcLogBp.insertUrcLog(urcLog);
         } else {
              /*4.2、根据templId列表和创建人批量删除数据权限方案模板*/
             //dataRuleTemplMapper.delTemplDatasByIdsAndCreatBy(lstTemplId, operator);
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, operator);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, operator);
+        }
+        
+        if(!CollectionUtils.isEmpty(lstTemplId)){
+        	List<DataRuleTemplDO> dataRuleTemplDOs= dataRuleTemplMapper.selectByTemplIds(lstTemplId);
+            List<String> lstTempName = new ArrayList<>();
+            dataRuleTemplDOs.forEach(c -> lstTempName.add(c.getTemplName()));
           //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTemplId.toString(), jsonStr);
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTempName.toString(), jsonStr);
             iUrcLogBp.insertUrcLog(urcLog);
         }
+        
         return VoHelper.getSuccessResult();
     }
 
