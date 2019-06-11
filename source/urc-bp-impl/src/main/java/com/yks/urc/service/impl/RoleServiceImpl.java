@@ -708,6 +708,11 @@ public class RoleServiceImpl implements IRoleService {
             // 通过owner  查看 角色下的用户
             dataMap.put("owner", operator);
         }
+        List<String> roleNames = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lstRoleId)){
+        	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(lstRoleId);
+            roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+        }
         dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
@@ -721,14 +726,9 @@ public class RoleServiceImpl implements IRoleService {
 //        permitStatBp.updateUserPermitCache(userNames);
 
         
-        if(!CollectionUtils.isEmpty(lstRoleId)){
-        	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(lstRoleId);
-            List<String> roleNames = new ArrayList<>();
-            roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
-          //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", roleNames.toString(), jsonStr);
-            iUrcLogBp.insertUrcLog(urcLog);
-        }
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", roleNames.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
       
         return VoHelper.getSuccessResult();
     }
@@ -1027,7 +1027,7 @@ public class RoleServiceImpl implements IRoleService {
                         userNames.add(userRoleDOS.get(j).getUserName());
 //                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
                         try {
-                        	logStr.append(userRoleDOS.get(j).getUserName()).append("->").append(roleMapper.getRoleByRoleId(userRoleDOS.get(j).getRoleId().toString()).getRoleName()).append(" ");
+                        	logStr.append(roleMapper.getRoleByRoleId(userRoleDOS.get(j).getRoleId().toString()).getRoleName()).append("->").append(userRoleDOS.get(j).getUserName()).append(";");
 						} catch (Exception e) {
 							logger.error("log error! e:{}",e);
 						}

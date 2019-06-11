@@ -956,6 +956,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("parameter lstTemplIdStr is null", ErrorCode.E_000002);
         }
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
+        
+        List<String> lstTempName = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lstTemplId)){
+        	List<DataRuleTemplDO> dataRuleTemplDOs= dataRuleTemplMapper.selectByTemplIds(lstTemplId);
+            dataRuleTemplDOs.forEach(c -> lstTempName.add(c.getTemplName()));
+        }
 
         /*3、判断当前用户是否为管理员，普通用户只能删除自己管理的方案*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -971,14 +977,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, operator);
         }
         
-        if(!CollectionUtils.isEmpty(lstTemplId)){
-        	List<DataRuleTemplDO> dataRuleTemplDOs= dataRuleTemplMapper.selectByTemplIds(lstTemplId);
-            List<String> lstTempName = new ArrayList<>();
-            dataRuleTemplDOs.forEach(c -> lstTempName.add(c.getTemplName()));
-          //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTempName.toString(), jsonStr);
-            iUrcLogBp.insertUrcLog(urcLog);
-        }
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTempName.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
         
         return VoHelper.getSuccessResult();
     }
