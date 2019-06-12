@@ -101,6 +101,14 @@ public class ZZService extends BaseServiceTest {
         UrcLog urcLog = new UrcLog("zz", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s 分配给：(用户)%s", roleIds,roleNames), JSON.toJSONString(roleIds));
         iUrcLogBp.insertUrcLog(urcLog);
 	}
+	 @Autowired
+	    private IUrcService service;
+	@Test
+	public void testgetAllFuncPermit(){
+		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
+		
+		System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
+	}
     
     
 }

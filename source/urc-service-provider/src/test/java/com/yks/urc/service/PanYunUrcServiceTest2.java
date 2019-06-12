@@ -144,7 +144,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getAllFuncPermit_Test() {
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun2")));
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun2",null)));
     }
 
     @Test
@@ -304,7 +304,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         e.context = "110 context";
 //        permitCache.lstUserSysVO.add(e);
         cacheBp.insertUserFunc(u.userName, permitCache);
-        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName);
+        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName,null);
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
 
         cacheBp.removeUser(u.userName);

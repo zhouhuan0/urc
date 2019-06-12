@@ -1,7 +1,5 @@
 package com.yks.urc.fw.constant;
 
-import java.util.Date;
-
 public class StringConstant {
 
 
@@ -18,4 +16,9 @@ public class StringConstant {
     public final static String loginTime = "loginTime";
 
     public final static String userName = "userName";
+    
+    public final static String sysKeys = "sysKeys";
+    
+    public final static String data = "data";
+
 }

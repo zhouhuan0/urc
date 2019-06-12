@@ -41,7 +41,7 @@ public interface IUserBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月14日 下午12:58:45
 	 */
-	ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator);
+	ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator,List<String> sysKeys);
 
 	ResultVO logout(String jsonStr);
 

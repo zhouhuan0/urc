@@ -15,6 +15,7 @@ import com.yks.urc.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -162,7 +163,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return String.format("user_sys_func_%s", userName);
     }
 
-    public GetAllFuncPermitRespVO getUserFunc(String userName) {
+    public GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys) {
         Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
         if (mapHash != null && mapHash.size() > 0) {
             // 按sysKeyr排序，前端顶部导航栏依赖此顺序
@@ -176,7 +177,16 @@ public class RedisCacheBpImpl2 implements ICacheBp {
                 String key = it.next();
                 if (StringUtility.stringEqualsIgnoreCase("NA", key))
                     continue;
-                rslt.lstSysRoot.add(map.get(key));
+                if(!CollectionUtils.isEmpty(sysKeys)){
+                	for (String sysKey : sysKeys) {
+						if(key.equals(sysKey)){
+							rslt.lstSysRoot.add(map.get(key));
+							break;
+						}
+					}
+                }else{
+                	rslt.lstSysRoot.add(map.get(key));
+                }
             }
             rslt.funcVersion = getFuncVersion(userName);
             return rslt;
