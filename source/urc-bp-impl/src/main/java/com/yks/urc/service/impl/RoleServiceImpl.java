@@ -287,9 +287,7 @@ public class RoleServiceImpl implements IRoleService {
 
         }
         
-      //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "新增(更新)角色", roleVO.getRoleName(), jsonStr);
-        iUrcLogBp.insertUrcLog(urcLog);
+      
         return VoHelper.getSuccessResult();
     }
 
@@ -349,6 +347,10 @@ public class RoleServiceImpl implements IRoleService {
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
+            
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "新增角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
+            iUrcLogBp.insertUrcLog(urcLog);
         } else {
             logger.info("update role");
             RoleDO role = roleMapper.getRoleByRoleId(String.valueOf(roleVO.getRoleId()));
@@ -381,6 +383,10 @@ public class RoleServiceImpl implements IRoleService {
             userRoleMapper.deleteByRoleId(roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
+            
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "更新角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
+            iUrcLogBp.insertUrcLog(urcLog);
         }
     }
 
