@@ -385,7 +385,7 @@ public class RoleServiceImpl implements IRoleService {
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
             
           //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "更新角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "编辑角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
             iUrcLogBp.insertUrcLog(urcLog);
         }
     }
@@ -1040,7 +1040,7 @@ public class RoleServiceImpl implements IRoleService {
                 }
             }
           //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s -> %s", roleNameList4Log,userNameList4Log), JSON.toJSONString(lstRole));
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNameList4Log.size() > 1 ? "批量分配用户":"分配用户", String.format("%s -> %s", roleNameList4Log,userNameList4Log), JSON.toJSONString(lstRole));
             iUrcLogBp.insertUrcLog(urcLog);
         }
       
