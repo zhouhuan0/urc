@@ -168,7 +168,7 @@
        and module_code = #{moduleCode,jdbcType=INTEGER}
     </if>
     <if test="userName != null and userName != ''">
-       and user_name = #{userName,jdbcType=INTEGER}
+       and user_name = #{userName,jdbcType=VARCHAR}
     </if>
     <if test="operateTimeStart != null and operateTimeEnd != null">
        and <![CDATA[operate_time > #{operateTimeStart}]]> and <![CDATA[operate_time < #{operateTimeEnd}]]> 

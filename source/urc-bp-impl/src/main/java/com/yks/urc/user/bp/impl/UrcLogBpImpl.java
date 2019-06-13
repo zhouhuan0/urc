@@ -64,7 +64,6 @@ public class UrcLogBpImpl implements IUrcLogBp {
 
 	@Override
 	public List<UrcLog> selectUrcLogByConditions(LogListReqVo logListReqVo) {
-		// TODO Auto-generated method stub
 		return urcLogMapper.selectUrcLogByConditions(logListReqVo);
 	}
 

@@ -861,7 +861,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             orgDataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.updateDataRuleTemplById(orgDataRuleTemplDO);
             //保存操作日志
-            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "更新数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(orgDataRuleTemplDO));
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "编辑数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(orgDataRuleTemplDO));
             iUrcLogBp.insertUrcLog(urcLog);
 
         }
@@ -1107,7 +1107,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         sendToMq(dataRuleVOS);
         
         //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "分配数据权限", lstUserName.toString(), jsonStr);
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), lstUserName.size() > 1 ?"批量分配数据权限":"分配数据权限", lstUserName.toString(), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         
         return VoHelper.getSuccessResult();

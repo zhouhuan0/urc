@@ -3,6 +3,7 @@ package com.yks.urc.motan.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.entity.UrcLog;
 import com.yks.urc.exception.ErrorCode;
@@ -23,6 +24,7 @@ import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.userValidate.bp.impl.UserValidateBp;
 import com.yks.urc.vo.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -961,10 +963,12 @@ public class UrcServiceImpl implements IUrcService {
 	    	logListReqVo.setPageNumber(null);
 	    	List<UrcLog> urcLogList4Count = iUrcLogBp.selectUrcLogByConditions(logListReqVo);
 	    	List<UrcLogVO> urcLogVOList = new ArrayList<>(urcLogList.size());
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 	    	if(!CollectionUtils.isEmpty(urcLogList)){
 	    		for (UrcLog urcLog : urcLogList) {
 	    			UrcLogVO urcLogVO = new UrcLogVO();
 					BeanUtils.copyProperties(urcLogVO, urcLog);
+					urcLogVO.setOperateTime(urcLog.getOperateTime() != null ? DateUtil.formatDate(urcLog.getOperateTime(), "yyyy-MM-dd HH:mm:ss"): null);
 					urcLogVO.setModuleName(ModuleCodeEnum.getOrderState(urcLog.getModuleCode()));
 					urcLogVOList.add(urcLogVO);
 				}

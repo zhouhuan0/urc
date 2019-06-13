@@ -7,7 +7,7 @@ public class UrcLogVO {
 
     private String userName;
 
-    private Date operateTime;
+    private String operateTime;
 
     private String computerIp;
 
@@ -38,15 +38,16 @@ public class UrcLogVO {
         this.userName = userName == null ? null : userName.trim();
     }
 
-    public Date getOperateTime() {
-        return operateTime;
-    }
 
-    public void setOperateTime(Date operateTime) {
-        this.operateTime = operateTime;
-    }
+    public String getOperateTime() {
+		return operateTime;
+	}
 
-    public String getComputerIp() {
+	public void setOperateTime(String operateTime) {
+		this.operateTime = operateTime;
+	}
+
+	public String getComputerIp() {
         return computerIp;
     }
 
