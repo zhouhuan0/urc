@@ -884,7 +884,7 @@ public class RoleServiceImpl implements IRoleService {
                 List<String> roleNames = new ArrayList<>();
                 roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
               //保存操作日志
-                UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "批量分配角色功能权限", String.format("%s",roleNames), JSON.toJSONString(lstRole));
+                UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNames.size() > 1?"批量分配权限":"分配权限", String.format("%s",roleNames), JSON.toJSONString(lstRole));
                 iUrcLogBp.insertUrcLog(urcLog);
             }
           

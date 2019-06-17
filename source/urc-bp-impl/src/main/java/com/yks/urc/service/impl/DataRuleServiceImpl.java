@@ -978,7 +978,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         
       //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限方案模板", lstTempName.toString(), jsonStr);
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限模板", lstTempName.toString(), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         
         return VoHelper.getSuccessResult();
