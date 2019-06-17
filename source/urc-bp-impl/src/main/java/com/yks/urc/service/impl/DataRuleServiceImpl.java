@@ -491,7 +491,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         
         DataRuleTemplDO dataRuleTemplDO= dataRuleTemplMapper.selectByTemplId(templId,null);
       //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配数据权限模板给用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
@@ -1107,7 +1107,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         sendToMq(dataRuleVOS);
         
         //保存操作日志
-        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), lstUserName.size() > 1 ?"批量分配数据权限":"分配数据权限", lstUserName.toString(), jsonStr);
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), lstUserName.size() > 1 ?"批量数据授权":"数据授权", lstUserName.toString(), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         
         return VoHelper.getSuccessResult();
