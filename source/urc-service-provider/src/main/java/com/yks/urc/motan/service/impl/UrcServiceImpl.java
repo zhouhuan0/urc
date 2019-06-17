@@ -3,6 +3,9 @@ package com.yks.urc.motan.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
+import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.entity.UrcLog;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
@@ -15,10 +18,13 @@ import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.userValidate.bp.impl.UserValidateBp;
 import com.yks.urc.vo.*;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
@@ -27,6 +33,9 @@ import java.util.Map;
 import java.util.Set;
 
 import com.yks.urc.vo.helper.VoHelper;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.CollectionUtils;
@@ -898,6 +907,114 @@ public class UrcServiceImpl implements IUrcService {
 			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取指定系统的平台编码失败.");
 		}
 		
+	}
+
+	@Override
+	public ResultVO getLogModuleList(String jsonStr) {
+		try {
+			List<LogModuleVo> list = new ArrayList<>();
+			LogModuleVo logModuleVoAll = new LogModuleVo();
+			logModuleVoAll.setKey("");
+			logModuleVoAll.setLabel("全部");
+			list.add(logModuleVoAll);
+			for(ModuleCodeEnum orderStatusEnum:ModuleCodeEnum.values()){
+				LogModuleVo logModuleVo = new LogModuleVo();
+				logModuleVo.setKey(orderStatusEnum.getStatus().toString());
+				logModuleVo.setLabel(orderStatusEnum.getStatusName());
+				list.add(logModuleVo);
+	        }
+			return VoHelper.getSuccessResult(list);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取所有模块失败.");
+		}
+	}
+
+	@Autowired
+	IUrcLogBp iUrcLogBp;
+	@Override
+	public ResultVO getLogList(String jsonStr) {
+		try {
+			JSONObject jsonObject = StringUtility.parseString(jsonStr);
+	    	
+	    	if(null == jsonObject){
+	    		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+	    	}
+	    	LogListReqVo logListReqVo = StringUtility.parseObject(jsonObject.getString("data"), LogListReqVo.class);
+	    	if (null == logListReqVo) {
+	            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "data为空");
+	        }
+	    	if(!CollectionUtils.isEmpty(logListReqVo.getOperateTimeRange()) && logListReqVo.getOperateTimeRange().size() == 2){
+	    		logListReqVo.setOperateTimeStart(new Date(logListReqVo.getOperateTimeRange().get(0)));
+	    		logListReqVo.setOperateTimeEnd(new Date(logListReqVo.getOperateTimeRange().get(1)));
+	    	}
+	    	if(logListReqVo.getPageData() == null || logListReqVo.getPageNumber() == null){
+	    		logListReqVo.setPageData(20);
+	    		logListReqVo.setPageNumber(1);
+	    	}
+	    	if(!StringUtils.isEmpty(logListReqVo.getModuleCode())){
+	    		logListReqVo.setModuleCode4Select(Integer.valueOf(logListReqVo.getModuleCode()));
+	    	}
+	    	logListReqVo.setOffset(logListReqVo.getPageData() * (logListReqVo.getPageNumber() - 1) );
+	    	LogListRespVo logListRespVo = new LogListRespVo();
+	    	logListRespVo.setPageSize(logListReqVo.getPageData());
+	    	
+	    	List<UrcLog> urcLogList = iUrcLogBp.selectUrcLogByConditions(logListReqVo);
+	    	logListReqVo.setPageData(null);
+	    	logListReqVo.setPageNumber(null);
+	    	List<UrcLog> urcLogList4Count = iUrcLogBp.selectUrcLogByConditions(logListReqVo);
+	    	List<UrcLogVO> urcLogVOList = new ArrayList<>(urcLogList.size());
+	    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	    	if(!CollectionUtils.isEmpty(urcLogList)){
+	    		for (UrcLog urcLog : urcLogList) {
+	    			UrcLogVO urcLogVO = new UrcLogVO();
+					BeanUtils.copyProperties(urcLogVO, urcLog);
+					urcLogVO.setOperateTime(urcLog.getOperateTime() != null ? DateUtil.formatDate(urcLog.getOperateTime(), "yyyy-MM-dd HH:mm:ss"): null);
+					urcLogVO.setModuleName(ModuleCodeEnum.getOrderState(urcLog.getModuleCode()));
+					urcLogVOList.add(urcLogVO);
+				}
+	    	}
+	    	logListRespVo.setList(urcLogVOList);
+	    	logListRespVo.setTotal(null != urcLogList4Count?urcLogList4Count.size():0);
+	    	logListRespVo.setTotalPage(logListRespVo.getTotal()/logListRespVo.getPageSize()+1);
+	    	return VoHelper.getSuccessResult(logListRespVo);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取日志列表失败.");
+		}
+	}
+	
+	@Autowired
+    IUserBp userBp;
+	@Override
+	public ResultVO getUserName(String jsonStr) {
+		try {
+			JSONObject jsonObject = StringUtility.parseString(jsonStr);
+	    	
+	    	if(null == jsonObject){
+	    		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+	    	}
+	    	UserVO userVO = StringUtility.parseObject(jsonObject.getString("data"), UserVO.class);
+	    	if (null == userVO) {
+	            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "data为空");
+	        }
+	    	List<GetUserNameRespVo> userNameList4Return = new ArrayList<>();
+	    	GetUserNameRespVo getUserNameRespVoAll = new GetUserNameRespVo();
+	    	getUserNameRespVoAll.setUserName("全部");
+	    	userNameList4Return.add(getUserNameRespVoAll);
+	    	List<String> userNameList = userBp.getUserName(userVO.userName);
+	    	List<GetUserNameRespVo> getUserNameRespVoList = new ArrayList<>();
+	    	if(!CollectionUtils.isEmpty(userNameList)){
+	    		for (String userName : userNameList) {
+	    			GetUserNameRespVo getUserNameRespVo = new GetUserNameRespVo();
+		    		getUserNameRespVo.setUserName(userName);
+		    		getUserNameRespVoList.add(getUserNameRespVo);
+				}
+	    		
+	    	}
+	    	userNameList4Return.addAll(getUserNameRespVoList);
+	    	return VoHelper.getSuccessResult(userNameList4Return);
+		} catch (Exception e) {
+			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取用户名失败.");
+		}
 	}
 
 

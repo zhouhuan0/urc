@@ -265,7 +265,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
     public void deleteDataRuleTempl(){
         List<Long> ids = new ArrayList<>();
         ids.add(1529375579688L);
-        ids.add(1529375579689L);
+        ids.add(1545365318481000007L);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator","admin");
         jsonObject.put("lstTemplId",ids);

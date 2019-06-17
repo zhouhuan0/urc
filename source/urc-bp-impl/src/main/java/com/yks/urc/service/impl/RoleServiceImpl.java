@@ -1,23 +1,15 @@
 package com.yks.urc.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.DateUtil;
-import com.yks.common.util.StringUtil;
-import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.*;
-import com.yks.urc.exception.ErrorCode;
-import com.yks.urc.exception.URCBizException;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.*;
-import com.yks.urc.operation.bp.api.IOperationBp;
-import com.yks.urc.permitStat.bp.api.IPermitStatBp;
-import com.yks.urc.seq.bp.api.ISeqBp;
-import com.yks.urc.service.api.IRoleService;
-import com.yks.urc.session.bp.api.ISessionBp;
-import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.*;
-import com.yks.urc.vo.helper.VoHelper;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +19,44 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
+import com.yks.common.util.StringUtil;
+import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
+import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.RoleOwnerDO;
+import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UrcLog;
+import com.yks.urc.entity.UserDO;
+import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IRolePermissionMapper;
+import com.yks.urc.mapper.IUserMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.mapper.RoleOwnerMapper;
+import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.service.api.IRoleService;
+import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
+import com.yks.urc.vo.NameVO;
+import com.yks.urc.vo.PageResultVO;
+import com.yks.urc.vo.PermissionVO;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.RoleOwnerVO;
+import com.yks.urc.vo.RoleVO;
+import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.helper.VoHelper;
 
 /**
  * 角色操作service实现类
@@ -69,6 +97,8 @@ public class RoleServiceImpl implements IRoleService {
     private RoleOwnerMapper ownerMapper;
     @Autowired
     private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
+    @Autowired
+    IUrcLogBp iUrcLogBp;
 
 
 
@@ -256,6 +286,8 @@ public class RoleServiceImpl implements IRoleService {
             logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
 
         }
+        
+      
         return VoHelper.getSuccessResult();
     }
 
@@ -315,6 +347,10 @@ public class RoleServiceImpl implements IRoleService {
             insertBatchRolePermission(roleVO, operator, roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
+            
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "新增角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
+            iUrcLogBp.insertUrcLog(urcLog);
         } else {
             logger.info("update role");
             RoleDO role = roleMapper.getRoleByRoleId(String.valueOf(roleVO.getRoleId()));
@@ -347,6 +383,10 @@ public class RoleServiceImpl implements IRoleService {
             userRoleMapper.deleteByRoleId(roleDO.getRoleId());
             /*批量新增用户-角色关系数据*/
             insertBatchUserRole(roleVO, operator, roleDO.getRoleId());
+            
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "编辑角色", roleVO.getRoleName(), JSON.toJSONString(roleVO));
+            iUrcLogBp.insertUrcLog(urcLog);
         }
     }
 
@@ -657,6 +697,7 @@ public class RoleServiceImpl implements IRoleService {
         if (StringUtil.isEmpty(lstRoleIdStr)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
         }
+        StringBuilder logStr = new StringBuilder();
         List<Long> lstRoleId = StringUtility.jsonToList(lstRoleIdStr, Long.class);
         /* 非管理员用户只能管理自己创建的角色 */
         Map dataMap = new HashMap();
@@ -665,12 +706,18 @@ public class RoleServiceImpl implements IRoleService {
         } else {
             lstRoleId.forEach(roleId -> {
                 RoleDO roleDO1 = roleMapper.getRoleByRoleId(String.valueOf(roleId));
+                logStr.append(roleDO1.getRoleName()).append(" ");
                 if (!StringUtils.equalsIgnoreCase(operator, roleDO1.getCreateBy())) {
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), String.format("当前操作人不是角色的创建者,无法删除该角色,对应的角色名为:%s,请重新选择", roleDO1.getRoleName()));
                 }
             });
             // 通过owner  查看 角色下的用户
             dataMap.put("owner", operator);
+        }
+        List<String> roleNames = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lstRoleId)){
+        	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(lstRoleId);
+            roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
         }
         dataMap.put("roleIds", lstRoleId);
         /*3、获取roleIds角色对应的用户名*/
@@ -684,6 +731,11 @@ public class RoleServiceImpl implements IRoleService {
         /*5、更新用户操作权限冗余表和缓存*/
 //        permitStatBp.updateUserPermitCache(userNames);
 
+        
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", roleNames.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
+      
         return VoHelper.getSuccessResult();
     }
 
@@ -826,6 +878,16 @@ public class RoleServiceImpl implements IRoleService {
         /*4、更新用户操作权限冗余表和缓存*/
             updateAffectedUserPermitCache.saveAffectedUser(userNames);
 //            permitStatBp.updateUserPermitCache(userNames);
+            
+            if(!CollectionUtils.isEmpty(roleIds)){
+            	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
+                List<String> roleNames = new ArrayList<>();
+                roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+              //保存操作日志
+                UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNames.size() > 1?"批量分配权限":"分配权限", String.format("%s",roleNames), JSON.toJSONString(lstRole));
+                iUrcLogBp.insertUrcLog(urcLog);
+            }
+          
             return VoHelper.getSuccessResult();
         } else {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
@@ -889,20 +951,24 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
+    	StringBuilder logStr = new StringBuilder();
         if (lstRole != null && lstRole.size() > 0) {
+        	Set<String> roleNameList4Log = new HashSet<>();
+        	Set<String> userNameList4Log = new HashSet<>();
             for (int i = 0; i < lstRole.size(); i++) {
                 RoleVO roleVO = lstRole.get(i);
                 RoleDO roleDO = roleMapper.getRoleByRoleId(roleVO.getRoleId());
+                roleNameList4Log.add(roleDO.getRoleName());
                 //判断传入的operator 是否是owner
                 if (roleDO != null) {
                     if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, roleDO.getRoleId())) {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不属于该角色的owner" + lstRole.get(i), ErrorCode.E_000003);
                     }
                 }
-
                 UserRoleDO userRole = new UserRoleDO();
                 List<UserRoleDO> userRoleDOS = new ArrayList<>();
                 List<String> userNameList = roleVO.getLstUserName();
+                userNameList4Log.addAll(userNameList);
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
                     //throw new URCBizException("批量分配用户不允许删除" + lstRole.get(i), ErrorCode.E_000003);
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "请至少选择一个用户");
@@ -964,18 +1030,20 @@ public class RoleServiceImpl implements IRoleService {
                     }
                 }
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
+                	 List<String> userNames = new ArrayList<>();
                     userRoleMapper.insertBatch(userRoleDOS);
-                    List<String> userNames = new ArrayList<>();
                     for (int j = 0; j < userRoleDOS.size(); j++) {
                         userNames.add(userRoleDOS.get(j).getUserName());
 //                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
                     }
                     updateAffectedUserPermitCache.saveAffectedUser(userNames);
-
                 }
             }
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNameList4Log.size() > 1 ? "批量分配用户":"分配用户", String.format("%s -> %s", roleNameList4Log,userNameList4Log), JSON.toJSONString(lstRole));
+            iUrcLogBp.insertUrcLog(urcLog);
         }
-
+      
         return VoHelper.getSuccessResult();
     }
 
@@ -1007,6 +1075,7 @@ public class RoleServiceImpl implements IRoleService {
         }
 
         RoleDO roleDO = getRoleInfo(operator, newRoleName, roleId);
+        String roleNameOld= roleDO.getRoleName();
         // 复制角色信息
         roleDO.setRoleId(seqBp.getNextRoleId());
         roleDO.setRoleName(newRoleName);
@@ -1058,6 +1127,10 @@ public class RoleServiceImpl implements IRoleService {
             records.add(record);
         }
         rolePermissionMapper.insertBatch(records);
+        
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "复制角色", String.format("%s -> %s",roleNameOld,newRoleName), String.format("%s -> %s",sourceRoleId,newRoleName));
+        iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
 

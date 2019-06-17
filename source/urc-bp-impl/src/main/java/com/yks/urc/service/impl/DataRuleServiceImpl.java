@@ -1,11 +1,13 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.common.util.StringUtil;
 import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
@@ -16,6 +18,7 @@ import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
@@ -103,6 +106,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ICacheBp cacheBp;
+    
+    @Autowired
+    IUrcLogBp iUrcLogBp;
 
     @Autowired(required = false)
     private IOrderManageService orderManageService;
@@ -482,6 +488,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVOS.add(dataRuleVO);
         }
         sendToMq(dataRuleVOS);
+        
+        DataRuleTemplDO dataRuleTemplDO= dataRuleTemplMapper.selectByTemplId(templId,null);
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
 
@@ -830,6 +841,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplDO.setModifiedTime(new Date());
             dataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.insert(dataRuleTemplDO);
+          //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "新增数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(dataRuleTemplDO));
+            iUrcLogBp.insertUrcLog(urcLog);
         } else {
             DataRuleTemplDO dataRuleTemplDO = dataRuleTemplMapper.selectByTemplId(Long.parseLong(templVO.getTemplId()),null);
             if(dataRuleTemplDO!=null){
@@ -846,6 +860,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
             orgDataRuleTemplDO.setModifiedTime(new Date());
             orgDataRuleTemplDO.setModifiedBy(operator);
             dataRuleTemplMapper.updateDataRuleTemplById(orgDataRuleTemplDO);
+            //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "编辑数据权限模板", dataRuleTemplDO.getTemplName(), JSON.toJSONString(orgDataRuleTemplDO));
+            iUrcLogBp.insertUrcLog(urcLog);
 
         }
 
@@ -939,6 +956,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("parameter lstTemplIdStr is null", ErrorCode.E_000002);
         }
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
+        
+        List<String> lstTempName = new ArrayList<>();
+        if(!CollectionUtils.isEmpty(lstTemplId)){
+        	List<DataRuleTemplDO> dataRuleTemplDOs= dataRuleTemplMapper.selectByTemplIds(lstTemplId);
+            dataRuleTemplDOs.forEach(c -> lstTempName.add(c.getTemplName()));
+        }
 
         /*3、判断当前用户是否为管理员，普通用户只能删除自己管理的方案*/
         Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
@@ -953,6 +976,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, operator);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, operator);
         }
+        
+      //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限模板", lstTempName.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
+        
         return VoHelper.getSuccessResult();
     }
 
@@ -964,6 +992,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/20 16:10
      * @see
      */
+    
     @Override
     @Transactional
     public ResultVO addOrUpdateDataRule(String jsonStr) {
@@ -1028,6 +1057,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<ExpressionDO> expressionCache = new ArrayList<>();
         //组装下发数据
         List<DataRuleVO> dataRuleVOS =new ArrayList<>();
+        
         /*2、新增用户-操作权限关系数据 dataRule*/
         for (int i = 0; i < lstUserName.size(); i++) {
             // 组装 dataRuleVO
@@ -1035,7 +1065,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVO.t = String.valueOf(System.currentTimeMillis());
             dataRuleVO.lstDataRuleSys =dataRuleSys;
             dataRuleVO.userName =lstUserName.get(i);
-
+            
             // 组装入库数据
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
@@ -1075,6 +1105,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
         }
         /*发送MQ*/
         sendToMq(dataRuleVOS);
+        
+        //保存操作日志
+        UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), lstUserName.size() > 1 ?"批量数据授权":"数据授权", lstUserName.toString(), jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
+        
         return VoHelper.getSuccessResult();
     }
 

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.UrcLogMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.UrcLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="operate_time" jdbcType="TIMESTAMP" property="operateTime" />
+    <result column="computer_ip" jdbcType="VARCHAR" property="computerIp" />
+    <result column="module_code" jdbcType="INTEGER" property="moduleCode" />
+    <result column="operate_action" jdbcType="VARCHAR" property="operateAction" />
+    <result column="operate_object" jdbcType="VARCHAR" property="operateObject" />
+    <result column="modify_time" jdbcType="TIMESTAMP" property="modifyTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.UrcLog">
+    <result column="operate_json" jdbcType="LONGVARCHAR" property="operateJson" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, operate_time, computer_ip, module_code, operate_action, operate_object, 
+    modify_time
+  </sql>
+  <sql id="Blob_Column_List">
+    operate_json
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from urc_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from urc_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.UrcLog">
+    insert into urc_log (id, user_name, operate_time, 
+      computer_ip, module_code, operate_action, 
+      operate_object, modify_time, operate_json
+      )
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{operateTime,jdbcType=TIMESTAMP}, 
+      #{computerIp,jdbcType=VARCHAR}, #{moduleCode,jdbcType=INTEGER}, #{operateAction,jdbcType=VARCHAR}, 
+      #{operateObject,jdbcType=VARCHAR}, #{modifyTime,jdbcType=TIMESTAMP}, #{operateJson,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.UrcLog">
+    insert into urc_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="operateTime != null">
+        operate_time,
+      </if>
+      <if test="computerIp != null">
+        computer_ip,
+      </if>
+      <if test="moduleCode != null">
+        module_code,
+      </if>
+      <if test="operateAction != null">
+        operate_action,
+      </if>
+      <if test="operateObject != null">
+        operate_object,
+      </if>
+      <if test="modifyTime != null">
+        modify_time,
+      </if>
+      <if test="operateJson != null">
+        operate_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operateTime != null">
+        #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="computerIp != null">
+        #{computerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleCode != null">
+        #{moduleCode,jdbcType=INTEGER},
+      </if>
+      <if test="operateAction != null">
+        #{operateAction,jdbcType=VARCHAR},
+      </if>
+      <if test="operateObject != null">
+        #{operateObject,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateJson != null">
+        #{operateJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.UrcLog">
+    update urc_log
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="operateTime != null">
+        operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="computerIp != null">
+        computer_ip = #{computerIp,jdbcType=VARCHAR},
+      </if>
+      <if test="moduleCode != null">
+        module_code = #{moduleCode,jdbcType=INTEGER},
+      </if>
+      <if test="operateAction != null">
+        operate_action = #{operateAction,jdbcType=VARCHAR},
+      </if>
+      <if test="operateObject != null">
+        operate_object = #{operateObject,jdbcType=VARCHAR},
+      </if>
+      <if test="modifyTime != null">
+        modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operateJson != null">
+        operate_json = #{operateJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.UrcLog">
+    update urc_log
+    set user_name = #{userName,jdbcType=VARCHAR},
+      operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      computer_ip = #{computerIp,jdbcType=VARCHAR},
+      module_code = #{moduleCode,jdbcType=INTEGER},
+      operate_action = #{operateAction,jdbcType=VARCHAR},
+      operate_object = #{operateObject,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP},
+      operate_json = #{operateJson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.UrcLog">
+    update urc_log
+    set user_name = #{userName,jdbcType=VARCHAR},
+      operate_time = #{operateTime,jdbcType=TIMESTAMP},
+      computer_ip = #{computerIp,jdbcType=VARCHAR},
+      module_code = #{moduleCode,jdbcType=INTEGER},
+      operate_action = #{operateAction,jdbcType=VARCHAR},
+      operate_object = #{operateObject,jdbcType=VARCHAR},
+      modify_time = #{modifyTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  
+  
+  <select id="selectUrcLogByConditions"  resultMap="ResultMapWithBLOBs" parameterType="com.yks.urc.vo.LogListReqVo">
+    select 
+    <include refid="Base_Column_List" />
+    from urc_log
+    where 1 = 1
+    <if test="moduleCode4Select != null">
+       and module_code = #{moduleCode,jdbcType=INTEGER}
+    </if>
+    <if test="userName != null and userName != ''">
+       and user_name = #{userName,jdbcType=VARCHAR}
+    </if>
+    <if test="operateTimeStart != null and operateTimeEnd != null">
+       and <![CDATA[operate_time > #{operateTimeStart}]]> and <![CDATA[operate_time < #{operateTimeEnd}]]> 
+    </if>
+    order by operate_time desc
+    <if test="pageData != null and pageNumber != null ">
+     limit #{offset},#{pageData}
+    </if>
+    
+  </select>
+</mapper>

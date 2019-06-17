@@ -131,6 +131,16 @@
         from urc_role
         where role_id = #{roleId,jdbcType=BIGINT}
     </select>
+    
+    <select id="getRoleByRoleIds"  resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_role
+        where role_id in
+        <foreach collection="roleIds" item="roleId" open="(" separator="," close=")">
+            #{roleId}
+        </foreach>
+    </select>
     <!--根据角色Id获取角色信息 包括功能权限、关联用户-->
     <select id="getRoleDatasByRoleId" parameterType="java.lang.Long" resultMap="FullBaseResultMap">
        select

@@ -427,9 +427,9 @@ public class UserBpImpl implements IUserBp {
 
     UserSysVOComparator myUserSysVOComparator = new UserSysVOComparator();
     @Override
-    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator) {
+    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator,List<String> sysKeys) {
         // 先从缓存取
-        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator);
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator,sysKeys);
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
@@ -477,5 +477,10 @@ public class UserBpImpl implements IUserBp {
         cacheBp.removeUser(strOperator);
         return VoHelper.getSuccessResult("logout success");
     }
+
+	@Override
+	public List<String> getUserName(String userName) {
+		return userMapper.getUserNameByFuzzy(userName);
+	}
 
 }

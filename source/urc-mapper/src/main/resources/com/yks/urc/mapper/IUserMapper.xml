@@ -133,6 +133,19 @@
         user_name as userName 
         from urc_user 
     </select>
+    
+    <select id="getUserNameByFuzzy" resultType="java.lang.String">
+        select
+        user_name as userName 
+        from urc_user 
+         <where>
+            <if test=" userName !=null and userName != '' ">
+                user_name LIKE CONCAT(CONCAT('%',#{userName},'%'))
+            </if>
+        </where>
+
+        limit 20
+    </select>
 
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseUserResultMap">

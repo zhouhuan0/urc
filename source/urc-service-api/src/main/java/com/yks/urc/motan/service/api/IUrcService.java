@@ -614,4 +614,32 @@ public interface IUrcService {
      * @version: 2019年5月20日 上午11:29:03
      */
     ResultVO getPlatformCode(String jsonStr);
+    
+    /**
+     * @Description: 获取所有模块
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年6月9日 下午4:13:03
+     */
+    ResultVO getLogModuleList(String jsonStr);
+    
+    /**
+     * @Description: 获取日志列表
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年6月9日 下午4:21:41
+     */
+    ResultVO getLogList(String jsonStr);
+    
+    /**
+     * @Description: 获取用户名
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年6月10日 上午9:20:54
+     */
+    ResultVO getUserName(String jsonStr);
+    
 }

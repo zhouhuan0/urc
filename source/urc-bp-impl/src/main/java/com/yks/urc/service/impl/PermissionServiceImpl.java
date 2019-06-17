@@ -233,13 +233,22 @@ public class PermissionServiceImpl implements IPermissionService {
      * 推送菜单树时将超级管理员存入urc_role_user_affected
      */
     private void saveSuperAdministrator() {
-        List<String> userNames = new ArrayList<>();
+    	
+    	try {
+    		Long roleId = roleMapper.selectAllSuperAdministrator();
+            updateAffectedUserPermitCache.assignAllPermit2SuperAdministrator(roleId);
+		} catch (Exception e) {
+			logger.error("saveSuperAdministrator error! {}",e);
+		}
+    	
+        
+        /*List<String> userNames = new ArrayList<>();
         userNames.add("superAdministrator");
         try {
             updateAffectedUserPermitCache.saveAffectedUser(userNames);
         } catch (Exception e) {
             logger.error("Save super administrator to urc_role_user_affected exception when pushing menu tree",e);
-        }
+        }*/
     }
 
     /**
