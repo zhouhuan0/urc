@@ -1734,31 +1734,35 @@ public class DataRuleServiceImpl implements IDataRuleService {
         	platformCodeVO4GetPlatformCode1.setPlatformCode("SHOPEE");
         	platformCodeVO4GetPlatformCode1.setPlatformName("SHOPEE");
         	platformCodes.add(platformCodeVO4GetPlatformCode1);
+        	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode2 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode2.setPlatformCode("eBay");
         	platformCodeVO4GetPlatformCode2.setPlatformName("eBay");
         	platformCodes.add(platformCodeVO4GetPlatformCode2);
+        	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode3 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode3.setPlatformCode("亚马逊");
         	platformCodeVO4GetPlatformCode3.setPlatformName("亚马逊");
         	platformCodes.add(platformCodeVO4GetPlatformCode3);
+        	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode4 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode4.setPlatformCode("LAZADA");
         	platformCodeVO4GetPlatformCode4.setPlatformName("LAZADA");
         	platformCodes.add(platformCodeVO4GetPlatformCode4);
+        	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode5 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode5.setPlatformCode("速卖通");
         	platformCodeVO4GetPlatformCode5.setPlatformName("速卖通");
         	platformCodes.add(platformCodeVO4GetPlatformCode5);
         	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode6 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode5.setPlatformCode("JOOM");
-        	platformCodeVO4GetPlatformCode5.setPlatformName("JOOM");
+        	platformCodeVO4GetPlatformCode6.setPlatformCode("JOOM");
+        	platformCodeVO4GetPlatformCode6.setPlatformName("JOOM");
         	platformCodes.add(platformCodeVO4GetPlatformCode6);
         	
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode7 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode5.setPlatformCode("Jumia");
-        	platformCodeVO4GetPlatformCode5.setPlatformName("Jumia");
+        	platformCodeVO4GetPlatformCode7.setPlatformCode("Jumia");
+        	platformCodeVO4GetPlatformCode7.setPlatformName("Jumia");
         	platformCodes.add(platformCodeVO4GetPlatformCode7);
         	
         	getPlatformCodeRespVO.setList(platformCodes);
