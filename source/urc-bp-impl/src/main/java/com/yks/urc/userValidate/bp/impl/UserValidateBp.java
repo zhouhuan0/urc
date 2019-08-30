@@ -544,7 +544,8 @@ public class UserValidateBp implements IUserValidateBp {
             }
             String ticket = map.get(StringConstant.ticket);
             String urcVersion = map.get(StringConstant.funcVersion);
-            UserVO u = cacheBp.getUser(operator);
+            String deviceType = map.get(StringConstant.deviceType);
+            UserVO u = cacheBp.getUser(operator,deviceType);
             // 校验ticket
             UserLoginLogDO loginLogDO = new UserLoginLogDO();
             loginLogDO.userName = operator;
@@ -554,7 +555,7 @@ public class UserValidateBp implements IUserValidateBp {
             UserTicketDO userTicketDO;
             if (u == null) {
                 //如果缓存的用户信息为null 从数据库里获取用户ticket信息
-                userTicketDO = userTicketMapper.selectUserTicketByUserName(operator);
+                userTicketDO = userTicketMapper.selectUserTicketByUserName(operator,deviceType);
                 if (StringUtil.isEmpty(userTicketDO)) {
                     //数据库也没有此用户的ticket信息
                     loginLogDO.remark = String.format("funcPermitValidate,request:[%s],此次的ticket:[%s];(数据库没有数据)", StringUtility.toJSONString(map), ticket);
@@ -576,6 +577,7 @@ public class UserValidateBp implements IUserValidateBp {
                     userVO.loginTime = userTicketDO.getModifiedTime().getTime();
                     userVO.ip = map.get(StringConstant.ip);
                     userVO.deviceName = map.get(StringConstant.deviceName);
+                    userVO.deviceType = deviceType;
                     cacheBp.insertUser(userVO);
                 }
                 //根据过期时间ExpiredTime来判断ticket是否过期
@@ -604,7 +606,7 @@ public class UserValidateBp implements IUserValidateBp {
 
             }
             // 刷新数据库ticket过期时间
-            ticketUpdateBp.refreshExpiredTime(operator, ticket);
+            ticketUpdateBp.refreshExpiredTime(operator,deviceType, ticket);
 
          /*   if (lstWhiteApiUrl.contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");

@@ -1011,10 +1011,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //DataRuleSysVO
 
         List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
-        logger.info(String.format("dataRuleSys =%s",StringUtility.toJSONString(dataRuleSys)));
+        
+        //删除数据结构异常记录
+        checkDataRuleSys(dataRuleSys);
+        
         if (CollectionUtils.isEmpty(dataRuleSys)) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
+        
+        logger.info(String.format("dataRuleSys =%s",StringUtility.toJSONString(dataRuleSys)));
 
         //分批量操作
         List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
@@ -1036,7 +1041,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
                         dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
                     }
                 }
-
             }
         } else {
         /*1、删除用户列表对应的数据权限 */
@@ -1113,7 +1117,38 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return VoHelper.getSuccessResult();
     }
 
-    @Override
+    private void checkDataRuleSys(List<DataRuleSysVO> dataRuleSys) {
+		if(!CollectionUtils.isEmpty(dataRuleSys)) {
+			Iterator<DataRuleSysVO> it4DataRuleSysVO = dataRuleSys.iterator();
+			while(it4DataRuleSysVO.hasNext()) {
+				DataRuleSysVO dataRuleSysVO = it4DataRuleSysVO.next();
+				if(dataRuleSysVO.getRow() != null && !CollectionUtils.isEmpty(dataRuleSysVO.getRow().getSubWhereClause())){
+					Iterator<ExpressionVO> it4ExpressionVO = dataRuleSysVO.getRow().getSubWhereClause().iterator();
+					while(it4ExpressionVO.hasNext()){
+						ExpressionVO expressionVO = it4ExpressionVO.next();
+						if(expressionVO.getOperValues().contains("\\\"")){
+							it4ExpressionVO.remove();
+						}
+					}
+				}
+				
+				if(dataRuleSysVO.getRow() != null && CollectionUtils.isEmpty(dataRuleSysVO.getRow().getSubWhereClause())) {
+					it4DataRuleSysVO.remove();
+				}
+			}
+		}
+		
+	}
+    
+  /*  public static void main(String[] args) {
+		String zz= "{\\\"platformId\":\"EB\",\"platformName\":\"ebay\",\"lstShop\":[{\"shopId\":\"bigger*gift\",\"shopName\":\"bigger*gift\"},{\"shopId\":\"buybubuy2\",\"shopName\":\"buybubuy2\"}]}";
+		
+		if(zz.contains("\\\"")){
+			System.out.println(zz);
+		}
+	}*/
+
+	@Override
     public ResultVO getDataRuleByUser(List<String> lstUserName, String operator,String sysKey) {
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
             throw new URCBizException("既不是超级管理员也不是业务管理员", ErrorCode.E_100003);

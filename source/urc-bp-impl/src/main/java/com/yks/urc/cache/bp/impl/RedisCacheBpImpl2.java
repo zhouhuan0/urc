@@ -12,6 +12,7 @@ import com.yks.urc.log.LogLevel;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -72,7 +73,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             if (u.loginTime != null) {
                 mapUser.put(StringConstant.loginTime, u.loginTime.toString());
             }
-            getUserLoginCache(u.userName).put(u.userName, StringUtility.toJSONString_NoException(mapUser));
+            getUserLoginCache(u.userName,u.deviceType).put(u.userName, StringUtility.toJSONString_NoException(mapUser));
         } catch (Exception ex) {
             logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
         }
@@ -96,17 +97,31 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return (long) (Math.random() * 100000);
     }
 
-    private String getCacheKey_UserLogin(String userName) {
-        return String.format("urc_user_login_%s", userName);
+    private String getCacheKey_UserLogin(String userName, String deviceType) {
+        // 不同设备使用不同的缓存，达到不同设备各维持一个设备在线
+        if (StringUtils.isBlank(deviceType)) {
+            // deviceType为空时，默认为PC端
+            return String.format("urc_user_login_%s", userName);
+        }
+        return String.format("urc_user_login_%s_%s", userName, deviceType);
     }
 
     private Cache getUserLoginCache(String userName) {
-        return getCache(getCacheKey_UserLogin(userName), 7200);
+        return getCache(getCacheKey_UserLogin(userName,null), 7200);
     }
 
-    public UserVO getUser(String userName) {
+    private Cache getUserLoginCache(String userName,String deviceType) {
+        return getCache(getCacheKey_UserLogin(userName,deviceType), 7200);
+    }
+
+//    public UserVO getUser(String userName) {
+//        return getUser(userName,null);
+//    }
+
+    @Override
+    public UserVO getUser(String userName, String deviceType){
         try {
-            String strUser = (String) getUserLoginCache(userName).get(userName);
+            String strUser = (String) getUserLoginCache(userName,deviceType).get(userName);
             return StringUtility.parseObject(strUser, UserVO.class);
             // return userInfoCache.get(userName);
         } catch (Exception ex) {
@@ -114,6 +129,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             return null;
         }
     }
+
     public String getWhiteApi(String str){
         String api=null;
         try{
@@ -342,8 +358,8 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
     @Override
-    public void refreshUserExpiredTime(String userName) {
-        insertUser(getUser(userName));
+    public void refreshUserExpiredTime(String userName,String deviceType) {
+        insertUser(getUser(userName,deviceType));
     }
 
     /**

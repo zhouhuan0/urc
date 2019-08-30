@@ -20,7 +20,7 @@ public interface UserTicketMapper {
      * @param userName
      * @return
      */
-    UserTicketDO selectUserTicketByUserName(String userName);
+    UserTicketDO selectUserTicketByUserName(@Param("userName") String userName, @Param("deviceType") String deviceType);
     /**
      * 用户ticket信息
      * @param map
@@ -39,11 +39,11 @@ public interface UserTicketMapper {
      * @Author panyun@youkeshu.com
      * @Date 2019/1/9 10:40
      */
-    void updateExpiredTime(@Param("userName") String userName, @Param("expiredTime") Date expiredTime);
+    void updateExpiredTime(@Param("userName") String userName,@Param("deviceType") String deviceType, @Param("expiredTime") Date expiredTime);
 
     /**
      * 根据用户名删除用户ticket信息
      * @param userName 用户名
      */
-    void deleteUserTicketByUserName(String userName);
+    void deleteUserTicketByUserName(@Param("userName") String userName,@Param("deviceType") String deviceType);
 }

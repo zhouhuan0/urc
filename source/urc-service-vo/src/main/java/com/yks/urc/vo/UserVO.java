@@ -116,6 +116,16 @@ public class UserVO implements Serializable {
      *  设备名称
      */
     public  String 	deviceName;
+
+    /**
+     * 设备类型:空 or 1-为PC浏览器,2-仓库PDA
+     * 不同设备类型可同时在线
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2019-08-30 10:39
+     */
+    public String deviceType;
+
     /**
      *  登录时间
      */
