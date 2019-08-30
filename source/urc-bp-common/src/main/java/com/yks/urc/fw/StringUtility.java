@@ -18,6 +18,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.yks.urc.vo.ResultVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -488,6 +491,40 @@ public class StringUtility {
 			logger.error("toJSONString_NoException", ex);
 			return Empty;
 		}
+	}
+
+	public static String obj2Json(Object obj) {
+		try {
+			ObjectMapper mapper = new ObjectMapper();
+			return mapper.writeValueAsString(obj);
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+		}
+		return null;
+	}
+
+	/**
+	 * 支持自定义日期反序列化
+	 *
+	 * @return
+	 * @Author panyun@youkeshu.com
+	 * @Date 2019/6/15 16:51
+	 */
+	public static <T> T json2ObjNew(String json, com.fasterxml.jackson.core.type.TypeReference<T> typeRef) {
+		if (StringUtility.isNullOrEmpty(json)) {
+			return null;
+		}
+		try {
+			SimpleModule serializerModule = new SimpleModule("CustomDateDeSerializer");
+			serializerModule.addDeserializer(Date.class, new CustomDateDeSerializer());
+			// 忽视 JSON 中的未知属性
+			ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+			mapper.registerModule(serializerModule);
+			return mapper.readValue(json, typeRef);
+		} catch (Exception e) {
+			logger.error(json, e);
+		}
+		return null;
 	}
 
 	public static <T> ResultVO<T> parseResultVO(String strSrc, Class<T> t) {

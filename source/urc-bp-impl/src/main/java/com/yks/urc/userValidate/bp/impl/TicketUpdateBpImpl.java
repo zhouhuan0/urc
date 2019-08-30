@@ -1,5 +1,6 @@
 package com.yks.urc.userValidate.bp.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.UserTicketDO;
 import com.yks.urc.fw.StringUtility;
@@ -57,7 +58,9 @@ public class TicketUpdateBpImpl implements ITicketUpdateBp {
             // 将map copy一份，再删除旧map元素，再写库
             if (mapUser.size() == 0) return;
 
-            Map<String, UserTicketDO> mapCp = StringUtility.parseObject(StringUtility.toJSONString_NoException(mapUser), mapUser.getClass());
+            Map<String, UserTicketDO> mapCp = StringUtility.json2ObjNew(StringUtility.obj2Json(mapUser),
+                    new TypeReference<Map<String, UserTicketDO>>() {
+                    });
             if (mapCp == null || mapCp.size() == 0) return;
             for (Map.Entry<String, UserTicketDO> en : mapCp.entrySet()) {
                 try {
