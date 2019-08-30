@@ -20,7 +20,7 @@ public interface UserTicketMapper {
      * @param userName
      * @return
      */
-    UserTicketDO selectUserTicketByUserName(String userName,String deviceType);
+    UserTicketDO selectUserTicketByUserName(@Param("userName") String userName, @Param("deviceType") String deviceType);
     /**
      * 用户ticket信息
      * @param map
