@@ -8,7 +8,9 @@ import com.yks.urc.vo.UserVO;
 
 public interface ICacheBp {
 	long getNextSeq(String strKey);
-	UserVO getUser(String userName);
+//	UserVO getUser(String userName);
+
+	UserVO getUser(String userName, String deviceType);
 
 	String getWhiteApi(String str);
 
@@ -105,5 +107,5 @@ public interface ICacheBp {
 	 */
 	void  setAllPlatformShop(String allPlatformShopJson,String entityCode);
 
-    void refreshUserExpiredTime(String userName);
+    void refreshUserExpiredTime(String userName,String deviceType);
 }

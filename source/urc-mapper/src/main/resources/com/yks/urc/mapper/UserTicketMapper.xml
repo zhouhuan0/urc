@@ -20,12 +20,18 @@
     FROM urc_user_ticket
     <where>
       user_name = #{userName}
+      <if test="deviceType !=null and deviceType!='' ">
+        and device_type=#{deviceType}
+      </if>
+      <if test="deviceType == null or deviceType=='' ">
+        and (device_type is null or device_type='')
+      </if>
     </where>
     limit 1
   </select>
 <insert id="insertUserTicket">
-  INSERT INTO urc_user_ticket (user_name,ticket,expired_time,created_time,modified_time,login_time,device_name,login_ip)
-          VALUES (#{userName},#{ticket},#{expiredTime},#{createdTime},#{modifiedTime},#{loginTime},#{deviceName},#{loginIp})
+  INSERT INTO urc_user_ticket (user_name,ticket,expired_time,created_time,modified_time,login_time,device_name,device_type,login_ip)
+          VALUES (#{userName},#{ticket},#{expiredTime},#{createdTime},#{modifiedTime},#{loginTime},#{deviceName},#{deviceType},#{loginIp})
 </insert>
   <update id="updateUserTicket">
     UPDATE urc_user_ticket
@@ -39,15 +45,28 @@
       ticket = #{ticket},expired_time = #{expiredTime},modified_time = #{modifiedTime},login_time = #{loginTime},device_name = #{deviceName},login_ip = #{loginIp}
     </set>
     where user_name = #{userName}
+    <if test="deviceType !=null and deviceType!='' ">
+      and device_type=#{deviceType}
+    </if>
+    <if test="deviceType == null or deviceType=='' ">
+      and (device_type is null or device_type='')
+    </if>
   </update>
     <update id="updateExpiredTime">
       UPDATE urc_user_ticket set expired_time = #{expiredTime},modified_time = now(3)
       where user_name = #{userName}
+
     </update>
   <delete id="deleteUserTicketByUserName" parameterType="java.lang.String">
     DELETE FROM urc_user_ticket
     <where>
       user_name = #{userName}
+      <if test="deviceType !=null and deviceType!='' ">
+        and device_type=#{deviceType}
+      </if>
+      <if test="deviceType == null or deviceType=='' ">
+        and (device_type is null or device_type='')
+      </if>
     </where>
   </delete>
 

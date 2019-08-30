@@ -16,6 +16,7 @@ public class UserTicketDO {
     private String ticket;
     private String loginIp;
     private String deviceName;
+    private String deviceType;
 
     public String getLoginIp() {
         return loginIp;
@@ -92,5 +93,13 @@ public class UserTicketDO {
 
     public void setModifiedTime(Date modifiedTime) {
         this.modifiedTime=modifiedTime;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 }

@@ -46,7 +46,7 @@ public class UrcLogBpImpl implements IUrcLogBp {
 	            @Override
 	            public void run() {
 	                try {
-	                	UserVO getU =cacheBp.getUser(urcLog.getUserName());
+						UserVO getU = cacheBp.getUser(urcLog.getUserName(), null);
 	        			urcLog.setComputerIp(null != getU?getU.ip:"");
 	        			urcLog.setOperateTime(new Date());
 	        			urcLogMapper.insert(urcLog);

@@ -292,13 +292,14 @@ public class UserBpImpl implements IUserBp {
 
     @Override
     public ResultVO login(Map<String, String> map) {
-        return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip),map.get(StringConstant.deviceName));
+        return login(map.get(StringConstant.userName), map.get(StringConstant.pwd), map.get(StringConstant.ip),map.get(StringConstant.deviceName),
+                map.get(StringConstant.deviceType));
     }
 
     @Autowired
     private IUserLogBp userLogBp;
 
-    public ResultVO login(String userName,String pwd,String ip,String deviceName) {
+    public ResultVO login(String userName,String pwd,String ip,String deviceName,String deviceType) {
         try {
             LoginRespVO resp = new LoginRespVO();
             long startTime = System.currentTimeMillis();
@@ -317,13 +318,14 @@ public class UserBpImpl implements IUserBp {
             resp.userName = userName;
             if (blnOk) {
                 resp.ticket = userValidateBp.createTicket(userName);
-               UserVO getU =cacheBp.getUser(userName);
+               UserVO getU =cacheBp.getUser(userName,deviceType);
                 // 缓存用户信息
                 UserVO u = new UserVO();
                 u.userName = userName;
                 u.ticket = resp.ticket;
                 u.ip = ip;
-                u.deviceName=deviceName;
+                u.deviceName = deviceName;
+                u.deviceType = deviceType;
                 u.loginTime=System.currentTimeMillis();
                 cacheBp.insertUser(u);
                 //缓存的同时备份到数据库
@@ -350,11 +352,12 @@ public class UserBpImpl implements IUserBp {
         Map map = new HashMap(10);
         try {
             //先查询用户记录是否存在
-            UserTicketDO userTicketDO = userTicketMapper.selectUserTicketByUserName(u.userName);
+            UserTicketDO userTicketDO = userTicketMapper.selectUserTicketByUserName(u.userName,u.deviceType);
             map.put("userName",u.userName);
             map.put("ticket",u.ticket);
             map.put("loginIp",u.ip);
             map.put("deviceName",u.deviceName);
+            map.put("deviceType",u.deviceType);
             Date now = new Date();
             map.put("modifiedTime",now);
             map.put("loginTime",now);
@@ -460,7 +463,8 @@ public class UserBpImpl implements IUserBp {
         JSONObject jo = StringUtility.parseString(jsonStr);
         String strOperator = jo.getString(StringConstant.operator);
         String ticket = jo.getString(StringConstant.ticket);
-        UserVO u = cacheBp.getUser(strOperator);
+        String deviceType = jo.getString(StringConstant.deviceType);
+        UserVO u = cacheBp.getUser(strOperator,deviceType);
         // 记录登出
         UserLoginLogDO logDO =new UserLoginLogDO();
         logDO.userName =strOperator;
@@ -470,7 +474,7 @@ public class UserBpImpl implements IUserBp {
         logDO.modifiedTime =new Date();
         this.insertLoginLog(logDO);
         //删除数据库的用户ticket信息
-        userTicketMapper.deleteUserTicketByUserName(strOperator);
+        userTicketMapper.deleteUserTicketByUserName(strOperator,deviceType);
         if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
             throw new URCBizException(ErrorCode.E_100002);
         }

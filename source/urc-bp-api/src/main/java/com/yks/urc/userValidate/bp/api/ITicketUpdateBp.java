@@ -8,7 +8,7 @@ package com.yks.urc.userValidate.bp.api;
  * @Date 2019/1/9 10:00
  */
 public interface ITicketUpdateBp {
-    void refreshExpiredTime(String userName, String ticket);
+    void refreshExpiredTime(String userName,String deviceType, String ticket);
 
     /**
      * 定期更新数据库ticket过期时间
