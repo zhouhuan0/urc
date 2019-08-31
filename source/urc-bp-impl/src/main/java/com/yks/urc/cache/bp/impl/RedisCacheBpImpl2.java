@@ -106,9 +106,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return String.format("urc_user_login_%s_%s", userName, deviceType);
     }
 
-    private Cache getUserLoginCache(String userName) {
-        return getCache(getCacheKey_UserLogin(userName,null), 7200);
-    }
+//    private Cache getUserLoginCache(String userName) {
+//        return getCache(getCacheKey_UserLogin(userName,null), 7200);
+//    }
 
     private Cache getUserLoginCache(String userName,String deviceType) {
         return getCache(getCacheKey_UserLogin(userName,deviceType), 7200);
@@ -299,13 +299,13 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
     @Override
-    public void removeUser(String userName) {
+    public void removeUser(String userName,String deviceType) {
         try {
             if (StringUtility.isNullOrEmpty(userName))
                 return;
-            getUserLoginCache(userName).clear();
+            getUserLoginCache(userName, deviceType).clear();
         } catch (Exception ex) {
-            logger.error(String.format("removeUser:%s", userName), ex);
+            logger.error(String.format("removeUser:%s %s", userName, deviceType), ex);
         }
     }
 
