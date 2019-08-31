@@ -1123,17 +1123,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
 			while(it4DataRuleSysVO.hasNext()) {
 				DataRuleSysVO dataRuleSysVO = it4DataRuleSysVO.next();
 				if(dataRuleSysVO.getRow() != null && !CollectionUtils.isEmpty(dataRuleSysVO.getRow().getSubWhereClause())){
-					Iterator<ExpressionVO> it4ExpressionVO = dataRuleSysVO.getRow().getSubWhereClause().iterator();
-					while(it4ExpressionVO.hasNext()){
-						ExpressionVO expressionVO = it4ExpressionVO.next();
-						if(null != expressionVO.getOperValues() && expressionVO.getOperValues().contains("\\\"")){
-							it4ExpressionVO.remove();
+					for (ExpressionVO expressionVO : dataRuleSysVO.getRow().getSubWhereClause()) {
+						if(!CollectionUtils.isEmpty(expressionVO.getOperValuesArr())){
+							Iterator<String> it = expressionVO.getOperValuesArr().iterator();
+							while (it.hasNext()) {
+								String operValuesArr = it.next();
+								if(operValuesArr.contains("\\\"")){
+									it.remove();
+								}
+							}
 						}
 					}
-				}
-				
-				if(dataRuleSysVO.getRow() != null && CollectionUtils.isEmpty(dataRuleSysVO.getRow().getSubWhereClause())) {
-					it4DataRuleSysVO.remove();
 				}
 			}
 		}
