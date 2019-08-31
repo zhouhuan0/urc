@@ -6,6 +6,7 @@
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
     <result column="ticket" jdbcType="VARCHAR" property="ticket"/>
     <result column="device_name" jdbcType="VARCHAR" property="deviceName"/>
+    <result column="device_type" jdbcType="VARCHAR" property="deviceType"/>
     <result column="login_ip" jdbcType="VARCHAR" property="loginIp"/>
     <result column="expired_time" jdbcType="TIMESTAMP" property="expiredTime"/>
     <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
