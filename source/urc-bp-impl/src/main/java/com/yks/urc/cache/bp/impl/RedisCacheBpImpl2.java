@@ -70,6 +70,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             if (!StringUtility.isNullOrEmpty(u.deviceName)) {
                 mapUser.put(StringConstant.deviceName, u.deviceName);
             }
+            if (!StringUtility.isNullOrEmpty(u.deviceType)) {
+                mapUser.put(StringConstant.deviceType, u.deviceType);
+            }
             if (u.loginTime != null) {
                 mapUser.put(StringConstant.loginTime, u.loginTime.toString());
             }
@@ -99,7 +102,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
 
     private String getCacheKey_UserLogin(String userName, String deviceType) {
         // 不同设备使用不同的缓存，达到不同设备各维持一个设备在线
-        if (StringUtils.isBlank(deviceType)) {
+        if (StringUtility.isNullOrEmpty(deviceType)) {
             // deviceType为空时，默认为PC端
             return String.format("urc_user_login_%s", userName);
         }
