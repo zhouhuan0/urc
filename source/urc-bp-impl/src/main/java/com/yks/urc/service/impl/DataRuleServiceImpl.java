@@ -1126,7 +1126,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 					Iterator<ExpressionVO> it4ExpressionVO = dataRuleSysVO.getRow().getSubWhereClause().iterator();
 					while(it4ExpressionVO.hasNext()){
 						ExpressionVO expressionVO = it4ExpressionVO.next();
-						if(expressionVO.getOperValues().contains("\\\"")){
+						if(null != expressionVO.getOperValues() && expressionVO.getOperValues().contains("\\\"")){
 							it4ExpressionVO.remove();
 						}
 					}
