@@ -1,7 +1,9 @@
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
@@ -31,8 +33,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class UserServiceImpl implements IUserService {
@@ -383,7 +387,10 @@ public class UserServiceImpl implements IUserService {
                 return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
             }
             response = HttpUtility2.postForm(castInfo, null, null);
-            JSONArray jsonArray = JSONArray.parseArray(response);
+            
+            List<CategoryResponseVO> categoryResponseVOs  = StringUtility.json2ObjNew(response, new TypeReference<List<CategoryResponseVO>>() {
+    		});
+            /*JSONArray jsonArray = JSONArray.parseArray(response);
             int size1 = jsonArray.size();
             SkuCategoryVO skuCategoryVO = new SkuCategoryVO();
             //  List<CategoryVO> categoryVOList = new ArrayList<>();
@@ -426,9 +433,9 @@ public class UserServiceImpl implements IUserService {
                 }
                 categoryResponseVO.setChildren(categoryResponseVOListSecond);
                 categoryResponseVOListFirst.add(categoryResponseVO);
-            }
+            }*/
             //组装返回数据basicDataVO
-            BasicDataVO basicDataVO = getBasicDataVO(skuCategoryVO, categoryResponseVOListFirst);
+            BasicDataVO basicDataVO = getBasicDataVO(new SkuCategoryVO(), categoryResponseVOs);
             resultVO.msg = "操作成功";
             resultVO.data = basicDataVO;
             resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();

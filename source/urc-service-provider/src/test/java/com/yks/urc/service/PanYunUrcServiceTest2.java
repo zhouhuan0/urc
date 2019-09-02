@@ -290,8 +290,8 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         u.userName = "py";
         u.ticket = "ticket";
         cacheBp.insertUser(u);
-        UserVO uFromCache = cacheBp.getUser(u.userName);
-        System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(uFromCache)));
+        //UserVO uFromCache = cacheBp.getUser(u.userName);
+       // System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(uFromCache)));
 
         cacheBp.insertSysContext("110", "sysContext");
         System.out.println(String.format("---------%s", cacheBp.getSysContext("110")));
@@ -307,7 +307,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName,null);
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
 
-        cacheBp.removeUser(u.userName);
+        //cacheBp.removeUser(u.userName);
         cacheBp.setDingAccessToken("dingAccessToken", "test");
         List<PermissionDO> lst = new ArrayList<>();
         PermissionDO pDO = new PermissionDO();
