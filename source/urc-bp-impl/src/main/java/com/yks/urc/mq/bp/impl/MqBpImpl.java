@@ -65,8 +65,8 @@ public class MqBpImpl implements IMqBp {
                 Callback arg1 = new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata arg0, Exception arg1) {
-                    	logger.info(String.format("send2Mq %s", arg0.toString()));
-                    	logger.error(String.format("send2Mq error!"),arg1);                    
+                    	logger.info(String.format("send2Mq %s", arg0));
+                    	logger.error(String.format("send2Mq error!"),arg1);  
                     }
                 };
                 KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
