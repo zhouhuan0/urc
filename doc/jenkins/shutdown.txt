@@ -1,0 +1,39 @@
+node {
+stage '拉取代码' 
+  sh '''
+   # 删除之前workspace中的缓存文件
+   rm -rf ./*
+  '''
+
+stage '同步配置文件'
+ sh '''
+   echo "is Ok!!!"
+ '''
+
+stage 'MVN编译' 
+ dir('./source'){
+  sh "echo ok"
+ }
+
+stage '部署应用'
+sh '''
+    confPath=urcenter-prod
+	
+      # serviceProvider
+      IP=10.90.1.190
+      ssh root@${IP} '/opt/urc-service-provider/bin/shutdown.sh'
+
+      # serviceProvider
+      IP=10.90.1.191
+      ssh root@${IP} '/opt/urc-service-provider/bin/shutdown.sh'
+
+      # serviceProvider
+      IP=10.90.1.192
+      ssh root@${IP} '/opt/urc-service-provider/bin/shutdown.sh'
+
+      # taskScheduler
+      IP=10.90.1.250
+      ssh root@${IP} '/opt/urc-taskScheduler/bin/shutdown.sh'
+
+  '''
+}

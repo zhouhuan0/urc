@@ -70,6 +70,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             if (!StringUtility.isNullOrEmpty(u.deviceName)) {
                 mapUser.put(StringConstant.deviceName, u.deviceName);
             }
+            if (!StringUtility.isNullOrEmpty(u.deviceType)) {
+                mapUser.put(StringConstant.deviceType, u.deviceType);
+            }
             if (u.loginTime != null) {
                 mapUser.put(StringConstant.loginTime, u.loginTime.toString());
             }
@@ -99,16 +102,16 @@ public class RedisCacheBpImpl2 implements ICacheBp {
 
     private String getCacheKey_UserLogin(String userName, String deviceType) {
         // 不同设备使用不同的缓存，达到不同设备各维持一个设备在线
-        if (StringUtils.isBlank(deviceType)) {
+        if (StringUtility.isNullOrEmpty(deviceType)) {
             // deviceType为空时，默认为PC端
             return String.format("urc_user_login_%s", userName);
         }
         return String.format("urc_user_login_%s_%s", userName, deviceType);
     }
 
-    private Cache getUserLoginCache(String userName) {
-        return getCache(getCacheKey_UserLogin(userName,null), 7200);
-    }
+//    private Cache getUserLoginCache(String userName) {
+//        return getCache(getCacheKey_UserLogin(userName,null), 7200);
+//    }
 
     private Cache getUserLoginCache(String userName,String deviceType) {
         return getCache(getCacheKey_UserLogin(userName,deviceType), 7200);
@@ -299,13 +302,13 @@ public class RedisCacheBpImpl2 implements ICacheBp {
     }
 
     @Override
-    public void removeUser(String userName) {
+    public void removeUser(String userName,String deviceType) {
         try {
             if (StringUtility.isNullOrEmpty(userName))
                 return;
-            getUserLoginCache(userName).clear();
+            getUserLoginCache(userName, deviceType).clear();
         } catch (Exception ex) {
-            logger.error(String.format("removeUser:%s", userName), ex);
+            logger.error(String.format("removeUser:%s %s", userName, deviceType), ex);
         }
     }
 

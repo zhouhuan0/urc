@@ -478,7 +478,7 @@ public class UserBpImpl implements IUserBp {
         if (u == null || !StringUtils.equalsIgnoreCase(u.ticket, ticket)) {
             throw new URCBizException(ErrorCode.E_100002);
         }
-        cacheBp.removeUser(strOperator);
+        cacheBp.removeUser(strOperator, deviceType);
         return VoHelper.getSuccessResult("logout success");
     }
 

@@ -65,7 +65,7 @@ public class TicketUpdateBpImpl implements ITicketUpdateBp {
             for (Map.Entry<String, UserTicketDO> en : mapCp.entrySet()) {
                 try {
                     UserTicketDO ut=en.getValue();
-                    if (ut == null || StringUtils.isBlank(ut.getUserName())) {
+                    if (ut == null || StringUtility.isNullOrEmpty(ut.getUserName())) {
                         continue;
                     }
                     userTicketMapper.updateExpiredTime(ut.getUserName(), ut.getDeviceType(), new Date(new Date().getTime() + EXPIRE_TIME));

@@ -26,7 +26,7 @@ public interface ICacheBp {
 	void insertUser(UserVO u);
      //存入白名单到redis
 	void insertWhiteApi(String apiStr);
-	void removeUser(String userName);
+	void removeUser(String userName,String deviceType);
 
 	/**
 	 * 缓存用户所有系统功能权限
