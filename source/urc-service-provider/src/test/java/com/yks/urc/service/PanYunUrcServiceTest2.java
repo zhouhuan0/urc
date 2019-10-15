@@ -316,7 +316,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName, null);
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
 
+
         cacheBp.removeUser(u.userName, "pc");
+
         cacheBp.setDingAccessToken("dingAccessToken", "test");
         List<PermissionDO> lst = new ArrayList<>();
         PermissionDO pDO = new PermissionDO();

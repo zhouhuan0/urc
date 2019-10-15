@@ -3,21 +3,26 @@ package com.yks.urc.vo;
 import java.io.Serializable;
 import java.util.List;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 public class CategoryResponseVO implements Serializable {
     private static final long serialVersionUID = 3003166758646712288L;
-    private List<CategoryResponseVO> children;
+    
+    @JSONField(name = "children")
+    private List<CategoryResponseVO> subCategorys;
     private String cateId;
     private String cateNameCn;
 
-    public List<CategoryResponseVO> getChildren() {
-        return children;
-    }
 
-    public void setChildren(List<CategoryResponseVO> children) {
-        this.children = children;
-    }
+    public List<CategoryResponseVO> getSubCategorys() {
+		return subCategorys;
+	}
 
-    public String getCateId() {
+	public void setSubCategorys(List<CategoryResponseVO> subCategorys) {
+		this.subCategorys = subCategorys;
+	}
+
+	public String getCateId() {
         return cateId;
     }
 
