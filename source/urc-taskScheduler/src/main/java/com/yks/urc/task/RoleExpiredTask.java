@@ -23,7 +23,7 @@ import com.yks.urc.service.impl.PersonServiceImpl;
  * 
  */
 @Component
-public class RoleExpiredTask extends BaseTask {
+	public class RoleExpiredTask extends BaseTask {
 	private static final Logger logger = LoggerFactory.getLogger(RoleExpiredTask.class);
 
 	@Autowired

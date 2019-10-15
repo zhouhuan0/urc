@@ -3,6 +3,8 @@ package com.yks.urc.permitStat.bp.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.sun.org.apache.xpath.internal.operations.Mod;
 import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.PermitItemUserVO;
+import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IPermitItemInfoMapper;
 import com.yks.urc.mapper.IPermitItemUserMapper;
@@ -13,6 +15,7 @@ import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +96,7 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
                 if (respVO == null || CollectionUtils.isEmpty(respVO.lstUserSysVO)) {
                     continue;
                 }
-                permissionMapper.deleteByUserName(userName);
+                permitItemUserMapper.deleteByUserName(userName);
                 Set<FunctionVO> lstAllKey = new HashSet<>();
 
                 for (UserSysVO userSysVO : respVO.lstUserSysVO) {
@@ -106,12 +109,38 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 //                    scanMenu(rootVO.system.name, rootVO, lstAllKey);
                 }
                 if (!CollectionUtils.isEmpty(lstAllKey)) {
-                    permissionMapper.addOrUpdatePermitItemUser(lstAllKey.stream().collect(Collectors.toList()), userName);
+                    permitItemUserMapper.addOrUpdatePermitItemUser(lstAllKey.stream().collect(Collectors.toList()), userName);
                 }
             } catch (Exception ex) {
                 logger.error(userName, ex);
             }
         }
+    }
+
+    @Override
+    public ResultVO getUserListByPermitKey(String json) {
+        RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
+        });
+        if (req.data.lstPermitKey.size() > 5) {
+            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "lstPermitKey 参数不能大于5个元素");
+        }
+        ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
+        rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
+        rslt.data.total = 0L;
+        Long total = permitItemUserMapper.getUserListByPermitKeyTotal(req);
+        if (total != null && total > 0) {
+            rslt.data.total = total;
+            req.data.offset = (req.data.pageNumber - 1) * req.data.pageData;
+            List<Resp_getUserListByPermitKey> lstRslt = permitItemUserMapper.getUserListByPermitKey(req);
+            rslt.data.list = lstRslt;
+        }
+        rslt.state = ErrorCode.E_000001.getState();
+        return rslt;
+    }
+
+    @Override
+    public ResultVO exportUserListByPermitKey(String json) {
+        return null;
     }
 
     private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {

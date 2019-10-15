@@ -19,6 +19,27 @@
     from permit_item_user
     where id = #{id,jdbcType=BIGINT}
   </select>
+
+  <select id="getUserListByPermitKey" resultType="com.yks.urc.vo.Resp_getUserListByPermitKey">
+    select i.permit_name AS permitName,u.user_name AS userName
+    from permit_item_user u
+    left join permit_item_info i on u.permit_key=i.permit_key
+    where u.permit_key in
+    <foreach collection="data.lstPermitKey" item="mem" open="(" separator="," close=")">
+      #{mem}
+    </foreach>
+    order by u.permit_key,u.user_name,u.id
+    limit #{data.offset},#{data.pageData}
+  </select>
+  <select id="getUserListByPermitKeyTotal" resultType="java.lang.Long">
+    select count(*)
+    from permit_item_user u
+    where u.permit_key in
+    <foreach collection="data.lstPermitKey" item="mem" open="(" separator="," close=")">
+      #{mem}
+    </foreach>
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from permit_item_user
     where id = #{id,jdbcType=BIGINT}
@@ -114,4 +135,25 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <insert id="addOrUpdate">
+    insert into permit_item_user(permit_key,user_name,creator,created_time,modifier,modified_time)
+    values
+    <foreach collection="lstAllKey" item="item" index="index"
+             separator=",">
+      (#{item.key},#{item.name},'',now(3),'',now(3))
+    </foreach>
+  </insert>
+
+  <delete id="deleteByUserName">
+    delete from permit_item_user where user_name=#{userName}
+  </delete>
+
+  <insert id="addOrUpdatePermitItemUser">
+    insert into permit_item_user(permit_key,user_name,creator,created_time,modifier,modified_time)
+    values
+    <foreach collection="lstAllKey" item="item" index="index"
+             separator=",">
+      (#{item.key},#{userName},'',now(3),'',now(3))
+    </foreach>
+  </insert>
 </mapper>

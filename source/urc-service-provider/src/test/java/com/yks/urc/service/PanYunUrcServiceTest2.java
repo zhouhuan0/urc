@@ -84,6 +84,16 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void tmp_Test() {
 //        permitInverseQueryBp.doTaskSub();
+        String json = "{\n" +
+                "  \"data\": {\n" +
+                "    \"lstPermitKey\": [\n" +
+                "      \"004-000001-000001-002\"\n" +
+                "    ],\n" +
+                "    \"pageData\": 20,\n" +
+                "    \"pageNumber\": 1\n" +
+                "  }\n" +
+                "}";
+        permitInverseQueryBp.getUserListByPermitKey(json);
     }
 
     @Test

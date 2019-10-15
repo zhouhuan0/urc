@@ -120,9 +120,6 @@ public interface PermissionMapper {
      * @Date 2018/11/12 10:06
      */
     int deleteSysPermissionBySysKey(String sysKey);
-    Integer deleteByUserName(@Param("userName") String userName);
-
-    Integer addOrUpdatePermitItemUser(@Param("lstAllKey") List<FunctionVO> lstAllKey, @Param("userName") String userName);
 
 
 }
