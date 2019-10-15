@@ -5,6 +5,7 @@ import com.yks.urc.entity.PermissionDO;
 import java.util.List;
 import java.util.Map;
 
+import com.yks.urc.vo.FunctionVO;
 import org.apache.ibatis.annotations.MapKey;
 import org.apache.ibatis.annotations.Param;
 
@@ -119,5 +120,9 @@ public interface PermissionMapper {
      * @Date 2018/11/12 10:06
      */
     int deleteSysPermissionBySysKey(String sysKey);
+    Integer deleteByUserName(@Param("userName") String userName);
+
+    Integer addOrUpdatePermitItemUser(@Param("lstAllKey") List<FunctionVO> lstAllKey, @Param("userName") String userName);
+
 
 }

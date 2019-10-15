@@ -28,6 +28,7 @@ import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IOrganizationService;
@@ -76,6 +77,14 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Value("${importSysPermit.aesPwd}")
     private String aesPwd;
+
+    @Autowired
+    private IPermitInverseQueryBp permitInverseQueryBp;
+
+    @Test
+    public void tmp_Test() {
+//        permitInverseQueryBp.doTaskSub();
+    }
 
     @Test
     public void mergeFuncJson2Obj_Test() throws IOException {
@@ -144,7 +153,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getAllFuncPermit_Test() {
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun2",null)));
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun2", null)));
     }
 
     @Test
@@ -266,12 +275,12 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
 //        lstUserName.clear();
         lstUserName.add("chenglifu1");
-        UserRoleDO ur=new UserRoleDO();
+        UserRoleDO ur = new UserRoleDO();
         ur.setRoleId(1547612297943000005L);
-        lstUserName=userRoleMapper.getUserNameByRoleId(ur);
-        Date dtStart=new Date();
+        lstUserName = userRoleMapper.getUserNameByRoleId(ur);
+        Date dtStart = new Date();
         permitStatBp.updateUserPermitCache(lstUserName);
-        Date dtEnd=new Date();
+        Date dtEnd = new Date();
         logger.error(String.format("updateUserPermitCache 总耗时:%s ms", (dtEnd.getTime() - dtStart.getTime())));
         // permitStatBp.updateUserPermitCache(lstUserName);
     }
@@ -290,7 +299,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         u.userName = "py";
         u.ticket = "ticket";
         cacheBp.insertUser(u);
-        UserVO uFromCache = cacheBp.getUser(u.userName);
+        UserVO uFromCache = cacheBp.getUser(u.userName, "pc");
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(uFromCache)));
 
         cacheBp.insertSysContext("110", "sysContext");
@@ -304,10 +313,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         e.context = "110 context";
 //        permitCache.lstUserSysVO.add(e);
         cacheBp.insertUserFunc(u.userName, permitCache);
-        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName,null);
+        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName, null);
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
 
-        cacheBp.removeUser(u.userName);
+        cacheBp.removeUser(u.userName, "pc");
         cacheBp.setDingAccessToken("dingAccessToken", "test");
         List<PermissionDO> lst = new ArrayList<>();
         PermissionDO pDO = new PermissionDO();
@@ -382,6 +391,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String jsonStr = StringUtility.toJSONString_NoException(map);
         System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
     }
+
     @Test
     public void createRole_Test() {
         File file = new File("C:\\Users\\A0103000228\\Desktop\\test.txt");
@@ -413,19 +423,21 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     private IOrganizationService organizationService;
 
     @Test
-    public void org_Test(){
+    public void org_Test() {
 
-        ResultVO rslt= organizationService.getAllOrgTreeAndUser();
+        ResultVO rslt = organizationService.getAllOrgTreeAndUser();
         System.out.println(StringUtility.toJSONString_NoException(rslt));
     }
+
     @Test
-    public void testResetPwdGetVerificationCode(){
+    public void testResetPwdGetVerificationCode() {
         String json = "{\"userName\":\"songguanye\",\"mobile\":\"18376740674\",\"ticket\":\"\",\"operator\":\"\",\"personName\":\"\",\"funcVersion\":\"\",\"moduleUrl\":\"/login/forget/\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         service.resetPwdGetVerificationCode(json);
     }
+
     @Test
-    public void testDeletRoles(){
+    public void testDeletRoles() {
         String json = "{\"lstRoleId\":[\"1548057616163000011\",\"1548057639017000012\"],\"ticket\":\"0b5aa9af43fc58338723a44d174a5107\",\"operator\":\"songguanye\",\"funcVersion\":\"684a5791a07040c3c4d7721b2e083a22\",\"moduleUrl\":\"/user/rolemanagement/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         service.deleteRoles(json);

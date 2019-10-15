@@ -8,6 +8,7 @@
  */
 package com.yks.urc.task;
 
+import com.yks.pls.task.quatz.BaseTask;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +16,15 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PlatformShopSiteTask {
+public class PlatformShopSiteTask extends BaseTask {
     private static Logger logger = Logger.getLogger(PlatformShopSiteTask.class);
 
     @Autowired
     private DataAuthorization dataAuthorization;
 
     public static final String SYSTEM = "system";
-    @Scheduled(cron = "0 0 3 * * ?")
+
+//    @Scheduled(cron = "0 0 3 * * ?")
     public void executeGetPlatformShopSite(){
         try {
             logger.info("开始同步平台数据");
@@ -34,5 +36,10 @@ public class PlatformShopSiteTask {
         } catch (Exception e) {
             logger.error("同步平台账号站点出错:",e);
         }
+    }
+
+    @Override
+    protected void doTaskSub(String param) throws Exception {
+        executeGetPlatformShopSite();
     }
 }

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IYksTaskMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.YksTaskVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_id" jdbcType="BIGINT" property="taskId" />
+    <result column="task_title" jdbcType="VARCHAR" property="taskTitle" />
+    <result column="task_desc" jdbcType="VARCHAR" property="taskDesc" />
+    <result column="task_group" jdbcType="VARCHAR" property="taskGroup" />
+    <result column="task_name" jdbcType="VARCHAR" property="taskName" />
+    <result column="trigger_start_time" jdbcType="TIMESTAMP" property="triggerStartTime" />
+    <result column="cron_expression" jdbcType="VARCHAR" property="cronExpression" />
+    <result column="is_enabled" jdbcType="BOOLEAN" property="isEnabled" />
+    <result column="bean_name" jdbcType="VARCHAR" property="beanName" />
+    <result column="bean_method" jdbcType="VARCHAR" property="beanMethod" />
+    <result column="bean_method_param" jdbcType="VARCHAR" property="beanMethodParam" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, task_id, task_title, task_desc, task_group, task_name, trigger_start_time, cron_expression, 
+    is_enabled, bean_name, bean_method, bean_method_param, creator, created_time, modifier, 
+    modified_time
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from yks_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="getByTaskGroup" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from yks_task
+    where
+    task_group = #{taskGroup}
+    and
+    is_enabled = 1;
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from yks_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.YksTaskVO">
+    insert into yks_task (id, task_id, task_title, 
+      task_desc, task_group, task_name, 
+      trigger_start_time, cron_expression, is_enabled, 
+      bean_name, bean_method, bean_method_param, 
+      creator, created_time, modifier, 
+      modified_time)
+    values (#{id,jdbcType=BIGINT}, #{taskId,jdbcType=BIGINT}, #{taskTitle,jdbcType=VARCHAR}, 
+      #{taskDesc,jdbcType=VARCHAR}, #{taskGroup,jdbcType=VARCHAR}, #{taskName,jdbcType=VARCHAR}, 
+      #{triggerStartTime,jdbcType=TIMESTAMP}, #{cronExpression,jdbcType=VARCHAR}, #{isEnabled,jdbcType=TINYINT}, 
+      #{beanName,jdbcType=VARCHAR}, #{beanMethod,jdbcType=VARCHAR}, #{beanMethodParam,jdbcType=VARCHAR}, 
+      #{creator,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
+      #{modifiedTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.YksTaskVO">
+    insert into yks_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="taskTitle != null">
+        task_title,
+      </if>
+      <if test="taskDesc != null">
+        task_desc,
+      </if>
+      <if test="taskGroup != null">
+        task_group,
+      </if>
+      <if test="taskName != null">
+        task_name,
+      </if>
+      <if test="triggerStartTime != null">
+        trigger_start_time,
+      </if>
+      <if test="cronExpression != null">
+        cron_expression,
+      </if>
+      <if test="isEnabled != null">
+        is_enabled,
+      </if>
+      <if test="beanName != null">
+        bean_name,
+      </if>
+      <if test="beanMethod != null">
+        bean_method,
+      </if>
+      <if test="beanMethodParam != null">
+        bean_method_param,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="modifiedTime != null">
+        modified_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="taskId != null">
+        #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="taskTitle != null">
+        #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDesc != null">
+        #{taskDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="taskGroup != null">
+        #{taskGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="triggerStartTime != null">
+        #{triggerStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cronExpression != null">
+        #{cronExpression,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null">
+        #{isEnabled,jdbcType=TINYINT},
+      </if>
+      <if test="beanName != null">
+        #{beanName,jdbcType=VARCHAR},
+      </if>
+      <if test="beanMethod != null">
+        #{beanMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="beanMethodParam != null">
+        #{beanMethodParam,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.YksTaskVO">
+    update yks_task
+    <set>
+      <if test="taskId != null">
+        task_id = #{taskId,jdbcType=BIGINT},
+      </if>
+      <if test="taskTitle != null">
+        task_title = #{taskTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="taskDesc != null">
+        task_desc = #{taskDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="taskGroup != null">
+        task_group = #{taskGroup,jdbcType=VARCHAR},
+      </if>
+      <if test="taskName != null">
+        task_name = #{taskName,jdbcType=VARCHAR},
+      </if>
+      <if test="triggerStartTime != null">
+        trigger_start_time = #{triggerStartTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cronExpression != null">
+        cron_expression = #{cronExpression,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnabled != null">
+        is_enabled = #{isEnabled,jdbcType=TINYINT},
+      </if>
+      <if test="beanName != null">
+        bean_name = #{beanName,jdbcType=VARCHAR},
+      </if>
+      <if test="beanMethod != null">
+        bean_method = #{beanMethod,jdbcType=VARCHAR},
+      </if>
+      <if test="beanMethodParam != null">
+        bean_method_param = #{beanMethodParam,jdbcType=VARCHAR},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.YksTaskVO">
+    update yks_task
+    set task_id = #{taskId,jdbcType=BIGINT},
+      task_title = #{taskTitle,jdbcType=VARCHAR},
+      task_desc = #{taskDesc,jdbcType=VARCHAR},
+      task_group = #{taskGroup,jdbcType=VARCHAR},
+      task_name = #{taskName,jdbcType=VARCHAR},
+      trigger_start_time = #{triggerStartTime,jdbcType=TIMESTAMP},
+      cron_expression = #{cronExpression,jdbcType=VARCHAR},
+      is_enabled = #{isEnabled,jdbcType=TINYINT},
+      bean_name = #{beanName,jdbcType=VARCHAR},
+      bean_method = #{beanMethod,jdbcType=VARCHAR},
+      bean_method_param = #{beanMethodParam,jdbcType=VARCHAR},
+      creator = #{creator,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="setLastExecuteTime">
+    update yks_task
+    set
+    trigger_start_time = now(3)
+    where
+    task_id = #{taskId,jdbcType=BIGINT}
+  </update>
+  <select id="selectByTaskName" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from yks_task
+    where
+    task_name = #{taskName}
+    </select>
+    <update id="disableTaskByTaskName">
+    	update yks_task
+    	set is_enabled = 0
+    	where task_name = #{taskName}
+    </update>
+
+  <select id="selectAllEnableTask" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from yks_task
+    where is_enabled = 1
+  </select>
+</mapper>

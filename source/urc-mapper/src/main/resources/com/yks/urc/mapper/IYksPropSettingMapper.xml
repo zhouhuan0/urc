@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IYksPropSettingMapper">
+    <resultMap id="result_OmsPropSetting_Map" type="com.yks.urc.entity.YksPropSetting">
+        <id column="id" property="id"/>
+        <result column="prop_key" property="propKey"/>
+        <result column="prop_value" property="propValue"/>
+        <result column="remark" property="remark"/>
+        <result column="create_by" property="createBy"/>
+        <result column="create_time" property="createTime"/>
+        <result column="modified_by" property="modifiedBy"/>
+        <result column="modified_time" property="modifiedTime"/>
+    </resultMap>
+
+    <sql id="oms_prop_setting_Column">
+        id,prop_key,prop_value,remark,create_by,create_time,modified_by,modified_time
+    </sql>
+
+    <select id="selectOmsPropSettingObjList" parameterType="com.yks.urc.entity.YksPropSetting"
+            resultMap="result_OmsPropSetting_Map">
+        select
+        <include refid="oms_prop_setting_Column"/>
+        from yks_prop_setting
+    </select>
+
+
+    <insert id="insertOrUpdateOmsProSeting" parameterType="com.yks.urc.entity.YksPropSetting">
+        insert into yks_prop_setting (
+        prop_key,
+        prop_value,
+        remark,
+        create_by,
+        create_time,
+        modified_by,
+        modified_time
+        ) VALUES
+        (
+        #{propKey},
+        #{propValue},
+        #{remark},
+        #{createBy},
+        #{createTime},
+        #{modifiedBy},
+        #{modifiedTime}
+        )
+        ON DUPLICATE KEY UPDATE
+        prop_value = VALUES(prop_value),
+        modified_by = VALUES(modified_by),
+        modified_time = VALUES(modified_time)
+    </insert>
+
+    <select id="selectOmsProSetingByProoKey" parameterType="string" resultMap="result_OmsPropSetting_Map">
+        SELECT <include refid="oms_prop_setting_Column"/>
+        FROM yks_prop_setting
+        WHERE prop_key = #{propKey};
+    </select>
+</mapper>

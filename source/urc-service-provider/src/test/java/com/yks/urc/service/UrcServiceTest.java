@@ -110,7 +110,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	}
 	@Test
 	public void testGetAllFuncPermit() {
-		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("linwanxian")));
+		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("linwanxian",null)));
 	}
 
 	public void test_funcPermitValidate() {

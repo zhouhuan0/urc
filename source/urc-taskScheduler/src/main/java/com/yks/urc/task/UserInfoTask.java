@@ -8,6 +8,7 @@
  */
 package com.yks.urc.task;
 
+import com.yks.pls.task.quatz.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,14 +18,14 @@ import org.springframework.stereotype.Component;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 
 @Component
-public class UserInfoTask {
+public class UserInfoTask extends BaseTask {
     private static Logger logger = LoggerFactory.getLogger(UserInfoTask.class);
 
     @Autowired
     private UserBpImpl userBp;
 
     public static final String SYSTEM = "system";
-	@Scheduled(cron = "0 0 2 * * ?")
+//	@Scheduled(cron = "0 0 2 * * ?")
 //    @Scheduled(cron = "0 0 */12 * * ?")
     public void executeGetUserInfo() {
         logger.info("开始同步用户数据");
@@ -34,5 +35,10 @@ public class UserInfoTask {
         } catch (Exception e) {
             logger.error("同步用户数据出错:",e);
         }
+    }
+
+    @Override
+    protected void doTaskSub(String param) throws Exception {
+        executeGetUserInfo();
     }
 }

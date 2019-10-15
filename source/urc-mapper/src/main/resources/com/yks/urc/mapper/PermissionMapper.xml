@@ -83,6 +83,14 @@
             )
         </foreach>
     </insert>
+    <insert id="addOrUpdatePermitItemUser">
+        insert into permit_item_user(permit_key,user_name,creator,created_time,modifier,modified_time)
+        values
+        <foreach collection="lstAllKey" item="item" index="index"
+                 separator=",">
+            (#{item.key},#{userName},'',now(3),'',now(3))
+        </foreach>
+    </insert>
     <!--获取systemKey-->
     <select id="getSystemKey" resultMap="BaseResultMap">
     SELECT  sys_key,sys_context FROM urc_permission WHERE sys_key =#{sysKey}
@@ -161,4 +169,7 @@
         DELETE FROM urc_permission WHERE  sys_key=#{sysKey}
     </delete>
 
+    <delete id="deleteByUserName">
+        delete from permit_item_user where user_name=#{userName}
+    </delete>
 </mapper>

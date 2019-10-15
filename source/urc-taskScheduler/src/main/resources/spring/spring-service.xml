@@ -16,4 +16,9 @@
 
     <!-- 配置基于注解的声明式事务 -->
     <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="quartzStart" class="com.yks.pls.task.quatz.QuatzBootstrap">
+        <property name="threadCount" value="20"></property>
+        <property name="threadNamePrefix" value="urc-task"></property>
+    </bean>
 </beans>

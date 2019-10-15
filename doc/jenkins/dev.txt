@@ -5,7 +5,7 @@ stage '拉取代码'
    rm -rf ./*
   '''
 
-  checkout([$class: 'GitSCM', branches: [[name: 'v_20190615_log']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@git.kokoerp.com:YKSproject/urcenter.git']]])
+  checkout([$class: 'GitSCM', branches: [[name: 'develop']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@git.kokoerp.com:YKSproject/urcenter.git']]])
 
 stage '同步配置文件'
  sh '''
