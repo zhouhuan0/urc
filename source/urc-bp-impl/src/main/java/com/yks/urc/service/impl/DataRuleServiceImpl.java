@@ -1023,7 +1023,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
         //分批量操作
         List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
-        if (lstUserName != null && lstUserName.size() > 1) {
+        if (lstUserName.size() > 1) {
             for (String  userName : lstUserName) {
                 DataRuleDO dataRuleDO = new DataRuleDO();
                 dataRuleDO.setUserName(userName);
@@ -1043,13 +1043,30 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
         } else {
+        	DataRuleDO dataRuleDO = new DataRuleDO();
+            dataRuleDO.setUserName(operator);
+            DataRuleDO dataRule4Operator = dataRuleMapper.getDataRule(dataRuleDO);
+            List<DataRuleSysDO> dataRuleSysDO4Operator = dataRuleSysMapper.getDataRuleSyAndOpersById(dataRule4Operator.getDataRuleId());
+            dataRuleDO.setUserName(lstUserName.get(0));
+            DataRuleDO dataRule = dataRuleMapper.getDataRule(dataRuleDO);
+            //记下dataRuleId
+            dataBatchRuleIds.add(dataRule);
+            if (dataRule != null && dataRule.getDataRuleId() != null) {
+                if (!CollectionUtils.isEmpty(dataRuleSys)) {
+                    List<String> sysKeys = new ArrayList<>();
+                    for (DataRuleSysDO dataRuleSysDO : dataRuleSysDO4Operator) {
+                        sysKeys.add(dataRuleSysDO.getSysKey());
+                    }
+                    dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
+                }
+            }
         /*1、删除用户列表对应的数据权限 */
-            List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
+            /*List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
             dataRuleMapper.delBatchByUserNames(lstUserName);
-                    /*2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
+                    2、删除用户列表对应的 数据权限Sys   行权限  列权限
             if (dataRuleIds != null && !dataRuleIds.isEmpty()) {
                 dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
-            }
+            }*/
         }
 
         List<DataRuleDO> dataRuleDOSCache = new ArrayList<>();
