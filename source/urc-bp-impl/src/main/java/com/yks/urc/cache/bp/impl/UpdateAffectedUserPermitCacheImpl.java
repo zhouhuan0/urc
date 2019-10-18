@@ -1,14 +1,12 @@
 package com.yks.urc.cache.bp.impl;
 
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.RolePermissionDO;
-import com.yks.urc.entity.UserRoleDO;
+import com.yks.urc.entity.*;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.mapper.*;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.session.bp.api.ISessionBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +84,8 @@ public class UpdateAffectedUserPermitCacheImpl implements IUpdateAffectedUserPer
         // 更新角色下的用户的权限缓存
         List<String> userNameList = userNames.stream().distinct().collect(Collectors.toList());
         permitStatBp.updateUserPermitCache(userNameList);
-        }
+    }
+
 
     /**
      * @param roleId 角色id

@@ -2,6 +2,7 @@ package com.yks.urc.task;
 
 import java.util.Date;
 
+import com.yks.pls.task.quatz.BaseTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import com.yks.urc.service.impl.PersonServiceImpl;
  * 
  */
 @Component
-public class RoleExpiredTask {
+	public class RoleExpiredTask extends BaseTask {
 	private static final Logger logger = LoggerFactory.getLogger(RoleExpiredTask.class);
 
 	@Autowired
@@ -30,7 +31,7 @@ public class RoleExpiredTask {
 	
 //	@Scheduled(cron = "0/10 * * * * ?")
 	// 每天凌晨3点
-	@Scheduled(cron = "0 0 4 * * ?")
+//	@Scheduled(cron = "0 0 4 * * ?")
 	public void executeRoleExpiredTask() {
 		logger.info("角色过期检查START");
 		roleSevice.handleExpiredRole();
@@ -39,8 +40,13 @@ public class RoleExpiredTask {
 	}
 	
 
-	@Scheduled(cron = "0/59 * * * * ?")
-	public void testTask() {
-		logger.info("testTask");
+//	@Scheduled(cron = "0/59 * * * * ?")
+//	public void testTask() {
+//		logger.info("testTask");
+//	}
+
+	@Override
+	protected void doTaskSub(String param) throws Exception {
+		executeRoleExpiredTask();
 	}
 }

@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IPermitRefreshTaskMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.PermitRefreshTaskVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="task_type" jdbcType="INTEGER" property="taskType" />
+    <result column="task_status" jdbcType="TINYINT" property="taskStatus" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.PermitRefreshTaskVO">
+    <result column="task_param" jdbcType="LONGVARCHAR" property="taskParam" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, task_type, task_status, creator, created_time, modifier, modified_time
+  </sql>
+  <sql id="Blob_Column_List">
+    task_param
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from permit_refresh_task
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="selectToDo" resultType="com.yks.urc.entity.PermitRefreshTaskVO">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from permit_refresh_task
+    where task_status in (1,4)
+    order by task_status,modified_time
+    limit #{pageSize}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from permit_refresh_task
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.PermitRefreshTaskVO">
+    insert into permit_refresh_task (id, task_type, task_status, 
+      creator, created_time, modifier, 
+      modified_time, task_param)
+    values (#{id,jdbcType=BIGINT}, #{taskType,jdbcType=INTEGER}, #{taskStatus,jdbcType=TINYINT}, 
+      #{creator,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{taskParam,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.PermitRefreshTaskVO">
+    insert into permit_refresh_task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskType != null">
+        task_type,
+      </if>
+      <if test="taskStatus != null">
+        task_status,
+      </if>
+      <if test="creator != null">
+        creator,
+      </if>
+        created_time,
+      <if test="modifier != null">
+        modifier,
+      </if>
+        modified_time,
+      <if test="taskParam != null">
+        task_param,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskType != null">
+        #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskStatus != null">
+        #{taskStatus,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        #{creator,jdbcType=VARCHAR},
+      </if>
+      now(3),
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      now(3),
+      <if test="taskParam != null">
+        #{taskParam,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.PermitRefreshTaskVO">
+    update permit_refresh_task
+    <set>
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=INTEGER},
+      </if>
+      <if test="taskStatus != null">
+        task_status = #{taskStatus,jdbcType=TINYINT},
+      </if>
+      <if test="creator != null">
+        creator = #{creator,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskParam != null">
+        task_param = #{taskParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.PermitRefreshTaskVO">
+    update permit_refresh_task
+    set task_type = #{taskType,jdbcType=INTEGER},
+      task_status = #{taskStatus,jdbcType=TINYINT},
+      creator = #{creator,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      task_param = #{taskParam,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.PermitRefreshTaskVO">
+    update permit_refresh_task
+    set task_type = #{taskType,jdbcType=INTEGER},
+      task_status = #{taskStatus,jdbcType=TINYINT},
+      creator = #{creator,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateTaskStatus">
+    update permit_refresh_task set task_status=#{taskStatus},modifier=#{modifier},modified_time=now(3) where id=#{id}
+  </update>
+</mapper>

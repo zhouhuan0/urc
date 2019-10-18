@@ -16,6 +16,7 @@ import com.yks.urc.mapper.IDataRuleTemplMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.user.bp.api.IUrcLogBp;
@@ -1017,5 +1018,16 @@ public class UrcServiceImpl implements IUrcService {
 		}
 	}
 
+    @Override
+    public ResultVO getUserListByPermitKey(String json) {
+        return permitInverseQueryBp.getUserListByPermitKey(json);
+    }
 
+    @Autowired
+    private IPermitInverseQueryBp permitInverseQueryBp;
+
+    @Override
+    public ResultVO exportUserListByPermitKey(String json) {
+        return permitInverseQueryBp.exportUserListByPermitKey(json);
+    }
 }

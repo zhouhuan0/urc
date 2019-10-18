@@ -118,4 +118,5 @@ public interface IUserRoleMapper {
 	List<String> getUserOwnSysByUserName(@Param("userName") String userName);
 
 
+	List<String> getAllUserName();
 }

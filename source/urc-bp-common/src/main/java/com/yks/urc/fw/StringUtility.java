@@ -34,6 +34,19 @@ import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 public class StringUtility {
 	private static Logger logger = LoggerFactory.getLogger(StringUtility.class);
 
+	public static Byte convertToByte(Object obj) {
+		return convertToByte(obj,Byte.MIN_VALUE);
+	}
+	public static Byte convertToByte(Object obj, Byte bDefault) {
+		try {
+			if (obj == null)
+				return bDefault;
+			return Byte.parseByte(convertToString(obj));
+		} catch (Exception ex) {
+			return bDefault;
+		}
+	}
+
 	public static byte[] base64Decode(byte[] arrSrc) {
 		return new org.apache.commons.codec.binary.Base64().decode(arrSrc);
 	}
@@ -409,6 +422,39 @@ public class StringUtility {
 		}
 	}
 
+	public static Date convertToDateNew(Object obj, Date dDefault) {
+		if (obj == null)
+			return dDefault;
+		String strSrc = addEmptyString(obj);
+		if (StringUtility.isNullOrEmpty(strSrc))
+			return dDefault;
+		try {
+			if (Pattern.matches("^\\d{4}-\\d{2}-\\d{2} \\d{2}\\:\\d{2}\\:\\d{2}\\.\\d{3}$", strSrc)) {
+				// yyyy-MM-dd HH:mm:ss.SSS
+				return string2Date(strSrc, DtFormatString);
+			} else if (Pattern.matches("^\\d{4}-\\d{2}-\\d{2} \\d{2}\\:\\d{2}\\:\\d{2}$", strSrc)) {
+				// yyyy-MM-dd HH:mm:ss
+				return string2Date(strSrc, DtFormatString_NoMillSecond);
+			} else if (Pattern.matches("^\\d{4}-\\d{2}-\\d{2}$", strSrc)) {
+				// yyyy-MM-dd
+				return string2Date(strSrc, DtFormatString_Date);
+			}else if (Pattern.matches("^\\d+$", strSrc)) {
+				// 毫秒
+				return new Date(convertToLong(strSrc));
+			}
+
+			// public static final String DtFormatString_NoMillSecond =
+			// "yyyy-MM-dd HH:mm:ss";
+			// public static final String TimeFormatString_NoMillSecond = "MM-dd
+			// HH:mm:ss";
+			// public static final String DtFormatString_Date = "yyyy-MM-dd";
+			// public static final String DtFormatString_yyyyMMddHHmmss =
+			// "yyyyMMddHHmmss";
+		} catch (Exception ex) {
+		}
+		return dDefault;
+	}
+
 	public static Date convertToDate(Object obj, Date dDefault) {
 		if (obj == null)
 			return dDefault;
@@ -558,6 +604,16 @@ public class StringUtility {
 		if (str1 == null)
 			return Empty;
 		return str1 + Empty;
+	}
+
+	public static String md5NoException(String src) {
+		try {
+			if (isNullOrEmpty(src)) return Empty;
+			return md5(src);
+		} catch (Exception ex) {
+			logger.error(String.format("MD5:%s", src), ex);
+			return Empty;
+		}
 	}
 
 	/**

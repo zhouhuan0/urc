@@ -249,6 +249,11 @@
         left join urc_role_permission urp on uur.role_id = urp.role_id
         where uur.user_name= #{userName,jdbcType=VARCHAR}
     </select>
+    <select id="getAllUserName" resultType="java.lang.String">
+        select distinct user_name
+        from urc_user_role
+        order by user_name
+    </select>
 
 
 </mapper>

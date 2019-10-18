@@ -14,6 +14,7 @@ import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.*;
 import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IRoleService;
@@ -152,6 +153,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     if (updateRolePermissionAndCache(p)){ continue;}*/
 
                 }
+                permitRefreshTaskBp.addPermitRefreshTaskForImportSysPermit(Arrays.asList(arr).stream().map(c->c.system.key).collect(Collectors.toList()));
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
                 rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
                 rslt.msg = "推送成功";
@@ -167,6 +169,10 @@ public class PermissionServiceImpl implements IPermissionService {
         saveSuperAdministrator();
         return rslt;
     }
+
+    @Autowired
+    private IPermitRefreshTaskBp permitRefreshTaskBp;
+
     /**
      *    重复key值
      * @param

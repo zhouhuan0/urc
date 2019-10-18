@@ -641,5 +641,8 @@ public interface IUrcService {
      * @version: 2019年6月10日 上午9:20:54
      */
     ResultVO getUserName(String jsonStr);
-    
+
+    ResultVO getUserListByPermitKey(String json);
+
+    ResultVO exportUserListByPermitKey(String json);
 }
