@@ -1,27 +1,12 @@
 package com.yks.urc.service.impl;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.DateUtil;
-import com.yks.common.util.StringUtil;
-import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
-import com.yks.urc.Enum.ModuleCodeEnum;
-import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.*;
-import com.yks.urc.exception.ErrorCode;
-import com.yks.urc.exception.URCBizException;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.*;
-import com.yks.urc.mq.bp.api.IMqBp;
-import com.yks.urc.seq.bp.api.ISeqBp;
-import com.yks.urc.service.api.IDataRuleService;
-import com.yks.urc.service.api.IUserService;
-import com.yks.urc.user.bp.api.IUrcLogBp;
-import com.yks.urc.vo.*;
-import com.yks.urc.vo.helper.Query;
-import com.yks.urc.vo.helper.VoHelper;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,8 +16,68 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.common.util.DateUtil;
+import com.yks.common.util.StringUtil;
+import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
+import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.entity.CsPlatform;
+import com.yks.urc.entity.CsPlatformGroup;
+import com.yks.urc.entity.DataRuleColDO;
+import com.yks.urc.entity.DataRuleDO;
+import com.yks.urc.entity.DataRuleSysDO;
+import com.yks.urc.entity.DataRuleTemplDO;
+import com.yks.urc.entity.Entity;
+import com.yks.urc.entity.ExpressionDO;
+import com.yks.urc.entity.Field;
+import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.PlatformDO;
+import com.yks.urc.entity.ShopSiteDO;
+import com.yks.urc.entity.UrcLog;
+import com.yks.urc.entity.UserDO;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.CsPlatformGroupMapper;
+import com.yks.urc.mapper.CsPlatformMapper;
+import com.yks.urc.mapper.EntityMapper;
+import com.yks.urc.mapper.FieldMapper;
+import com.yks.urc.mapper.IDataRuleColMapper;
+import com.yks.urc.mapper.IDataRuleMapper;
+import com.yks.urc.mapper.IDataRuleSysMapper;
+import com.yks.urc.mapper.IDataRuleTemplMapper;
+import com.yks.urc.mapper.IExpressionMapper;
+import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.mapper.IUserRoleMapper;
+import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.mapper.PlatformMapper;
+import com.yks.urc.mapper.ShopSiteMapper;
+import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.service.api.IDataRuleService;
+import com.yks.urc.service.api.IUserService;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.vo.CsCodeNameVO;
+import com.yks.urc.vo.DataRuleColVO;
+import com.yks.urc.vo.DataRuleSysVO;
+import com.yks.urc.vo.DataRuleTemplVO;
+import com.yks.urc.vo.DataRuleVO;
+import com.yks.urc.vo.ExpressionVO;
+import com.yks.urc.vo.GetPlatformCodeRespVO;
+import com.yks.urc.vo.OmsPlatformVO;
+import com.yks.urc.vo.OmsShopVO;
+import com.yks.urc.vo.OmsSiteVO;
+import com.yks.urc.vo.PageResultVO;
+import com.yks.urc.vo.PlatformCodeVO4GetPlatformCode;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.SysAuthWayVO;
+import com.yks.urc.vo.helper.Query;
+import com.yks.urc.vo.helper.VoHelper;
 
 /**
  * 〈一句话功能简述〉
@@ -992,7 +1037,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/20 16:10
      * @see
      */
-    
+    @Autowired
+    AuthWayBp authWayBp;
     @Override
     @Transactional
     public ResultVO addOrUpdateDataRule(String jsonStr) {
@@ -1043,10 +1089,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
         } else {
-        	DataRuleDO dataRuleDO = new DataRuleDO();
-            dataRuleDO.setUserName(operator);
-            DataRuleDO dataRule4Operator = dataRuleMapper.getDataRule(dataRuleDO);
-            List<DataRuleSysDO> dataRuleSysDO4Operator = dataRuleSysMapper.getDataRuleSyAndOpersById(dataRule4Operator.getDataRuleId());
+        	
+            List<SysAuthWayVO> sysAuthWayVOList = authWayBp.getMyAuthWay(operator);
+
+            DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setUserName(lstUserName.get(0));
             DataRuleDO dataRule = dataRuleMapper.getDataRule(dataRuleDO);
             //记下dataRuleId
@@ -1054,8 +1100,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
             if (dataRule != null && dataRule.getDataRuleId() != null) {
                 if (!CollectionUtils.isEmpty(dataRuleSys)) {
                     List<String> sysKeys = new ArrayList<>();
-                    for (DataRuleSysDO dataRuleSysDO : dataRuleSysDO4Operator) {
-                        sysKeys.add(dataRuleSysDO.getSysKey());
+                    for (SysAuthWayVO sysAuthWayVO : sysAuthWayVOList) {
+                        sysKeys.add(sysAuthWayVO.sysKey);
                     }
                     dataRuleSysMapper.delRuleSysDatasByIdsAndSyskey(sysKeys, dataRule.getDataRuleId());
                 }
