@@ -31,6 +31,8 @@
         <c3p0.version>0.9.1.2</c3p0.version>
         <yks.common.version>1.0.0</yks.common.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
+        
+        <poi.version>4.1.0</poi.version>
     </properties>
 
     <repositories>

@@ -1,11 +1,26 @@
 package com.yks.urc.permitStat.bp.impl;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.sun.org.apache.xpath.internal.operations.Mod;
+import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.PermitItemUserVO;
+import com.yks.urc.excel.FileUpDownLoadUtils;
+import com.yks.urc.excel.FileUploadRespVO;
+import com.yks.urc.excel.PermitInfoExcelExport;
 import com.yks.urc.exception.ErrorCode;
-import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IPermitItemInfoMapper;
 import com.yks.urc.mapper.IPermitItemUserMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
@@ -14,17 +29,19 @@ import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.session.bp.api.ISessionBp;
-import com.yks.urc.vo.*;
+import com.yks.urc.vo.FunctionVO;
+import com.yks.urc.vo.GetAllFuncPermitRespVO;
+import com.yks.urc.vo.MenuVO;
+import com.yks.urc.vo.ModuleVO;
+import com.yks.urc.vo.PagedVO;
+import com.yks.urc.vo.Req_getUserListByPermitKey;
+import com.yks.urc.vo.RequestVO;
+import com.yks.urc.vo.Resp_getUserListByPermitKey;
+import com.yks.urc.vo.ResultPagedVO;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.SystemRootVO;
+import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.helper.VoHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
@@ -35,6 +52,8 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 
     @Autowired
     private ISerializeBp serializeBp;
+    
+    private static String excelTemp = "/opt/tmp/";
 
     public void xxx() {
         Set<FunctionVO> lstAllKey = new HashSet<>();
@@ -138,12 +157,44 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
         return rslt;
     }
 
+    @Autowired
+    PermitInfoExcelExport permitInfoExcelExport;
     @Override
     public ResultVO exportUserListByPermitKey(String json) {
-        return null;
+    	try {
+    		RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
+            });
+            if (req.data.lstPermitKey.size() > 5) {
+                return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "lstPermitKey 参数不能大于5个元素");
+            }
+            ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
+            rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
+            rslt.data.total = 0L;
+            Long total = permitItemUserMapper.getUserListByPermitKeyTotal(req);
+            req.data.pageData = Integer.valueOf(total.toString());
+            req.data.offset = 0;
+            List<Resp_getUserListByPermitKey> lstRslt = permitItemUserMapper.getUserListByPermitKey(req);
+            String downloadFileUrl = downloadByData(lstRslt);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(),downloadFileUrl);
+		} catch (Exception e) {
+			logger.error(String.format("exportUserListByPermitKey error ! json:%s", json),e);
+		}
+    	return VoHelper.getErrorResult();
     }
 
-    private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {
+    private String downloadByData(List<Resp_getUserListByPermitKey> lstRslt) {
+    	Date now = new Date();
+    	String fileName = excelTemp + "permitKey-"+now.getTime() +".xlsx";
+    	permitInfoExcelExport.setLstRslt(lstRslt);
+    	permitInfoExcelExport.setExportFilePath(fileName);
+    	permitInfoExcelExport.initExportExcel();
+    	
+    	String result = FileUpDownLoadUtils.getDownloadUrl("http://www.soter.youkeshu.com/yks/file/server/", fileName);
+    	
+		return result;
+	}
+
+	private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {
         List<MenuVO> menu1 = rootVO.menu;
         if (CollectionUtils.isEmpty(menu1)) {
             return;
