@@ -140,8 +140,8 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
     public ResultVO getUserListByPermitKey(String json) {
         RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
         });
-        if (req.data.lstPermitKey.size() > 5) {
-            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "lstPermitKey 参数不能大于5个元素");
+        if (CollectionUtils.isEmpty(req.data.lstPermitKey) || req.data.lstPermitKey.size() < 1 || req.data.lstPermitKey.size() > 5) {
+            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "只能选择1-5个权限查询 ");
         }
         ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
         rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
@@ -164,9 +164,9 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
     	try {
     		RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
             });
-            if (req.data.lstPermitKey.size() > 5) {
-                return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "lstPermitKey 参数不能大于5个元素");
-            }
+    		if (CollectionUtils.isEmpty(req.data.lstPermitKey) || req.data.lstPermitKey.size() < 1 || req.data.lstPermitKey.size() > 5) {
+    	            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "只能选择1-5个权限查询 ");
+    	    }
             ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
             rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
             rslt.data.total = 0L;
