@@ -138,23 +138,29 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 
     @Override
     public ResultVO getUserListByPermitKey(String json) {
-        RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
-        });
-        if (CollectionUtils.isEmpty(req.data.lstPermitKey) || req.data.lstPermitKey.size() < 1 || req.data.lstPermitKey.size() > 5) {
-            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "只能选择1-5个权限查询 ");
-        }
-        ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
-        rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
-        rslt.data.total = 0L;
-        Long total = permitItemUserMapper.getUserListByPermitKeyTotal(req);
-        if (total != null && total > 0) {
-            rslt.data.total = total;
-            req.data.offset = (req.data.pageNumber - 1) * req.data.pageData;
-            List<Resp_getUserListByPermitKey> lstRslt = permitItemUserMapper.getUserListByPermitKey(req);
-            rslt.data.list = lstRslt;
-        }
-        rslt.state = ErrorCode.E_000001.getState();
-        return rslt;
+    	try {
+    		RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
+            });
+            if (CollectionUtils.isEmpty(req.data.lstPermitKey) || req.data.lstPermitKey.size() < 1 || req.data.lstPermitKey.size() > 5) {
+                return VoHelper.getErrorResult(ErrorCode.E_000003.getState(), "只能选择1-5个权限查询 ");
+            }
+            ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
+            rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
+            rslt.data.total = 0L;
+            Long total = permitItemUserMapper.getUserListByPermitKeyTotal(req);
+            if (total != null && total > 0) {
+                rslt.data.total = total;
+                req.data.offset = (req.data.pageNumber - 1) * req.data.pageData;
+                List<Resp_getUserListByPermitKey> lstRslt = permitItemUserMapper.getUserListByPermitKey(req);
+                rslt.data.list = lstRslt;
+            }
+            rslt.state = ErrorCode.E_000001.getState();
+            return rslt;
+		} catch (Exception e) {
+			logger.error(String.format("getUserListByPermitKey error ! json:%s", json),e);
+		}
+    	return VoHelper.getErrorResult();
+        
     }
 
     @Autowired
@@ -165,7 +171,7 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
     		RequestVO<Req_getUserListByPermitKey> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<Req_getUserListByPermitKey>>() {
             });
     		if (CollectionUtils.isEmpty(req.data.lstPermitKey) || req.data.lstPermitKey.size() < 1 || req.data.lstPermitKey.size() > 5) {
-    	            return VoHelper.getErrorResult(ErrorCode.E_000001.getState(), "只能选择1-5个权限查询 ");
+    	            return VoHelper.getErrorResult(ErrorCode.E_000003.getState(), "只能选择1-5个权限查询 ");
     	    }
             ResultPagedVO<Resp_getUserListByPermitKey> rslt = new ResultPagedVO<>();
             rslt.data = new PagedVO<Resp_getUserListByPermitKey>();
