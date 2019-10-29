@@ -534,7 +534,7 @@ public class UserValidateBp implements IUserValidateBp {
 
     @Override
     public ResultVO funcPermitValidate(Map<String, String> map) {
-        logger.info(String.format("funcPermitValidate:%s", StringUtility.toJSONString_NoException(map)));
+        logger.info(String.format("funcPermitValidate_request:%s", StringUtility.toJSONString_NoException(map)));
         try {
             String apiUrl = map.get("apiUrl");
             String moduleUrl = map.get("moduleUrl");

@@ -8,6 +8,7 @@
  */
 package com.yks.urc.service;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCacheBuilder;
@@ -93,7 +94,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
                 "    \"pageNumber\": 1\n" +
                 "  }\n" +
                 "}";
-        permitInverseQueryBp.getUserListByPermitKey(json);
+        ResultVO resultVO = permitInverseQueryBp.exportUserListByPermitKey(json);
+        System.out.println(JSON.toJSONString(resultVO));
+        System.out.println(JSON.toJSONString(resultVO));
     }
 
     @Test

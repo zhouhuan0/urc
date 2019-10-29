@@ -1880,4 +1880,16 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return VoHelper.getSuccessResult((Object) "待配置!......");
         }
 	}
+	
+	public static void main(String[] args) {
+        Map<String,String> trakCodeInfo4PushMdMap = new HashMap<>();
+        trakCodeInfo4PushMdMap.put("ordersCodeUrl","www.baidu.com");
+        trakCodeInfo4PushMdMap.put("trackCode1","23444");
+        trakCodeInfo4PushMdMap.put("trackCode2",null);
+
+        JSONObject trakCodeInfo4PushMdMapJson = (JSONObject) JSONObject.toJSON(trakCodeInfo4PushMdMap);
+        System.out.println(trakCodeInfo4PushMdMapJson.toString());
+
+        System.out.println(trakCodeInfo4PushMdMapJson);
+    }
 }
