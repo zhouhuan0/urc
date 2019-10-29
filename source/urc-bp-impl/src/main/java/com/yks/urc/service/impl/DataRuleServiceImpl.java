@@ -1863,11 +1863,6 @@ public class DataRuleServiceImpl implements IDataRuleService {
         	platformCodeVO4GetPlatformCode7.setPlatformName("Jumia");
         	platformCodes.add(platformCodeVO4GetPlatformCode7);
         	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode8 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode8.setPlatformCode("Douyin");
-        	platformCodeVO4GetPlatformCode8.setPlatformName("Douyin");
-        	platformCodes.add(platformCodeVO4GetPlatformCode8);
-        	
         	getPlatformCodeRespVO.setList(platformCodes);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
