@@ -105,7 +105,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
         List<String> lstJson = new ArrayList<>();
         lstJson.add(strJson1);
-        lstJson.add(strJson2);
+        //lstJson.add(strJson2);
         System.out.println(userValidateBp.mergeFuncJson(lstJson));
     }
 

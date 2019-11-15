@@ -1,12 +1,29 @@
 package com.yks.urc.userValidate.bp.impl;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.StringUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.entity.UrcWhiteApiVO;
 import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.UrcWhiteApiVO;
 import com.yks.urc.entity.UserLoginLogDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.entity.UserTicketDO;
@@ -32,20 +49,6 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SystemRootVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.VoHelper;
-import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Component
 public class UserValidateBp implements IUserValidateBp {
@@ -499,13 +502,37 @@ public class UserValidateBp implements IUserValidateBp {
             SystemRootVO sys2 = lstSysRootVO.get(i);
             distinctSystemRootVO(sys1, sys2);
         }
-        return sys1;
+        return checkSystemRootVo(sys1);
     }
 
    /* private List<String> lstWhiteApiUrl = Arrays.asList("/urc/motan/service/api/IUrcService/getAllFuncPermit",
             "/urc/motan/service/api/IUrcService/logout");*/
 
-    private List<String> lstWhiteApiUrl() {
+    private SystemRootVO checkSystemRootVo(SystemRootVO sys1) {
+    	if(null == sys1) return null;
+    	if(CollectionUtils.isEmpty(sys1.menu)) return null;
+    	
+    	Iterator<MenuVO> it = sys1.menu.iterator();
+    	while (it.hasNext()) {
+    		if(null == checkoutMenuVO(it.next())){
+    			it.remove();
+    		}
+    	}
+    	return sys1;
+		
+	}
+
+	private MenuVO checkoutMenuVO(MenuVO menuVO) {
+		
+		if(null == menuVO || CollectionUtils.isEmpty(menuVO.module)) return null;
+		
+		return menuVO;
+		
+	}
+
+	
+
+	private List<String> lstWhiteApiUrl() {
         List<String> whiteApi = new ArrayList<>();
         String whiteApiCash = cacheBp.getWhiteApi("api");
         if (whiteApiCash == null) {

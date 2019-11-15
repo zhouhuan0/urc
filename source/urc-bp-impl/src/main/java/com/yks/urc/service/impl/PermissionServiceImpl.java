@@ -325,6 +325,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     if (lstFuncJson != null && lstFuncJson.size() > 0) {
                         // 合并json树
                         SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
+                        if(null == rootVO) continue;
                         PermissionVO permissionVO = new PermissionVO();
                         permissionVO.setSysKey(sysKey);
                         permissionVO.setSysContext(StringUtility.toJSONString_NoException(rootVO));

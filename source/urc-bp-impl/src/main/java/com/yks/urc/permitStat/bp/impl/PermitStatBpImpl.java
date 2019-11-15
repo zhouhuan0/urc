@@ -105,7 +105,7 @@ public class PermitStatBpImpl implements IPermitStatBp {
 					cacheDo.setSysKey(entry.getKey());
 					// 合并json树
 					SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
-
+					if(null == rootVO) continue;
 					//获取sysName
 					String sysName = getSysNameBySyskey(entry.getKey());
 					if (!StringUtility.isNullOrEmpty(sysName)) {

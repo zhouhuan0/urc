@@ -137,26 +137,7 @@
     },
         {
             "key": "008-000002",
-            "module": [{
-                "function": [{
-                    "key": "008-000002-000001-001",
-                    "name": "查看"
-                },
-                    {
-                        "key": "008-000002-000001-002",
-                        "name": "新增/修改"
-                    },
-                    {
-                        "key": "008-000002-000001-003",
-                        "name": "删除"
-                    }],
-                "key": "008-000002-000001",
-                "module": [],
-                "name": "图库设置",
-                "pageFullPathName": "",
-                "show": 1,
-                "url": "/publish/setting/basicsetimgset/"
-            }],
+            "module": [],
             "name": "基础设置",
             "url": "/publish/"
         }],
