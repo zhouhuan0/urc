@@ -40,6 +40,7 @@ sh '''
   	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-taskScheduler/target/urc-taskScheduler-assembly.tar.gz root@${IP}:/opt
   	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_provider_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/service_provider_restart.sh;/opt/service_provider_restart.sh'
+      sleep 30
 
       # serviceProvider
       IP=10.90.1.191
@@ -47,6 +48,7 @@ sh '''
       rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
       scp `pwd`/doc/config文件/${confPath}/urcenter/service_provider_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/service_provider_restart.sh;/opt/service_provider_restart.sh'
+      sleep 30
 
       # serviceProvider
       IP=10.90.1.192
