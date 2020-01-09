@@ -1,6 +1,7 @@
 package com.yks.urc.service.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.entity.CsPlatform;
 import com.yks.urc.entity.CsPlatformGroup;
 import com.yks.urc.entity.DataRuleColDO;
@@ -1813,6 +1815,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
 	        }
 	}
 
+	@Autowired
+	IConfigBp configBp;
 	@Override
 	public ResultVO getPlatformByConditions(JSONObject jsonObject) {
 		String operator = jsonObject.getString("operator");
@@ -1827,8 +1831,17 @@ public class DataRuleServiceImpl implements IDataRuleService {
         	getPlatformCodeRespVO.setList((List<PlatformCodeVO4GetPlatformCode>) resultVO.data);
         	return VoHelper.getSuccessResult(getPlatformCodeRespVO);
         } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
+        	String platformCodes4E_PlsShopAccount = StringUtility.convertToString(configBp.getString("E_PlsShopAccount_PlatformCode"));
+            List<String> platformCodesList = Arrays.asList(platformCodes4E_PlsShopAccount.split(","));
+            
+            for (String platformCode : platformCodesList) {
+            	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode = new PlatformCodeVO4GetPlatformCode();
+            	platformCodeVO4GetPlatformCode.setPlatformCode(platformCode);
+            	platformCodeVO4GetPlatformCode.setPlatformName(platformCode);
+            	platformCodes.add(platformCodeVO4GetPlatformCode);
+			}
             // 刊登--->ebyay 只需要账号, 目前返回这4个平台
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode1 = new PlatformCodeVO4GetPlatformCode();
+        	/*PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode1 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode1.setPlatformCode("SHOPEE");
         	platformCodeVO4GetPlatformCode1.setPlatformName("SHOPEE");
         	platformCodes.add(platformCodeVO4GetPlatformCode1);
@@ -1861,7 +1874,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode7 = new PlatformCodeVO4GetPlatformCode();
         	platformCodeVO4GetPlatformCode7.setPlatformCode("Jumia");
         	platformCodeVO4GetPlatformCode7.setPlatformName("Jumia");
-        	platformCodes.add(platformCodeVO4GetPlatformCode7);
+        	platformCodes.add(platformCodeVO4GetPlatformCode7);*/
         	
         	getPlatformCodeRespVO.setList(platformCodes);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);

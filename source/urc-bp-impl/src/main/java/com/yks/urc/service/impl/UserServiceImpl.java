@@ -85,7 +85,9 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO syncUserInfo(String operator) {
         ResultVO resultVO = new ResultVO();
+        
         try {
+        	dataAuthorization.syncShopSite(operator);
             resultVO = userBp.SynUserFromUserInfo(operator);
         } catch (Exception e) {
             logger.error("同步任务异常" + e.getMessage());
