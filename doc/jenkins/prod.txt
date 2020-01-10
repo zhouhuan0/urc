@@ -33,35 +33,28 @@ stage '部署应用'
 sh '''
     confPath=urcenter-prod
 	
-      # serviceProvider
-      IP=10.90.1.190
-      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'	  
-  	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
-  	  rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-taskScheduler/target/urc-taskScheduler-assembly.tar.gz root@${IP}:/opt
-  	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_provider_restart.sh root@${IP}:/opt
-      ssh root@${IP} 'chmod +x /opt/service_provider_restart.sh;/opt/service_provider_restart.sh'
-      sleep 30
-
-      # serviceProvider
-      IP=10.90.1.191
-      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'   
-      rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
-      scp `pwd`/doc/config文件/${confPath}/urcenter/service_provider_restart.sh root@${IP}:/opt
-      ssh root@${IP} 'chmod +x /opt/service_provider_restart.sh;/opt/service_provider_restart.sh'
-      sleep 30
-
-      # serviceProvider
-      IP=10.90.1.192
-      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'   
+    # 部署 urcenter-service-provider-prod
+    POD_NAME=urcenter-service-provider-prod
+    for IP in `/var/lib/jenkins/list_pod.sh |grep -wi ${POD_NAME}|awk '{print $NF}'`
+    do
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'
       rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
       scp `pwd`/doc/config文件/${confPath}/urcenter/service_provider_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/service_provider_restart.sh;/opt/service_provider_restart.sh'
 
-      # taskScheduler
-      IP=10.90.1.250
+      echo "urcenter-service-provider-prod is Ok"
+    done
+
+    # 部署 urcenter-task-scheduler-prod
+    POD_NAME=urcenter-task-scheduler-prod
+    for IP in `/var/lib/jenkins/list_pod.sh |grep -wi ${POD_NAME}|awk '{print $NF}'`
+    do
       ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'
       rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-taskScheduler/target/urc-taskScheduler-assembly.tar.gz root@${IP}:/opt
       scp `pwd`/doc/config文件/${confPath}/urcenter/taskScheduler_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/taskScheduler_restart.sh;/opt/taskScheduler_restart.sh'
+
+      echo "urcenter-task-scheduler-prod is Ok"
+    done
   '''
 }
