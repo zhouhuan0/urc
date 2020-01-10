@@ -10,7 +10,7 @@ stage '拉取代码'
 stage '同步配置文件'
  sh '''
    # 替换配置模板
-   curEnv=urcenterprod
+   curEnv=urcenter-service-provider-prod
    #/usr/bin/python3 /var/lib/jenkins/replace_config.py $curEnv
    cmdstr=`pwd`/doc/jenkins/replace_config_py.py
    echo $cmdstr
