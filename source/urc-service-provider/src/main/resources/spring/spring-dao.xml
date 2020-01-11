@@ -19,7 +19,7 @@
 		<property name="password" value="${jdbc.password}" />
 
 		<!-- c3p0连接池的私有属性 -->
-		<property name="maxPoolSize" value="30" />
+		<property name="maxPoolSize" value="130" />
 		<property name="initialPoolSize" value="20"/>
  		<property name="minPoolSize" value="10" />
 		<!-- 关闭连接后不自动commit -->
@@ -37,7 +37,7 @@
 		<!--<property name="maxIdleTime" value="600000"/>-->
 		<!-- 空闲时间-->
 		<property name="maxIdleTime" value="250"/>
-		<property name="idleConnectionTestPeriod" value="250"/>
+		<property name="idleConnectionTestPeriod" value="240"/>
 	</bean>
 
 	<!-- 3.配置SqlSessionFactory对象 -->

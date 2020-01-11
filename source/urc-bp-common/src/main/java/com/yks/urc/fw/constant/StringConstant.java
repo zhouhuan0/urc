@@ -21,5 +21,7 @@ public class StringConstant {
     public final static String sysKeys = "sysKeys";
     
     public final static String data = "data";
+    public static String requestId = "requestId";
+    public static String requestid = "requestid";
 
 }
