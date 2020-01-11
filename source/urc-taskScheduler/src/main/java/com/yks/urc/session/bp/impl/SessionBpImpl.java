@@ -20,4 +20,15 @@ public class SessionBpImpl implements ISessionBp {
     public Long getLong(String strKey) {
         return 0L;
     }
+
+
+    @Override
+    public String cpString() {
+        return getOperator();
+    }
+
+    @Override
+    public void initCp(String strCp) {
+
+    }
 }

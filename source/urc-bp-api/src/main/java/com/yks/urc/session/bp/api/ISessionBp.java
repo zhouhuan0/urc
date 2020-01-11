@@ -6,4 +6,7 @@ public interface ISessionBp {
     String getOperator();
     String getStringValue(String strKey);
     Long getLong(String strKey);
+    String cpString();
+    void initCp(String strCp);
+
 }
