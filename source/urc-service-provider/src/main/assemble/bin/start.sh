@@ -30,9 +30,15 @@ JAVA_OPTS="$JAVA_OPTS -XX:CMSInitiatingOccupancyFraction=75"
 JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCApplicationStoppedTime"
 JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDateStamps -XX:+PrintGCTimeStamps"
 JAVA_OPTS="$JAVA_OPTS -XX:+PrintGCDetails"
-JAVA_OPTS="$JAVA_OPTS -Xloggc:/applogs/urc/serviceProvider/serviceProvider_gc.log"
+JAVA_OPTS="$JAVA_OPTS -Xloggc:/applogs/serviceProvider_gc.log"
 #debug Options
-JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8065,server=y,suspend=n"
+#JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,address=8065,server=y,suspend=n"
+
+if [ -n "$APPNAME" ] ; then
+    sed -i "s/APPNAME/$APPNAME/g" /plugin/sky-agent/agent/config/agent.config
+    sed -i "s/BACKEND_SERVER/$BACKEND_SERVER/g" /plugin/sky-agent/agent/config/agent.config
+    JAVA_OPTS="$JAVA_OPTS -javaagent:/plugin/sky-agent/agent/skywalking-agent.jar -Dskywalking.agent.service_name=$APPNAME -Dskywalking.collector.backend_service=$BACKEND_SERVER"
+fi
 #==============================================================================
 
 TEMP_CLASSPATH="$BASE_HOME/conf"
