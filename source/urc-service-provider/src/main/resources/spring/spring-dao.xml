@@ -11,33 +11,25 @@
 	<!--<context:property-placeholder location="classpath:jdbc.properties" />-->
 
 	<!-- 2.数据库连接池 -->
-	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
-		<!-- 配置连接池属性 -->
-		<property name="driverClass" value="${jdbc.driver}" />
-		<property name="jdbcUrl" value="${jdbc.url}" />
-		<property name="user" value="${jdbc.username}" />
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
 		<property name="password" value="${jdbc.password}" />
 
-		<!-- c3p0连接池的私有属性 -->
-		<property name="maxPoolSize" value="130" />
-		<property name="initialPoolSize" value="20"/>
- 		<property name="minPoolSize" value="10" />
-		<!-- 关闭连接后不自动commit -->
-		<property name="autoCommitOnClose" value="false" />
-		<!-- 获取连接超时时间 -->
-		<property name="checkoutTimeout" value="10000" />
-		<!-- 当获取连接失败重试次数 -->
-		<property name="acquireRetryAttempts" value="2" />
 
-
-		<!---->
-		<!--<property name="testConnectionOnCheckout" value="false"/>
-		<property name="testConnectionOnCheckin" value="false"/>-->
-
-		<!--<property name="maxIdleTime" value="600000"/>-->
-		<!-- 空闲时间-->
-		<property name="maxIdleTime" value="250"/>
-		<property name="idleConnectionTestPeriod" value="240"/>
+		<property name="minIdle" value="5" />
+		<property name="maxIdle" value="5" />
+		<property name="initialSize" value="5" />
+		<property name="maxActive" value="250" />
+		<property name="maxWait" value="10000" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false"/>
+		<property name="testOnReturn" value="false"/>
+		<property name="validationQuery" value="SELECT 1 FROM DUAL"/>
+		<!--		配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒-->
+		<property name="timeBetweenEvictionRunsMillis" value="10000" />
+		<property name="removeAbandoned" value="true" />
 	</bean>
 
 	<!-- 3.配置SqlSessionFactory对象 -->
