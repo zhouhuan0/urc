@@ -34,7 +34,7 @@ public class RedissonLockBpImpl implements ILockBp {
     @Autowired
     private ISerializeBp serializeBp;
 
-    @PostConstruct
+//    @PostConstruct
     private void init() {
         RedissonLockConfigVO configVO = serializeBp.json2ObjNew(configBp.getString("redisson_lock_config"),
                 new TypeReference<RedissonLockConfigVO>() {
@@ -64,10 +64,17 @@ public class RedissonLockBpImpl implements ILockBp {
         return String.format("lk_%s", lockName);
     }
 
+    public Redisson getRedisson() {
+        if (redisson == null) {
+            init();
+        }
+        return redisson;
+    }
+
     @Override
     public Boolean tryLock(String lockName) {
         try {
-            RLock mylock = redisson.getLock(getLockName(lockName));
+            RLock mylock = getRedisson().getLock(getLockName(lockName));
             // 1s拿不到锁则退出
             return mylock.tryLock(1, TimeUnit.SECONDS);
         } catch (Exception ex) {
@@ -84,7 +91,7 @@ public class RedissonLockBpImpl implements ILockBp {
     @Override
     public void unlock(String lockName) {
         try {
-            RLock mylock = redisson.getLock(getLockName(lockName));
+            RLock mylock = getRedisson().getLock(getLockName(lockName));
             if(mylock != null && mylock.isHeldByCurrentThread()){
                 mylock.unlock();
             }

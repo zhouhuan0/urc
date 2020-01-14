@@ -29,6 +29,8 @@ import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.mq.bp.api.IMqCallback;
+import com.yks.urc.mq.bp.api.IPubSubBp;
 import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
@@ -456,5 +458,26 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         String json = "{\"lstRoleId\":[\"1548057616163000011\",\"1548057639017000012\"],\"ticket\":\"0b5aa9af43fc58338723a44d174a5107\",\"operator\":\"songguanye\",\"funcVersion\":\"684a5791a07040c3c4d7721b2e083a22\",\"moduleUrl\":\"/user/rolemanagement/\",\"personName\":\"songguanye\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         service.deleteRoles(json);
+    }
+
+    @Autowired
+    private IPubSubBp pubSubBp;
+
+    @Test
+    public void mqSubTest() throws InterruptedException {
+        pubSubBp.sub("1", new IMqCallback() {
+            @Override
+            public void call(String topic, String msg) {
+
+            }
+        });
+        while (true) {
+            Thread.sleep(1000);
+        }
+    }
+
+    @Test
+    public void pubTest() {
+        pubSubBp.pub("1", "Hello");
     }
 }
