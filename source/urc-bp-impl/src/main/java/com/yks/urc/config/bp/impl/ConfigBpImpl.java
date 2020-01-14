@@ -1,11 +1,18 @@
 package com.yks.urc.config.bp.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.entity.YksPropSetting;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IYksPropSettingMapper;
 import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.mq.bp.api.IMqCallback;
+import com.yks.urc.mq.bp.api.IPubSubBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.vo.RequestVO;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -18,7 +25,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ConfigBpImpl implements IConfigBp,InitializingBean {
+public class ConfigBpImpl implements IConfigBp, InitializingBean {
 
     @Autowired
     private IYksPropSettingMapper omsPropSettingMapper;
@@ -27,32 +34,34 @@ public class ConfigBpImpl implements IConfigBp,InitializingBean {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigBpImpl.class);
 
+    @Autowired
+    private IPubSubBp pubSubBp;
+
     @Override
-    public void afterPropertiesSet() throws Exception{
+    public void afterPropertiesSet() throws Exception {
         initMap();
         // 订单配置更新 TOPIC
-//        mqBp.subscribe(TOPIC_CONFIG_UPDATED, new IMqCallback() {
-//            @Override
-//            public void call(String topic, String msg) {
-//                LOGGER.info("received:{} {} {}", StringUtility.getDateTimeNow_yyyyMMddHHmmssSSS(), topic, msg);
-//                initMap();
-//            }
-//        });
+        pubSubBp.sub(TOPIC_CONFIG_UPDATED, new IMqCallback() {
+            @Override
+            public void call(String topic, String msg) {
+                initMap();
+            }
+        });
     }
 
-    private void initMap(){
+    private void initMap() {
         Map<String, String> map1 = new ConcurrentHashMap<>();
         List<YksPropSetting> omsPropSettings = omsPropSettingMapper.selectOmsPropSettingObjList(null);
-        for (YksPropSetting o : omsPropSettings){
-            if(o.getPropKey() == null || o.getPropValue() == null){
+        for (YksPropSetting o : omsPropSettings) {
+            if (o.getPropKey() == null || o.getPropValue() == null) {
                 continue;
             }
-            map1.put(o.getPropKey(),o.getPropValue());
+            map1.put(o.getPropKey(), o.getPropValue());
         }
-        if (map != null){
+        if (map != null) {
             map.clear();
         }
-        map= map1;
+        map = map1;
     }
 
     @Override
@@ -88,22 +97,11 @@ public class ConfigBpImpl implements IConfigBp,InitializingBean {
         return StringUtility.convertToLong(getString(key), null);
     }
 
-    @Autowired
-    private IMqBp mqBp;
-
     private String TOPIC_CONFIG_UPDATED = "TOPIC_CONFIG_UPDATED";
 
     @Override
     public void publishConfigUpdate() {
-//        mqBp.pubish(TOPIC_CONFIG_UPDATED, String.format("%s %s", TOPIC_CONFIG_UPDATED, StringUtility.getDateTimeNow_yyyyMMddHHmmssSSS()),
-//                new IMessageCallBack() {
-//                    @Override
-//                    public void onCompletion(Exception e) {
-//                        if(e!=null){
-//                            LOGGER.error("publishConfigUpdate ERROR", e);
-//                        }
-//                    }
-//                });
+        pubSubBp.pub(TOPIC_CONFIG_UPDATED, String.format("%s %s", TOPIC_CONFIG_UPDATED, StringUtility.getDateTimeNow_yyyyMMddHHmmssSSS()));
     }
 
     @Override
@@ -128,5 +126,17 @@ public class ConfigBpImpl implements IConfigBp,InitializingBean {
         omsPropSetting.setCreateTime(new Date());
         omsPropSetting.setModifiedTime(omsPropSetting.getCreateTime());
         omsPropSettingMapper.insertOrUpdateOmsProSeting(omsPropSetting);
+    }
+
+    @Autowired
+    private ISerializeBp serializeBp;
+
+    @Override
+    public ResultVO updateConfig(String json) {
+        RequestVO<YksPropSetting> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<YksPropSetting>>() {
+        });
+        this.update2Db(req.data.getPropKey(), req.data.getPropValue());
+        this.publishConfigUpdate();
+        return VoHelper.getSuccessResult("更新&&发消息成功啦");
     }
 }

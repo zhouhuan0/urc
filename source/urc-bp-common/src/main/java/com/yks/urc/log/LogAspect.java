@@ -12,7 +12,9 @@ package com.yks.urc.log;
 import com.yks.urc.exception.AbstractURCException;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCServiceException;
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.session.bp.api.ISessionBp;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.slf4j.Logger;
@@ -72,12 +74,17 @@ public class LogAspect implements InitializingBean, DisposableBean {
         }catch (Throwable e){
             throw new URCServiceException(ErrorCode.E_000007, e);
         }finally {
-            executorService.submit(new LogTask(getLogId(),jp,result,startDate,endDate, log));
+            ISessionBp sessionBp = BeanProvider.getBean(ISessionBp.class);
+            String cpString = sessionBp.cpString();
+            executorService.submit(new LogTask(cpString,getLogId(),jp,result,startDate,endDate, log));
         }
     }
     @Deprecated
     public void after(JoinPoint jp,Log log, Object result) {
-        executorService.submit(new LogTask(getLogId(), jp, result,null,null, log));
+        ISessionBp sessionBp = BeanProvider.getBean(ISessionBp.class);
+        String cpString = sessionBp.cpString();
+
+        executorService.submit(new LogTask(cpString,getLogId(), jp, result,null,null, log));
     }
 
     @Override

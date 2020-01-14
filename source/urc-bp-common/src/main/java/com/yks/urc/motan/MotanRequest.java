@@ -34,6 +34,10 @@ public class MotanRequest {
         return StringUtility.Empty;
     }
 
+    public String getRequestId() {
+        return getStringValue(StringConstant.requestId);
+    }
+
     public String getStringValue(String strKey) {
         if (_jsonArg != null) return _jsonArg.getString(strKey);
         if (_mapArg != null) return _mapArg.get(strKey);

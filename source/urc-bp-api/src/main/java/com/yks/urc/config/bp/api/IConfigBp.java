@@ -1,5 +1,7 @@
 package com.yks.urc.config.bp.api;
 
+import com.yks.urc.vo.ResultVO;
+
 public interface IConfigBp {
     String getString(String key);
 
@@ -31,4 +33,6 @@ public interface IConfigBp {
     String getStringFromDb(String key);
 
     void update2Db(String key, String value);
+
+    ResultVO updateConfig(String json);
 }

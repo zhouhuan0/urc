@@ -16,7 +16,9 @@ import com.weibo.api.motan.core.extension.SpiMeta;
 import com.weibo.api.motan.filter.Filter;
 import com.weibo.api.motan.rpc.*;
 import com.weibo.api.motan.serialize.DeserializableObject;
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.session.bp.api.ISessionClear;
 import com.yks.urc.vo.ResultVO;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +46,11 @@ public class StringFilter implements Filter {
     private final static Logger log = LoggerFactory.getLogger(StringFilter.class);
     private void decodeSession(Request request){
         try {
+            ISessionClear sessionClear = BeanProvider.getBeanNoException(ISessionClear.class);
+            if (sessionClear != null) {
+                sessionClear.removeThreadLocal();
+            }
+
             Object[] arrArg = request.getArguments();
             if (arrArg != null && arrArg.length > 0) {
                 MotanSession.initialSession(arrArg[0]);

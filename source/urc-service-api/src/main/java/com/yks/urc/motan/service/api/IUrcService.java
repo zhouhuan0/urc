@@ -645,4 +645,13 @@ public interface IUrcService {
     ResultVO getUserListByPermitKey(String json);
 
     ResultVO exportUserListByPermitKey(String json);
+
+    /**
+     * 更新通用配置项
+     *
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2020-01-14 09:20
+     */
+    ResultVO updateConfig(String json);
 }

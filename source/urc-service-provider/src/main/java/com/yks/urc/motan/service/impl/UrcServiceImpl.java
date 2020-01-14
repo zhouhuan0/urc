@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.common.enums.CommonMessageCodeEnum;
 import com.yks.common.util.DateUtil;
 import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.entity.UrcLog;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -1029,5 +1030,13 @@ public class UrcServiceImpl implements IUrcService {
     @Override
     public ResultVO exportUserListByPermitKey(String json) {
         return permitInverseQueryBp.exportUserListByPermitKey(json);
+    }
+
+    @Autowired
+    private IConfigBp configBp;
+
+    @Override
+    public ResultVO updateConfig(String json) {
+        return configBp.updateConfig(json);
     }
 }

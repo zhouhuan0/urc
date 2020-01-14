@@ -12,6 +12,8 @@ package com.yks.urc.log;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.common.util.DateUtil;
+import com.yks.urc.fw.BeanProvider;
+import com.yks.urc.session.bp.api.ISessionBp;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
 import org.slf4j.Logger;
@@ -37,8 +39,10 @@ public class LogTask implements Runnable{
     private Date startDate;
     private Date endDate;
     private Log log;
+    String cpString;
 
-    public LogTask(String logId, JoinPoint jp, Object result, Date startDate, Date endDate, Log log) {
+    public LogTask(String cpString,String logId, JoinPoint jp, Object result, Date startDate, Date endDate, Log log) {
+        this.cpString = cpString;
         this.logId = logId;
         this.jp = jp;
         this.result = result;
@@ -80,6 +84,7 @@ public class LogTask implements Runnable{
     }
     @Override
     public void run() {
+        BeanProvider.getBean(ISessionBp.class).initCp(cpString);
         logPrint();
     }
 

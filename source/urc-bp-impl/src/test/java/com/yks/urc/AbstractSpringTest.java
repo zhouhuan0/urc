@@ -9,7 +9,6 @@
  */
 package com.yks.urc;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 import com.yks.urc.service.api.IRoleService;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.junit.Assert;
@@ -62,48 +61,6 @@ public class AbstractSpringTest implements ApplicationContextAware {
 
     private ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
-    @Bean(value = "dataSource", destroyMethod = "close")
-    public ComboPooledDataSource dataSource(@Value("${jdbc.driver}") String driverClass,
-                                            @Value("${jdbc.url}") String jdbcUrl,
-                                            @Value("${jdbc.username}") String user,
-                                            @Value("${jdbc.password}") String password) throws PropertyVetoException {
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
-        dataSource.setDriverClass(driverClass);
-        dataSource.setJdbcUrl(jdbcUrl);
-        dataSource.setUser(user);
-        dataSource.setPassword(password);
-        dataSource.setAutoCommitOnClose(false);
-        dataSource.setAcquireRetryAttempts(2);
-        dataSource.setCheckoutTimeout(10000);
-        dataSource.setMaxPoolSize(30);
-        dataSource.setMinPoolSize(10);
-        return dataSource;
-    }
-
-    @Bean("sqlSessionFactory")
-    public FactoryBean<SqlSessionFactory> sqlSessionFactoryBean() throws IOException {
-        SqlSessionFactoryBean sqlSessionFactoryBean = new SqlSessionFactoryBean();
-        sqlSessionFactoryBean.setDataSource(getDataSource());
-        sqlSessionFactoryBean.setConfigLocation(new ClassPathResource("mybatis-config-test.xml"));
-        sqlSessionFactoryBean.setTypeAliasesPackage("com.yks.urc.entity");
-        sqlSessionFactoryBean.setMapperLocations(getResources("classpath:com/yks/urc/mapper/*.xml"));
-        return sqlSessionFactoryBean;
-    }
-
-    @Bean
-    public BeanDefinitionRegistryPostProcessor processor() {
-        MapperScannerConfigurer scannerConfigurer = new MapperScannerConfigurer();
-        scannerConfigurer.setSqlSessionFactoryBeanName("sqlSessionFactory");
-        scannerConfigurer.setBasePackage("com.yks.urc.mapper");
-        return scannerConfigurer;
-    }
-
-    @Bean("transactionManager")
-    public PlatformTransactionManager transactionManager() {
-        DataSourceTransactionManager transactionManager = new DataSourceTransactionManager();
-        transactionManager.setDataSource(getDataSource());
-        return transactionManager;
-    }
 
     public String getProperty(String key) {
         return context.getBean(Environment.class).getProperty(key);
