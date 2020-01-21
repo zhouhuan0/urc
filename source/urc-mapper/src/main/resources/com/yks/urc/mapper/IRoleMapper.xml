@@ -196,6 +196,8 @@
                 </foreach>
             </if>
         </where>
+        <!-- order by很重要，请参考：https://www.tapd.cn/23020281/documents/view/1123020281001000706-->
+        order by r.modified_time desc
     </select>
     
      <!--根据username/syskey获取业务员角色功能权限, owner 所需的权限树-->
