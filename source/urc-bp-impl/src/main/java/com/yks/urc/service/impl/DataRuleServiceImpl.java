@@ -1061,7 +1061,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
         
         //删除数据结构异常记录
-        checkDataRuleSys(dataRuleSys);
+        if(checkDataRuleSys(dataRuleSys)) {
+            throw new URCBizException("请求参数不合法，请排查原因！", ErrorCode.E_000003);
+        }
         
         if (CollectionUtils.isEmpty(dataRuleSys)) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
@@ -1182,7 +1184,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         return VoHelper.getSuccessResult();
     }
 
-    private void checkDataRuleSys(List<DataRuleSysVO> dataRuleSys) {
+    private boolean checkDataRuleSys(List<DataRuleSysVO> dataRuleSys) {
 		if(!CollectionUtils.isEmpty(dataRuleSys)) {
 			Iterator<DataRuleSysVO> it4DataRuleSysVO = dataRuleSys.iterator();
 			while(it4DataRuleSysVO.hasNext()) {
@@ -1193,8 +1195,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 							Iterator<String> it = expressionVO.getOperValuesArr().iterator();
 							while (it.hasNext()) {
 								String operValuesArr = it.next();
-								if(operValuesArr.contains("\\\"")){
-									it.remove();
+								if(operValuesArr.contains("\\\"") || !StringUtility.isJson(operValuesArr)){
+                                    return true;
+									//it.remove();
 								}
 							}
 						}
@@ -1202,8 +1205,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 				}
 			}
 		}
-		
-	}
+
+        return false;
+    }
     
   /*  public static void main(String[] args) {
 		String zz= "{\\\"platformId\":\"EB\",\"platformName\":\"ebay\",\"lstShop\":[{\"shopId\":\"bigger*gift\",\"shopName\":\"bigger*gift\"},{\"shopId\":\"buybubuy2\",\"shopName\":\"buybubuy2\"}]}";

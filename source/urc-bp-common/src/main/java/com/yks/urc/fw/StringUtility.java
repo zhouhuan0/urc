@@ -1373,4 +1373,14 @@ public class StringUtility {
 		return reMap;
 	}
 
+	public static boolean isJson(String content){
+		try {
+			JSONObject jsonStr = JSONObject.parseObject(content);
+			return true;
+		} catch (Exception e) {
+			return false ;
+		}
+	}
+
+
 }

@@ -246,7 +246,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
         String strData = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("dataRuleBody.json"));
         List<String> lstData = StringUtility.parseObject(strData, new ArrayList<String>().getClass());
-        ResultVO resultVO = dataRuleService.addOrUpdateDataRule(lstData.get(0));
+        ResultVO resultVO = dataRuleService.addOrUpdateDataRule(strData);
     }
 
     /*@Test
