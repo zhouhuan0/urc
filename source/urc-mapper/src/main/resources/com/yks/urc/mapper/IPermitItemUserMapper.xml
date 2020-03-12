@@ -23,6 +23,8 @@
   <select id="getUserListByPermitKey" resultType="com.yks.urc.vo.Resp_getUserListByPermitKey">
     select i.permit_name AS permitName,u.user_name AS userName
     from permit_item_user u
+    join urc_user uu on u.user_name = uu.user_name
+    join urc_person up on uu.ding_user_id = up.ding_user_id
     left join permit_item_info i on u.permit_key=i.permit_key
     where u.permit_key in
     <foreach collection="data.lstPermitKey" item="mem" open="(" separator="," close=")">
@@ -34,6 +36,8 @@
   <select id="getUserListByPermitKeyTotal" resultType="java.lang.Long">
     select count(*)
     from permit_item_user u
+    join urc_user uu on u.user_name = uu.user_name
+    join urc_person up on uu.ding_user_id = up.ding_user_id
     where u.permit_key in
     <foreach collection="data.lstPermitKey" item="mem" open="(" separator="," close=")">
       #{mem}
