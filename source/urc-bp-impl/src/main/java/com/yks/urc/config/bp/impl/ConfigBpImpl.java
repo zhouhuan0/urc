@@ -15,8 +15,15 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -25,7 +32,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-public class ConfigBpImpl implements IConfigBp, InitializingBean {
+public class ConfigBpImpl implements IConfigBp, InitializingBean, ApplicationListener {
 
     @Autowired
     private IYksPropSettingMapper omsPropSettingMapper;
@@ -40,6 +47,10 @@ public class ConfigBpImpl implements IConfigBp, InitializingBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         initMap();
+    }
+
+    private void myInit() {
+
         // 订单配置更新 TOPIC
         pubSubBp.sub(TOPIC_CONFIG_UPDATED, new IMqCallback() {
             @Override
@@ -138,5 +149,12 @@ public class ConfigBpImpl implements IConfigBp, InitializingBean {
         this.update2Db(req.data.getPropKey(), req.data.getPropValue());
         this.publishConfigUpdate();
         return VoHelper.getSuccessResult("更新&&发消息成功啦");
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent applicationEvent) {
+        if (applicationEvent instanceof ContextRefreshedEvent) {
+            myInit();
+        }
     }
 }
