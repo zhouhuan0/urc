@@ -318,7 +318,7 @@ public class PermissionServiceImpl implements IPermissionService {
             //业务管理员
             List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
             if (lstSysKey != null && lstSysKey.size() > 0) {
-                lstSysKey.remove("004");
+//                lstSysKey.remove("004");
                 for (String sysKey : lstSysKey) {
                     // 获取用户sys的功能权限json
                     List<String> lstFuncJson = roleMapper.getBizAdminFuncJsonByUserAndSysKey(userName, sysKey);
@@ -326,6 +326,13 @@ public class PermissionServiceImpl implements IPermissionService {
                         // 合并json树
                         SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
                         if(null == rootVO) continue;
+                        // 只有超管能分配用户中心权限
+                        if ("004".equalsIgnoreCase(sysKey)) {
+                            Optional<MenuVO> op = rootVO.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, "004-000001")).findFirst();
+                            if (op.isPresent()) {
+                                rootVO.menu.remove(op.get());
+                            }
+                        }
                         PermissionVO permissionVO = new PermissionVO();
                         permissionVO.setSysKey(sysKey);
                         permissionVO.setSysContext(StringUtility.toJSONString_NoException(rootVO));
