@@ -17,6 +17,7 @@ import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.PermitRefreshTaskVO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.EncryptHelper;
@@ -37,6 +38,7 @@ import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
+import com.yks.urc.task.PermitRefreshTask;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -479,5 +481,15 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void pubTest() {
         pubSubBp.pub("1", "Hello");
+    }
+
+    @Autowired
+    private PermitRefreshTask permitRefreshTask;
+
+    @Test
+    public void doPermitRefreshTask_Test() {
+        PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
+        mem.setTaskParam("[\"liangxiaomin\"]");
+        permitRefreshTask.doOne(mem);
     }
 }

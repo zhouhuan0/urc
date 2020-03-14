@@ -12,7 +12,12 @@
         <dependency>
             <groupId>com.yks.urc</groupId>
             <artifactId>urc-bp-impl</artifactId>
-            <version>1.0.0</version>
+            <version>${urc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yks.urc</groupId>
+            <artifactId>urc-task</artifactId>
+            <version>${urc.version}</version>
         </dependency>
     </dependencies>
 

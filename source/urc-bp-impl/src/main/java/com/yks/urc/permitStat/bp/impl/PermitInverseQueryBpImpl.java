@@ -113,6 +113,7 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
             try {
                 GetAllFuncPermitRespVO respVO = permitStatBp.updateUserPermitCache(userName);
                 if (respVO == null || CollectionUtils.isEmpty(respVO.lstUserSysVO)) {
+                    permitItemUserMapper.deleteByUserName(userName);
                     continue;
                 }
                 permitItemUserMapper.deleteByUserName(userName);

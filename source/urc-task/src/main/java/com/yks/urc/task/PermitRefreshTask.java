@@ -15,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -85,7 +84,7 @@ public class PermitRefreshTask extends BaseTask {
         }
     }
 
-    private void doOne(PermitRefreshTaskVO mem) {
+    public void doOne(PermitRefreshTaskVO mem) {
         try {
             if (StringUtils.isBlank(mem.getTaskParam())) {
                 mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));

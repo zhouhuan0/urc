@@ -214,6 +214,7 @@
         <module>urc-bp-vo</module>
         <module>urc-bp-common</module>
         <module>pls-task</module>
+        <module>urc-task</module>
     </modules>
 
 

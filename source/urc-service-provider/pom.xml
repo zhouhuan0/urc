@@ -39,11 +39,16 @@
            <version>${urc.version}</version>
        </dependency>
 
-       <dependency>
-           <groupId>com.yks.urc</groupId>
-           <artifactId>urc-bp-api</artifactId>
-           <version>${urc.version}</version>
-       </dependency>
+        <dependency>
+            <groupId>com.yks.urc</groupId>
+            <artifactId>urc-bp-api</artifactId>
+            <version>${urc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yks.urc</groupId>
+            <artifactId>urc-task</artifactId>
+            <version>${urc.version}</version>
+        </dependency>
     </dependencies>
 
 
