@@ -492,4 +492,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         mem.setTaskParam("[\"liangxiaomin\"]");
         permitRefreshTask.doOne(mem);
     }
+
+    @Test
+    public void synUserFromUserInfo_Test() {
+        userBp.SynUserFromUserInfo("py");
+    }
 }

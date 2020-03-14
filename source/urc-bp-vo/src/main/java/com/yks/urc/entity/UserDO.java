@@ -4,6 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 public class UserDO {
+    private String chineseName;
+
+    private String mobile;
+
     private Long id;
     /**
      * 上网账号
@@ -128,5 +132,21 @@ public class UserDO {
 
     public void setUserRoleDOList(List<UserRoleDO> userRoleDOList) {
         this.userRoleDOList = userRoleDOList;
+    }
+
+    public String getChineseName() {
+        return chineseName;
+    }
+
+    public void setChineseName(String chineseName) {
+        this.chineseName = chineseName;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }

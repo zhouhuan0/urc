@@ -88,7 +88,7 @@
   <select id="list"  resultMap="BasePersonVOResultMap">
     select 
      <include refid="Base_User_Column_List" /> 
-     from urc_person up LEFT JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
+     from urc_person up LEFT JOIN urc_user uu on (up.ding_user_id=uu.ding_user_id  or up.phone_num=uu.mobile)
      <where>
      		 <if test="jobNumber != null and jobNumber != '' ">
      		 	up.job_number=#{jobNumber,jdbcType=VARCHAR}
@@ -108,7 +108,7 @@
   
    <select id="count"  resultType="java.lang.Long">
      SELECT count(up.id)
-     from urc_person up LEFT JOIN urc_user uu on up.ding_user_id=uu.ding_user_id
+     from urc_person up LEFT JOIN urc_user uu on (up.ding_user_id=uu.ding_user_id  or up.phone_num=uu.mobile)
      <where>
      		 <if test="jobNumber != null and jobNumber != '' ">
      		 	up.job_number=#{jobNumber,jdbcType=VARCHAR}

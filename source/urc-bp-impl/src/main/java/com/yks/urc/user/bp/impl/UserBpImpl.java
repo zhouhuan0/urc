@@ -108,6 +108,8 @@ public class UserBpImpl implements IUserBp {
                 for (UserInfo user : userInfoList) {
                     UserDO userDo = new UserDO();
                     userDo.setUserName(user.username);
+                    userDo.setChineseName(user.chinese_name);
+                    userDo.setMobile(user.mobile);
                     userDo.setDingUserId(user.ding_userid);
                     userDo.setCreateBy(username);
                     userDo.setModifiedBy(username);

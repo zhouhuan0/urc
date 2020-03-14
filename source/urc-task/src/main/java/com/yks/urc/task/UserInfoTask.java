@@ -9,13 +9,11 @@
 package com.yks.urc.task;
 
 import com.yks.pls.task.quatz.BaseTask;
+import com.yks.urc.user.bp.impl.UserBpImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import com.yks.urc.user.bp.impl.UserBpImpl;
 
 @Component
 public class UserInfoTask extends BaseTask {

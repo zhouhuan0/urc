@@ -312,7 +312,7 @@
 
     <insert id="insertBatchUser" parameterType="com.yks.urc.entity.UserDO">
         insert into urc_user
-        (user_name,is_active,active_time,ding_user_id,create_by,modified_by,create_time,modified_time)
+        (user_name,is_active,active_time,ding_user_id,create_by,modified_by,create_time,modified_time,chinese_name,mobile)
         values
         <foreach collection="userDoList" item="list" separator=",">
             (#{list.userName},
@@ -322,8 +322,9 @@
             #{list.createBy},
             #{list.modifiedBy},
             #{list.createTime},
-            #{list.modifiedTime})
-
+            #{list.modifiedTime},
+            #{list.chineseName},
+            #{list.mobile})
         </foreach>
     </insert>
     <delete id="deleteUrcUser">
@@ -334,7 +335,7 @@
         select DISTINCT (u.user_name) AS userName ,p.person_name AS personName,u.active_time AS activeTime ,u.is_active
         AS isActive
         from urc_user u
-        LEFT JOIN urc_person p on u.ding_user_id = p.ding_user_id
+        LEFT JOIN urc_person p (u.ding_user_id = p.ding_user_id or u.mobile=p.phone_num)
         LEFT JOIN urc_user_role r on u.user_name=r.user_name
         <where>
             <if test="list.size >0">
@@ -351,7 +352,7 @@
     <select id="getUsersByUserInfoCount" parameterType="com.yks.urc.vo.helper.Query" resultType="java.lang.Integer">
         select count(DISTINCT(u.user_name))
         from urc_user u
-        LEFT JOIN urc_person p on u.ding_user_id = p.ding_user_id
+        LEFT JOIN urc_person p (u.ding_user_id = p.ding_user_id or u.mobile=p.phone_num)
         LEFT JOIN urc_user_role r on u.user_name=r.user_name
         <where>
             <if test="list.size >0">
