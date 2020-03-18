@@ -489,7 +489,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void doPermitRefreshTask_Test() {
         PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
-        mem.setTaskParam("[\"liangxiaomin\"]");
+        mem.setTaskParam("[\"guozhongrui\"]");
         permitRefreshTask.doOne(mem);
     }
 
