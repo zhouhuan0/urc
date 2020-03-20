@@ -8,6 +8,8 @@ import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
 import com.yks.urc.dingding.proxy.ApiProxy;
+import org.springframework.beans.factory.annotation.Autowired;
+
 /**
  * @Author: wujianghui@youkeshu.com
  * @Date: 2018/6/6 8:59
@@ -29,10 +31,13 @@ public class TestGetAccessToken {
 	}
 
 
+	@Autowired
+	private DingApiProxy dingApiProxy;
+
 	@Test
 	public void  getDingAllDept(){
 		try {
-            DingApiProxy p = proxy.getDingProxy();
+            DingApiProxy p = dingApiProxy;
 			List<DingDeptVO> dd = p.getDingAllSubDept("64195047");
 			System.out.println(dd);
 		} catch (Exception e) {

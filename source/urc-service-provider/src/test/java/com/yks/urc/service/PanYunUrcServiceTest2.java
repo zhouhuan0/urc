@@ -16,6 +16,7 @@ import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dingding.client.DingApiProxy;
+import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.PermitRefreshTaskVO;
 import com.yks.urc.entity.RoleDO;
@@ -35,6 +36,7 @@ import com.yks.urc.mq.bp.api.IPubSubBp;
 import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
@@ -496,5 +498,28 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void synUserFromUserInfo_Test() {
         userBp.SynUserFromUserInfo("py");
+    }
+
+
+    @Autowired
+    private DingApiProxy dingApiProxy;
+
+    @Autowired
+    private ISerializeBp serializeBp;
+
+    @Test
+    public void getDingAllDept() {
+        try {
+            while (true) {
+                DingApiProxy p = dingApiProxy;
+                List<DingDeptVO> dd = p.getDingAllSubDept("64195047");
+                System.out.println(serializeBp.obj2Json(dd));
+
+                dingApiProxy.getDingAllDept();
+//                Thread.sleep(500);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
