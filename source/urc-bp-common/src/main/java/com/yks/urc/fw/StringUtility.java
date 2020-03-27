@@ -471,6 +471,9 @@ public class StringUtility {
 			} else if (Pattern.matches("^\\d{4}-\\d{2}-\\d{2}$", strSrc)) {
 				// yyyy-MM-dd
 				return string2Date(strSrc, DtFormatString_Date);
+			}else if (Pattern.matches("^\\d+$", strSrc)) {
+				// 毫秒
+				return new Date(convertToLong(strSrc));
 			}
 
 			// public static final String DtFormatString_NoMillSecond =

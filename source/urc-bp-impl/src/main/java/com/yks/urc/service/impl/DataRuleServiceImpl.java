@@ -1373,8 +1373,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
             // 查询等于最大时间的记录
             List<DataRuleSysDO> lstDrSysEq = dataRuleSysMapper.getDataRuleSysEqDt(sysKey, lstDrSysGt.get(lstDrSysGt.size() - 1).getCreateTime());
-            lstDrSysEq.remove(0);
-            lstDrSysGt.addAll(lstDrSysEq);
+            if (!CollectionUtils.isEmpty(lstDrSysEq)) {
+                for (DataRuleSysDO eq : lstDrSysEq) {
+                    if (!lstDrSysGt.stream().filter(c -> StringUtility.stringEqualsIgnoreCaseObj(c.getDataRuleSysId(), eq.getDataRuleSysId())).findFirst().isPresent()) {
+                        lstDrSysGt.add(eq);
+                    }
+                }
+            }
         }
         List<DataRuleSysVO> lstDr = getDataRuleVOByDataRuleSys(lstDrSysGt);
         return VoHelper.getSuccessResult(lstDr);
