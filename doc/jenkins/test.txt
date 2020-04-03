@@ -54,7 +54,7 @@ sh '''
       rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-mgr/target/urc-mgr-assembly.tar.gz root@${IP}:/opt
 
       scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart_mgr.sh root@${IP}:/opt
-      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart_mgr.sh'
+      ssh root@${IP} 'chmod +x /opt/service_restart_mgr.sh;/opt/service_restart_mgr.sh'
     echo "is Ok"
     done
   '''
