@@ -1,0 +1,42 @@
+node {
+stage '拉取代码' 
+  sh '''
+   # 删除之前workspace中的缓存文件
+   rm -rf ./*
+  '''
+
+  checkout([$class: 'GitSCM', branches: [[name: 'v_20190615_log']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@git.kokoerp.com:YKSproject/urcenter.git']]])
+
+stage '同步配置文件'
+ sh '''
+   # 替换配置模板
+   curEnv=urcenter-service-provider-prod
+   #/usr/bin/python3 /var/lib/jenkins/replace_config.py $curEnv
+   cmdstr=`pwd`/doc/jenkins/replace_config_py.py
+   echo $cmdstr
+   chmod 777 $cmdstr
+   /usr/bin/python3 $cmdstr $curEnv `pwd`
+   
+   chmod 777 ./cover_config.sh
+   bash ./cover_config.sh
+   
+   echo "is Ok!!!"
+ '''
+
+stage 'MVN编译' 
+ dir('./source'){
+  sh "/opt/apache-maven-3.3.9/bin/mvn clean install -am  -e -U -Dmaven.test.skip=true"
+  sh "echo ok"
+ }
+
+stage '部署应用'
+sh '''
+
+  POD_NAME=urcenter-mgr-prod
+  echo "构建image"${POD_NAME} 
+  bash `pwd`/doc/jenkins/build_image.sh ${JOB_NAME} ${BUILD_NUMBER} ${POD_NAME}  /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-mgr/target/urc-mgr-assembly.tar.gz
+  echo "部署应用"${POD_NAME}
+  bash /var/lib/jenkins/image/patch_busybox.sh ${POD_NAME} ${BUILD_NUMBER} v1.14
+
+  '''
+}
