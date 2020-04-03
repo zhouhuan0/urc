@@ -12,7 +12,7 @@ cd urc-service-provider/bin
 ./start.sh
 
 
-###启动urc-service-provider服务
+###启动urc-mgr 服务
 /opt/urc-mgr/bin/shutdown.sh
 sleep 2
 cd /opt
