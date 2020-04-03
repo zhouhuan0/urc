@@ -13,5 +13,6 @@
 
   {"source":"./source/urc-service-provider/src/main/resources_template/","target":"./source/urc-service-provider/src/main/resources","type":"d"},
   {"source":"./source/urc-service-provider/src/main/resources_template/","target":"./source/urc-taskScheduler/src/main/resources","type":"d"},
+  {"source":"./source/conf/urc-mgr/src/main/resources/","target":"./source/urc-mgr/src/main/resources","type":"d"},
 ]
 

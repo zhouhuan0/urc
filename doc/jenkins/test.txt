@@ -40,11 +40,22 @@ sh '''
 	  
     rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-service-provider/target/urc-service-provider-assembly.tar.gz root@${IP}:/opt
     rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-taskScheduler/target/urc-taskScheduler-assembly.tar.gz root@${IP}:/opt
-    rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-mgr/target/urc-mgr-assembly.tar.gz root@${IP}:/opt
 
 	  scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart.sh root@${IP}:/opt
       ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart.sh'
 	  echo "is Ok"
+    done
+
+    POD_NAME=urcenter-mgr-test
+    for IP in `/var/lib/jenkins/list_pod.sh |grep -wi ${POD_NAME}|awk '{print $NF}'`
+    do
+      ssh root@${IP} 'if [ ! -d /opt ];then mkdir /opt ;fi'   
+    
+      rsync -rltgD /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-mgr/target/urc-mgr-assembly.tar.gz root@${IP}:/opt
+
+      scp `pwd`/doc/config文件/${confPath}/urcenter/service_restart_mgr.sh root@${IP}:/opt
+      ssh root@${IP} 'chmod +x /opt/service_restart.sh;/opt/service_restart_mgr.sh'
+    echo "is Ok"
     done
   '''
 }

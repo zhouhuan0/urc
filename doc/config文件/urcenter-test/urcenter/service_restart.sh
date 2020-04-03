@@ -20,16 +20,3 @@ tar -xvf urc-taskScheduler-assembly.tar.gz
 sleep 2
 cd urc-taskScheduler/bin
 ./start.sh
-
-###启动urc-mgr 服务
-/opt/urc-mgr/bin/shutdown.sh
-sleep 2
-cd /opt
-rm -rf /opt/urc-mgr/
-tar -xvf urc-mgr-assembly.tar.gz
-sleep 2
-
-# 8002端口改为8003
-sed -in-place -e s/8002/8003/g urc-mgr/conf/motan/motan-service-config.xml
-cd urc-mgr/bin
-./start.sh
