@@ -1,0 +1,1294 @@
+{
+    "operator": "yangbo1",
+    "pwd": "com.yks.urc.123456",
+    "ticket": "3b6f2734d6561484c81a0213c1af26a5",
+    "funcVersion": "165cd797c6055e38ed1b97b3e4ab2a61",
+    "data": [
+        {
+            "apiUrlPrefix": [
+                "/wmsservice/api/"
+            ],
+            "system": {
+                "key": "012",
+                "name": "仓储",
+                "url": "/wms/"
+            },
+            "menu": [
+                {
+                    "key": "012-000001",
+                    "name": "库存管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000001-000001",
+                            "name": "库存查询",
+                            "url": "/wms/inventorymanage/checkinventory/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000001-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/QueryStock/queryStock"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000001-000002",
+                            "name": "库存盘点",
+                            "url": "/wms/inventorymanage/makinganinventory/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000001-000002-001",
+                                    "name": "盘点计划列表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000001-000002-001",
+                                    "name": "盘点计划列表详情",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000001-000002-003",
+                                    "name": "盘点计划列表-下载",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000001-000002-004",
+                                    "name": "盘点计划列表-上传初盘结果",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000001-000002-005",
+                                    "name": "盘点计划列表-上传复盘单",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000001-000002-006",
+                                    "name": "盘点计划列表-取消",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000002",
+                    "name": "入库管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000002-000001",
+                            "name": "扫描收货",
+                            "url": "/wms/stockmanage/scanandcollect/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000002-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Batch/scanPurchaseNumber"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000001-002",
+                                    "name": "确认收货",
+                                    "url": [
+                                        "/wmsservice/api/Batch/confirmReceipt"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000001-003",
+                                    "name": "修改到货数量",
+                                    "url": [
+                                        "/wmsservice/api/Batch/editArrivalQuantity"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000001-004",
+                                    "name": "打印",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000002-000002",
+                            "name": "对图",
+                            "url": "/wms/stockmanage/compareimage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000002-000002-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/CheckPicture/checkPicture"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000002-002",
+                                    "name": "是否有误",
+                                    "url": [
+                                        "/wmsservice/api/CheckPicture/editWrongReason"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000002-003",
+                                    "name": "打印",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000002-000002-004",
+                                    "name": "删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/CheckPicture/deleteItem"
+                                    ]
+                                }
+                            ],
+                            "module": [
+                                {
+                                    "key": "012-000002-000002-000001",
+                                    "name": "对图详情",
+                                    "url": "/wms/stockmanage/compareimage/detail/",
+                                    "show": 0,
+                                    "function": [
+                                        {
+                                            "key": "012-000002-000002-000001-001",
+                                            "name": "查看",
+                                            "url": [
+                                                "/wmsservice/api/CheckPicture/ItemDetails"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "key": "012-000002-000003",
+                            "name": "质检",
+                            "url": "/wms/stockmanage/qualitytesting/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000002-000003-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/CheckQuality/queryCheckQuality"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000003-002",
+                                    "name": "编辑/保存",
+                                    "url": [
+                                        "/wmsservice/api/CheckQuality/editCheckQuality"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000003-003",
+                                    "name": "打印箱唛",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000002-000003-004",
+                                    "name": "打印异常",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000002-000003-005",
+                                    "name": "拣货确认",
+                                    "url": [
+                                        "/wmsservice/api/CheckQuality/scanPickingGroup",
+                                        "/wmsservice/api/CheckQuality/getPickingGroup"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000003-006",
+                                    "name": "拣货确认",
+                                    "url": [
+                                        "/wmsservice/api/CheckQuality/finishPick"
+                                    ]
+                                }
+                            ],
+                            "module": [
+                            ]
+                        },
+                        {
+                            "key": "012-000002-000004",
+                            "name": "批次管理",
+                            "url": "/wms/stockmanage/batchmanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000002-000004-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Batch/queryBatchManagement"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000004-002",
+                                    "name": "上传图片",
+                                    "url": [
+                                        "/wmsservice/api/Batch/editBatchManagement"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000002-000004-003",
+                                    "name": "销售退货-导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000006",
+                    "name": "出库管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000006-000001",
+                            "name": "发货列表",
+                            "url": "/wms/outboundmanage/delivierieslist/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000006-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Saleorder/searchSaleorder"
+                                    ]
+                                }
+                            ],
+                            "module": [
+                            ]
+                        },
+                        {
+                            "key": "012-000006-000002",
+                            "name": "拣货任务",
+                            "url": "/wms/outboundmanage/pickingtask/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000006-000002-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/TaskOrder/searchTaskOrder"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000002-002",
+                                    "name": "手动生成任务",
+                                    "url": [
+                                        "/wmsservice/api/TaskOrder/manualCreatePickTask"
+                                    ]
+                                }
+                            ],
+                            "module": [
+                                {
+                                    "key": "012-000006-000002-000001",
+                                    "name": "任务详情",
+                                    "url": "/wms/outboundmanage/pickingtask/detail/",
+                                    "show": 0,
+                                    "function": [
+                                        {
+                                            "key": "012-000006-000002-000001-001",
+                                            "name": "查看",
+                                            "url": [
+                                                "/wmsservice/api/TaskOrder/getTaskOrderDetail"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "key": "012-000006-000003",
+                            "name": "核对打包",
+                            "url": "/wms/outboundmanage/checkpackage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000006-000003-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/scanContainer",
+                                        "/wmsservice/api/CheckOrderSku/scanSku"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000003-002",
+                                    "name": "补打面单",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/coverSheet"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000003-003",
+                                    "name": "称重提交",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/setOrderWeight"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000003-004",
+                                    "name": "标记不良",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/signAbnormalSku"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000003-005",
+                                    "name": "打包缺货",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/signShortage"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000003-006",
+                                    "name": "扫描换渠道",
+                                    "url": [
+                                        "/wmsservice/api/CheckOrderSku/setOrderChannel"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000006-000004",
+                            "name": "扫描发运",
+                            "url": "/wms/outboundmanage/scanDelivery/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000006-000004-001",
+                                    "name": "扫描发运-查看",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/collectingOrderCacheList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-002",
+                                    "name": "扫描发运-确认结袋",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/addCollectingBag"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-003",
+                                    "name": "扫描发运-删除",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/deleteCollectingOrderCache"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-004",
+                                    "name": "集货称重-查看",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/queryCollectingBag"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-005",
+                                    "name": "集货称重-集货袋称重",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/collectingBagWeight"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-006",
+                                    "name": "渠道合并-查看",
+                                    "url": [
+                                        "/wmsservice/api/ChannelTable/channelTableList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-007",
+                                    "name": "渠道合并-合并",
+                                    "url": [
+                                        "/wmsservice/api/ChannelTable/channelTableMerge"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-008",
+                                    "name": "集货袋合并-查看",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/queryCollectingBagMerge"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-009",
+                                    "name": "集货袋合并-合并",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/collectingBagMerge"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-010",
+                                    "name": "集货袋合并-打印",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/printCollectingBag"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-011",
+                                    "name": "更新包裹重量-查看",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/bagList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000006-000004-012",
+                                    "name": "更新包裹重量-更新",
+                                    "url": [
+                                        "/wmsservice/api/CollectingBag/updateBagWeight"
+                                    ]
+                                }
+                            ],
+                            "module": [
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000003",
+                    "name": "异常管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000003-000002",
+                            "name": "三无产品登记",
+                            "url": "/wms/exceptionmanage/threenoupload/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000003-000002-001",
+                                    "name": "查看",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": [
+                            ]
+                        },
+                        {
+                            "key": "012-000003-000001",
+                            "name": "入库异常",
+                            "url": "/wms/exceptionmanage/exceptionobjecthandle/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000003-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/SpecialCase/specialCase"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000003-000001-002",
+                                    "name": "打印sku",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000003-000001-003",
+                                    "name": "打印箱唛",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000003-000001-004",
+                                    "name": "录入快递单号",
+                                    "url": [
+                                        "/wmsservice/api/SpecialCase/editCourierNumber"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000003-000001-005",
+                                    "name": "重新收货",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000003-000001-006",
+                                    "name": "导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": [
+                            ]
+                        },
+                        {
+                            "key": "012-000003-000003",
+                            "name": "出库异常",
+                            "url": "/wms/exceptionmanage/abnormalorder/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000003-000003-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/OutboundSpecialCase/searchOutboundSpecialCase"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000003-000003-002",
+                                    "name": "导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000004",
+                    "name": "不良品管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000004-000001",
+                            "name": "不良品库存查询",
+                            "url": "/wms/rejectsmanage/rejectsinventorydemand/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000004-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/DefectiveProductList/defectiveProductList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000004-000001-002",
+                                    "name": "数据导出",
+                                    "url": [
+                                        "/wmsservice/api/DefectiveProductList/exportData"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000007",
+                    "name": "退货管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000007-000001",
+                            "name": "三无产品退件",
+                            "url": "/wms/returnmanage/returnthreeno/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000007-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/ScanReturn/scanReturn"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000007-000001-002",
+                                    "name": "确认收货",
+                                    "url": [
+                                        "/wmsservice/api/Returnthreeno/confirm"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000008",
+                    "name": "样品管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000008-000001",
+                            "name": "样品记录",
+                            "url": "/wms/samplemanage/samplerecord/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000008-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Sample/search"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-002",
+                                    "name": "样品申请",
+                                    "url": [
+                                        "/wmsservice/api/Sample/add"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-003",
+                                    "name": "审核",
+                                    "url": [
+                                        "/wmsservice/api/Sample/check"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-004",
+                                    "name": "装车发运",
+                                    "url": [
+                                        "/wmsservice/api/Sample/shipment"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-005",
+                                    "name": "归还",
+                                    "url": [
+                                        "/wmsservice/api/Sample/preBack"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-006",
+                                    "name": "确认完结",
+                                    "url": [
+                                        "/wmsservice/api/Sample/over"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-007",
+                                    "name": "取消",
+                                    "url": [
+                                        "/wmsservice/api/Sample/cancel"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000008-000001-008",
+                                    "name": "打印",
+                                    "url": [
+                                        "/wmsservice/api/Sample/prt"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000009",
+                    "name": "移位管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000009-000001",
+                            "name": "移位列表",
+                            "url": "/wms/shiftmanage/shiftlist/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000009-000001-001",
+                                    "name": "查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000009-000001-002",
+                                    "name": "取消",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000009-000001-003",
+                                    "name": "导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000009-000001-004",
+                                    "name": "创建移位",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000010",
+                    "name": "报表管理",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000010-000001",
+                            "name": "入库类报表",
+                            "url": "/wms/reportformsmanage/stockforms/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000010-000001-001",
+                                    "name": "收货报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-002",
+                                    "name": "收货报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-003",
+                                    "name": "收货明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-004",
+                                    "name": "收货明细报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-005",
+                                    "name": "对图报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-006",
+                                    "name": "对图报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-007",
+                                    "name": "对图明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-008",
+                                    "name": "对图明细报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-009",
+                                    "name": "质检报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-010",
+                                    "name": "质检报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-011",
+                                    "name": "质检明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000001-012",
+                                    "name": "质检明细报表-导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000010-000003",
+                            "name": "不良品报表",
+                            "url": "/wms/reportformsmanage/badgoodsforms/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000010-000003-001",
+                                    "name": "不良品报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000003-002",
+                                    "name": "不良品报表-导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000010-000002",
+                            "name": "库存维护类报表",
+                            "url": "/wms/reportformsmanage/inventorymaintenance/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000010-000002-001",
+                                    "name": "入库报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-002",
+                                    "name": "入库报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-003",
+                                    "name": "入库明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-004",
+                                    "name": "入库明细报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-005",
+                                    "name": "出库报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-006",
+                                    "name": "出库报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-007",
+                                    "name": "出库明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-008",
+                                    "name": "出库明细报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-009",
+                                    "name": "盘点报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-010",
+                                    "name": "盘点报表-导出",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-011",
+                                    "name": "盘点明细报表-查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000010-000002-012",
+                                    "name": "盘点明细报表-导出",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "012-000005",
+                    "name": "系统设置",
+                    "url": "/wms/",
+                    "module": [
+                        {
+                            "key": "012-000005-000001",
+                            "name": "库容管理",
+                            "url": "/wms/systemsetting/inventorycapacitymanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000001-001",
+                                    "name": "储位管理-查看",
+                                    "url": [
+                                        "/wmsservice/api/PlaceManage/placeManage"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-002",
+                                    "name": "储位管理-新增",
+                                    "url": [
+                                        "/wmsservice/api/PlaceManage/add"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-003",
+                                    "name": "储位管理-删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/PlaceManage/delete"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-004",
+                                    "name": "储位管理-数据导入",
+                                    "url": [
+                                        "/wmsservice/api/PlaceManage/import"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-005",
+                                    "name": "储位库存-查看",
+                                    "url": [
+                                        "/wmsservice/api/PlaceSkuStock/storageStockList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-006",
+                                    "name": "储位库存-添加SKU库",
+                                    "url": [
+                                        "/wmsservice/api/PlaceSkuStock/addSkuStock"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000001-007",
+                                    "name": "储位库存-导入",
+                                    "url": [
+                                        "/wmsservice/api/PlaceSkuStock/batchImport"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000002",
+                            "name": "基础资料配置",
+                            "url": "/wms/systemsetting/basedataconfig/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000002-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/BasicConfig/Warehouse/warehouse",
+                                        "/wmsservice/api/BasicConfig/queryGroup",
+                                        "/wmsservice/api/BasicConfig/queryChild"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000002-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/BasicConfig/addGroup"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000002-003",
+                                    "name": "管理",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000003",
+                            "name": "拣货员管理",
+                            "url": "/wms/systemsetting/pickermanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000003-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/PickManManage/pickerList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000003-002",
+                                    "name": "设置",
+                                    "url": [
+                                        "/wmsservice/api/PickManManage/setPickingGroup"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000004",
+                            "name": "交付码管理",
+                            "url": "/wms/systemsetting/deliverycodemanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000004-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/DeliveryCode/deliveryCodeList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000004-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/DeliveryCode/addDeliveryCode"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000004-003",
+                                    "name": "删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/DeliveryCode/deleteCode"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000004-004",
+                                    "name": "批量打印",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000005",
+                            "name": "卡板管理",
+                            "url": "/wms/systemsetting/cardmanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000005-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Board/boardList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000005-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/Board/addBoard"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000005-003",
+                                    "name": "删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/Board/deleteBoard"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000005-004",
+                                    "name": "批量打印",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000006",
+                            "name": "容器管理",
+                            "url": "/wms/systemsetting/containermanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000006-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/Container/containerList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000006-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/Container/addContainer"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000006-003",
+                                    "name": "删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/Container/deleteContainer"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000006-004",
+                                    "name": "批量打印",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000007",
+                            "name": "播种墙管理",
+                            "url": "/wms/systemsetting/seedwallmanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000007-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/SeedWall/seedWallList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000007-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/SeedWall/addSeedWall"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000007-003",
+                                    "name": "删除/批量",
+                                    "url": [
+                                        "/wmsservice/api/SeedWall/deleteSeedWallContainer"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000008",
+                            "name": "补打标签",
+                            "url": "/wms/systemsetting/supplementprint/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000008-001",
+                                    "name": "补打SKU-查看",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000005-000008-002",
+                                    "name": "补打箱唛-查看",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000005-000008-003",
+                                    "name": "补打面单-查看",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000005-000008-004",
+                                    "name": "补打异常标签-查看",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000009",
+                            "name": "设置拣货规则",
+                            "url": "/wms/systemsetting/pickingrule/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000009-001",
+                                    "name": "查看",
+                                    "url": [
+                                        "/wmsservice/api/PickRule/pickRuleList",
+                                        "/wmsservice/api/PickRule/platformPickRuleList",
+                                        "/wmsservice/api/PickRule/channelPickRuleList"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000009-002",
+                                    "name": "新增",
+                                    "url": [
+                                        "/wmsservice/api/PickRule/addPickRule"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000009-003",
+                                    "name": "设置",
+                                    "url": []
+                                },
+                                {
+                                    "key": "012-000005-000009-004",
+                                    "name": "切换状态",
+                                    "url": [
+                                        "/wmsservice/api/PickRule/switchPickingRuleState"
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000009-005",
+                                    "name": "切换优先级",
+                                    "url": [
+                                        "/wmsservice/api/PickRule/switchPickingRulePriority"
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000010",
+                            "name": "主仓设置",
+                            "url": "/wms/systemsetting/mainwarehouse/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000010-001",
+                                    "name": "查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000010-002",
+                                    "name": "设置主仓库",
+                                    "url": [
+                                    ]
+                                }
+                            ],
+                            "module": []
+                        },
+                        {
+                            "key": "012-000005-000011",
+                            "name": "PDA版本管理",
+                            "url": "/wms/systemsetting/pdamanage/",
+                            "show": 1,
+                            "function": [
+                                {
+                                    "key": "012-000005-000011-001",
+                                    "name": "查看",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000011-002",
+                                    "name": "下载",
+                                    "url": [
+                                    ]
+                                },
+                                {
+                                    "key": "012-000005-000011-003",
+                                    "name": "上传",
+                                    "url": []
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
