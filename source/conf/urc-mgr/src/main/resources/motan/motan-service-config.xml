@@ -22,7 +22,7 @@
 
     <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
     <motan:basicService id="serviceBasicConfig"
-                        registry="zkRegistry" export="motan2:$[urc_motan_mgr_port]$" group="$[urc_motan_group]$"
+                        registry="zkRegistry" export="motan2:8002" group="$[urc_motan_group]$"
                         version="1.0" accessLog="true" shareChannel="true" module="$[urc_motan_module]$"
                         application="$[urc_application]$"/>
 
@@ -31,7 +31,7 @@
 
     <!-- 具体rpc服务配置，声明实现的接口类。 -->
     <motan:service interface="com.yks.urc.motan.service.api.IUrcMgr"
-                   ref="urcMgrImpl" export="motan2:$[urc_motan_mgr_port]$" basicService="serviceBasicConfig">
+                   ref="urcMgrImpl" export="motan2:8002" basicService="serviceBasicConfig">
     </motan:service>
 
 
