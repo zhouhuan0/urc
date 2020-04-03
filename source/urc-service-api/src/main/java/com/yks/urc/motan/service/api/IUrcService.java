@@ -458,14 +458,6 @@ public interface IUrcService {
     ResultVO fuzzSearchPersonByName(String json);
 
     /**
-     * 获取指定系统大于某个时间之后有更新的数据权限
-     *
-     * @param json
-     * @return
-     */
-    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
-
-    /**
      * 更新缓存ａｐｉ前缀
      *
      * @return

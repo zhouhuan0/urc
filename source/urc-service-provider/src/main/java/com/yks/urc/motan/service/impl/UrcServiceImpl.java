@@ -651,17 +651,6 @@ public class UrcServiceImpl implements IUrcService {
 
     }
 
-    @Override
-    @Log("获取指定系统的数据权限")
-    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json) {
-        JSONObject jObj = MotanSession.getRequest().getJSONObjectArg();
-        String sysKey = jObj.getString(StringConstant.sysKey);
-        Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);
-        Integer pageSize = jObj.getInteger("pageSize");
-        return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
-
-    }
-
     /**
      * 更新缓存Api前缀
      *
