@@ -129,7 +129,7 @@
                 <if test=" createTime != null  ">
                     <![CDATA[  and udrs.create_time > #{createTime}   ]]>
                 </if>
-                AND  udr.user_name is not null and udr.user_name <>''
+                AND  udr.user_name is not null and udr.user_name !=''
             </where>
         ORDER BY udrs.create_time asc
         LIMIT #{pageSize}
@@ -152,7 +152,7 @@
             <if test=" createTime != null  ">
                 <![CDATA[  and udrs.create_time = #{createTime}   ]]>
             </if>
-            AND  udr.user_name is not null and udr.user_name <>''
+            AND  udr.user_name is not null and udr.user_name !=''
         </where>
         ORDER BY udrs.create_time asc
     </select>
