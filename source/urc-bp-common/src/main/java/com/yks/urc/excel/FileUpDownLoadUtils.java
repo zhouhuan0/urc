@@ -1,11 +1,8 @@
 package com.yks.urc.excel;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Date;
-
+import com.alibaba.fastjson.JSON;
+import com.yks.urc.fw.StringUtility;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.ParseException;
@@ -21,9 +18,10 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.alibaba.fastjson.JSON;
-import com.yks.common.util.DateUtil;
-import com.yks.common.util.StringUtil;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Date;
 
 public class FileUpDownLoadUtils {
 	private static Logger logger = LoggerFactory.getLogger(FileUpDownLoadUtils.class);
@@ -91,17 +89,17 @@ public class FileUpDownLoadUtils {
 	
 	public static String getDownloadUrl(String url, String fileName) {
 		String result = postFile(url,fileName);
-		if(!StringUtil.isEmpty(result)){
+		if(!StringUtility.isNullOrEmpty(result)){
 			FileUploadRespVO fileUploadRespVO = JSON.parseObject(result, FileUploadRespVO.class);
 			
 			return fileUploadRespVO.getData().get(0).getPath();
 		}
 		return null;
 	}
-	public static String getFileName(String fileLastName) {
-		String timeStamp = DateUtil.formatDate(new Date(), "yyyyMMddHHmmss");
-		return timeStamp + fileLastName;
-	}
+//	public static String getFileName(String fileLastName) {
+//		String timeStamp = DateUtil.formatDate(new Date(), "yyyyMMddHHmmss");
+//		return timeStamp + fileLastName;
+//	}
 
 	public static String getStaticFilePath(String modelPath) throws IOException
 	{

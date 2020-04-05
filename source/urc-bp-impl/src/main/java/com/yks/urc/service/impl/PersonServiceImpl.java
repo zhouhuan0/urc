@@ -1,32 +1,9 @@
 
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import com.alibaba.fastjson.JSONArray;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.vo.*;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.alibaba.fastjson.JSONArray;
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.StringUtil;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
@@ -34,17 +11,30 @@ import com.yks.urc.dingding.client.vo.DingUserVO;
 import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
-import com.yks.urc.entity.UserDO;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.fw.StringUtil;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.IPersonService;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Service
 public class PersonServiceImpl implements IPersonService {

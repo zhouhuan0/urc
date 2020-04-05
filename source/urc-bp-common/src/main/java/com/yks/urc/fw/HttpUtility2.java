@@ -1,6 +1,5 @@
 package com.yks.urc.fw;
 
-import com.yks.common.util.StringCommonUtils;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.PlsVoHelper;
 import com.yks.urc.vo.helper.VoHelper;
@@ -62,7 +61,7 @@ public class HttpUtility2 {
         try {
             return postFormWithException(urlToRequest, paramMap, headerMap);
         } catch (Exception ex) {
-            LOGGER.error(String.format("%s\r\n%s\r\n%s", urlToRequest, StringCommonUtils.toJSONString(paramMap), StringCommonUtils.toJSONString(headerMap)), ex);
+            LOGGER.error(String.format("%s\r\n%s\r\n%s", urlToRequest, StringUtility.toJSONString(paramMap), StringUtility.toJSONString(headerMap)), ex);
         }
         return StringUtility.Empty;
     }
@@ -120,7 +119,7 @@ public class HttpUtility2 {
         try {
             return postStringWithException(urlToRequest,paramBody,headerMap);
         } catch (Exception ex) {
-            LOGGER.error(String.format("%s\r\n%s\r\n%s", urlToRequest, paramBody, StringCommonUtils.toJSONString(headerMap)), ex);
+            LOGGER.error(String.format("%s\r\n%s\r\n%s", urlToRequest, paramBody, StringUtility.toJSONString(headerMap)), ex);
             return StringUtility.Empty;
         }
     }

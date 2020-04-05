@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.RoleDO;

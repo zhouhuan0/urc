@@ -1,9 +1,6 @@
 package com.yks.urc.vo.helper;
 
-import java.util.List;
-
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.urc.entity.Person;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.vo.ResultVO;
 

@@ -1,13 +1,12 @@
 package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.StringUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserPermitStatDO;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
@@ -427,7 +426,7 @@ public class PermissionServiceImpl implements IPermissionService {
         queryMap.put("userName", userName);
         String pageNumber = jsonObject.getString("pageNumber");
         String pageData = jsonObject.getString("pageData");
-        if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+        if (!StringUtility.isNum(pageNumber) || !StringUtility.isNum(pageData)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000003);
         }
         int currPage = Integer.valueOf(pageNumber);

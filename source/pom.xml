@@ -30,7 +30,7 @@
         <mysql.connector.java.version>5.1.45</mysql.connector.java.version>
         <yks.common.version>1.0.0</yks.common.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
-        
+        <jackson.json.version>2.9.1</jackson.json.version>
         <poi.version>4.1.0</poi.version>
     </properties>
 
@@ -77,27 +77,12 @@
             <version>${spring.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.yks.eventbus</groupId>
-            <artifactId>yks-eventbus</artifactId>
-            <version>${yks.eventbus.version}</version>
-        </dependency>
         <!--基础平台common包-->
+
         <dependency>
-            <groupId>com.yks.common</groupId>
-            <artifactId>yks-common</artifactId>
-            <version>${yks.common.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yks.config.file.center</groupId>
-            <artifactId>yks-config-file-center</artifactId>
-            <version>${yks.config.file.center.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>io.netty</groupId>
-                    <artifactId>netty</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.json.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yks.mq</groupId>

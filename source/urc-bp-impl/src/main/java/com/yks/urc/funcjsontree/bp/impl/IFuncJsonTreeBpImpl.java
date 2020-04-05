@@ -8,7 +8,7 @@
  */
 package com.yks.urc.funcjsontree.bp.impl;
 
-import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RolePermissionDO;

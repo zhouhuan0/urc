@@ -19,8 +19,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
-import com.yks.common.util.StringUtil;
+import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.fw.StringUtil;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UrcWhiteApiVO;

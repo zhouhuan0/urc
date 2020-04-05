@@ -1,8 +1,7 @@
 package com.yks.urc.excel;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.vo.Resp_getUserListByPermitKey;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
@@ -11,9 +10,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
-import com.yks.common.util.StringCommonUtils;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.vo.Resp_getUserListByPermitKey;
+import java.util.ArrayList;
+import java.util.List;
 
 @Scope("prototype")
 @Component
@@ -37,7 +35,7 @@ public class PermitInfoExcelExport extends AbstractExcelExport {
 	}
 
 	private void writeRowData(int rowNum, Resp_getUserListByPermitKey resp_getUserListByPermitKey) {
-		LOGGER.info("write {} row data : resp_getUserListByPermitKey=", rowNum, StringCommonUtils.toJSONString(resp_getUserListByPermitKey));
+		LOGGER.info("write {} row data : resp_getUserListByPermitKey=", rowNum, StringUtility.toJSONString(resp_getUserListByPermitKey));
         Row row = sheet.createRow(rowNum);
 
         row.createCell(0).setCellValue(StringUtility.convertToString(resp_getUserListByPermitKey.permitName));

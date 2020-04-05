@@ -11,8 +11,8 @@ package com.yks.urc.log;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.util.DateUtil;
 import com.yks.urc.fw.BeanProvider;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.session.bp.api.ISessionBp;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -74,7 +74,7 @@ public class LogTask implements Runnable{
     }
 
     private final static String format(Date date){
-        return DateUtil.formatDate(date, YYYY_MM_DD_HH_MM_SS_MS);
+        return StringUtility.get_yyyyMMddHHmmssSSS(date);
     }
     private Long getConsume(){
         if (null == startDate || null == endDate){

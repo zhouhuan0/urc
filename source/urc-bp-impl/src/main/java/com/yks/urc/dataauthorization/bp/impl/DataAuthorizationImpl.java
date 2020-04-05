@@ -10,7 +10,7 @@ package com.yks.urc.dataauthorization.bp.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.enums.CommonMessageCodeEnum;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;

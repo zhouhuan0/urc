@@ -1,8 +1,7 @@
 package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
-import com.yks.common.util.DateUtil;
-import com.yks.urc.entity.RoleDO;
+import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.PermissionVO;
@@ -13,7 +12,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
