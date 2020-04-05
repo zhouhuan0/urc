@@ -948,7 +948,7 @@ public class UrcServiceImpl implements IUrcService {
 	    	if(!CollectionUtils.isEmpty(urcLogList)){
 	    		for (UrcLog urcLog : urcLogList) {
 	    			UrcLogVO urcLogVO = new UrcLogVO();
-					BeanUtils.copyProperties(urcLogVO, urcLog);
+                    BeanUtils.copyProperties(urcLog, urcLogVO);
 					urcLogVO.setOperateTime(urcLog.getOperateTime() != null ? DateUtil.formatDate(urcLog.getOperateTime(), "yyyy-MM-dd HH:mm:ss"): null);
 					urcLogVO.setModuleName(ModuleCodeEnum.getOrderState(urcLog.getModuleCode()));
 					urcLogVOList.add(urcLogVO);
