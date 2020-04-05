@@ -32,20 +32,21 @@
         <pinyin4j.version>2.5.0</pinyin4j.version>
         <jackson.json.version>2.9.1</jackson.json.version>
         <poi.version>4.1.0</poi.version>
+        <commons-dbcp.version>1.3</commons-dbcp.version>
     </properties>
 
     <repositories>
         <repository>
             <id>nexus-releases</id>
-            <url>http://192.168.9.26:8084/nexus/content/repositories/releases/</url>
+            <url>http://192.168.9.26:8082/nexus/content/repositories/releases/</url>
         </repository>
         <repository>
             <id>nexus-thirdparty</id>
-            <url>http://192.168.9.26:8084/nexus/content/repositories/thirdparty/</url>
+            <url>http://192.168.9.26:8082/nexus/content/repositories/thirdparty/</url>
         </repository>
         <repository>
             <id>nexus-snapshots</id>
-            <url>http://192.168.9.26:8084/nexus/content/repositories/snapshots/</url>
+            <url>http://192.168.9.26:8082/nexus/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
@@ -55,12 +56,12 @@
         <repository>
             <id>nexus-releases</id>
             <name>Nexus Releases Repository</name>
-            <url>http://192.168.9.26:8084/nexus/content/repositories/releases</url>
+            <url>http://192.168.9.26:8082/nexus/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>nexus-snapshots</id>
             <name>Nexus Snapshots Repository</name>
-            <url>http://192.168.9.26:8084/nexus/content/repositories/snapshots</url>
+            <url>http://192.168.9.26:8082/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -79,6 +80,11 @@
         </dependency>
         <!--基础平台common包-->
 
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp.version}</version>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
