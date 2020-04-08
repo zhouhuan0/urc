@@ -856,7 +856,7 @@ public class UrcServiceImpl implements IUrcService {
             for (String sellerId : lstSellerId) {
             	for (OmsShopVO omsShopVO : lstShop) {
             		if(null !=sellerId && sellerId.equalsIgnoreCase(omsShopVO.shopId)){
-    					okSellerId.add(sellerId);
+    					okSellerId.add(omsShopVO.shopId);
     					break;
     				}
         		}
