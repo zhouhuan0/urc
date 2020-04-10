@@ -55,6 +55,7 @@ public class SellerIdBpImpl implements ISellerIdBp {
             CheckSellerIdRespVO checkSellerIdRespVO = new CheckSellerIdRespVO();
             Set<String> notOkSellerId = new HashSet<>();
             Set<String> okSellerId = new HashSet<>();
+            Set<String> okSellerId4Input = new HashSet<>();
             if(CollectionUtils.isEmpty(omsPlatformVOList)){
                 notOkSellerId.addAll(lstSellerId);
             }
@@ -63,11 +64,12 @@ public class SellerIdBpImpl implements ISellerIdBp {
                 for (OmsShopVO omsShopVO : lstShop) {
                     if(null !=sellerId && sellerId.equalsIgnoreCase(omsShopVO.shopId)){
                         okSellerId.add(omsShopVO.shopId);
+                        okSellerId4Input.add(sellerId);
                         break;
                     }
                 }
             }
-            lstSellerId.removeAll(new ArrayList<>(okSellerId));
+            lstSellerId.removeAll(new ArrayList<>(okSellerId4Input));
             checkSellerIdRespVO.setNotOkSellerId(lstSellerId);
             checkSellerIdRespVO.setOkSellerId(new ArrayList<>(okSellerId));
             return VoHelper.getSuccessResult(checkSellerIdRespVO);
