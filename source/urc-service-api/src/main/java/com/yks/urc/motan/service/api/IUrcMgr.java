@@ -13,4 +13,6 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
+
+    ResultVO checkSellerId(String jsonStr);
 }

@@ -18,12 +18,14 @@ import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.sellerid.bp.api.ISellerIdBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
+import net.bytebuddy.asm.Advice;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -819,56 +821,14 @@ public class UrcServiceImpl implements IUrcService {
     	
 	}
 
+	@Autowired
+    private ISellerIdBp sellerIdBp;
+
     @Log("匹配正确的销售账号")
 	@Override
-	public ResultVO checkSellerId(String jsonStr) {
-    	try {
-    		JSONObject jsonObject = StringUtility.parseString(jsonStr);
-        	
-        	if(null == jsonObject){
-        		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
-        	}
-        	String entityCode = jsonObject.getString("entityCode");
-        	String platformCode = jsonObject.getString("platformCode");
-        	String keys = jsonObject.getString("keys");
-        	List<String> lstSellerId = JSONArray.parseArray(jsonObject.getString("lstSellerId"), String.class);//要检测的销售账号【必填】for checkSellerId
-        	if (StringUtility.isNullOrEmpty(entityCode)) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
-            }
-            if (StringUtility.isNullOrEmpty(platformCode)) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "platformCode为空");
-            }
-            if (CollectionUtils.isEmpty(lstSellerId)) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstSellerId为空");
-            }
-            String operator = MotanSession.getRequest().getOperator();
-            jsonObject.put("operator", operator);
-            
-            ResultVO resultVOTemp =  dataRuleService.getPlatformShopByConditions(jsonObject);
-            List<OmsPlatformVO> omsPlatformVOList = (List<OmsPlatformVO>) resultVOTemp.data;
-            CheckSellerIdRespVO checkSellerIdRespVO = new CheckSellerIdRespVO();
-            Set<String> notOkSellerId = new HashSet<>();
-            Set<String> okSellerId = new HashSet<>();
-            if(CollectionUtils.isEmpty(omsPlatformVOList)){
-            	notOkSellerId.addAll(lstSellerId);
-            }
-            List<OmsShopVO> lstShop = omsPlatformVOList.get(0).lstShop;
-            for (String sellerId : lstSellerId) {
-            	for (OmsShopVO omsShopVO : lstShop) {
-            		if(null !=sellerId && sellerId.equalsIgnoreCase(omsShopVO.shopId)){
-    					okSellerId.add(omsShopVO.shopId);
-    					break;
-    				}
-        		}
-			}
-            lstSellerId.removeAll(new ArrayList<>(okSellerId));
-            checkSellerIdRespVO.setNotOkSellerId(lstSellerId);
-            checkSellerIdRespVO.setOkSellerId(new ArrayList<>(okSellerId));
-            return VoHelper.getSuccessResult(checkSellerIdRespVO);
-		} catch (Exception e) {
-			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"匹配正确的销售账号失败.");
-		}
-	}
+    public ResultVO checkSellerId(String jsonStr) {
+        return sellerIdBp.checkSellerId(jsonStr);
+    }
 
     @Log("获取指定系统的平台编码")
 	@Override
