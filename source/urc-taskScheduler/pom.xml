@@ -10,6 +10,11 @@
 	<url>http://maven.apache.org</url>
     <dependencies>
         <dependency>
+            <groupId>com.yks.mq</groupId>
+            <artifactId>yks-mq-client</artifactId>
+            <version>${yks.mq.client.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.yks.urc</groupId>
             <artifactId>urc-bp-impl</artifactId>
             <version>${urc.version}</version>

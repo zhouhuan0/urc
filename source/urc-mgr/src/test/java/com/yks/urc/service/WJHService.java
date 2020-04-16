@@ -1,31 +1,21 @@
 package com.yks.urc.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.dingding.client.DingApiProxy;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
-import org.drools.compiler.lang.DRL5Expressions.literal_return;
+import com.yks.urc.vo.PersonVO;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.RoleVO;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.enums.CommonMessageCodeEnum;
-import com.yks.urc.Enum.ModuleCodeEnum;
-import com.yks.urc.dingding.client.DingApiProxy;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UrcLog;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.vo.PersonVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.helper.VoHelper;
-
-import javax.management.relation.Role;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class WJHService extends BaseServiceTest {
