@@ -117,7 +117,7 @@ public interface IUrcService {
      * @param jsonStr
      * @return
      */
-    ResultVO assignDataRuleTempl2User(String jsonStr);
+    ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception;
 
     /**
      * 根据templId获取数据权限模板

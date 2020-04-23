@@ -15,4 +15,12 @@ public interface IUrcMgr {
     ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String json);
 
     ResultVO checkSellerId(String jsonStr);
+    /**
+     * 快速分配数据权限模板给用户
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception;
+
 }

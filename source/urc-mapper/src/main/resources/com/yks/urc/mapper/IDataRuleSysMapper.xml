@@ -205,6 +205,27 @@
         </where>
     </delete>
 
+    <!--根据userName以及sysKeys列表删除 权限数据Sys、行权限、列权限-->
+    <delete id="delRuleSysDatasByUserNameAndSyskey">
+        delete us,uc,ue
+        from
+        urc_data_rule r
+        inner join urc_data_rule_sys us on r.data_rule_id=us.data_rule_id
+        left join urc_data_rule_col uc on us.data_rule_sys_id = uc.data_rule_sys_id
+        left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
+        <where>
+            r.user_name in
+            <foreach collection="lstUserName" item="userName" open="(" separator="," close=")">
+                #{userName}
+            </foreach>
+
+            and us.sys_key in
+            <foreach collection="lstSysKey2Del" item="sysKey" open="(" separator="," close=")">
+                #{sysKey}
+            </foreach>
+        </where>
+    </delete>
+
     <select id="getTemplOwnSysByDataRuleId" resultType="java.lang.String">
         select sys_key from urc_data_rule_sys where data_rule_id=  #{dataRuleId,jdbcType=BIGINT}
     </select>

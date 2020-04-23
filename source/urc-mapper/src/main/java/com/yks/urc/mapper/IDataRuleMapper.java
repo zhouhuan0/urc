@@ -45,4 +45,14 @@ public interface IDataRuleMapper {
      * @return
      */
     DataRuleDO getDataRule(DataRuleDO dataRuleDO);
+
+    /**
+     * 根据用户名查找存在的用户名
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2020-04-23 17:37
+     */
+    List<String> getExistsByUserName(@Param("lstUserName") List<String> lstUserName);
+
+    List<DataRuleDO> getDataRuleByUserName(@Param("lstUserName") List<String> lstUserName);
 }

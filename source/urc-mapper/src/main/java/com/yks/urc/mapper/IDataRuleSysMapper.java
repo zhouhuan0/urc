@@ -115,4 +115,6 @@ public interface IDataRuleSysMapper {
     List<DataRuleSysDO> getDataRuleSysGtDt(@Param("sysKey") String sysKey ,@Param("createTime") Date date,@Param("pageSize") Integer pageSize );
 
     List<DataRuleSysDO> getDataRuleSysEqDt(@Param("sysKey") String sysKey,@Param("createTime") Date createTime);
+
+    int delRuleSysDatasByUserNameAndSyskey(@Param("lstUserName") List<String> lstUserName, @Param("lstSysKey2Del") List<String> lstSysKey2Del);
 }

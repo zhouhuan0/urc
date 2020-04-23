@@ -39,4 +39,10 @@ public class UrcMgrImpl implements IUrcMgr {
     public ResultVO checkSellerId(String jsonStr) {
         return sellerIdBp.checkSellerId(jsonStr);
     }
+
+    @Override
+    @Log("快速分配数据权限模板给用户")
+    public ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception {
+        return dataRuleService.assignDataRuleTempl2User(jsonStr);
+    }
 }

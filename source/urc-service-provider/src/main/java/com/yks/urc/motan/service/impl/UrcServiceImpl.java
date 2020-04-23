@@ -173,7 +173,7 @@ public class UrcServiceImpl implements IUrcService {
      */
     @Override
     @Log("快速分配数据权限模板给用户")
-    public ResultVO assignDataRuleTempl2User(String jsonStr) {
+    public ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception {
         return dataRuleService.assignDataRuleTempl2User(jsonStr);
     }
 

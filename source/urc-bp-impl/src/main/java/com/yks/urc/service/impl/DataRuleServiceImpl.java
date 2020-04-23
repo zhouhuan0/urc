@@ -1,12 +1,6 @@
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.yks.urc.fw.DateUtil;
@@ -412,9 +406,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
      * @date: 2018/6/12 21:03
      * @see
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResultVO assignDataRuleTempl2User(String jsonStr) {
+    public ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception {
         /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数并校验*/
@@ -472,13 +466,18 @@ public class DataRuleServiceImpl implements IDataRuleService {
        /*4、组装数据  并放入待入库列表*/
         assembleDatasToAdd(dataRuleSysDOSCache, dataRuleDOSCache, dataRuleColDOSCache, expressionDOSCache, lstUserName, operator, dataRuleSyAndOpers);
         /*5.1、删除用户原有的数据权限关系数据 包括行权限 列权限*/
-        List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
-        dataRuleMapper.delBatchByUserNames(lstUserName);
-        /*5.2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
-        if (dataRuleIds != null && !dataRuleIds.isEmpty()) {
-            dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
-        }
+        delRuleSysDatasByUserNameAndSyskey(dataRuleSyAndOpers, lstUserName);
+//        List<Long> dataRuleIds = dataRuleMapper.getDataRuleIdsByUserName(lstUserName);
+//        dataRuleMapper.delBatchByUserNames(lstUserName);
+//        /*5.2、删除用户列表对应的 数据权限Sys   行权限  列权限*/
+//        if (dataRuleIds != null && !dataRuleIds.isEmpty()) {
+//            dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
+//        }
         /*6 批量添加用户数据权限关系数据*/
+
+        List<String> lstExistsUserName = dataRuleMapper.getExistsByUserName(lstUserName);
+        // 已存在的不用插入，因为不会删除 urc_data_rule 表
+        dataRuleDOSCache = dataRuleDOSCache.stream().filter(m -> !lstExistsUserName.contains(m.getUserName())).collect(Collectors.toList());
         if (dataRuleDOSCache != null && !dataRuleDOSCache.isEmpty()) {
             dataRuleMapper.insertBatch(dataRuleDOSCache);
         }
@@ -541,6 +540,22 @@ public class DataRuleServiceImpl implements IDataRuleService {
         UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
+    }
+
+    private void delRuleSysDatasByUserNameAndSyskey(List<DataRuleSysDO> dataRuleFromTempl, List<String> lstUserName) throws Exception {
+        if (CollectionUtils.isEmpty(dataRuleFromTempl)) {
+            throw new Exception("模板中的数据权限为空");
+        }
+        if (CollectionUtils.isEmpty(lstUserName)) {
+            throw new Exception("要授权的用户为空");
+        }
+        // 通过模板分配用户时，要先删除用户的数据权限(只删除模板中的sys)即可
+
+        List<String> lstSysKey2Del = dataRuleFromTempl.stream().map(c -> c.getSysKey()).distinct().collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(lstSysKey2Del)) {
+            throw new Exception("模板中的sys为空");
+        }
+        dataRuleSysMapper.delRuleSysDatasByUserNameAndSyskey(lstUserName, lstSysKey2Del);
     }
 
     private void convertRuleSysDo2Vo(List<DataRuleSysDO> dataRuleSyAndOpers, List<DataRuleSysVO> dataRuleSysVOS) {
@@ -639,13 +654,24 @@ public class DataRuleServiceImpl implements IDataRuleService {
                                     List<String> lstUserName,
                                     String createBy,
                                     List<DataRuleSysDO> dataRuleSysDOS) {
+        List<DataRuleDO> lstDrFromDb = dataRuleMapper.getDataRuleByUserName(lstUserName);
+
         for (String userName : lstUserName) {
             /*4、组装用户-数据权限关系数据  并放入待入库列表*/
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(createBy);
             dataRuleDO.setCreateTime(new Date());
             dataRuleDO.setUserName(userName);
-            Long dataRuleId = seqBp.getNextDataRuleId();
+
+            Long dataRuleId = null;
+            Optional<DataRuleDO> optional = lstDrFromDb.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.getUserName(), userName)).findFirst();
+            if (optional.isPresent()) {
+                // 数据库已存在，使用数据库的 dataRuleId
+                dataRuleId = optional.get().getDataRuleId();
+            } else {
+                dataRuleId = seqBp.getNextDataRuleId();
+            }
+
             dataRuleDO.setDataRuleId(dataRuleId);
             dataRuleDOSCache.add(dataRuleDO);
             for (DataRuleSysDO dataRuleSysDO : dataRuleSysDOS) {

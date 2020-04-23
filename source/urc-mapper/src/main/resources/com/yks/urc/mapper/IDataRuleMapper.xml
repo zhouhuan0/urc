@@ -44,6 +44,22 @@
                 </if>
           </where>
     </select>
+    <select id="getExistsByUserName" resultType="java.lang.String">
+        select user_name
+        from urc_data_rule
+        where user_name in
+        <foreach collection="lstUserName" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>
+    </select>
+    <select id="getDataRuleByUserName" resultMap="BaseResultMap">
+        select user_name,data_rule_id
+        from urc_data_rule
+        where user_name in
+        <foreach collection="lstUserName" item="userName" open="(" separator="," close=")">
+            #{userName}
+        </foreach>
+    </select>
 
     <!--根据userName列表批量删除 -->
     <delete id="delBatchByUserNames" parameterType="java.util.List">

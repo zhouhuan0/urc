@@ -35,7 +35,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
     }
 
     @Test
-    public void assignDataRuleTempl2User() {
+    public void assignDataRuleTempl2User() throws Exception {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("operator", "lvchangrong");
         jsonObject.put("templId", 1529404283335L);

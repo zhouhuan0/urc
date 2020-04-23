@@ -35,17 +35,19 @@ public class DataRuleServiceTest extends BaseServiceTest {
     }
 
     @Test
-    public void assignDataRuleTempl2User() {
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("operator", "lvchangrong");
-        jsonObject.put("templId", 1529404283335L);
-        List<String> lstUserName = new ArrayList<>();
-        lstUserName.add("admin2122");
-        lstUserName.add("admin2222");
-       /*   lstUserName.add("admin23");
-        lstUserName.add("admin24");*/
-        jsonObject.put("lstUserName", lstUserName);
-        ResultVO resultVO = dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
+    public void assignDataRuleTempl2User() throws Exception {
+        String json="{\n" +
+                "\t\"lstUserName\": [\"dengjinsheng\",\"pa\"],\n" +
+                "\t\"templId\": \"1587632165200000019\",\n" +
+                "\t\"ticket\": \"ed52273a6d9206a335f513107129a382\",\n" +
+                "\t\"operator\": \"panyun2\",\n" +
+                "\t\"funcVersion\": \"fd9d9184ee1b54bc8c411acdd1226dcb\",\n" +
+                "\t\"moduleUrl\": \"/user/usermanagementlist/datapermissiontempl/viewplan/\",\n" +
+                "\t\"personName\": \"潘韵\",\n" +
+                "\t\"requestId\": \"04231659116734883a5030b10e454823\",\n" +
+                "\t\"deviceName\": \"Chrome浏览器\"\n" +
+                "}";
+        ResultVO resultVO = dataRuleService.assignDataRuleTempl2User(json);
         System.out.println(resultVO);
     }
 
