@@ -126,6 +126,27 @@ public class UserValidateBp implements IUserValidateBp {
         return lstRslt;
     }
 
+    @Override
+    public List<ModuleVO> plainModule(SystemRootVO sys1) {
+        if (sys1 == null) return Collections.emptyList();
+        List<MenuVO> lstMenu = sys1.menu;
+
+        List<ModuleVO> lstModuleRslt = new ArrayList<>();
+        for (MenuVO menu : lstMenu) {
+            List<ModuleVO> lstModule = menu.module;
+            if (lstModule == null)
+                continue;
+            for (ModuleVO m : lstModule) {
+                m.pageFullPathName.append(m.name);
+                m.lstChildFunc = getChildrenFuncDesc(m);
+                m.sysKey = sys1.system.key;
+                lstModuleRslt.add(m);
+                plainModule(m, lstModuleRslt);
+            }
+        }
+        return lstModuleRslt;
+    }
+
     /**
      * 按module节点打平
      *

@@ -23,4 +23,16 @@ public interface IUrcMgr {
      */
     ResultVO assignDataRuleTempl2User(String jsonStr) throws Exception;
 
+
+    /**
+     * 导入sys功能权限定义
+     *
+     * @param jsonStr
+     * @return
+     * @author panyun@youkeshu.com
+     * @date 2018年6月14日 下午7:17:14
+     */
+    ResultVO importSysPermit(String jsonStr);
+
+
 }

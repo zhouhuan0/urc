@@ -10,6 +10,7 @@ package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.mq.client.MQConsumerClient;
@@ -172,7 +173,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getAllFuncPermit_Test() {
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("hexuerong", null)));
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
     }
 
     @Test
@@ -306,7 +307,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void importSysPermit_Test() throws IOException {
-        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms2.json"));
+        List<String> lst = serializeBp.json2ObjNew(strJson1, new TypeReference<List<String>>() {
+        });
+        strJson1 = lst.get(0);
         MotanSession.initialSession(strJson1);
         permissionService.importSysPermit(strJson1);
     }
@@ -491,8 +495,12 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void doPermitRefreshTask_Test() {
         PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
-        mem.setTaskParam("[\"guozhongrui\"]");
+        mem.setTaskParam("[\"panyun1\"]");
         permitRefreshTask.doOne(mem);
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
+
+        mem.setTaskParam("[\"001\"]");
+//        permitRefreshTask.doTwo(mem);
     }
 
     @Test

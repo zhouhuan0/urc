@@ -228,16 +228,6 @@ public interface IUrcService {
     ResultVO getDataRuleByUser(String jsonStr);
 
     /**
-     * 导入sys功能权限定义
-     *
-     * @param jsonStr
-     * @return
-     * @author panyun@youkeshu.com
-     * @date 2018年6月14日 下午7:17:14
-     */
-    ResultVO importSysPermit(String jsonStr);
-
-    /**
      * 获取指定用户可授权给其它角色的功能权限
      *
      * @param jsonStr

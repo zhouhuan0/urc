@@ -65,7 +65,7 @@ public class PermitRefreshTask extends BaseTask {
         }
     }
 
-    private void doTwo(PermitRefreshTaskVO mem) {
+    public void doTwo(PermitRefreshTaskVO mem) {
         try {
             if (StringUtils.isBlank(mem.getTaskParam())) {
                 mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));

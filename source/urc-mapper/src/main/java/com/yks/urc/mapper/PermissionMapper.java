@@ -18,7 +18,7 @@ public interface PermissionMapper {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/12 9:28
      */
-    PermissionDO getSystemKey(@Param("sysName") String sysKey);
+    PermissionDO getSystemKey(@Param("sysKey") String sysKey);
 
     PermissionDO getPermissionBySysKey(@Param("sysKey") String sysKey);
 

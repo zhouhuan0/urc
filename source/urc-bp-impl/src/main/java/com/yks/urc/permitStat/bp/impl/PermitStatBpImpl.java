@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
+import com.yks.urc.permitStat.bp.api.IPermitSortBp;
 import com.yks.urc.vo.SystemKeyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +69,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private ICacheBp cacheBp;
 
+	@Autowired
+	private IPermitSortBp permitSortBp;
+
 	public GetAllFuncPermitRespVO updateUserPermitCache(String userName) {
 		GetAllFuncPermitRespVO permitCache = new GetAllFuncPermitRespVO();
 
@@ -112,6 +116,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 						rootVO.system.name = sysName;
 					}
 
+					if ("001".equalsIgnoreCase(entry.getKey())) {
+						permitSortBp.sortSystemRootVO(rootVO, entry.getKey());
+					}
 
 					cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
 					//				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
@@ -130,40 +137,6 @@ public class PermitStatBpImpl implements IPermitStatBp {
 					}
 				}
 			}
-
-//			for (String sysKey : lstSysKey) {
-//				// 获取用户sys的功能权限json
-//				List<String> lstFuncJson = roleMapper.getFuncJsonByUserAndSysKey(userName, sysKey);
-//
-//				UserPermissionCacheDO cacheDo = new UserPermissionCacheDO();
-//				cacheDo.setUserName(userName);
-//				cacheDo.setSysKey(sysKey);
-//				// 合并json树
-//				SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
-//
-//				//获取sysName
-//				String sysName = getSysNameBySyskey(sysKey);
-//				if (!StringUtility.isNullOrEmpty(sysName)) {
-//					rootVO.system.name = sysName;
-//				}
-//
-//
-//				cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
-////				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
-//				cacheDo.setCreateTime(new Date());
-//				cacheDo.setModifiedTime(cacheDo.getCreateTime());
-//				lstCacheToAdd.add(cacheDo);
-//
-//				UserSysVO userPermit = new UserSysVO();
-//				userPermit.sysKey = sysKey;
-//				userPermit.context = cacheDo.getUserContext();
-//				permitCache.lstUserSysVO.add(userPermit);
-//				calcFuncVersion(permitCache);
-//				List<UserPermitStatDO> lstStatCur = userValidateBp.plainSys(rootVO, userName);
-//				if (lstStatCur != null && lstStatCur.size() > 0) {
-//					lstStatToAdd.addAll(lstStatCur);
-//				}
-//			}
 
 			if (lstCacheToAdd.size() > 0) {
 				// insert urc_user_permission_cache表

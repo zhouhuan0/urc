@@ -7,6 +7,7 @@ public class ModuleVO {
 	public String key;
 	public String url;
 	public Integer show;
+	public Integer sortIdx;
 	public List<ModuleVO> module;
 	public List<FunctionVO> function;
 

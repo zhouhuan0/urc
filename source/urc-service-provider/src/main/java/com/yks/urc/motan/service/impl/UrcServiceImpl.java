@@ -330,13 +330,6 @@ public class UrcServiceImpl implements IUrcService {
         return dataRuleService.getDataRuleByUser(lstUserName, operator, sysKey);
     }
 
-
-    @Override
-    @Log("推送系统功能及子功能权限")
-    public ResultVO importSysPermit(String jsonStr) {
-        return permissionService.importSysPermit(jsonStr);
-    }
-
     @Override
     @Log("获取当前用户能授权的功能权限")
     public ResultVO getUserAuthorizablePermission(String jsonStr) {

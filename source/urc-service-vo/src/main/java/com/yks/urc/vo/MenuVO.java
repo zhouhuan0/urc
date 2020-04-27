@@ -17,6 +17,7 @@ public class MenuVO implements Serializable {
 	public String name;
 	public String key;
 	public String url;
+	public Integer sortIdx;
 	public List<ModuleVO> module;
 
 }
