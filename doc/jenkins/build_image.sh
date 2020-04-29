@@ -30,6 +30,9 @@ cd $JOB_PATH/image
 cp $PACK_PATH .
 cp /var/lib/jenkins/image/service_start.sh .
 
+# 记录本次构建的一些日志，例如:基于的git branch信息
+git name-rev --name-only HEAD > pipeline.log  && git log --pretty=format:"%an %ad %h %s" -n 1  --date=format:'%Y-%m-%d %H:%M:%S' >> pipeline.log
+
 #替换模板dockerfile里面的包名
 cat /var/lib/jenkins/image/Base_Dockerfile | sed  "s/PACK_NAME/${pack}/g" > Dockerfile
 

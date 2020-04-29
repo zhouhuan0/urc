@@ -44,5 +44,11 @@ sh '''
   echo "部署应用"${POD_NAME}
   bash /var/lib/jenkins/image/patch_busybox.sh ${POD_NAME} ${BUILD_NUMBER} v1.14
 
+  POD_NAME=urcenter-mgr-prod
+  echo "构建image"${POD_NAME} 
+  bash `pwd`/doc/jenkins/build_image.sh ${JOB_NAME} ${BUILD_NUMBER} ${POD_NAME}  /var/lib/jenkins/jobs/${JOB_NAME}/workspace/source/urc-mgr/target/urc-mgr-assembly.tar.gz
+  echo "部署应用"${POD_NAME}
+  bash /var/lib/jenkins/image/patch_busybox.sh ${POD_NAME} ${BUILD_NUMBER} v1.14
+
   '''
 }
