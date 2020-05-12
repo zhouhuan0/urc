@@ -82,7 +82,7 @@
             #{item.fieldCode,jdbcType=VARCHAR}, #{item.entityCode,jdbcType=VARCHAR},
             #{item.oper,jdbcType=VARCHAR}, #{item.operValues,jdbcType=LONGVARCHAR},
             #{item.parentExpressionId,jdbcType=BIGINT},#{item.isAnd,jdbcType=TINYINT},
-            #{item.createTime,jdbcType=TIMESTAMP}, #{item.createBy,jdbcType=VARCHAR},
+            now(3), #{item.createBy,jdbcType=VARCHAR},
             #{item.modifiedTime,jdbcType=TIMESTAMP}, #{item.modifiedBy,jdbcType=VARCHAR})
         </foreach>
     </insert>

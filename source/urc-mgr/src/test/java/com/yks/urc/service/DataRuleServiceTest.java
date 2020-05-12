@@ -3,15 +3,22 @@ package com.yks.urc.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.entity.DataRuleSysDO;
+import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IDataRuleSysMapper;
+import com.yks.urc.mapper.IExpressionMapper;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +30,56 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Autowired
     private IDataRuleService dataRuleService;
 
+
+    @Autowired
+    private ISeqBp seqBp;
+
+    @Autowired
+    private IDataRuleSysMapper dataRuleSysMapper;
+
+    @Autowired
+    private IExpressionMapper expressionMapper;
+
+//    @Transactional
+    @Test
+    public void fixData_Test() throws IOException {
+        // 只插入一个系统的数据权限
+        List<DataRuleSysDO> lstDrs = new ArrayList<>();
+        DataRuleSysDO drs = new DataRuleSysDO();
+        drs.setSysKey("008");
+        Long dataRuleId = 1587616037551000541L;
+        drs.setDataRuleId(dataRuleId);
+        Long dataRuleSysId = seqBp.getNextDataRuleSysId();
+        drs.setDataRuleSysId(dataRuleSysId);
+        drs.setCreateBy("py");
+        lstDrs.add(drs);
+        dataRuleSysMapper.insertBatch(lstDrs);
+
+        List<ExpressionDO> lstExp = new ArrayList<>();
+        Long parentExpressionId = seqBp.getExpressionId();
+        ExpressionDO parentExpression = new ExpressionDO();
+        parentExpression.setDataRuleSysId(dataRuleSysId);
+        parentExpression.setExpressionId(parentExpressionId);
+        parentExpression.setAnd(true);
+        parentExpression.setCreateBy("py");
+        lstExp.add(parentExpression);
+
+
+        String strOperValues = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("dataRuleOperValues.json"));
+
+        ExpressionDO expressionDO = new ExpressionDO();
+        expressionDO.setDataRuleSysId(dataRuleSysId);
+        expressionDO.setExpressionId(seqBp.getExpressionId());
+        expressionDO.setParentExpressionId(parentExpressionId);
+        expressionDO.setFieldCode("F_PlsShopAccount");
+        expressionDO.setEntityCode("E_PlsShopAccount");
+        expressionDO.setOperValues(strOperValues);
+        expressionDO.setCreateBy("py");
+        lstExp.add(expressionDO);
+
+        expressionMapper.insertBatch(lstExp);
+
+    }
 
     @Test
     public void getDataRuleTemplByTemplId() {
@@ -36,7 +93,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
     @Test
     public void assignDataRuleTempl2User() throws Exception {
-        String json="{\n" +
+        String json = "{\n" +
                 "\t\"lstUserName\": [\"dengjinsheng\",\"pa\"],\n" +
                 "\t\"templId\": \"1587632165200000019\",\n" +
                 "\t\"ticket\": \"ed52273a6d9206a335f513107129a382\",\n" +

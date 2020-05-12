@@ -56,7 +56,7 @@
         values
         <foreach collection="list" index="index" item="item" separator=",">
             ( #{item.dataRuleSysId,jdbcType=BIGINT},#{item.dataRuleId,jdbcType=BIGINT}, #{item.sysKey,jdbcType=CHAR},
-            #{item.createTime,jdbcType=TIMESTAMP}, #{item.createBy,jdbcType=VARCHAR},
+            now(3), #{item.createBy,jdbcType=VARCHAR},
             #{item.modifiedTime,jdbcType=TIMESTAMP},#{item.modifiedBy,jdbcType=VARCHAR})
         </foreach>
     </insert>
