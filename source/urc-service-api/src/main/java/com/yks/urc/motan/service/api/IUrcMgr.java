@@ -35,4 +35,5 @@ public interface IUrcMgr {
     ResultVO importSysPermit(String jsonStr);
 
 
+    ResultVO getRoleUserByRoleId(String json) throws Exception;
 }

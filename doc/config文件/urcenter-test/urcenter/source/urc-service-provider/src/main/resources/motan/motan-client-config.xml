@@ -6,7 +6,7 @@
 
     <!-- 注册中心配置 -->
     <motan:registry regProtocol="zookeeper" name="clientZkRegistry"
-                    address="10.90.1.199:2181,10.90.1.198:2181,10.90.1.197:2181"
+                    address="10.90.1.199:2182,10.90.1.198:2182,10.90.1.197:2182"
                     connectTimeout="2000"/>
 
     <motan:basicReferer requestTimeout="200" accessLog="false"  version="1.0"

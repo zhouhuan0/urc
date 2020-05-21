@@ -1,18 +1,14 @@
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtil;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,13 +45,6 @@ import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.NameVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.PermissionVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.RoleOwnerVO;
-import com.yks.urc.vo.RoleVO;
-import com.yks.urc.vo.SystemRootVO;
 import com.yks.urc.vo.helper.VoHelper;
 
 /**
@@ -1201,6 +1190,45 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     public ResultVO operIsSuperAdmin(String operator) {
         return VoHelper.getSuccessResult(roleMapper.isSuperAdminAccount(operator));
+    }
+
+    @Autowired
+    private ISerializeBp serializeBp;
+
+    @Override
+    public ResultVO getRoleUserByRoleId(String json) throws Exception {
+        RequestVO<List<String>> req = serializeBp.json2ObjNew(json, new TypeReference<RequestVO<List<String>>>() {
+        });
+        if (req == null) {
+            throw new Exception(String.format("参数错误,正确示例:%s", "{\t\"data\":[\"roleId1\"] }"));
+        }
+        List<String> lstRoleId = req.data;
+        if (CollectionUtils.isEmpty(lstRoleId)) {
+            throw new Exception("roleId不能为空");
+        }
+        List<UserRoleDO> lstRoleUser = userRoleMapper.getRoleUserByRoleId(lstRoleId);
+        if (CollectionUtils.isEmpty(lstRoleUser)) {
+            return VoHelper.getSuccessResult("无数据");
+        }
+
+        List<GetRoleUserRespVO> lstRole = new ArrayList<>();
+        for (UserRoleDO r : lstRoleUser) {
+            GetRoleUserRespVO roleVO = new GetRoleUserRespVO();
+            roleVO.roleId = (StringUtility.addEmptyString(r.getRoleId()));
+            roleVO.lstUser = (new ArrayList<>());
+            Arrays.asList(StringUtility.addEmptyString(r.getUserName()).split(",")).stream().forEach(c ->
+            {
+                String[] arrUser = c.split("/");
+                if (arrUser.length > 0 && !StringUtils.isBlank(arrUser[0])) {
+                    UserRespVO nameVO = new UserRespVO();
+                    nameVO.userId = arrUser[0];
+                    nameVO.userName = arrUser.length > 1 ? arrUser[1] : StringUtils.EMPTY;
+                    roleVO.lstUser.add(nameVO);
+                }
+            });
+            lstRole.add(roleVO);
+        }
+        return VoHelper.getSuccessResult(lstRole);
     }
 
     @Override

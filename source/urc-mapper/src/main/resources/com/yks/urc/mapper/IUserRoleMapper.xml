@@ -254,6 +254,19 @@
         from urc_user_role
         order by user_name
     </select>
+    <select id="getRoleUserByRoleId" resultType="com.yks.urc.entity.UserRoleDO">
+        SELECT r.role_id roleId,GROUP_CONCAT(CONCAT( uu.user_name ,'/',up.person_name)) userName
+        FROM urc_role r
+        inner join urc_user_role uur on r.role_id=uur.role_id
+        left join urc_user uu ON uur.user_name = uu.user_name
+        LEFT JOIN urc_person up ON uu.ding_user_id = up.ding_user_id
+        where r.role_id in
+            <foreach collection="lstRoleId" item="roleId" open="(" separator="," close=")">
+                #{ roleId}
+            </foreach>
+        group by r.role_id
+        order by r.role_id;
+    </select>
 
 
 </mapper>

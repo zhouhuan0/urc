@@ -119,4 +119,6 @@ public interface IUserRoleMapper {
 
 
 	List<String> getAllUserName();
+
+    List<UserRoleDO> getRoleUserByRoleId(@Param("lstRoleId") List<String> lstRoleId);
 }

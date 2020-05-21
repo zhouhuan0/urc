@@ -9,6 +9,7 @@ import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.sellerid.bp.api.ISellerIdBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IPermissionService;
+import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,5 +56,16 @@ public class UrcMgrImpl implements IUrcMgr {
     @Log("推送系统功能及子功能权限")
     public ResultVO importSysPermit(String jsonStr) {
         return permissionService.importSysPermit(jsonStr);
+    }
+
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Override
+    public ResultVO getRoleUserByRoleId(String json) throws Exception {
+        // for 刊登
+        // 根据角色id获取人
+        return roleService.getRoleUserByRoleId(json);
     }
 }

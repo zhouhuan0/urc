@@ -3,6 +3,7 @@ package com.yks.urc.service;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.PermissionVO;
 import com.yks.urc.vo.ResultVO;
@@ -31,17 +32,17 @@ public class RoleServiceTest extends BaseServiceTest {
         ids.add(2L);
         ids.add(3L);
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("lstRoleId",ids);
-        jsonObject.put("operator","admin");
+        jsonObject.put("lstRoleId", ids);
+        jsonObject.put("operator", "admin");
         roleService.deleteRoles(jsonObject.toString());
     }
 
     @Test
     public void getRoleByRoleId() {
-        JSONObject  jsonObject = new JSONObject();
-        jsonObject.put("operator","lvchangrong");
-        jsonObject.put("roleId",1530581467555000128L);
-        ResultVO<RoleVO>  resultVO= roleService.getRoleByRoleId(jsonObject.toString());
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("operator", "lvchangrong");
+        jsonObject.put("roleId", 1530581467555000128L);
+        ResultVO<RoleVO> resultVO = roleService.getRoleByRoleId(jsonObject.toString());
         Assert.assertNotNull(resultVO);
     }
 
@@ -71,8 +72,8 @@ public class RoleServiceTest extends BaseServiceTest {
         roleVO.setActive(Boolean.TRUE);
         roleVO.setAuthorizable(Boolean.TRUE);
         roleVO.setForever(Boolean.FALSE);
-        roleVO.setEffectiveTime(DateUtil.String2Date("2018-06-25 12:00:00",DateUtil.YYYY_MM_DD_HH_MM_SS));
-        roleVO.setExpireTime(DateUtil.String2Date("2018-06-27 12:00:00",DateUtil.YYYY_MM_DD_HH_MM_SS));
+        roleVO.setEffectiveTime(DateUtil.String2Date("2018-06-25 12:00:00", DateUtil.YYYY_MM_DD_HH_MM_SS));
+        roleVO.setExpireTime(DateUtil.String2Date("2018-06-27 12:00:00", DateUtil.YYYY_MM_DD_HH_MM_SS));
         roleVO.setRemark("我的备注");
         List<PermissionVO> permissionVOS = new ArrayList<>();
         PermissionVO permissionVO1 = new PermissionVO();
@@ -86,7 +87,7 @@ public class RoleServiceTest extends BaseServiceTest {
         roleVO.setSelectedContext(permissionVOS);
         List<String> lstUserName = new ArrayList<>();
         String userName = "admin";
-        String userName2= "edison";
+        String userName2 = "edison";
         lstUserName.add(userName);
         lstUserName.add(userName2);
         roleVO.setLstUserName(lstUserName);
@@ -98,8 +99,9 @@ public class RoleServiceTest extends BaseServiceTest {
 
         Assert.assertNotNull(resultVO);
     }
+
     @Test
-    public void getRolesByInfo(){
+    public void getRolesByInfo() {
         JSONObject jsonObject = new JSONObject();
         RoleVO roleVO = new RoleVO();
         StringBuilder roleNames = new StringBuilder();
@@ -111,23 +113,34 @@ public class RoleServiceTest extends BaseServiceTest {
                  .append(System.getProperty("line.separator"));*/
         //roleNames.append("admin");
         //roleVO.setRoleName("line.separator"+"line.separator+"+"line.separator");
-       // roleVO.setRoleName("1");
-        jsonObject.put("operator","linwanxian");
-        jsonObject.put("pageNumber",1);
-        jsonObject.put("pageData",20);
-        jsonObject.put("role",roleVO);
+        // roleVO.setRoleName("1");
+        jsonObject.put("operator", "linwanxian");
+        jsonObject.put("pageNumber", 1);
+        jsonObject.put("pageData", 20);
+        jsonObject.put("role", roleVO);
         ResultVO resultVO = roleService.getRolesByInfo(jsonObject.toString());
         System.out.println(StringUtility.toJSONString(resultVO));
     }
+
+    @Autowired
+    private ISerializeBp serializeBp;
+
     @Test
-    public void test()
-    {
-        Pattern pattern = Pattern.compile("^[\\u4e00-\\u9fa5_a-zA-Z0-9]+$");
-        Matcher matcher = pattern.matcher("admin");
-        System.out.println(matcher.matches());
+    public void test() throws Exception {
+        String json = "";
+//        System.out.println(serializeBp.obj2Json(roleService.getRoleUserByRoleId(json)));
+        json = "{\n" +
+                "    \"data\": [\n" +
+                "        \"1589443050774000011\",\n" +
+                "        \"1566269828377000041\",\n" +
+                "        \"1574413551097000006\"\n" +
+                "    ]\n" +
+                "}";
+        System.out.println(serializeBp.obj2Json(roleService.getRoleUserByRoleId(json)));
     }
+
     @Test
-    public void copyRole(){
-        roleService.copyRole("dcadmin","复制角色","1539164355294000010");
+    public void copyRole() {
+        roleService.copyRole("dcadmin", "复制角色", "1539164355294000010");
     }
 }

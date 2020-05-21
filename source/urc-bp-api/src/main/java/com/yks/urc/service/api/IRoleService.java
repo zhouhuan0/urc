@@ -62,4 +62,6 @@ public interface IRoleService {
      * @return
      */
     ResultVO operIsSuperAdmin(String operator);
+
+    ResultVO getRoleUserByRoleId(String json) throws Exception;
 }
