@@ -18,6 +18,7 @@ public class UserInfoVO implements Serializable {
     public String dingUserId;
     public String orgName;
     public String parentOrgName;
+    public String dingOrgId;
     //增加两个字段返回
     /**
      * 手机号

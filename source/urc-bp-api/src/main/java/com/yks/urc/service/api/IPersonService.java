@@ -36,4 +36,7 @@ public interface IPersonService {
 	 */
 	ResultVO fuzzSearchPersonByName(String operator,String userName);
 
+
+	ResultVO fuzzSearchPersonByName4Account(String operator,String userName);
+
 }

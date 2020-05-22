@@ -9,6 +9,7 @@ import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.sellerid.bp.api.ISellerIdBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IPermissionService;
+import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.ResultVO;
@@ -61,11 +62,27 @@ public class UrcMgrImpl implements IUrcMgr {
 
     @Autowired
     private IRoleService roleService;
+    @Autowired
+    private IPersonService personService;
 
     @Override
     public ResultVO getRoleUserByRoleId(String json) throws Exception {
         // for 刊登
         // 根据角色id获取人
         return roleService.getRoleUserByRoleId(json);
+    }
+
+    /**
+     * @param json
+     * @Description 根据用户账号信息模糊查询对应用户的详细信息
+     * @Author zengzheng
+     * @Date 2020/5/21 16:13
+     */
+    @Override
+    public ResultVO getUserInfoDetailByUserName(String json) throws Exception {
+        JSONObject jsonObject = StringUtility.parseString(json);
+        String operator = MotanSession.getRequest().getOperator();
+        String userName = jsonObject.getString("userName");
+        return personService.fuzzSearchPersonByName4Account(operator, userName);
     }
 }

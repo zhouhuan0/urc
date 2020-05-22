@@ -36,4 +36,12 @@ public interface IUrcMgr {
 
 
     ResultVO getRoleUserByRoleId(String json) throws Exception;
+
+    /**
+     * @Description 根据用户账号信息模糊查询对应用户的详细信息
+     * @Author zengzheng
+     * @Date 2020/5/21 16:13
+     */
+    ResultVO getUserInfoDetailByUserName(String json) throws Exception;
+
 }

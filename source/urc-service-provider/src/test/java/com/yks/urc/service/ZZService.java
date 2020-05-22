@@ -7,6 +7,8 @@ import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UrcLog;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRoleMapper;
+import com.yks.urc.motan.MotanSession;
+import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.api.*;
 import com.yks.urc.user.bp.api.IUrcLogBp;
@@ -17,7 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class ZZService extends BaseServiceTest {
@@ -92,9 +96,19 @@ public class ZZService extends BaseServiceTest {
 	}
 	 @Autowired
 	    private IUrcService service;
+
+	private Map map = new HashMap();
+	private String operator = "zengzheng";
+	private ResultVO resultVO;
 	@Test
 	public void testgetAllFuncPermit(){
 		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
+		map.put("name", "zengzheng");
+		map.put("operator", operator);
+		String json = StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		resultVO = service.fuzzSearchPersonByName(json);
+		System.out.println(StringUtility.toJSONString(resultVO));
 		
 		System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
 	}

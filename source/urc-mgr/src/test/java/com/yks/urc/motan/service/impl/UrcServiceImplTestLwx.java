@@ -2,6 +2,7 @@ package com.yks.urc.motan.service.impl;
 
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
+import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.motan.service.api.IUrcService;
 import com.yks.urc.service.BaseServiceTest;
 import com.yks.urc.vo.*;
@@ -349,6 +350,7 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
         resultVO = service.syncShopSite(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
+
 
     @Test
     public void fuzzSearchPersonByName() throws Exception {

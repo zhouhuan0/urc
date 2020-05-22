@@ -170,4 +170,6 @@ public interface IUserMapper {
      * @version: 2019年6月10日 上午9:55:14
      */
     List<String> getUserNameByFuzzy(@Param("userName") String userName);
+
+    List<UserInfoVO> fuzzSearchUserByName4Account(@Param("name") String name);
 }

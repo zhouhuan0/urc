@@ -151,8 +151,8 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
     public void importSysPermit() throws Exception {
         String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("oms.json"));
         MotanSession.initialSession(strJson1);
-        resultVO =service.importSysPermit(strJson1);
-        System.out.println(StringUtility.toJSONString(resultVO));
+        /*resultVO =service.importSysPermit(strJson1);
+        System.out.println(StringUtility.toJSONString(resultVO));*/
     }
 
     @Test

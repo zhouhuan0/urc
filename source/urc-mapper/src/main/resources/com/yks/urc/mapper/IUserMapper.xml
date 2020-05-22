@@ -405,4 +405,26 @@
               </if>
           </where>
     </select>
+
+    <select id="fuzzSearchUserByName4Account" resultType="com.yks.urc.vo.UserInfoVO">
+      SELECT
+	u.user_name AS userName,
+	p.person_name AS personName,
+	p.ding_user_id AS dingUserId,
+	p.position AS `position`,
+	p.job_number AS jobNumber,
+	upo.ding_org_id AS dingOrgId,
+	uo.org_name AS orgName,uo.full_name_path AS parentOrgName
+    FROM
+        urc_user u
+        LEFT JOIN urc_person p ON u.ding_user_id = p.ding_user_id
+        left join urc_person_org upo on p.ding_user_id = upo.ding_user_id
+        LEFT JOIN urc_organization uo ON  upo.ding_org_id =uo.ding_org_id
+    WHERE
+        u.is_active = 1 and
+	    u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
+	    order by u.user_name
+    </select>
+
+
 </mapper>
