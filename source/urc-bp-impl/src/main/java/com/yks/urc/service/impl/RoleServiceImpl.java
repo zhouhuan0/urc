@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtil;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
@@ -752,21 +753,15 @@ public class RoleServiceImpl implements IRoleService {
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                    List<RolePermissionDO> rolePermissionList = null;
-                    if (!roleMapper.isSuperAdminAccount(operator)) {
-                        //非超管
-                        rolePermissionList = rolePermissionMapper.getRoleSalePermission(permissionDO);
-                    } else {
-                        rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
-                    }
+                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
                     List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
                     if (rolePermissionList != null && rolePermissionList.size() > 0) {
                         for (RolePermissionDO rolePermissionDO : rolePermissionList) {
                             PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                            String SelectedContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+                            String contextJson = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
                             PermissionVO permissionVO = new PermissionVO();
                             permissionVO.setSysKey(rolePermissionDO.getSysKey());
-                            permissionVO.setSysContext(SelectedContext);
+                            permissionVO.setSysContext(handleSuperAdmin(contextJson, rolePermissionDO.getSysKey(), operator));
                             permissionVOs.add(permissionVO);
                         }
                     }
@@ -779,6 +774,26 @@ public class RoleServiceImpl implements IRoleService {
             }
         }
         return VoHelper.getSuccessResult(roleVoList);
+    }
+
+    private String handleSuperAdmin(String contextJson, String sysKey, String operator) {
+        try {
+            if (StringConstant.URC_SYS_KEY.equalsIgnoreCase(sysKey)) {
+                // 超管才能开用户中心权限
+                if (!roleMapper.isSuperAdminAccount(operator)) {
+                    SystemRootVO urcSys = serializeBp.json2ObjNew(contextJson, new TypeReference<SystemRootVO>() {
+                    });
+                    Optional<MenuVO> op = urcSys.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, StringConstant.URC_PERMIT_KEY)).findFirst();
+                    if (op.isPresent()) {
+                        urcSys.menu.remove(op.get());
+                        return serializeBp.obj2Json(urcSys);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            logger.error(String.format("%s %s %s", contextJson, sysKey, operator), ex);
+        }
+        return contextJson;
     }
 
     @Override

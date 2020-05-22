@@ -11,6 +11,7 @@ import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.*;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
@@ -326,8 +327,8 @@ public class PermissionServiceImpl implements IPermissionService {
                         SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
                         if(null == rootVO) continue;
                         // 只有超管能分配用户中心权限
-                        if ("004".equalsIgnoreCase(sysKey)) {
-                            Optional<MenuVO> op = rootVO.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, "004-000001")).findFirst();
+                        if (StringConstant.URC_SYS_KEY.equalsIgnoreCase(sysKey)) {
+                            Optional<MenuVO> op = rootVO.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, StringConstant.URC_PERMIT_KEY)).findFirst();
                             if (op.isPresent()) {
                                 rootVO.menu.remove(op.get());
                             }

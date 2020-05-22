@@ -179,17 +179,6 @@ public class WJHService extends BaseServiceTest {
     
     
     @Test
-    public void getRolePermission() throws Exception{
-    	List<String> lstRoleId=new ArrayList<>();
-    	lstRoleId.add("1529746076695000006");
-        lstRoleId.add("1529746076695000007");
-    	
-    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("panyun", lstRoleId)));
-    	
-    }
-    
-    
-    @Test
     public void getRoleByRoleId() throws Exception{
 
     	String jsonStr="{\"roleId\":\"1530015877269000015\",\"operator\":\"tangyong\"}";

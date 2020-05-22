@@ -24,4 +24,7 @@ public class StringConstant {
     public static String requestId = "requestId";
     public static String requestid = "requestid";
 
+    public static String URC_PERMIT_KEY = "004-000001";
+    public static String URC_SYS_KEY = "004";
+
 }
