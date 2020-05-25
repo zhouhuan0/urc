@@ -44,4 +44,11 @@ public interface IUrcMgr {
      */
     ResultVO getUserInfoDetailByUserName(String json) throws Exception;
 
+    /**
+     * 获取多个角色已有的功能权限
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getRolePermission(String jsonStr);
 }

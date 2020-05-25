@@ -1,6 +1,8 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
@@ -84,5 +86,24 @@ public class UrcMgrImpl implements IUrcMgr {
         String operator = MotanSession.getRequest().getOperator();
         String userName = jsonObject.getString("userName");
         return personService.fuzzSearchPersonByName4Account(operator, userName);
+    }
+
+    @Override
+    @Log("获取多个角色已有的功能权限")
+    public ResultVO getRolePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = jsonObject.getString("operator");
+
+        if (StringUtility.isNullOrEmpty(operator)) {
+            throw new URCBizException("operator为空", ErrorCode.E_000002);
+        }
+
+        if (StringUtility.isNullOrEmpty(jsonObject.getString("lstRoleId"))) {
+            throw new URCBizException("lstRoleId为空", ErrorCode.E_000002);
+        }
+
+        List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
+
+        return roleService.getRolePermission(operator, lstRoleId);
     }
 }
