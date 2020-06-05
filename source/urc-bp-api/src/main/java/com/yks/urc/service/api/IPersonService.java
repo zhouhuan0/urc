@@ -39,4 +39,5 @@ public interface IPersonService {
 
 	ResultVO fuzzSearchPersonByName4Account(String operator,String userName);
 
+	ResultVO getDepartment(String orgLevel);
 }

@@ -425,6 +425,12 @@
 	    u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
 	    order by u.user_name
     </select>
+    <select id="getDepartmentByOrgLevel" resultType="com.yks.urc.vo.UserInfoVO">
+        select ding_org_id AS dingOrgId,
+	    org_name AS orgName,full_name_path AS parentOrgName
+	    from urc_organization
+	    WHERE org_level = #{orgLevel}
+    </select>
 
 
 </mapper>

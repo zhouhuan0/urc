@@ -89,6 +89,14 @@ public class UrcMgrImpl implements IUrcMgr {
     }
 
     @Override
+    public ResultVO getDepartment(String json) {
+        JSONObject jsonObject = StringUtility.parseString(json);
+        String operator = MotanSession.getRequest().getOperator();
+        String orgLevel = jsonObject.getString("orgLevel");
+        return personService.getDepartment(orgLevel);
+    }
+
+    @Override
     @Log("获取多个角色已有的功能权限")
     public ResultVO getRolePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);

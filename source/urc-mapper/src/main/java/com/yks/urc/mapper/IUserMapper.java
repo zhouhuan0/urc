@@ -172,4 +172,6 @@ public interface IUserMapper {
     List<String> getUserNameByFuzzy(@Param("userName") String userName);
 
     List<UserInfoVO> fuzzSearchUserByName4Account(@Param("name") String name);
+
+    List<UserInfoVO> getDepartmentByOrgLevel(Integer orgLevel);
 }

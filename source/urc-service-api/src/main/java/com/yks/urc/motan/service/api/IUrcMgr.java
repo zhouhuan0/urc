@@ -51,4 +51,6 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO getRolePermission(String jsonStr);
+
+    ResultVO getDepartment(String json);
 }

@@ -46,6 +46,11 @@ public class TestOrgService extends BaseServiceTest {
 		String json = StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 		resultVO = urcMgr.getUserInfoDetailByUserName(json);
+		map.put("orgLevel", "2");
+		map.put("operator", operator);
+		json = StringUtility.toJSONString(map);
+		MotanSession.initialSession(json);
+		resultVO = urcMgr.getDepartment(json);
 		System.out.println(StringUtility.toJSONString(resultVO));
 
 	}

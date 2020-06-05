@@ -300,4 +300,18 @@ public class PersonServiceImpl implements IPersonService {
         }
     }
 
+    @Override
+    public ResultVO getDepartment(String orgLevel) {
+        try {
+            if (StringUtil.isEmpty(orgLevel)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            }
+            List<UserInfoVO> infoVOList = userMapper.getDepartmentByOrgLevel(Integer.valueOf(orgLevel));
+
+            return VoHelper.getSuccessResult(infoVOList);
+        } catch (Exception e) {
+            logger.error("未知错误", e);
+            return VoHelper.getErrorResult();
+        }
+    }
 }
