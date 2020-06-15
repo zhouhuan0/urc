@@ -289,9 +289,9 @@ public class PersonServiceImpl implements IPersonService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO fuzzSearchPersonByName4Account(String operator, String userName) {
+    public ResultVO fuzzSearchPersonByName4Account(String operator, String userName, Integer exact) {
         try {
-            List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName);
+            List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName,exact);
 
             return VoHelper.getSuccessResult(infoVOList);
         } catch (Exception e) {

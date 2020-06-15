@@ -421,9 +421,16 @@
         left join urc_person_org upo on p.ding_user_id = upo.ding_user_id
         LEFT JOIN urc_organization uo ON  upo.ding_org_id =uo.ding_org_id
     WHERE
-        u.is_active = 1 and
-	    u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
-	    order by u.user_name
+        u.is_active = 1
+        <choose>
+            <when test="exact == 1">
+               and u.user_name =  #{name}
+            </when>
+            <otherwise>
+                and u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"
+            </otherwise>
+        </choose>
+        order by u.user_name
     </select>
     <select id="getDepartmentByOrgLevel" resultType="com.yks.urc.vo.UserInfoVO">
         select ding_org_id AS dingOrgId,

@@ -85,7 +85,9 @@ public class UrcMgrImpl implements IUrcMgr {
         JSONObject jsonObject = StringUtility.parseString(json);
         String operator = MotanSession.getRequest().getOperator();
         String userName = jsonObject.getString("userName");
-        return personService.fuzzSearchPersonByName4Account(operator, userName);
+        Integer exact = jsonObject.getInteger("exact");
+
+        return personService.fuzzSearchPersonByName4Account(operator, userName,exact);
     }
 
     @Override

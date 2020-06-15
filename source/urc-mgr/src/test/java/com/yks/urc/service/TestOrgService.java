@@ -41,7 +41,7 @@ public class TestOrgService extends BaseServiceTest {
 	@Test
 	public void testgetAllFuncPermit() throws Exception {
 		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
-		map.put("userName", "zen");
+		map.put("userName", "zengzheng");
 		map.put("operator", operator);
 		String json = StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
