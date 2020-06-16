@@ -826,21 +826,7 @@ public class UrcServiceImpl implements IUrcService {
     @Log("获取指定系统的平台编码")
 	@Override
 	public ResultVO getPlatformCode(String jsonStr) {
-		try {
-			JSONObject jsonObject = StringUtility.parseString(jsonStr);
-	    	
-	    	if(null == jsonObject){
-	    		return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
-	    	}
-	    	String entityCode = jsonObject.getString("entityCode");
-	    	if (StringUtility.isNullOrEmpty(entityCode)) {
-	            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
-	        }
-	    	return dataRuleService.getPlatformByConditions(jsonObject);
-		} catch (Exception e) {
-			return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取指定系统的平台编码失败.");
-		}
-		
+        return dataRuleService.getPlatformCode(jsonStr);
 	}
 
 	@Override

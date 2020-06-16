@@ -1852,13 +1852,32 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
 	@Autowired
 	IConfigBp configBp;
+
+    @Override
+    public ResultVO getPlatformCode(String jsonStr) {
+        try {
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+
+            if(null == jsonObject){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "参数异常");
+            }
+            String entityCode = jsonObject.getString("entityCode");
+            if (StringUtility.isNullOrEmpty(entityCode)) {
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "entityCode为空");
+            }
+            return dataRuleService.getPlatformByConditions(jsonObject);
+        } catch (Exception e) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(),"获取指定系统的平台编码失败.");
+        }
+
+    }
+
 	@Override
 	public ResultVO getPlatformByConditions(JSONObject jsonObject) {
-		String operator = jsonObject.getString("operator");
 		String entityCode = jsonObject.getString("entityCode");//实体code【必填】例如oms为E_PlatformShopSite
 		List<PlatformCodeVO4GetPlatformCode> platformCodes = new ArrayList<>();
 		GetPlatformCodeRespVO getPlatformCodeRespVO = new GetPlatformCodeRespVO();
-    	List<String> platformIds = new ArrayList<>();
+
         //根据entityCode找到对应得platforid
         if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
             //通过调oms的接口获取销售账号
@@ -1868,11 +1887,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
         	String platformCodes4E_PlsShopAccount = StringUtility.convertToString(configBp.getString("E_PlsShopAccount_PlatformCode"));
             List<String> platformCodesList = Arrays.asList(platformCodes4E_PlsShopAccount.split(","));
-            
-            for (String platformCode : platformCodesList) {
+            List<PlatformDO> lstPlatInfo = platformMapper.selectPlatforms(platformCodesList);
+
+            for (PlatformDO plat : lstPlatInfo) {
             	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode = new PlatformCodeVO4GetPlatformCode();
-            	platformCodeVO4GetPlatformCode.setPlatformCode(platformCode);
-            	platformCodeVO4GetPlatformCode.setPlatformName(platformCode);
+                platformCodeVO4GetPlatformCode.setPlatformCode(plat.getPlatformId());
+                platformCodeVO4GetPlatformCode.setPlatformName(plat.getPlatformName());
             	platformCodes.add(platformCodeVO4GetPlatformCode);
 			}
             // 刊登--->ebyay 只需要账号, 目前返回这4个平台
