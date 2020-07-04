@@ -431,6 +431,9 @@
             </otherwise>
         </choose>
         order by u.user_name
+        <if test="start != null and pageData != null ">
+            limit #{start},#{pageData}
+        </if>
     </select>
     <select id="getDepartmentByOrgLevel" resultType="com.yks.urc.vo.UserInfoVO">
         select ding_org_id AS dingOrgId,

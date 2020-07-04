@@ -87,7 +87,9 @@ public class UrcMgrImpl implements IUrcMgr {
         String userName = jsonObject.getString("userName");
         Integer exact = jsonObject.getInteger("exact");
 
-        return personService.fuzzSearchPersonByName4Account(operator, userName,exact);
+        Integer pageData = jsonObject.getInteger("pageData");
+        Integer pageNum = jsonObject.getInteger("pageNum");
+        return personService.fuzzSearchPersonByName4Account(operator, userName,exact,pageData,pageNum);
     }
 
     @Override
