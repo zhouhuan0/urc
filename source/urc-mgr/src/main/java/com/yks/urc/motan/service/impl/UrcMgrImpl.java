@@ -100,6 +100,12 @@ public class UrcMgrImpl implements IUrcMgr {
         return personService.getDepartment(orgLevel);
     }
 
+    @Log("获取指定系统的平台编码")
+    @Override
+    public ResultVO getPlatformCode(String jsonStr) {
+        return dataRuleService.getPlatformCode(jsonStr);
+    }
+
     @Override
     @Log("获取多个角色已有的功能权限")
     public ResultVO getRolePermission(String jsonStr) {

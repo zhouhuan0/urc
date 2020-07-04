@@ -1,6 +1,7 @@
 package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.entity.RoleDO;
@@ -21,83 +22,90 @@ import java.util.List;
 
 
 public class ZZService extends BaseServiceTest {
-	
-	private static Logger LOG = LoggerFactory.getLogger(ZZService.class);
-	
-	@Autowired
-	private IOrganizationService orgService;
-	
-	@Autowired
-	private IRoleService roleService;
-	
-	@Autowired
-	private IPersonService personService;
-	
-	@Autowired
-	private IUserService userService;
-	@Autowired
+
+    private static Logger LOG = LoggerFactory.getLogger(ZZService.class);
+
+    @Autowired
+    private IOrganizationService orgService;
+
+    @Autowired
+    private IRoleService roleService;
+
+    @Autowired
+    private IPersonService personService;
+
+    //	@Autowired
+    private IUserService userService;
+    //	@Autowired
     private IUrcService urcService;
-	
-	
-	@Autowired
-	private IPermissionService permissionService;
-	
-	@Autowired
-	private IDataRuleService dataRuleService;
+
+
+    @Autowired
+    private IPermissionService permissionService;
+
+    @Autowired
+    private IDataRuleService dataRuleService;
 
     @Autowired
     private ICsService csService;
 
-	@Autowired
-	private DingApiProxy dingApiProxy;
+    @Autowired
+    private DingApiProxy dingApiProxy;
 
-	@Test
-	public void getPlatformShopByEntityCode() throws Exception{
-		String jsonStr = "{\"entityCode\":\"E_PlsShopAccount\",\"lstSellerId\":[\"cn1525069322gjcn\",\"cn1525069561iluv\",\"123456\"],\"platformCode\":\"速卖通\"}";
-		ResultVO resultVO=urcService.getPlatformCode(jsonStr);
+
+    @Test
+    public void getPlatformShopByEntityCode() throws Exception {
+        String jsonStr = "{\"entityCode\":\"E_PlsShopAccount\",\"lstSellerId\":[\"cn1525069322gjcn\",\"cn1525069561iluv\",\"123456\"],\"platformCode\":\"速卖通\"}";
+
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        ResultVO resultVO = dataRuleService.getPlatformByConditions(jsonObject);
         System.out.println(StringUtility.toJSONString(resultVO));
-	}
-	 
-	
-	@Test
-	public void testUrcLogApi(){
-		String jsonStr = "{\"data\":{\"userName\":\"\"},\"operator\":\"zengzheng\"}";
-		ResultVO resultVO=urcService.getUserName(jsonStr);
+    }
+
+
+    @Test
+    public void testUrcLogApi() {
+        String jsonStr = "{\"data\":{\"userName\":\"\"},\"operator\":\"zengzheng\"}";
+        ResultVO resultVO = urcService.getUserName(jsonStr);
         System.out.println(StringUtility.toJSONString(resultVO));
-        
+
         jsonStr = null;
-        resultVO=urcService.getLogModuleList(jsonStr);
-        
+        resultVO = urcService.getLogModuleList(jsonStr);
+
         System.out.println(StringUtility.toJSONString(resultVO));
-        
+
         jsonStr = "{\"data\":{\"moduleCode\":\"1\",\"operateTimeRange\":[1560096000000, 1563206399000],\"pageData\":20,\"pageNumber\":1,\"userName\":\"chencanwei\"},\"operator\":\"zengzheng\"}";
-        resultVO=urcService.getLogList(jsonStr);
+        resultVO = urcService.getLogList(jsonStr);
         System.out.println(StringUtility.toJSONString(resultVO));
-	}
-	@Autowired
+    }
+
+    @Autowired
     private IRoleMapper roleMapper;
-	@Autowired
+    @Autowired
     IUrcLogBp iUrcLogBp;
-	@Test
-	public void testUrcLog(){
-		List<Long> roleIds = new ArrayList<>();
-		roleIds.add(1539160322094000002L);
-		roleIds.add(1535359122340000047L);
-		List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
+
+    @Test
+    public void testUrcLog() {
+        List<Long> roleIds = new ArrayList<>();
+        roleIds.add(1539160322094000002L);
+        roleIds.add(1535359122340000047L);
+        List<RoleDO> roleDOs = roleMapper.getRoleByRoleIds(roleIds);
         List<String> roleNames = new ArrayList<>();
         roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
-      //保存操作日志
-        UrcLog urcLog = new UrcLog("zz", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s 分配给：(用户)%s", roleIds,roleNames), JSON.toJSONString(roleIds));
+        //保存操作日志
+        UrcLog urcLog = new UrcLog("zz", ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "分配用户", String.format("%s 分配给：(用户)%s", roleIds, roleNames), JSON.toJSONString(roleIds));
         iUrcLogBp.insertUrcLog(urcLog);
-	}
-	 @Autowired
-	    private IUrcService service;
-	@Test
-	public void testgetAllFuncPermit(){
-		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
-		
-		System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
-	}
-    
-    
+    }
+
+    //	 @Autowired
+    private IUrcService service;
+
+    @Test
+    public void testgetAllFuncPermit() {
+        String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
+
+        System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
+    }
+
+
 }

@@ -37,6 +37,7 @@ import com.yks.urc.permitStat.bp.api.IPermitInverseQueryBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IOrganizationService;
 import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
@@ -56,7 +57,7 @@ import java.util.*;
 
 //@Component
 public class PanYunUrcServiceTest2 extends BaseServiceTest {
-    @Autowired
+//    @Autowired
     private IUrcService service;
     @Autowired
     private IUserValidateBp userValidateBp;
@@ -521,5 +522,15 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Autowired
+    private IDataRuleService dataRuleService;
+
+    @Test
+    public void getPlatformShopByEntityCode() throws Exception {
+        String jsonStr = "{\"entityCode\":\"E_PlsShopAccount\",\"lstSellerId\":[\"cn1525069322gjcn\",\"cn1525069561iluv\",\"123456\"],\"platformCode\":\"速卖通\"}";
+        ResultVO resultVO = dataRuleService.getPlatformCode(jsonStr);
+        System.out.println(StringUtility.toJSONString(resultVO));
     }
 }

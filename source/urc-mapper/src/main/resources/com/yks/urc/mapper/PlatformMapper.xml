@@ -73,6 +73,7 @@
 	urc_platform p,urc_shop_site s
     WHERE
     p.platform_id = s.platform_id AND s.shop_id != ''
+    order by p.platform_id
   </select>
 
   <!--获取指定平台数据-->

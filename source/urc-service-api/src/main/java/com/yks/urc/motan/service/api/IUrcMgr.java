@@ -53,4 +53,14 @@ public interface IUrcMgr {
     ResultVO getRolePermission(String jsonStr);
 
     ResultVO getDepartment(String json);
+
+
+    /**
+     * @Description:  获取指定系统的平台编码
+     * @author: zengzheng
+     * @param jsonStr
+     * @return
+     * @version: 2019年5月20日 上午11:29:03
+     */
+    ResultVO getPlatformCode(String jsonStr);
 }
