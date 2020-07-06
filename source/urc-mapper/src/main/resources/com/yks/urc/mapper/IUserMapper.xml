@@ -417,11 +417,11 @@
 	uo.org_name AS orgName,uo.full_name_path AS parentOrgName
     FROM
         urc_user u
-        LEFT JOIN urc_person p ON u.ding_user_id = p.ding_user_id
+        JOIN urc_person p ON u.ding_user_id = p.ding_user_id
         left join urc_person_org upo on p.ding_user_id = upo.ding_user_id
         LEFT JOIN urc_organization uo ON  upo.ding_org_id =uo.ding_org_id
     WHERE
-        u.is_active = 1
+        u.is_active = 1 and p.person_name != null and p.person_name != ""
         <choose>
             <when test="exact == 1">
                and u.user_name =  #{name} or p.person_name = #{name}

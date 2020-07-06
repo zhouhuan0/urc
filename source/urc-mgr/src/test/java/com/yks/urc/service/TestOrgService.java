@@ -41,11 +41,11 @@ public class TestOrgService extends BaseServiceTest {
 	@Test
 	public void testgetAllFuncPermit() throws Exception {
 		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
-		map.put("userName", "曾峥");
+		map.put("userName", "");
 		map.put("operator", operator);
-		map.put("exact",1);
-		/*map.put("pageData",10);
-		map.put("pageNum",2);*/
+		//map.put("exact",1);
+		map.put("pageData",10);
+		map.put("pageNum",1);
 		String json = StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 		resultVO = urcMgr.getUserInfoDetailByUserName(json);
