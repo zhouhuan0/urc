@@ -424,7 +424,7 @@
         u.is_active = 1
         <choose>
             <when test="exact == 1">
-               and u.user_name =  #{name}
+               and u.user_name =  #{name} or p.person_name = #{name}
             </when>
             <otherwise>
                 and u.user_name LIKE "%"#{name}"%"  OR p.person_name LIKE "%"#{name}"%" OR p.person_name_collage LIKE "%"#{name}"%"

@@ -296,7 +296,6 @@ public class PersonServiceImpl implements IPersonService {
                 start = (pageNum - 1)* pageData;
             }
             List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName,exact,start,pageData);
-
             return VoHelper.getSuccessResult(infoVOList);
         } catch (Exception e) {
             logger.error("未知错误", e);
