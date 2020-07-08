@@ -173,7 +173,8 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getAllFuncPermit_Test() {
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
+        System.out.println(serializeBp.obj2Json(permitStatBp.updateUserPermitCache("xujianping")));
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("xujianping", null)));
     }
 
     @Test

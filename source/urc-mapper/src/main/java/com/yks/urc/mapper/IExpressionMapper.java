@@ -21,4 +21,5 @@ public interface IExpressionMapper {
     List<ExpressionDO> listExpressionDOsBySysKey(@Param("dataRuleSysId") long dataRuleSysId );
 
 
+    int updateOperValuesByExpressionId(ExpressionDO expUpdate);
 }

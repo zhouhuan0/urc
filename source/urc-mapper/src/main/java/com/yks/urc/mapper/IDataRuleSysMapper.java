@@ -95,7 +95,7 @@ public interface IDataRuleSysMapper {
     /**
      * Description: 获取dataRuleId所拥有的系统
      * @param :
-     * @return: 
+     * @return:
      * @auther: lvcr
      * @date: 2018/7/4 12:45
      * @see
@@ -117,4 +117,8 @@ public interface IDataRuleSysMapper {
     List<DataRuleSysDO> getDataRuleSysEqDt(@Param("sysKey") String sysKey,@Param("createTime") Date createTime);
 
     int delRuleSysDatasByUserNameAndSyskey(@Param("lstUserName") List<String> lstUserName, @Param("lstSysKey2Del") List<String> lstSysKey2Del);
+
+    DataRuleSysDO getDataRuleSysBy(@Param("userName") String userName,@Param("sysKey") String sysKey);
+
+    int updateModifiedTime(@Param("dataRuleSysId") Long dataRuleSysId);
 }

@@ -3,20 +3,29 @@ package com.yks.urc.service;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.datarule.bp.api.IDataRuleCpBp;
+import com.yks.urc.entity.DataRuleSysDO;
+import com.yks.urc.entity.ExpressionDO;
 import com.yks.urc.entity.RoleDO;
+import com.yks.urc.entity.ShopSiteDO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IDataRuleMapper;
+import com.yks.urc.mapper.IDataRuleSysMapper;
+import com.yks.urc.mapper.IExpressionMapper;
+import com.yks.urc.mapper.IUserMapper;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.vo.*;
 import org.junit.Assert;
 import org.junit.Test;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class DataRuleServiceTest extends BaseServiceTest {
 
@@ -287,4 +296,43 @@ public class DataRuleServiceTest extends BaseServiceTest {
                         "sss", "数据权限模11板6", "sss")
         ));
     }
+
+    @Autowired
+    private IUserMapper userMapper;
+
+    @Autowired
+    private ISeqBp seqBp;
+
+    @Autowired
+    private IDataRuleCpBp dataRuleCpBp;
+
+    @Test
+    public void xxx() throws InterruptedException, IOException {
+        String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("userNames.json"));
+
+        List<String> lstUserName = serializeBp.json2ObjNew(strJson1, new TypeReference<List<String>>() {
+        });
+//        lstUserName = new ArrayList<>();
+//        lstUserName.add("panyun");// userMapper.getAllUser();
+        for (int i = 0; i < lstUserName.size(); i++) {
+            String userName = lstUserName.get(i);
+            dataRuleCpBp.cpOms2Pls(userName);
+            lstUserName.remove(i);
+            i--;
+            System.out.println(i + " " + serializeBp.obj2Json(lstUserName));
+            System.out.println(userName + " FINISHED");
+        }
+        while (true) {
+            Thread.sleep(1000);
+        }
+    }
+
+    @Autowired
+    private IExpressionMapper expressionMapper;
+
+    @Autowired
+    private IDataRuleSysMapper dataRuleSysMapper;
+
+    @Autowired
+    private IDataRuleMapper dataRuleMapper;
 }

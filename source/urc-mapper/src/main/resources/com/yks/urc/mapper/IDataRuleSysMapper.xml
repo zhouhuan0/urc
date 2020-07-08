@@ -57,9 +57,12 @@
         <foreach collection="list" index="index" item="item" separator=",">
             ( #{item.dataRuleSysId,jdbcType=BIGINT},#{item.dataRuleId,jdbcType=BIGINT}, #{item.sysKey,jdbcType=CHAR},
             now(3), #{item.createBy,jdbcType=VARCHAR},
-            #{item.modifiedTime,jdbcType=TIMESTAMP},#{item.modifiedBy,jdbcType=VARCHAR})
+            now(3),#{item.modifiedBy,jdbcType=VARCHAR})
         </foreach>
     </insert>
+    <update id="updateModifiedTime">
+        update urc_data_rule_sys set create_time=now(3),modified_time=now(3) where data_rule_sys_id=#{dataRuleSysId}
+    </update>
 
     <!--根据dataRuleId 获取数据权限Sys 包含行权限、列权限 -->
     <select id="getDataRuleSyAndOpersById" parameterType="java.lang.Long" resultMap="DataRuleSyAndOperMap">
@@ -234,5 +237,20 @@
         select sys_key from urc_data_rule ud left join urc_data_rule_sys us
          on ud.data_rule_id = us.data_rule_id
          where ud.user_name= #{userName,jdbcType=VARCHAR}
+    </select>
+
+    <select id="getDataRuleSysBy" resultMap="BaseResultMap">
+        SELECT
+        udrs.data_rule_id,
+        udrs.data_rule_sys_id,
+        udrs.create_time,
+        udrs.sys_key,
+        udr.user_name
+        from urc_data_rule_sys udrs
+        LEFT JOIN urc_data_rule udr  ON udrs.data_rule_id = udr.data_rule_id
+        where udrs.sys_key = #{sysKey}
+        AND  udr.user_name =#{userName}
+        order by udrs.create_time desc
+        limit 1
     </select>
 </mapper>

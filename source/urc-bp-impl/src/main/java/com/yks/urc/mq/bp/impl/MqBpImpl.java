@@ -15,7 +15,7 @@ import java.util.List;
 
 @Component
 public class MqBpImpl implements IMqBp {
-   
+
 
     private String getDataRuleTopic(String sysKey) {
         return String.format("URC_USER_DATARULE_%s", sysKey);
@@ -36,12 +36,16 @@ public class MqBpImpl implements IMqBp {
             Callback arg1 = new Callback() {
                 @Override
                 public void onCompletion(RecordMetadata arg0, Exception arg1) {
-
+                    logger.info(String.format("send2Mq %s %s", arg0.toString(), value));
+                    if (arg1 != null) {
+                        logger.error(String.format("send2Mq error!"), arg1);
+                    }
                 }
             };
             KafkaProducerSingleton.getInstance(null).send(arg0, arg1);
         }
     }
+
     private final Logger logger = Logger.getLogger(this.getClass());
 
     @Override
@@ -61,12 +65,14 @@ public class MqBpImpl implements IMqBp {
                 String topic = getDataRuleTopic(sysKey);
                 String value = StringUtility.toJSONString_NoException(drSys);
                 logger.info(String.format("send2Mq:%s %s", topic, value));
-				ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
+                ProducerRecord<String, String> arg0 = new ProducerRecord<String, String>(topic, value);
                 Callback arg1 = new Callback() {
                     @Override
                     public void onCompletion(RecordMetadata arg0, Exception arg1) {
-                    	logger.info(String.format("send2Mq %s", arg0));
-                    	logger.error(String.format("send2Mq error!"),arg1);  
+                        logger.info(String.format("send2Mq %s", arg0));
+                        if (arg1 != null) {
+                            logger.error(String.format("send2Mq error!"), arg1);
+                        }
                     }
                 };
                 KafkaProducerSingleton.getInstance(null).send(arg0, arg1);

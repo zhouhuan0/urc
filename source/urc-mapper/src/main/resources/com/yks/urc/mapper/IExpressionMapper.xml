@@ -169,4 +169,11 @@
       modified_by = #{modifiedBy,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+    <update id="updateOperValuesByExpressionId">
+        update urc_expression set oper_values = #{operValues},
+        modified_time = now(3),
+        modified_by = #{modifiedBy,jdbcType=VARCHAR}
+        where expression_id = #{expressionId}
+    </update>
 </mapper>

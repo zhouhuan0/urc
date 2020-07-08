@@ -25,4 +25,6 @@ public class OmsPlatformVO implements Serializable {
      * 账号
      */
     public List<OmsShopVO> lstShop;
+
+    public Boolean isAll;
 }

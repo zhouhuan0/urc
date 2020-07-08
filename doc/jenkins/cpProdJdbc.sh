@@ -4,6 +4,7 @@
 
 cd ../../
 cp ./doc/config文件/urcenter-prod/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-service-provider/src/main/resources/
+cp ./doc/config文件/urcenter-prod/urcenter/source/urc-service-provider/src/main/resources/kafka* ./source/urc-service-provider/src/main/resources/
 cp ./doc/config文件/urcenter-prod/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-mgr/src/main/resources/
 
 cd ./source
