@@ -74,6 +74,7 @@ import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.SysAuthWayVO;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.util.StopWatch;
 
 /**
  * 〈一句话功能简述〉
@@ -147,7 +148,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired
     private ICacheBp cacheBp;
-    
+
     @Autowired
     IUrcLogBp iUrcLogBp;
 
@@ -534,7 +535,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVOS.add(dataRuleVO);
         }
         sendToMq(dataRuleVOS);
-        
+
         DataRuleTemplDO dataRuleTemplDO= dataRuleTemplMapper.selectByTemplId(templId,null);
       //保存操作日志
         UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "快速分配用户",String.format("%s -> %s", dataRuleTemplDO.getTemplName(),lstUserName.toString()), jsonStr);
@@ -754,6 +755,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVOS.add(dataRuleVO);
         }*/
         mqBp.send2Mq(dataRuleVOS);
+
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                mqBp.send2Mq(dataRuleVOS);
+//            }
+//        }).start();
     }
 
     /**
@@ -1029,7 +1037,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             throw new URCBizException("parameter lstTemplIdStr is null", ErrorCode.E_000002);
         }
         List<Long> lstTemplId = StringUtility.jsonToList(lstTemplIdStr, Long.class);
-        
+
         List<String> lstTempName = new ArrayList<>();
         if(!CollectionUtils.isEmpty(lstTemplId)){
         	List<DataRuleTemplDO> dataRuleTemplDOs= dataRuleTemplMapper.selectByTemplIds(lstTemplId);
@@ -1049,11 +1057,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleTemplMapper.delTemplByIdsAndCreatBy(lstTemplId, operator);
             dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(lstTemplId, operator);
         }
-        
+
       //保存操作日志
         UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), "删除数据权限模板", lstTempName.toString(), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
-        
+
         return VoHelper.getSuccessResult();
     }
 
@@ -1070,6 +1078,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     @Override
     @Transactional
     public ResultVO addOrUpdateDataRule(String jsonStr) {
+        StopWatch sw=new StopWatch("addOrUpdateDataRule");
          /*1、将json字符串转为Json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、获取参数*/
@@ -1085,18 +1094,19 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //DataRuleSysVO
 
         List<DataRuleSysVO> dataRuleSys =StringUtility.jsonToList(dataJson.getString("lstDataRuleSys"),DataRuleSysVO.class);
-        
+
         //删除数据结构异常记录
         if(checkDataRuleSys(dataRuleSys)) {
             throw new URCBizException("请求参数不合法，请排查原因！", ErrorCode.E_000003);
         }
-        
+
         if (CollectionUtils.isEmpty(dataRuleSys)) {
             throw new URCBizException("parameter lstDataRule is null", ErrorCode.E_000002);
         }
-        
+
         logger.info(String.format("dataRuleSys =%s",StringUtility.toJSONString(dataRuleSys)));
 
+        sw.start("A");
         //分批量操作
         List<DataRuleDO> dataBatchRuleIds = new ArrayList<DataRuleDO>();
         if (lstUserName.size() > 1) {
@@ -1119,7 +1129,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             }
         } else {
-        	
+
             List<SysAuthWayVO> sysAuthWayVOList = authWayBp.getMyAuthWay(operator);
 
             DataRuleDO dataRuleDO = new DataRuleDO();
@@ -1144,7 +1154,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 dataRuleSysMapper.delRuleSysDatasByIdsAndCreatBy(dataRuleIds, null);
             }*/
         }
+        sw.stop();
 
+        sw.start("B");
         List<DataRuleDO> dataRuleDOSCache = new ArrayList<>();
          /*数据权限Sys列表*/
         List<DataRuleSysDO> dataRuleSysCache = new ArrayList<>();
@@ -1154,7 +1166,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<ExpressionDO> expressionCache = new ArrayList<>();
         //组装下发数据
         List<DataRuleVO> dataRuleVOS =new ArrayList<>();
-        
+
         /*2、新增用户-操作权限关系数据 dataRule*/
         for (int i = 0; i < lstUserName.size(); i++) {
             // 组装 dataRuleVO
@@ -1162,7 +1174,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             dataRuleVO.t = String.valueOf(System.currentTimeMillis());
             dataRuleVO.lstDataRuleSys =dataRuleSys;
             dataRuleVO.userName =lstUserName.get(i);
-            
+
             // 组装入库数据
             DataRuleDO dataRuleDO = new DataRuleDO();
             dataRuleDO.setCreateBy(operator);
@@ -1184,29 +1196,42 @@ public class DataRuleServiceImpl implements IDataRuleService {
             // 组装下发消息
             dataRuleVOS.add(dataRuleVO);
         }
+        sw.stop();
+        sw.start("C.1");
         /*批量新增用户-数据权限关系*/
         if (dataRuleDOSCache != null && !dataRuleDOSCache.isEmpty()) {
             dataRuleMapper.insertBatch(dataRuleDOSCache);
         }
+        sw.stop();
+        sw.start("C.2");
          /*批量新增数据权限Sys*/
         if (dataRuleSysCache != null && !dataRuleSysCache.isEmpty()) {
             dataRuleSysMapper.insertBatch(dataRuleSysCache);
         }
+        sw.stop();
+        sw.start("C.3");
              /*批量新增行权限数据*/
         if (expressionCache != null && !expressionCache.isEmpty()) {
             expressionMapper.insertBatch(expressionCache);
         }
+        sw.stop();
+        sw.start("C.4");
             /*批量新增列权限数据*/
         if (dataRuleColCache != null && !dataRuleColCache.isEmpty()) {
             dataRuleColMapper.insertBatch(dataRuleColCache);
         }
+        sw.stop();
+        sw.start("Send MQ");
         /*发送MQ*/
         sendToMq(dataRuleVOS);
-        
+        sw.stop();
+
+        sw.start("LOG");
         //保存操作日志
         UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.USER_MANAGERMENT.getStatus(), lstUserName.size() > 1 ?"批量数据授权":"数据授权", lstUserName.toString(), jsonStr);
         iUrcLogBp.insertUrcLog(urcLog);
-        
+        sw.stop();
+        logger.info(sw.prettyPrint());
         return VoHelper.getSuccessResult();
     }
 
@@ -1772,7 +1797,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     	String platformCode = jsonObject.getString("platformCode");//平台2字code【必填】 跟entityCode对应
     	String keys = jsonObject.getString("keys");//关键字,不传默认查所有账号，左匹配搜索 for searchSellerId
     	List<Object> lstSellerId = jsonObject.getJSONArray("lstSellerId");//要检测的销售账号【必填】for checkSellerId
-    	
+
     	List<String> platformIds = new ArrayList<>();
         //根据entityCode找到对应得platforid
         if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
@@ -1930,7 +1955,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         	platformCodeVO4GetPlatformCode7.setPlatformCode("Jumia");
         	platformCodeVO4GetPlatformCode7.setPlatformName("Jumia");
         	platformCodes.add(platformCodeVO4GetPlatformCode7);*/
-        	
+
         	getPlatformCodeRespVO.setList(platformCodes);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
@@ -1948,7 +1973,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
             return VoHelper.getSuccessResult((Object) "待配置!......");
         }
 	}
-	
+
 	public static void main(String[] args) {
         Map<String,String> trakCodeInfo4PushMdMap = new HashMap<>();
         trakCodeInfo4PushMdMap.put("ordersCodeUrl","www.baidu.com");

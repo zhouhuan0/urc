@@ -124,4 +124,10 @@ public class UrcMgrImpl implements IUrcMgr {
 
         return roleService.getRolePermission(operator, lstRoleId);
     }
+
+    @Override
+    @Log("创建或更新多个用户的数据权限")
+    public ResultVO addOrUpdateDataRule(String jsonStr) {
+        return dataRuleService.addOrUpdateDataRule(jsonStr);
+    }
 }

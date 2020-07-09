@@ -218,99 +218,9 @@ public class DataRuleServiceTest extends BaseServiceTest {
 
     @Test
     public void addOrUpdateDataRule() throws IOException {
-        /*列权限1*/
-        List<DataRuleColVO> dataRuleColVOS = new ArrayList<>();
-        DataRuleColVO calJsonObj1 = new DataRuleColVO();
-        calJsonObj1.setEntityCode("entityProduct");
-        JSONArray colArray1 = new JSONArray();
-        JSONObject colJson1 = new JSONObject();
-        colJson1.put("fieldCode", "name");
-        colJson1.put("showType", 0);
-        colArray1.add(colJson1);
-        JSONObject colJson2 = new JSONObject();
-        colJson2.put("fieldCode", "price");
-        colJson2.put("showType", 0);
-        colArray1.add(colJson2);
-        calJsonObj1.setColJson(colArray1.toString());
-        dataRuleColVOS.add(calJsonObj1);
-
-        /*列权限2*/
-        DataRuleColVO calJsonObj2 = new DataRuleColVO();
-        calJsonObj2.setEntityCode("entitySupplier");
-        JSONArray colArray2 = new JSONArray();
-        JSONObject colJson21 = new JSONObject();
-        colJson21.put("fieldCode", "addr");
-        colJson21.put("showType", 0);
-        colArray2.add(colJson21);
-        JSONObject colJson22 = new JSONObject();
-        colJson22.put("fieldCode", "city");
-        colJson22.put("showType", 0);
-        colArray2.add(colJson22);
-        calJsonObj2.setColJson(colArray2.toJSONString());
-        dataRuleColVOS.add(calJsonObj2);
-
-        /*行权限*/
-        ExpressionVO expressionVO = new ExpressionVO();
-        expressionVO.setIsAnd(1);
-        List<ExpressionVO> subWhereClause = new ArrayList<>();
-        ExpressionVO subWhereClause1 = new ExpressionVO();
-        subWhereClause1.setFieldCode("fieldPlatform");
-        subWhereClause1.setEntityCode("platform");
-        subWhereClause1.setOper("in");
-        subWhereClause1.setOperValues("[\"eBay\",\"WISH\"]");
-        subWhereClause.add(subWhereClause1);
-
-        ExpressionVO subWhereClause2 = new ExpressionVO();
-        subWhereClause2.setFieldCode("fieldSite");
-        subWhereClause2.setOper("in");
-        subWhereClause2.setOperValues("[\"美国\",\"英国\"]");
-        subWhereClause.add(subWhereClause2);
-
-        ExpressionVO subWhereClause3 = new ExpressionVO();
-        subWhereClause3.setFieldCode("fieldProductSku");
-        subWhereClause3.setOper("in");
-        subWhereClause3.setOperValues("[\"SKU001\"]");
-        subWhereClause.add(subWhereClause3);
-        expressionVO.setSubWhereClause(subWhereClause);
-
-        DataRuleSysVO dataRuleSysVO = new DataRuleSysVO();
-        dataRuleSysVO.setSysKey("002");
-        dataRuleSysVO.setRow(expressionVO);
-        dataRuleSysVO.setCol(dataRuleColVOS);
-        List<DataRuleSysVO> dataRuleSysVOS1 = new ArrayList<>();
-        dataRuleSysVOS1.add(dataRuleSysVO);
-
-
-        List<DataRuleVO> lstDataRule = new ArrayList<>();
-
-
-        DataRuleVO dataRuleVO = new DataRuleVO();
-        dataRuleVO.setUserName("songguanye");
-        dataRuleVO.setLstDataRuleSys(dataRuleSysVOS1);
-        lstDataRule.add(dataRuleVO);
-
-
-        DataRuleVO dataRuleVO1 = new DataRuleVO();
-        dataRuleVO1.setUserName("tangjianbo");
-        dataRuleVO1.setLstDataRuleSys(dataRuleSysVOS1);
-        lstDataRule.add(dataRuleVO1);
-
-
-        JSONObject json = new JSONObject();
-
-        json.put("operator", "panyun");
-        json.put("lstDataRule", lstDataRule);
-
         String strData = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("dataRuleBody.json"));
-        List<String> lstData = StringUtility.parseObject(strData, new ArrayList<String>().getClass());
         ResultVO resultVO = dataRuleService.addOrUpdateDataRule(strData);
     }
-
-    /*@Test
-    public void assignDataRuleTempl2User(){
-        JSONObject jsonObject = new JSONObject();
-        dataRuleService.assignDataRuleTempl2User(jsonObject.toString());
-    }*/
 
     @Autowired
     private ISerializeBp serializeBp;
@@ -321,7 +231,6 @@ public class DataRuleServiceTest extends BaseServiceTest {
         ResultVO<List<DataRuleSysVO>> rslt = dataRuleService.getDataRuleGtDt("001", dt, 100);
         System.out.println(serializeBp.obj2Json(rslt));
     }
-
 
     @Test
     public void deleteDataRuleTempl() {

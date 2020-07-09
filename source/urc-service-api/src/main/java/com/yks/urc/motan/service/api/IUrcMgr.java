@@ -63,4 +63,6 @@ public interface IUrcMgr {
      * @version: 2019年5月20日 上午11:29:03
      */
     ResultVO getPlatformCode(String jsonStr);
+
+    ResultVO addOrUpdateDataRule(String jsonStr);
 }
