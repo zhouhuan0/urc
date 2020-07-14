@@ -807,6 +807,11 @@ public class RoleServiceImpl implements IRoleService {
         if (CollectionUtils.isEmpty(lstRole)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
         }
+        // 过滤 selectedContext 为空的 role
+        lstRole = lstRole.stream().filter(r -> !CollectionUtils.isEmpty(r.getSelectedContext())).collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(lstRole)) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色的 selectedContext 字段为空");
+        }
         //校验传过来的书架上是否是合法的
         for (RoleVO jumpRoleVO : lstRole) {
             if (StringUtils.isBlank(jumpRoleVO.roleId)) {
