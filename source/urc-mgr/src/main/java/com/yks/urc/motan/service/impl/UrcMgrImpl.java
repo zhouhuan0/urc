@@ -6,6 +6,7 @@ import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
+import com.yks.urc.log.LogLevel;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.sellerid.bp.api.ISellerIdBp;
@@ -129,5 +130,12 @@ public class UrcMgrImpl implements IUrcMgr {
     @Log("创建或更新多个用户的数据权限")
     public ResultVO addOrUpdateDataRule(String jsonStr) {
         return dataRuleService.addOrUpdateDataRule(jsonStr);
+    }
+
+
+    @Override
+    @Log(value = "更新多个角色的功能权限", level = LogLevel.INFO)
+    public ResultVO updateRolePermission(String jsonStr) {
+        return roleService.updateRolePermission(jsonStr);
     }
 }

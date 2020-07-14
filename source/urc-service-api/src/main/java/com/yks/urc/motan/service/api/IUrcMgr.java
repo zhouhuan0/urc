@@ -65,4 +65,6 @@ public interface IUrcMgr {
     ResultVO getPlatformCode(String jsonStr);
 
     ResultVO addOrUpdateDataRule(String jsonStr);
+
+    ResultVO updateRolePermission(String jsonStr);
 }
