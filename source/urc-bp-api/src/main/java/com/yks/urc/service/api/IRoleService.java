@@ -28,7 +28,8 @@ public interface IRoleService {
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/20 10:39
      */
-    ResultVO updateRolePermission(String operator,List<RoleVO> lstRole);
+    ResultVO updateRolePermission(String operator, List<RoleVO> lstRole, String json);
+    ResultVO updateRolePermission(String json);
 
 
     ResultVO getRoleUser(String operator, List<String> lstRoleId);

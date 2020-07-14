@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IRoleOperLogMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.RoleOperLogVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="logger" jdbcType="VARCHAR" property="logger" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.RoleOperLogVOWithBLOBs">
+    <result column="req_body" jdbcType="LONGVARCHAR" property="reqBody" />
+    <result column="resp_body" jdbcType="LONGVARCHAR" property="respBody" />
+    <result column="stack_trace" jdbcType="LONGVARCHAR" property="stackTrace" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, role_id, logger, created_time, creater
+  </sql>
+  <sql id="Blob_Column_List">
+    req_body, resp_body, stack_trace
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from role_oper_log
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from role_oper_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.RoleOperLogVOWithBLOBs">
+    insert into role_oper_log (id, role_id, logger, 
+      created_time, creater, req_body, 
+      resp_body, stack_trace)
+    values (#{id,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{logger,jdbcType=VARCHAR}, 
+      #{createdTime,jdbcType=TIMESTAMP}, #{creater,jdbcType=VARCHAR}, #{reqBody,jdbcType=LONGVARCHAR}, 
+      #{respBody,jdbcType=LONGVARCHAR}, #{stackTrace,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.RoleOperLogVOWithBLOBs">
+    insert into role_oper_log
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="logger != null">
+        logger,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="creater != null">
+        creater,
+      </if>
+      <if test="reqBody != null">
+        req_body,
+      </if>
+      <if test="respBody != null">
+        resp_body,
+      </if>
+      <if test="stackTrace != null">
+        stack_trace,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="roleId != null">
+        #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="logger != null">
+        #{logger,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null">
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="reqBody != null">
+        #{reqBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="respBody != null">
+        #{respBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stackTrace != null">
+        #{stackTrace,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="insertBatch">
+    insert into role_oper_log (role_id, logger,created_time, creater, req_body,resp_body, stack_trace)
+    values
+    <foreach collection="lst" index="index" item="item" separator=",">
+      (#{item.roleId,jdbcType=BIGINT}, #{item.logger,jdbcType=VARCHAR},
+      now(3), #{item.creater,jdbcType=VARCHAR}, #{item.reqBody,jdbcType=LONGVARCHAR},#{item.respBody,jdbcType=LONGVARCHAR}, #{item.stackTrace,jdbcType=LONGVARCHAR})
+    </foreach>
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.RoleOperLogVOWithBLOBs">
+    update role_oper_log
+    <set>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=BIGINT},
+      </if>
+      <if test="logger != null">
+        logger = #{logger,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creater != null">
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="reqBody != null">
+        req_body = #{reqBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="respBody != null">
+        resp_body = #{respBody,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="stackTrace != null">
+        stack_trace = #{stackTrace,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.RoleOperLogVOWithBLOBs">
+    update role_oper_log
+    set role_id = #{roleId,jdbcType=BIGINT},
+      logger = #{logger,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      creater = #{creater,jdbcType=VARCHAR},
+      req_body = #{reqBody,jdbcType=LONGVARCHAR},
+      resp_body = #{respBody,jdbcType=LONGVARCHAR},
+      stack_trace = #{stackTrace,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.RoleOperLogVO">
+    update role_oper_log
+    set role_id = #{roleId,jdbcType=BIGINT},
+      logger = #{logger,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      creater = #{creater,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -5,12 +5,17 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.enums.RoleLogEnum;
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.motan.MotanSession;
+import com.yks.urc.role.bp.api.IRoleLogBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -798,106 +803,127 @@ public class RoleServiceImpl implements IRoleService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole) {
-        //校验传过来的书架上是否是合法的
-        if (lstRole != null && lstRole.size() > 0) {
-            for (RoleVO jumpRoleVO : lstRole) {
-                List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
-                if (jumpPermissionVOS != null) {
-                    for (PermissionVO jumpPermissionVO : jumpPermissionVOS) {
-                        //若是没有sys_key , 则返回给前端
-                        if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey())) {
-                            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "sys_key不能为空");
-                        }
-                        //通过roleId 查找 角色是否存在
-                        RoleDO roleDO = roleMapper.getRoleByRoleId(jumpRoleVO.roleId);
-                        if (StringUtility.isNullOrEmpty(jumpRoleVO.roleId) || roleDO == null) {
-                            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "roleId不存在");
-                        }
-                        //判断传过来的json数据是否能转成SystemRootVO
-                        if (StringUtility.parseObject(jumpPermissionVO.getSysContext(), SystemRootVO.class) == null) {
-                            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "数据结构非法");
-                        }
-                    }
-                }
-            }
-            //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
-
-            //判断用户是否是普通用户
-            if (!roleMapper.isAdminOrSuperAdmin(operator)) {
-                return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "您不是管理员,没有权限更新数据");
-            }
-            //如果是超级管理员,则更新所有,否则只能更新自己的创建的
-            List<Long> roleIds = new ArrayList<>();
-            for (RoleVO roleVO : lstRole) {
-                //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的owner不是他自己的话,则无权限更新此数据,跳过处理
-                if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, Long.valueOf(roleVO.roleId))) {
-                    continue;
-                }
-                //2. 更新角色的功能权限
-                List<PermissionVO> permissionVOS = roleVO.selectedContext;
-                if (permissionVOS == null || permissionVOS.size() <= 0 && lstRole.size() > 1) {
-                    throw new URCBizException("批量分配角色权限不允许删除" + roleVO.getRoleId(), ErrorCode.E_000003);
-                }
-                roleIds.add(Long.valueOf(roleVO.roleId));
-                List<RolePermissionDO> permissionDOS = new ArrayList<>();
-                List<String> roleSysKey = new ArrayList<String>();
-                if (permissionVOS != null) {
-                    for (PermissionVO permissionVO : permissionVOS) {
-                        RolePermissionDO rolePermissionDO = new RolePermissionDO();
-                        //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
-                        rolePermissionDO.setRoleId(Long.valueOf(roleVO.roleId));
-                        roleSysKey.add(permissionVO.getSysKey());
-                        rolePermissionDO.setSysKey(permissionVO.getSysKey());
-                        rolePermissionDO.setModifiedBy(operator);
-                        rolePermissionDO.setCreateBy(operator);
-                        rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
-                        rolePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
-                        rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
-                        permissionDOS.add(rolePermissionDO);
-                    }
-                }
-                if (lstRole.size() > 1) {
-                    rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
-                } else {
-                    rolePermissionMapper.deleteByRoleId(Long.parseLong(roleVO.roleId));
-                }
-                // rolePermissionMapper.deleteBatch(roleIds);
-                logger.info("清理相关的功能权限完成");
-                if (permissionDOS != null && permissionDOS.size() > 0) {
-                    rolePermissionMapper.insertBatch(permissionDOS);
-                    logger.info("更新相关功能权限完成");
-                }
-            }
-            Map dataMap = new HashMap();
-            dataMap.put("roleIds", roleIds);
-            /*3、获取roleIds角色对应的用户名*/
-            logger.info(String.format("获取的角色id为%s", roleIds));
-            if (roleIds.size() == 0) {
-                logger.info("roleID 的集合为空");
-                return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有任何数据可以更新");
-            }
-            List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
-            logger.info(String.format("获取的用户名为%s", userNames));
-        /*4、更新用户操作权限冗余表和缓存*/
-            updateAffectedUserPermitCache.saveAffectedUser(userNames);
-//            permitStatBp.updateUserPermitCache(userNames);
-            
-            if(!CollectionUtils.isEmpty(roleIds)){
-            	List<RoleDO> roleDOs= roleMapper.getRoleByRoleIds(roleIds);
-                List<String> roleNames = new ArrayList<>();
-                roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
-              //保存操作日志
-                UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNames.size() > 1?"批量分配权限":"分配权限", String.format("%s",roleNames), JSON.toJSONString(lstRole));
-                iUrcLogBp.insertUrcLog(urcLog);
-            }
-          
-            return VoHelper.getSuccessResult();
-        } else {
+    public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole,String json) {
+        if (CollectionUtils.isEmpty(lstRole)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
         }
+        //校验传过来的书架上是否是合法的
+        for (RoleVO jumpRoleVO : lstRole) {
+            if (StringUtils.isBlank(jumpRoleVO.roleId)) {
+                return VoHelper.getFail("roleId参数不能为空");
+            }
+            //通过roleId 查找 角色是否存在
+            RoleDO roleDO = roleMapper.getRoleByRoleId(jumpRoleVO.roleId);
+            if (roleDO == null) {
+                return VoHelper.getFail(String.format("%s %s不存在", jumpRoleVO.getRoleId(), jumpRoleVO.getRoleName()));
+            }
+            List<PermissionVO> jumpPermissionVOS = jumpRoleVO.selectedContext;
+            if (jumpPermissionVOS != null) {
+                for (PermissionVO jumpPermissionVO : jumpPermissionVOS) {
+                    //若是没有sys_key , 则返回给前端
+                    if (StringUtility.isNullOrEmpty(jumpPermissionVO.getSysKey())) {
+                        return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "sys_key不能为空");
+                    }
+                    //判断传过来的json数据是否能转成SystemRootVO
+                    if (StringUtility.parseObject(jumpPermissionVO.getSysContext(), SystemRootVO.class) == null) {
+                        return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "数据结构非法");
+                    }
+                }
+            }
+        }
+        //1.首先拿到当前角色的所有的用户 , 首先判断用户是否是管理员,若是管理员则,具有更新数据的权限,否则没有权限
 
+        //判断用户是否是普通用户
+        if (!roleMapper.isAdminOrSuperAdmin(operator)) {
+            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "您不是管理员,没有权限更新数据");
+        }
+        //如果是超级管理员,则更新所有,否则只能更新自己的创建的
+        List<Long> roleIds = new ArrayList<>();
+        for (RoleVO roleVO : lstRole) {
+            //判断如果用户不是超级管理员,那么如果他拿到的roleVO 的权限的owner不是他自己的话,则无权限更新此数据,跳过处理
+            if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, Long.valueOf(roleVO.roleId))) {
+                continue;
+            }
+            //2. 更新角色的功能权限
+            List<PermissionVO> permissionVOS = roleVO.selectedContext;
+            if (permissionVOS == null || permissionVOS.size() <= 0 && lstRole.size() > 1) {
+                throw new URCBizException("批量分配角色权限不允许删除" + roleVO.getRoleId(), ErrorCode.E_000003);
+            }
+            roleIds.add(Long.valueOf(roleVO.roleId));
+            List<RolePermissionDO> permissionDOS = new ArrayList<>();
+            List<String> roleSysKey = new ArrayList<String>();
+            if (permissionVOS != null) {
+                for (PermissionVO permissionVO : permissionVOS) {
+                    RolePermissionDO rolePermissionDO = new RolePermissionDO();
+                    //将功能版本放入do中 ,通过roleId来更新角色的功能权限, 先删除,在插入
+                    rolePermissionDO.setRoleId(Long.valueOf(roleVO.roleId));
+                    roleSysKey.add(permissionVO.getSysKey());
+                    rolePermissionDO.setSysKey(permissionVO.getSysKey());
+                    rolePermissionDO.setModifiedBy(operator);
+                    rolePermissionDO.setCreateBy(operator);
+                    rolePermissionDO.setCreateTime(StringUtility.getDateTimeNow());
+                    rolePermissionDO.setModifiedTime(StringUtility.getDateTimeNow());
+                    rolePermissionDO.setSelectedContext(permissionVO.getSysContext());
+                    permissionDOS.add(rolePermissionDO);
+                }
+            }
+            // 只影响传入模块的权限
+
+            rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
+
+//            if (lstRole.size() > 1) {
+//                rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
+//            } else {
+//                rolePermissionMapper.deleteByRoleId(Long.parseLong(roleVO.roleId));
+//            }
+            // rolePermissionMapper.deleteBatch(roleIds);
+            logger.info("清理相关的功能权限完成");
+            if (permissionDOS != null && permissionDOS.size() > 0) {
+                rolePermissionMapper.insertBatch(permissionDOS);
+                logger.info("更新相关功能权限完成");
+            }
+        }
+
+        roleLogBp.addLog(roleIds, RoleLogEnum.FenPei_QuanXian, json);
+
+        Map dataMap = new HashMap();
+        dataMap.put("roleIds", roleIds);
+        /*3、获取roleIds角色对应的用户名*/
+        logger.info(String.format("获取的角色id为%s", roleIds));
+        if (roleIds.size() == 0) {
+            logger.info("roleID 的集合为空");
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "没有任何数据可以更新");
+        }
+        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        logger.info(String.format("获取的用户名为%s", userNames));
+        /*4、更新用户操作权限冗余表和缓存*/
+        updateAffectedUserPermitCache.saveAffectedUser(userNames);
+
+        if (!CollectionUtils.isEmpty(roleIds)) {
+            List<RoleDO> roleDOs = roleMapper.getRoleByRoleIds(roleIds);
+            List<String> roleNames = new ArrayList<>();
+            roleDOs.forEach(c -> roleNames.add(c.getRoleName()));
+            //保存操作日志
+            UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), roleNames.size() > 1 ? "批量分配权限" : "分配权限", String.format("%s", roleNames), JSON.toJSONString(lstRole));
+            iUrcLogBp.insertUrcLog(urcLog);
+        }
+
+        return VoHelper.getSuccessResult();
     }
+
+    @Override
+    public ResultVO updateRolePermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        String operator = MotanSession.getRequest().getOperator();
+        List<RoleVO> lstRole = StringUtility.jsonToList(jsonObject.getString("lstRole"), RoleVO.class);
+        if (lstRole == null) {
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色为空");
+        }
+        return BeanProvider.getBean(IRoleService.class).updateRolePermission(operator, lstRole, jsonStr);
+    }
+
+    @Autowired
+    private IRoleLogBp roleLogBp;
 
     /**
      * Description: 1、分配权限--获取多个角色已有的用户 2、…

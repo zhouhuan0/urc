@@ -24,6 +24,10 @@ public class VoHelper {
 		return getResultVO(state, strMsg, null);
 	}
 
+	public static ResultVO getFail(String msg) {
+		return getResultVO(CommonMessageCodeEnum.FAIL.getCode(), msg, null);
+	}
+
 	public static <T> ResultVO getResultVO(String state, String strMsg, T data) {
 		ResultVO<T> rslt = new ResultVO<>();
 		rslt.data = data;
