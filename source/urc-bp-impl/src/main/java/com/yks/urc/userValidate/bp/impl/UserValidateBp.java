@@ -264,8 +264,10 @@ public class UserValidateBp implements IUserValidateBp {
             }
         }
 
-        for (MenuVO m : sysOld.menu) {
-            cleanDeletedModule(m.module, lstNewestKey);
+        if (!CollectionUtils.isEmpty(sysOld.menu)) {
+            for (MenuVO m : sysOld.menu) {
+                cleanDeletedModule(m.module, lstNewestKey);
+            }
         }
 
         return StringUtility.toJSONString_NoException(sysOld);

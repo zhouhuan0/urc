@@ -13,6 +13,7 @@ import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.role.bp.api.IRoleLogBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.vo.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -788,10 +789,12 @@ public class RoleServiceImpl implements IRoleService {
                 if (!roleMapper.isSuperAdminAccount(operator)) {
                     SystemRootVO urcSys = serializeBp.json2ObjNew(contextJson, new TypeReference<SystemRootVO>() {
                     });
-                    Optional<MenuVO> op = urcSys.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, StringConstant.URC_PERMIT_KEY)).findFirst();
-                    if (op.isPresent()) {
-                        urcSys.menu.remove(op.get());
-                        return serializeBp.obj2Json(urcSys);
+                    if (!CollectionUtils.isEmpty(urcSys.menu)) {
+                        Optional<MenuVO> op = urcSys.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, StringConstant.URC_PERMIT_KEY)).findFirst();
+                        if (op.isPresent()) {
+                            urcSys.menu.remove(op.get());
+                            return serializeBp.obj2Json(urcSys);
+                        }
                     }
                 }
             }
@@ -801,17 +804,38 @@ public class RoleServiceImpl implements IRoleService {
         return contextJson;
     }
 
+    @Autowired
+    private IPermissionService permissionService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateRolePermission(String operator, List<RoleVO> lstRole,String json) {
         if (CollectionUtils.isEmpty(lstRole)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "lstRole 为空");
         }
-        // 过滤 selectedContext 为空的 role
-        lstRole = lstRole.stream().filter(r -> !CollectionUtils.isEmpty(r.getSelectedContext())).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(lstRole)) {
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色的 selectedContext 字段为空");
+        // 获取用户可授权的sysKey
+        List<String> lstAuthorizableSysKey = permissionService.getUserAuthorizableSysKey(operator);
+        if (CollectionUtils.isEmpty(lstAuthorizableSysKey)) {
+            return VoHelper.getFail("您没有可授权的模块");
         }
+        // 如果sysKey前端没传，表示需要清空
+        Set<String> lstSysKeyToDel = new HashSet<>();
+        lstRole.forEach(r -> {
+            if (r.getSelectedContext() == null) {
+                lstSysKeyToDel.addAll(lstAuthorizableSysKey);
+            } else {
+                lstAuthorizableSysKey.forEach(sysKey -> {
+                    if (!r.getSelectedContext().stream().filter(s -> sysKey.equalsIgnoreCase(s.getSysKey())).findFirst().isPresent()) {
+                        lstSysKeyToDel.add(sysKey);
+                    }
+                });
+            }
+        });
+        // 过滤 selectedContext 为空的 role
+//        lstRole = lstRole.stream().filter(r -> !CollectionUtils.isEmpty(r.getSelectedContext())).collect(Collectors.toList());
+//        if (CollectionUtils.isEmpty(lstRole)) {
+//            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "角色的 selectedContext 字段为空");
+//        }
         //校验传过来的书架上是否是合法的
         for (RoleVO jumpRoleVO : lstRole) {
             if (StringUtils.isBlank(jumpRoleVO.roleId)) {
@@ -874,19 +898,18 @@ public class RoleServiceImpl implements IRoleService {
             }
             // 只影响传入模块的权限
 
-            rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
+            if (!CollectionUtils.isEmpty(roleSysKey)) {
+                rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
+            }
 
-//            if (lstRole.size() > 1) {
-//                rolePermissionMapper.deleteByRoleIdInSysKey(roleVO.roleId, roleSysKey);
-//            } else {
-//                rolePermissionMapper.deleteByRoleId(Long.parseLong(roleVO.roleId));
-//            }
-            // rolePermissionMapper.deleteBatch(roleIds);
             logger.info("清理相关的功能权限完成");
             if (permissionDOS != null && permissionDOS.size() > 0) {
                 rolePermissionMapper.insertBatch(permissionDOS);
                 logger.info("更新相关功能权限完成");
             }
+        }
+        if (lstRole.size() == 1 && !CollectionUtils.isEmpty(lstSysKeyToDel)) {
+            rolePermissionMapper.deleteByRoleIdInSysKey(lstRole.get(0).roleId, lstSysKeyToDel.stream().collect(Collectors.toList()));
         }
 
         roleLogBp.addLog(roleIds, RoleLogEnum.FenPei_QuanXian, json);

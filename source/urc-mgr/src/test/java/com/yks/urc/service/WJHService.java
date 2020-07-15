@@ -70,28 +70,7 @@ public class WJHService extends BaseServiceTest {
 
     @Test
     public void updateRolePermission() throws Exception{
-    	String json="{\n" +
-                "    \"deviceName\": \"Chrome浏览器\",\n" +
-                "    \"funcVersion\": \"8822bbe0a088109ab92b6e75b996b335\",\n" +
-                "    \"lstRole\": [\n" +
-                "        {\n" +
-                "            \"active\": false,\n" +
-                "            \"authorizable\": false,\n" +
-                "            \"forever\": false,\n" +
-                "            \"isActive\": false,\n" +
-                "            \"isAuthorizable\": false,\n" +
-                "            \"isForever\": false,\n" +
-                "            \"roleId\": \"1594269084562000031\",\n" +
-                "            \"roleName\": \"BI测试\",\n" +
-                "            \"selectedContext\": []\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"moduleUrl\": \"/user/rolemanagement/operatingAuthorization/\",\n" +
-                "    \"operator\": \"yanfukun\",\n" +
-                "    \"personName\": \"yanfukun\",\n" +
-                "    \"requestId\": \"0714174944594b0f2a74c7aea682b028\",\n" +
-                "    \"ticket\": \"f5c104476bb87a95b89d1780ba749199\"\n" +
-                "}";
+    	String json="{\"operator\":\"yanfukun\",\"lstRole\":[{\"active\":false,\"authorizable\":false,\"forever\":false,\"isActive\":false,\"isAuthorizable\":false,\"isForever\":false,\"roleId\":\"1594269084562000031\",\"roleName\":\"BI测试\",\"selectedContext\":[]}],\"ticket\":\"126d30e7d66bc172ad69cc305808a236\",\"funcVersion\":\"3e6f8c21e34cc356081a8267f7d97556\",\"moduleUrl\":\"/user/rolemanagement/operatingAuthorization/\",\"personName\":\"yanfukun\",\"requestId\":\"0715091944267c73a1aa5298aefbe5dd\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         roleService.updateRolePermission(json);
     }
@@ -192,10 +171,9 @@ public class WJHService extends BaseServiceTest {
     @Test
     public void getRolePermission() throws Exception{
     	List<String> lstRoleId=new ArrayList<>();
-    	lstRoleId.add("1529746076695000006");
-        lstRoleId.add("1529746076695000007");
+        lstRoleId.add("1594269084562000031");
     	
-    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("panyun", lstRoleId)));
+    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("yanfukun", lstRoleId)));
     	
     }
     

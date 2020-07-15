@@ -495,4 +495,10 @@ public class PermissionServiceImpl implements IPermissionService {
         return null;
     }
 
+    @Override
+    public List<String> getUserAuthorizableSysKey(String operator) {
+        ResultVO<List<PermissionVO>> rslt = getUserAuthorizablePermission(operator);
+        return rslt.data.stream().map(c -> c.getSysKey()).distinct().collect(Collectors.toList());
+    }
+
 }
