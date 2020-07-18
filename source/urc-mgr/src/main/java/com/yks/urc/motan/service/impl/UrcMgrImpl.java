@@ -10,10 +10,7 @@ import com.yks.urc.log.LogLevel;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.sellerid.bp.api.ISellerIdBp;
-import com.yks.urc.service.api.IDataRuleService;
-import com.yks.urc.service.api.IPermissionService;
-import com.yks.urc.service.api.IPersonService;
-import com.yks.urc.service.api.IRoleService;
+import com.yks.urc.service.api.*;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,5 +134,14 @@ public class UrcMgrImpl implements IUrcMgr {
     @Log(value = "更新多个角色的功能权限", level = LogLevel.INFO)
     public ResultVO updateRolePermission(String jsonStr) {
         return roleService.updateRolePermission(jsonStr);
+    }
+
+    @Autowired
+    private IUserService userService;
+
+    @Log("搜索用户上网账号和用户名")
+    @Override
+    public  ResultVO  searchUserPerson(String jsonStr)  {
+        return  userService.searchUserPerson(jsonStr);
     }
 }
