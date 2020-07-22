@@ -57,7 +57,7 @@ import java.util.*;
 
 //@Component
 public class PanYunUrcServiceTest2 extends BaseServiceTest {
-//    @Autowired
+    //    @Autowired
     private IUrcService service;
     @Autowired
     private IUserValidateBp userValidateBp;
@@ -409,9 +409,9 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void getAllFuc_Test() {
         Map<String, Object> map = new HashMap<>();
-        map.put(StringConstant.operator, "hanhanzhou");
+        map.put(StringConstant.operator, "panyun1");
         String jsonStr = StringUtility.toJSONString_NoException(map);
-        System.out.println(StringUtility.toJSONString_NoException(service.getAllFuncPermit(jsonStr)));
+        System.out.println(StringUtility.toJSONString_NoException(userService.getAllFuncPermit(jsonStr)));
     }
 
     @Test

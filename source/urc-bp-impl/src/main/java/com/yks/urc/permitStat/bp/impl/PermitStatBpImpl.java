@@ -13,6 +13,7 @@ import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.permitStat.bp.api.IPermitSortBp;
+import com.yks.urc.permitStat.bp.api.IPermitTreeRefreshBp;
 import com.yks.urc.vo.SystemKeyContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,9 @@ public class PermitStatBpImpl implements IPermitStatBp {
 	@Autowired
 	private IPermitSortBp permitSortBp;
 
+	@Autowired
+	private IPermitTreeRefreshBp permitTreeRefreshBp;
+
 	public GetAllFuncPermitRespVO updateUserPermitCache(String userName) {
 		GetAllFuncPermitRespVO permitCache = new GetAllFuncPermitRespVO();
 
@@ -111,14 +115,19 @@ public class PermitStatBpImpl implements IPermitStatBp {
 					SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
 					if(null == rootVO) continue;
 					//获取sysName
-					String sysName = getSysNameBySyskey(entry.getKey());
-					if (!StringUtility.isNullOrEmpty(sysName)) {
-						rootVO.system.name = sysName;
-					}
+//					String sysName = getSysNameBySyskey(entry.getKey());
+//					if (!StringUtility.isNullOrEmpty(sysName)) {
+//						rootVO.system.name = sysName;
+//					}
 
-					if ("001".equalsIgnoreCase(entry.getKey())) {
+					// 更新所有节点的name/sortIdx/url
+					// 因为角色下的json与 urc_permission 表最新json定义可能会不一样
+					permitTreeRefreshBp.refreshNewestFields(rootVO);
+
+//					if ("001".equalsIgnoreCase(entry.getKey())) {
 						permitSortBp.sortSystemRootVO(rootVO, entry.getKey());
-					}
+//					}
+
 
 					cacheDo.setUserContext(StringUtility.toJSONString_NoException(rootVO));
 					//				cacheDo.setPermissionVersion(userValidateBp.calcFuncVersion(cacheDo.getUserContext()));
