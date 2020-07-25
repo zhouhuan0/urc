@@ -81,16 +81,18 @@ public class RedisCacheBpImpl2 implements ICacheBp {
             logger.error(String.format("insertUser:%s", StringUtility.toJSONString_NoException(u)), ex);
         }
     }
-      @Override
-    public void insertWhiteApi(String apiStr){
-        try {
-            //getCache("white_api").clear();
-            getCache("white_api",7200).put("api", apiStr);
-        }catch (Exception e){
-            logger.error(String.format("Cache whitelisting failed:%s",apiStr),e);
-        }
 
-      }
+    private final static String WhiteApiKey = "white_api";
+
+    @Override
+    public void insertWhiteApi(String apiStr) {
+        try {
+            getCache(WhiteApiKey).put("api", apiStr);
+        } catch (Exception e) {
+            logger.error(String.format("Cache whitelisting failed:%s", apiStr), e);
+        }
+    }
+
     public long getNextSeq(String strKey) {
         try {
             return (long) getCache("urc_seq").incrSequence(strKey);
@@ -133,18 +135,19 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         }
     }
 
-    public String getWhiteApi(String str){
-        String api=null;
-        try{
-            Object object=getCache("white_api",7200).get("api");
-            if (object!=null ){
-                api=object.toString();
+    public String getWhiteApi(String str) {
+        String api = null;
+        try {
+            Object object = getCache(WhiteApiKey).get("api");
+            if (object != null) {
+                api = object.toString();
             }
-        }catch (Exception e){
-            logger.error(String.format("getWhiteApi:%s",str),e);
+        } catch (Exception e) {
+            logger.error(String.format("getWhiteApi:%s", str), e);
         }
         return api;
     }
+
     private static final String NA = "NA";
 
     public void insertUserFunc(String userName, GetAllFuncPermitRespVO permitCache) {
