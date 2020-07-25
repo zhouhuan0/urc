@@ -10,5 +10,6 @@ public class OrgTreeAndUserVO implements Serializable {
     public String key;
     public String title;
     public String parentDingOrgId;
+    public String dingOrgId;
     public List<OrgTreeAndUserVO> children;
 }

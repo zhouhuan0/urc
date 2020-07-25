@@ -442,5 +442,8 @@
 	    WHERE org_level = #{orgLevel}
     </select>
 
-
+    <select id="getAllUser" resultType="com.yks.urc.vo.OrgTreeAndUserVO">
+        select po.ding_org_id `dingOrgId`,u.user_name `key`,chinese_name title
+        from urc_person_org po inner join urc_user u on u.ding_user_id=po.ding_user_id
+    </select>
 </mapper>

@@ -446,8 +446,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void org_Test() {
-
-        ResultVO rslt = organizationService.getAllOrgTreeAndUser();
+        ResultVO rslt = organizationService.getAllOrgTreeAndUserV2();
         System.out.println(StringUtility.toJSONString_NoException(rslt));
     }
 

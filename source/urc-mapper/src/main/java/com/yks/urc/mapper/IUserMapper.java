@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.*;
 import com.yks.urc.vo.NameVO;
+import com.yks.urc.vo.OrgTreeAndUserVO;
 import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.helper.Query;
@@ -174,4 +175,6 @@ public interface IUserMapper {
     List<UserInfoVO> fuzzSearchUserByName4Account(@Param("name") String name,@Param("exact") Integer exact,@Param("start") Integer start,@Param("pageData") Integer pageData);
 
     List<UserInfoVO> getDepartmentByOrgLevel(Integer orgLevel);
+
+    List<OrgTreeAndUserVO> getAllUser();
 }

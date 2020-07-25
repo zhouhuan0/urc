@@ -135,10 +135,11 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getAllOrgTree() {
         return organizationService.getAllOrgTree();
     }
+
     @Override
     @Log("获取全部用户及组织结构")
     public ResultVO getAllOrgTreeAndUser(){
-        return organizationService.getAllOrgTreeAndUser();
+        return organizationService.getAllOrgTreeAndUserV2();
     }
 
     /**

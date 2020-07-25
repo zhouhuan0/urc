@@ -77,4 +77,12 @@ public interface IUrcMgr {
      * @return:
      **/
     ResultVO searchUserPerson(String jsonStr);
+
+    /**
+     * 获取全部用户及组织结构
+     *
+     * @param
+     * @return
+     */
+    ResultVO getAllOrgTreeAndUser();
 }

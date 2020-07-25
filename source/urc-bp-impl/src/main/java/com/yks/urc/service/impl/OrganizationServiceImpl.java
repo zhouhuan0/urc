@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import java.sql.RowIdLifetime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.entity.UserAndPersonDO;
@@ -94,6 +95,43 @@ public class OrganizationServiceImpl implements IOrganizationService {
             VoHelper.getErrorResult();
         }
         return VoHelper.getSuccessResult(deptJosn);
+    }
+
+    @Override
+    public ResultVO getAllOrgTreeAndUserV2() {
+        List<Organization> orgList = organizationMapper.queryAllDept();
+        List<OrgTreeAndUserVO> lstAllUser = iUserMapper.getAllUser();
+        lstAllUser.forEach(u -> u.isUser = 1);
+
+        Organization org = orgList.stream().filter(o -> StringUtility.stringEqualsIgnoreCase(o.getParentDingOrgId(), "0")).findFirst().get();
+        OrgTreeAndUserVO root = convertVO(org);
+        handleChidrenOrg(root, orgList, lstAllUser);
+        List<OrgTreeAndUserVO> deptJosn = new ArrayList<>();
+        deptJosn.add(root);
+        return VoHelper.getSuccessResult(deptJosn);
+    }
+
+    private void handleChidrenOrg(OrgTreeAndUserVO root, List<Organization> orgList, List<OrgTreeAndUserVO> lstAllUser) {
+        root.children = orgList.stream().filter(o -> o.getParentDingOrgId().equalsIgnoreCase(root.key)).map(c -> convertVO(c)).collect(Collectors.toList());
+        // 加人
+        root.children.addAll(lstAllUser.stream().filter(u -> u.dingOrgId.equalsIgnoreCase(root.dingOrgId)).collect(Collectors.toList()));
+        root.children.forEach(c ->
+        {
+            if (c.isUser == 0) {
+                handleChidrenOrg(c, orgList, lstAllUser);
+            }
+        });
+    }
+
+    private OrgTreeAndUserVO convertVO(Organization org) {
+        OrgTreeAndUserVO orgTreeAndUserVO = new OrgTreeAndUserVO();
+        orgTreeAndUserVO.key = org.getDingOrgId();
+        orgTreeAndUserVO.dingOrgId = org.getDingOrgId();
+        orgTreeAndUserVO.title = org.getOrgName();
+        //设立初始值，0代表组织结构
+        orgTreeAndUserVO.isUser = 0;
+        orgTreeAndUserVO.parentDingOrgId = org.getParentDingOrgId();
+        return orgTreeAndUserVO;
     }
 
     @Override

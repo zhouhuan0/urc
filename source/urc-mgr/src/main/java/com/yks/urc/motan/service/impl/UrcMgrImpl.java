@@ -144,4 +144,13 @@ public class UrcMgrImpl implements IUrcMgr {
     public  ResultVO  searchUserPerson(String jsonStr)  {
         return  userService.searchUserPerson(jsonStr);
     }
+
+    @Autowired
+    private IOrganizationService organizationService;
+
+    @Override
+    @Log("获取全部用户及组织结构")
+    public ResultVO getAllOrgTreeAndUser(){
+        return organizationService.getAllOrgTreeAndUserV2();
+    }
 }

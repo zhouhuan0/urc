@@ -19,12 +19,11 @@ public interface IOrganizationService {
 	 */
 	ResultVO getAllOrgTreeAndUser();
 
+	ResultVO getAllOrgTreeAndUserV2();
+
 	/**
 	 *  精确搜索用户
 	 * @return
 	 */
 	ResultVO getUserByUserName(String operator, UserVO userVo);
-
-
-
 }
