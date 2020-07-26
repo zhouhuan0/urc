@@ -558,7 +558,7 @@ public class UserValidateBp implements IUserValidateBp {
 	@Autowired
     private ISerializeBp serializeBp;
 
-	private List<String> lstWhiteApiUrl() {
+	public List<String> lstWhiteApiUrl() {
         List<String> whiteApi = new ArrayList<>();
         String whiteApiCash = cacheBp.getWhiteApi("api");
         if (whiteApiCash == null) {

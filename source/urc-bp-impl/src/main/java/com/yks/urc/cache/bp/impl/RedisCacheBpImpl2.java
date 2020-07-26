@@ -39,7 +39,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         if (!mapCache.containsKey(cacheName)) {
             DistributedCacheBuilder b = DistributedCacheBuilder.newBuilder().config("/cache.properties");
             b.cacheName(cacheName);
-            if (expire > 0) {
+            if (expire >= -1) {
                 b.expire(expire);
             }
             mapCache.put(cacheName, b.build());

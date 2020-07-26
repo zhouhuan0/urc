@@ -107,6 +107,11 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     }
 
     @Test
+    public void whiteApi_Test(){
+        userValidateBp.lstWhiteApiUrl();
+    }
+
+    @Test
     public void mergeFuncJson2Obj_Test() throws IOException {
         String strJson1 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func1.json"));
         String strJson2 = StringUtility.inputStream2String(ClassLoader.getSystemResourceAsStream("func2.json"));
