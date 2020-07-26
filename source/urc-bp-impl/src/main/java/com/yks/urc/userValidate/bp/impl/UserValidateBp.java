@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -553,7 +555,8 @@ public class UserValidateBp implements IUserValidateBp {
 		
 	}
 
-	
+	@Autowired
+    private ISerializeBp serializeBp;
 
 	private List<String> lstWhiteApiUrl() {
         List<String> whiteApi = new ArrayList<>();
@@ -563,10 +566,13 @@ public class UserValidateBp implements IUserValidateBp {
             if (whiteApi == null) {
                 whiteApi = new ArrayList<>();
             }
+            String apiStr = serializeBp.obj2Json(whiteApi);
+            //缓存api
+            cacheBp.insertWhiteApi(apiStr);
         } else {
-            whiteApi = StringUtility.jsonToList(whiteApiCash, String.class);
+            whiteApi = serializeBp.json2ObjNew(whiteApiCash, new TypeReference<List<String>>() {
+            });
         }
-
         return whiteApi;
 
     }
