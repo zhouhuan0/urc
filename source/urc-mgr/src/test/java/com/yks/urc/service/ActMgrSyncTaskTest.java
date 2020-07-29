@@ -16,12 +16,12 @@ public class ActMgrSyncTaskTest extends BaseServiceTest {
     public void test1() throws Exception {
         String dtStart = "2020-07-28 00:00:00";
         String dtEnd = "2020-09-28 00:00:00";
-        actMgrBp.syncAct(dtStart, dtEnd);
-//        while (true) {
-//            actMgrSyncTask.doTask("{\n" +
-//                    "    \"minutes\": 600\n" +
-//                    "}");
-//            Thread.sleep(1000L);
-//        }
+//        actMgrBp.syncAct(dtStart, dtEnd);
+        while (true) {
+            actMgrSyncTask.doTask("{\n" +
+                    "    \"minutes\": 600\n" +
+                    "}");
+            Thread.sleep(1000L);
+        }
     }
 }

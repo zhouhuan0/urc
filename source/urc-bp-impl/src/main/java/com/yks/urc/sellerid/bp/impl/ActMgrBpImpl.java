@@ -14,6 +14,7 @@ import com.yks.urc.mapper.IActmgrUserAccountRefMapper;
 import com.yks.urc.mapper.IDataRuleMapper;
 import com.yks.urc.mapper.IDataRuleSysMapper;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
+import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IDataRuleService;
@@ -71,6 +72,17 @@ public class ActMgrBpImpl implements IActMgrBp {
     @Autowired
     private IDataRuleService dataRuleService;
 
+    public List<String> getSysKey() {
+        return serializeBp.json2ObjNew(configBp.getString("actMgr.sysKey", "[\"001\",\"008\"]"), new TypeReference<List<String>>() {
+        });
+    }
+
+
+    private List<String> getPlatCode() {
+        return serializeBp.json2ObjNew(configBp.getString("actMgr.platCode", "[\"SE\"]"), new TypeReference<List<String>>() {
+        });
+    }
+
     public void syncAct(String dtModifyStart, String dtModifyEnd) throws Exception {
         Request4GetUserAccountInfo req = new Request4GetUserAccountInfo();
         req.setModifyDateStart(dtModifyStart);
@@ -90,9 +102,7 @@ public class ActMgrBpImpl implements IActMgrBp {
         if (!CollectionUtils.isEmpty(lstAct)) {
             BeanProvider.getBean(IActMgrBp.class).saveAct(lstAct);
             // 发MQ
-            lstAct.forEach(a -> {
-                dataRuleService.sendMq(a.getUserName(), "001");
-            });
+            sendMq(lstAct);
         }
 
         int totalPage = (int) (resp.data.getTotal() % req.getPageSize() > 0 ? resp.data.getTotal() / req.getPageSize() + 1 : resp.data.getTotal() / req.getPageSize());
@@ -105,11 +115,41 @@ public class ActMgrBpImpl implements IActMgrBp {
             if (!CollectionUtils.isEmpty(lstAct)) {
                 BeanProvider.getBean(IActMgrBp.class).saveAct(lstAct);
                 // 发MQ
-                lstAct.forEach(a -> {
-                    dataRuleService.sendMq(a.getUserName(), "001");
-                });
+                sendMq(lstAct);
             }
         }
+    }
+
+    private void sendMq(List<UserInfo4Third> lstAct) {
+        List<String> lstSysKey = getSysKey();
+        if (CollectionUtils.isEmpty(lstAct) || CollectionUtils.isEmpty(lstSysKey)) {
+            return;
+        }
+        lstAct.forEach(a -> {
+            try {
+                lstSysKey.forEach(s -> {
+                    try {
+                        dataRuleService.sendMq(a.getUserName(), s);
+                    } catch (Exception e) {
+                        taskProvider.writeErrorLog(e);
+                    }
+                });
+            } catch (Exception ex) {
+                taskProvider.writeErrorLog(ex);
+            }
+        });
+    }
+
+    private ISysDataruleContext getSysDataruleContext(String sysKey) {
+        Map<String, ISysDataruleContext> map = BeanProvider.getBeansOfType(ISysDataruleContext.class);
+        Iterator<Map.Entry<String, ISysDataruleContext>> it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            ISysDataruleContext rslt = it.next().getValue();
+            if (StringUtility.stringEqualsIgnoreCase(rslt.getSysKey(), sysKey)) {
+                return rslt;
+            }
+        }
+        return null;
     }
 
     public void mergeAct(DataRuleSysVO sysDO) {
@@ -117,28 +157,32 @@ public class ActMgrBpImpl implements IActMgrBp {
             return;
         }
 
-        List<String> lstPlatCode = Arrays.asList("SE");
-        if (sysDO.sysKey.equalsIgnoreCase("001")) {
+        List<String> lstPlatCode = getPlatCode();
+        List<String> lstOldPlatCode = getOldPlatCode(lstPlatCode);
+        // 刊登和oms数据权限一致
+        if (getSysKey().contains(sysDO.sysKey)) {
             if (sysDO.row == null) {
                 sysDO.row = new ExpressionVO();
             }
+            ISysDataruleContext ctx = getSysDataruleContext(sysDO.sysKey);
+
             sysDO.row.setIsAnd(1);
             if (CollectionUtils.isEmpty(sysDO.row.getSubWhereClause())) {
                 sysDO.row.setSubWhereClause(new ArrayList<>());
                 ExpressionVO e = new ExpressionVO();
                 e.setOperValuesArr(null);
-                e.setEntityCode(StringConstant.E_PlatformShopSite);
-                e.setFieldCode(StringConstant.F_PlatformShopSite);
+                e.setEntityCode(ctx.getEntityCode());
+                e.setFieldCode(ctx.getFieldCode());
                 sysDO.row.getSubWhereClause().add(e);
             }
 
             ExpressionVO oms = null;
-            Optional<ExpressionVO> op = sysDO.row.getSubWhereClause().stream().filter(w -> w.getEntityCode().equalsIgnoreCase(StringConstant.E_PlatformShopSite)).findFirst();
+            Optional<ExpressionVO> op = sysDO.row.getSubWhereClause().stream().filter(w -> w.getEntityCode().equalsIgnoreCase(ctx.getEntityCode())).findFirst();
             if (!op.isPresent()) {
                 ExpressionVO e = new ExpressionVO();
                 e.setOperValuesArr(null);
-                e.setEntityCode(StringConstant.E_PlatformShopSite);
-                e.setFieldCode(StringConstant.F_PlatformShopSite);
+                e.setEntityCode(ctx.getEntityCode());
+                e.setFieldCode(ctx.getFieldCode());
                 sysDO.row.getSubWhereClause().add(e);
                 oms = e;
             } else {
@@ -155,14 +199,15 @@ public class ActMgrBpImpl implements IActMgrBp {
                 });
                 // 只处理SE平台
                 // 删除SE平台的旧数据权限
-                if (platformVO != null && lstPlatCode.contains(platformVO.platformId)) {
+                if (platformVO != null && (lstPlatCode.contains(platformVO.platformId) ||
+                        lstOldPlatCode.contains(platformVO.platformId))) {
                     lstPlat.remove(i);
                     i--;
                 }
             }
 
             // 用账号管理系统的替换
-            String json = userAccountRefMapper.getByUserNameAndEntityCode(sysDO.userName, StringConstant.E_PlatformShopSite);
+            String json = userAccountRefMapper.getByUserNameAndEntityCode(sysDO.userName, ctx.getQueryEntityCode());
             if (StringUtils.isBlank(json)) {
                 // 无账号管理系统权限,continue
                 return;
@@ -182,7 +227,7 @@ public class ActMgrBpImpl implements IActMgrBp {
                     t.setAccountList(new ArrayList<>());
                 }
                 OmsPlatformVO actPlat = new OmsPlatformVO();
-                actPlat.platformId = t.getPlatformCode();
+                actPlat.platformId = ctx.getPlatformId(t);
                 actPlat.platCode = t.getPlatformCode();
                 actPlat.isAll = StringUtility.stringEqualsIgnoreCaseObj(t.getIfAll(), 1);
                 actPlat.platformName = t.getPlatformCode();
@@ -198,6 +243,16 @@ public class ActMgrBpImpl implements IActMgrBp {
                 lstPlat.add(serializeBp.obj2JsonNonEmpty(actPlat));
             }
         }
+    }
+
+    private static Map<String, String> mapNew2Old = new HashMap<>();
+
+    static {
+        mapNew2Old.put("SE", "SHOPEE");
+    }
+
+    private List<String> getOldPlatCode(List<String> lstPlatCode) {
+        return lstPlatCode.stream().map(c -> mapNew2Old.get(c)).collect(Collectors.toList());
     }
 
     @Override
@@ -252,15 +307,10 @@ public class ActMgrBpImpl implements IActMgrBp {
             lstRef.add(refVO);
         }
         userAccountRefMapper.insertOrUpdate(lstRef);
-
         lstAct.forEach(u -> saveOneUser(u));
     }
 
     private void saveOneUser(UserInfo4Third u) {
-
-        String omsSysKey = "001";
-        String omsEntiyCode = StringConstant.E_PlatformShopSite;
-
         // 处理 urc_data_rule 表
         String userName = u.getUserName();
         List<DataRuleDO> lstDr = dataRuleMapper.getDataRuleByUserName(Arrays.asList(userName));
@@ -277,20 +327,23 @@ public class ActMgrBpImpl implements IActMgrBp {
             dataRuleId = lstDr.get(0).getDataRuleId();
         }
         // 处理 urc_data_rule_sys 表
-        DataRuleSysDO drs = dataRuleSysMapper.getDataRuleSysBy(userName, omsSysKey);
-        if (drs == null) {
-            // insert urc_data_rule_sys
-            drs = new DataRuleSysDO();
-            drs.setDataRuleId(dataRuleId);
-            Long dataRuleSysId = seqBp.getNextDataRuleSysId();
-            drs.setDataRuleSysId(dataRuleSysId);
-            drs.setSysKey(omsSysKey);
-            drs.setCreateBy(sessionBp.getOperator());
-            drs.setModifiedBy(sessionBp.getOperator());
-            dataRuleSysMapper.insert(drs);
-        } else {
-            // 更新 urc_data_rule_sys 表的的创建时间，com.yks.urc.motan.service.impl.UrcMgrImpl.getDataRuleGtDt 才能取到更新的数据
-            dataRuleSysMapper.updateModifiedTime(drs.getDataRuleSysId());
+        List<String> lstSysKey = Arrays.asList("001", "008");
+        for (String sysKey : lstSysKey) {
+            DataRuleSysDO drs = dataRuleSysMapper.getDataRuleSysBy(userName, sysKey);
+            if (drs == null) {
+                // insert urc_data_rule_sys
+                drs = new DataRuleSysDO();
+                drs.setDataRuleId(dataRuleId);
+                Long dataRuleSysId = seqBp.getNextDataRuleSysId();
+                drs.setDataRuleSysId(dataRuleSysId);
+                drs.setSysKey(sysKey);
+                drs.setCreateBy(sessionBp.getOperator());
+                drs.setModifiedBy(sessionBp.getOperator());
+                dataRuleSysMapper.insert(drs);
+            } else {
+                // 更新 urc_data_rule_sys 表的的创建时间，com.yks.urc.motan.service.impl.UrcMgrImpl.getDataRuleGtDt 才能取到更新的数据
+                dataRuleSysMapper.updateModifiedTime(drs.getDataRuleSysId());
+            }
         }
     }
 }

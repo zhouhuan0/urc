@@ -17,6 +17,8 @@ public class PlatformAccount4Third {
      */
     private String platformCode;
 
+    private String platformCodeOld;
+
     /**
      * 是否全选 0 否 1 是
      */
@@ -50,5 +52,13 @@ public class PlatformAccount4Third {
 
     public void setAccountList(List<AccountBeanInfoVO> accountList) {
         this.accountList = accountList;
+    }
+
+    public String getPlatformCodeOld() {
+        return platformCodeOld;
+    }
+
+    public void setPlatformCodeOld(String platformCodeOld) {
+        this.platformCodeOld = platformCodeOld;
     }
 }

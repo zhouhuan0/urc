@@ -4,7 +4,11 @@
 
 cd ../../
 cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-service-provider/src/main/resources/
+cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/main/resources/motan/* ./source/urc-service-provider/src/main/resources/motan/*
+
 cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-mgr/src/main/resources/
+cp -rf ./doc/config文件/urcenter-test/urcenter/source/urc-mgr/src/main/resources/* ./source/urc-mgr/src/main/resources
+
 cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-taskScheduler/src/main/resources/
 
 cd ./source

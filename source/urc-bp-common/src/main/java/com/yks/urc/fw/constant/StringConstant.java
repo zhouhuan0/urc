@@ -37,4 +37,6 @@ public class StringConstant {
     public static String E_PlatformShopSite = "E_PlatformShopSite";
     public static String F_PlatformShopSite = "F_PlatformShopSite";
 
+    public static String E_PlsShopAccount = "E_PlsShopAccount";
+    public static String F_PlsShopAccount = "F_PlsShopAccount";
 }
