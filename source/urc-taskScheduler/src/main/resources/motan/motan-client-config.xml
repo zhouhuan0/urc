@@ -9,19 +9,14 @@
                     address="10.90.1.199:2182,10.90.1.198:2182,10.90.1.197:2182"
                     connectTimeout="2000"/>
 
-    <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。 -->
-    <!--   <motan:protocol id="motan2" default="true" name="motan2" haStrategy="failover"
-                       loadbalance="roundrobin" maxServerConnection="80000" maxContentLength="1048576"
-                       maxWorkerThread="800" minWorkerThread="20"/>-->
-
-    <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
-    <!--<motan:basicReferer requestTimeout="200" accessLog="false"-->
-    <!--retries="2" group="rpc-client-provider-test" module="rpc-client-provider-test"-->
-    <!--application="omsOrderManage" protocol="motan2" registry="zkRegistry"-->
-    <!--id="motanClientBasicConfig" throwException="true" check="true"/>-->
+    <motan:protocol id="motanGateway" default="true" name="motan2"
+                    haStrategy="failover" loadbalance="roundrobin" serialization="simple"
+                    maxServerConnection="80000"
+                    maxContentLength="99999999" maxWorkerThread="1048576"
+                    minWorkerThread="20" />
     <motan:basicReferer requestTimeout="200" accessLog="false"
                         retries="2" group="rpc-service-group-test" module="yks-oms-order-manage"
-                        application="omsOrderManage" protocol="motan2" registry="clientZkRegistry"
+                        application="omsOrderManage" protocol="motanGateway" registry="clientZkRegistry"
                         id="motanClientBasicConfig" throwException="true" check="false"/>
 
     <!-- 具体referer配置。使用方通过beanid使用服务接口类 -->
