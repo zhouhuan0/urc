@@ -31,6 +31,7 @@ public interface IConfigBp {
     void publishConfigUpdate();
 
     String getStringFromDb(String key);
+    String getStringFromDb(String key, String defaultValue);
 
     void update2Db(String key, String value);
 

@@ -9,6 +9,7 @@ import com.yks.urc.mapper.IDataRuleSysMapper;
 import com.yks.urc.mapper.IExpressionMapper;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mq.bp.api.IMqBp;
+import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IDataRuleService;
@@ -180,8 +181,13 @@ public class DataRuleCpBpImpl implements IDataRuleCpBp {
                 plsDr.t = String.valueOf(new Date().getTime());
                 plsDr.userName = userName;
                 mqVO.lstDataRuleSys.add(plsDr);
+
+                actMgrBp.mergeAct(mqVO.lstDataRuleSys);
                 mqBp.send2Mq(mqVO);
             }
         }
     }
+
+    @Autowired
+    private IActMgrBp actMgrBp;
 }

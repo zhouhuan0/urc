@@ -13,6 +13,7 @@ import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.RequestVO;
 import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -122,6 +123,15 @@ public class ConfigBpImpl implements IConfigBp, InitializingBean, ApplicationLis
             return rslt.getPropValue();
         }
         return StringUtility.Empty;
+    }
+
+    @Override
+    public String getStringFromDb(String key, String defaultValue) {
+        String rslt = getStringFromDb(key);
+        if (StringUtils.isBlank(rslt)) {
+            return defaultValue;
+        }
+        return rslt;
     }
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.yks.urc.serialize.bp.impl;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -23,6 +24,21 @@ public class SerializeBpImpl implements ISerializeBp {
     public String obj2Json(Object obj) {
         try {
             ObjectMapper mapper = new ObjectMapper();
+            return mapper.writeValueAsString(obj);
+        } catch (Exception e) {
+            log.error(e.toString(), e);
+        }
+        return null;
+    }
+
+
+    @Override
+    public String obj2JsonNonEmpty(Object obj) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            //过滤为null和“”的属性、如上面的student中对address设为“” 此处不能打印出来
+            mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+
             return mapper.writeValueAsString(obj);
         } catch (Exception e) {
             log.error(e.toString(), e);

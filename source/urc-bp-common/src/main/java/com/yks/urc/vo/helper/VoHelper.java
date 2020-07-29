@@ -12,6 +12,11 @@ import com.yks.urc.vo.ResultVO;
  * 
  */
 public class VoHelper {
+
+	public static boolean ifSuccess(ResultVO rslt) {
+		return rslt != null && rslt.state.equalsIgnoreCase(CommonMessageCodeEnum.SUCCESS.getCode());
+	}
+
 	public static ResultVO getSuccessResult() {
 		return getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(), null);
 	}

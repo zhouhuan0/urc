@@ -1,14 +1,24 @@
 package com.yks.pls.task.quatz;
 
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.lock.bp.api.ILockBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class BaseTask {
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
+    private ITaskProvider defaultTaskProvider = new DefaultTaskProvider();
+
+    ITaskProvider getTaskProvider() {
+        ITaskProvider t = BeanProvider.getBeanNoException(ITaskProvider.class);
+        if (t == null) {
+            return defaultTaskProvider;
+        }
+        return t;
+    }
 
     public void doTask(String param) {
-        ITaskProvider taskProvider = QuatzBootstrap.getBean(ITaskProvider.class);
+        ITaskProvider taskProvider = getTaskProvider();
         try {
             if (!isNeedLock()) {
                 taskProvider.writeInfoLog("task start");
@@ -17,7 +27,7 @@ public abstract class BaseTask {
                 return;
             }
 
-            ILockBp lockBp = QuatzBootstrap.getBean(ILockBp.class);
+            ILockBp lockBp = BeanProvider.getBean(ILockBp.class);
             if (lockBp.tryLock(this.getClass().getSimpleName())) {
                 try {
                     taskProvider.writeInfoLog("task start");

@@ -2,8 +2,10 @@ package com.yks.urc.task.bp.impl;
 
 import com.yks.pls.task.quatz.ITaskProvider;
 import com.yks.pls.task.quatz.PlsEbayTaskDO;
+import com.yks.urc.entity.YksTaskLogVO;
 import com.yks.urc.entity.YksTaskVO;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IYksTaskLogMapper;
 import com.yks.urc.mapper.IYksTaskMapper;
 import com.yks.urc.session.bp.api.ISessionBp;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -23,6 +25,9 @@ public class OmsTaskProvider implements ITaskProvider {
 
     @Autowired
     private IYksTaskMapper taskMapper;
+
+    byte INFO = (byte) 1;
+    byte ERROR = (byte) 2;
 
     @Override
     public List<PlsEbayTaskDO> getTaskDO() {
@@ -94,7 +99,17 @@ public class OmsTaskProvider implements ITaskProvider {
                 return;
             }
             setLastExecuteTime(getCurrentThreadTask());
-            writeLog(msg, (byte) 1);
+            writeLog(log.getName(), INFO, msg);
+        } catch (Exception ex) {
+            log.error(msg, ex);
+        }
+    }
+
+
+    @Override
+    public void writeInfoLog(String logger, String msg) {
+        try {
+            writeLog(logger, INFO, msg);
         } catch (Exception ex) {
             log.error(msg, ex);
         }
@@ -103,12 +118,32 @@ public class OmsTaskProvider implements ITaskProvider {
     @Override
     public void writeErrorLog(Exception ex) {
         try {
-            writeLog(ExceptionUtils.getStackTrace(ex), (byte) 2);
+            writeLog(log.getName(), ERROR, ExceptionUtils.getStackTrace(ex));
         } catch (Exception e) {
             log.error(ExceptionUtils.getStackTrace(ex), e);
         }
     }
 
-    private void writeLog(String msg, Byte logLevel) {
+
+    private Long getTaskId() {
+        if (getCurrentThreadTask() == null) {
+            return 0L;
+        }
+        return getCurrentThreadTask().getTaskId();
+    }
+
+    @Autowired
+    private IYksTaskLogMapper yksTaskLogMapper;
+
+    private void writeLog(String logger, Byte logLevel, String msg) {
+        Long taskId = getTaskId();
+        YksTaskLogVO logVO = new YksTaskLogVO();
+        logVO.setTaskId(taskId);
+        logVO.setLogger(logger);
+        logVO.setLogLevel(logLevel);
+        logVO.setMsg(msg);
+        logVO.setCreator(sessionBp.getOperator());
+        logVO.setCreatorIp(sessionBp.getIp());
+        yksTaskLogMapper.insertSelective(logVO);
     }
 }

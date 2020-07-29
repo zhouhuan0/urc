@@ -9,4 +9,5 @@ public interface ISessionBp {
     String cpString();
     void initCp(String strCp);
 
+    String getIp();
 }

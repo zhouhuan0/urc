@@ -21,6 +21,16 @@ public class OmsShopVO implements Serializable {
      * 账号ID
      */
     public String shopId;
+
+    /**
+     * 新账号管理系统账号唯一ID
+     *
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2020-07-29 10:12
+     */
+    public String accountId;
+
     /**
      * 站点
      */

@@ -19,8 +19,8 @@
         (data_rule_id, user_name, create_time, create_by)
         values
         <foreach collection="list" index="index" item="item" separator=",">
-            (#{item.dataRuleId,jdbcType=TINYINT},#{item.userName,jdbcType=VARCHAR}
-            ,#{item.createTime,jdbcType=TIMESTAMP},#{item.createBy,jdbcType=VARCHAR})
+            (#{item.dataRuleId,jdbcType=TINYINT},#{item.userName,jdbcType=VARCHAR},
+            now(3),#{item.createBy,jdbcType=VARCHAR})
         </foreach>
     </insert>
 

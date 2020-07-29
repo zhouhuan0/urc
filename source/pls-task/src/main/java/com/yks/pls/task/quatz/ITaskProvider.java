@@ -12,6 +12,7 @@ public interface ITaskProvider {
     void removeTaskDO(PlsEbayTaskDO jobVO);
 
     void writeInfoLog(String task_start);
+    void writeInfoLog(String logger, String msg);
 
     void writeErrorLog(Exception ex);
 }

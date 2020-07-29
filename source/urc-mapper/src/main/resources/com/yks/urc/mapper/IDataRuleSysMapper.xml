@@ -42,11 +42,11 @@
    </sql>
     <!--新增-->
     <insert id="insert" parameterType="com.yks.urc.entity.DataRuleSysDO">
-        insert into urc_data_rule_sys ( data_rule_id, sys_key,
+        insert into urc_data_rule_sys (data_rule_sys_id, data_rule_id, sys_key,
         create_time, create_by, modified_time, modified_by)
-        values ( #{dataRuleId,jdbcType=BIGINT}, #{sysKey,jdbcType=CHAR},
-        #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-        #{modifiedTime,jdbcType=TIMESTAMP},#{modifiedBy,jdbcType=VARCHAR})
+        values (#{dataRuleSysId}, #{dataRuleId,jdbcType=BIGINT}, #{sysKey,jdbcType=CHAR},
+        now(3), #{createBy,jdbcType=VARCHAR},
+        now(3),#{modifiedBy,jdbcType=VARCHAR})
     </insert>
 
     <!--批量新增-->
@@ -250,6 +250,7 @@
         LEFT JOIN urc_data_rule udr  ON udrs.data_rule_id = udr.data_rule_id
         where udrs.sys_key = #{sysKey}
         AND  udr.user_name =#{userName}
+        and udrs.data_rule_sys_id is not null
         order by udrs.create_time desc
         limit 1
     </select>

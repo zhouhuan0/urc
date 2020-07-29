@@ -8,6 +8,7 @@ import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.vo.*;
 
 public interface IDataRuleService {
+    void sendMq(String userName, String sysKey);
 
     ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr);
 

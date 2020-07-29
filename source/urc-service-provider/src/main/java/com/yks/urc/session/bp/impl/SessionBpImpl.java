@@ -2,6 +2,7 @@ package com.yks.urc.session.bp.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.fw.IpUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.MotanSession;
@@ -55,6 +56,11 @@ public class SessionBpImpl implements ISessionBp, IRemoveSession {
                 MDC.put(StringConstant.requestid, req.requestId);
             }
         }
+    }
+
+    @Override
+    public String getIp() {
+        return IpUtil.getAddressIp();
     }
 
     public String getRequestId() {

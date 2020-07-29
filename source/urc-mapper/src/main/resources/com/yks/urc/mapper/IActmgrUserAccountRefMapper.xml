@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IActmgrUserAccountRefMapper">
+  <resultMap id="BaseResultMap" type="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="entity_code" jdbcType="VARCHAR" property="entityCode" />
+    <result column="creater" jdbcType="VARCHAR" property="creater" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="modifier" jdbcType="VARCHAR" property="modifier" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    <result column="act_json" jdbcType="LONGVARCHAR" property="actJson" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_name, entity_code, creater, created_time, modifier, modified_time
+  </sql>
+  <sql id="Blob_Column_List">
+    act_json
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from actmgr_user_account_ref
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+
+  <select id="getByUserNameAndEntityCode" resultType="String">
+    select act_json from actmgr_user_account_ref where user_name=#{userName} and entity_code=#{entityCode}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from actmgr_user_account_ref
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    insert into actmgr_user_account_ref (id, user_name, entity_code, 
+      creater, created_time, modifier, 
+      modified_time, act_json)
+    values (#{id,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR}, #{entityCode,jdbcType=VARCHAR}, 
+      #{creater,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, #{modifier,jdbcType=VARCHAR}, 
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{actJson,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    insert into actmgr_user_account_ref
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userName != null">
+        user_name,
+      </if>
+      <if test="entityCode != null">
+        entity_code,
+      </if>
+      <if test="creater != null">
+        creater,
+      </if>
+      <if test="createdTime != null">
+        created_time,
+      </if>
+      <if test="modifier != null">
+        modifier,
+      </if>
+      <if test="modifiedTime != null">
+        modified_time,
+      </if>
+      <if test="actJson != null">
+        act_json,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userName != null">
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="entityCode != null">
+        #{entityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null">
+        #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actJson != null">
+        #{actJson,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <insert id="insertOrUpdate">
+    insert into actmgr_user_account_ref (user_name, entity_code,
+    creater, created_time, modifier, modified_time, act_json) VALUES
+    <foreach collection="lst" item="item" index="index"
+             separator=",">(
+      #{item.userName},
+      #{item.entityCode},
+      #{item.creater},      now(3),      #{item.modifier},      now(3),
+      #{item.actJson}
+      )
+    </foreach>
+    ON DUPLICATE KEY UPDATE
+    modifier = VALUES(modifier) ,
+    modified_time =now(3),
+    act_json=VALUES(act_json)
+  </insert>
+
+  <update id="updateByPrimaryKeySelective" parameterType="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    update actmgr_user_account_ref
+    <set>
+      <if test="userName != null">
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="entityCode != null">
+        entity_code = #{entityCode,jdbcType=VARCHAR},
+      </if>
+      <if test="creater != null">
+        creater = #{creater,jdbcType=VARCHAR},
+      </if>
+      <if test="createdTime != null">
+        created_time = #{createdTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifier != null">
+        modifier = #{modifier,jdbcType=VARCHAR},
+      </if>
+      <if test="modifiedTime != null">
+        modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="actJson != null">
+        act_json = #{actJson,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    update actmgr_user_account_ref
+    set user_name = #{userName,jdbcType=VARCHAR},
+      entity_code = #{entityCode,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP},
+      act_json = #{actJson,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.yks.urc.entity.ActmgrUserAccountRefVO">
+    update actmgr_user_account_ref
+    set user_name = #{userName,jdbcType=VARCHAR},
+      entity_code = #{entityCode,jdbcType=VARCHAR},
+      creater = #{creater,jdbcType=VARCHAR},
+      created_time = #{createdTime,jdbcType=TIMESTAMP},
+      modifier = #{modifier,jdbcType=VARCHAR},
+      modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

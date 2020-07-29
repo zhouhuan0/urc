@@ -11,6 +11,13 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 public interface ISerializeBp {
     String obj2Json(Object obj);
+    /**
+     * 过滤为null和“”的属性
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2019-11-09 17:18
+     */
+    String obj2JsonNonEmpty(Object obj);
 
     /**
      * 此方法支持泛型

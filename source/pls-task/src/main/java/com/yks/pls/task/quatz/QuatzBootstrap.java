@@ -62,6 +62,21 @@ public class QuatzBootstrap implements ApplicationContextAware {
         ctx.getBean(ITaskProvider.class).setLastExecuteTime(taskDO);
     }
 
+    /**
+     * 找不到bean返回null
+     *
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2019/4/24 9:23
+     */
+    public static <T> T getBeanNoException(Class<T> clazz) {
+        try {
+            return ctx.getBean(clazz);
+        } catch (Exception ex) {
+            return null;
+        }
+    }
+
     public static <T> T getBean(Class<T> var1) throws BeansException{
         return ctx.getBean(var1);
     }

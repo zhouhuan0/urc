@@ -11,6 +11,7 @@
     http://www.springframework.org/schema/task/spring-task-3.2.xsd ">
 
     <import resource="classpath:/spring/*.xml"/>
+    <import resource="classpath:/motan/motan-client-config.xml"/>
 
     <!--task任务扫描注解-->
     <task:annotation-driven />
