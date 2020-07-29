@@ -12,6 +12,7 @@
 [
 
   {"source":"./source/conf/urc-service-provider/src/main/resources/","target":"./source/urc-service-provider/src/main/resources","type":"d"},
+  {"source":"./source/conf/urc-taskScheduler/src/main/resources/","target":"./source/urc-taskScheduler/src/main/resources","type":"d"},
   {"source":"./source/conf/urc-service-provider/src/main/resources/","target":"./source/urc-taskScheduler/src/main/resources","type":"d"},
   {"source":"./source/conf/urc-service-provider/src/main/resources/","target":"./source/urc-mgr/src/main/resources","type":"d"},
   {"source":"./source/conf/urc-mgr/src/main/resources/","target":"./source/urc-mgr/src/main/resources","type":"d"},
