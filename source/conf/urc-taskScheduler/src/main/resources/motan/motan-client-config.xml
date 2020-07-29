@@ -9,9 +9,15 @@
                     address="$[gateway_zk]$"
                     connectTimeout="2000"/>
 
+    <motan:protocol id="motanGateway" default="true" name="motan2"
+                    haStrategy="failover" loadbalance="roundrobin" serialization="simple"
+                    maxServerConnection="80000"
+                    maxContentLength="99999999" maxWorkerThread="1048576"
+                    minWorkerThread="20" />
+
     <motan:basicReferer requestTimeout="200" accessLog="false"
                         retries="2" group="$[oms_motan_group]$" module="yks-oms-order-manage"
-                        application="omsOrderManage" protocol="motan2" registry="clientZkRegistry"
+                        application="omsOrderManage" protocol="motanGateway" registry="clientZkRegistry"
                         id="motanClientBasicConfig" throwException="true" check="false"/>
 
     <motan:referer id="orderManageServiceImpl" interface="com.yks.oms.order.manage.motan.service.api.IOrderManageService"

@@ -4,4 +4,5 @@
 cd ../../
 git checkout -- ./source/urc-service-provider/src/main/resources/*
 git checkout -- ./source/urc-mgr/src/main/resources/*
+git checkout -- ./source/urc-taskScheduler/src/main/resources/*
 

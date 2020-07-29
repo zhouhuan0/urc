@@ -10,15 +10,6 @@
                     connectTimeout="2000"/>
 
     <!-- 协议配置。为防止多个业务配置冲突，推荐使用id表示具体协议。 -->
-    <!--   <motan:protocol id="motan2" default="true" name="motan2" haStrategy="failover"
-                       loadbalance="roundrobin" maxServerConnection="80000" maxContentLength="1048576"
-                       maxWorkerThread="800" minWorkerThread="20"/>-->
-
-    <!-- 通用配置，多个rpc服务使用相同的基础配置. group和module定义具体的服务池。export格式为“protocol id:提供服务的端口” -->
-    <!--<motan:basicReferer requestTimeout="200" accessLog="false"-->
-    <!--retries="2" group="rpc-client-provider-test" module="rpc-client-provider-test"-->
-    <!--application="omsOrderManage" protocol="motan2" registry="zkRegistry"-->
-    <!--id="motanClientBasicConfig" throwException="true" check="true"/>-->
     <motan:basicReferer requestTimeout="200" accessLog="false"
                         retries="2" group="$[oms_motan_group]$" module="yks-oms-order-manage"
                         application="omsOrderManage" protocol="motan2" registry="clientZkRegistry"
