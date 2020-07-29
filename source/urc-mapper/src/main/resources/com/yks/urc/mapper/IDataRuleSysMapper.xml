@@ -133,6 +133,7 @@
                     <![CDATA[  and udrs.create_time > #{createTime}   ]]>
                 </if>
                 AND  udr.user_name is not null and udr.user_name !=''
+                and udrs.data_rule_sys_id is not null
             </where>
         ORDER BY udrs.create_time asc
         LIMIT #{pageSize}
