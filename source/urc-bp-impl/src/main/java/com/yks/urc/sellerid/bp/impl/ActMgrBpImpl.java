@@ -3,6 +3,7 @@ package com.yks.urc.sellerid.bp.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.actmgr.motan.service.api.IActMgrService;
 import com.yks.pls.task.quatz.ITaskProvider;
+import com.yks.urc.cache.bp.api.ILocalCacheBp;
 import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.entity.ActmgrUserAccountRefVO;
 import com.yks.urc.entity.DataRuleDO;
@@ -81,6 +82,26 @@ public class ActMgrBpImpl implements IActMgrBp {
     private List<String> getPlatCode() {
         return serializeBp.json2ObjNew(configBp.getString("actMgr.platCode", "[\"SE\"]"), new TypeReference<List<String>>() {
         });
+    }
+
+    private UserNameConfigVO getUserNameConfigVO() {
+        return serializeBp.json2ObjNew(configBp.getString("actMgr.userNameList", "{ \"ifAll\":true}"), new TypeReference<UserNameConfigVO>() {
+        });
+    }
+
+    private boolean ifUserNameInList(String userName) {
+        UserNameConfigVO configVO = getUserNameConfigVO();
+        if (configVO == null) {
+            return false;
+        }
+        if (Boolean.TRUE.equals(configVO.ifAll)) {
+            return true;
+        }
+        if (CollectionUtils.isEmpty(configVO.lstUserName)) {
+            return false;
+        }
+        // 不在清单中的用户不使用新账号数据权限
+        return configVO.lstUserName.contains(userName);
     }
 
     public void syncAct(String dtModifyStart, String dtModifyEnd) throws Exception {
@@ -252,7 +273,38 @@ public class ActMgrBpImpl implements IActMgrBp {
     }
 
     private List<String> getOldPlatCode(List<String> lstPlatCode) {
+        List<BasePlatformInfo> lst = getPlatMapFromLocalCache();
+        if (CollectionUtils.isEmpty(lst)) {
+            lst = getPlatMapFromActMgr();
+            if (!CollectionUtils.isEmpty(lst)) {
+                // 入缓存,缓存6小时
+                localCacheBp.setLocalCache(platCodeMapCacheName, lst, 1000 * 60 * 60 * 6L);
+            }
+        }
+
+        if (!CollectionUtils.isEmpty(lst)) {
+            return lst.stream().filter(p -> lstPlatCode.contains(p.getPlatformCode())).map(p -> p.getPlatformCodeOld()).collect(Collectors.toList());
+        }
         return lstPlatCode.stream().map(c -> mapNew2Old.get(c)).collect(Collectors.toList());
+    }
+
+    @Autowired
+    private ILocalCacheBp localCacheBp;
+
+    private String platCodeMapCacheName = "platCodeMap";
+
+    private List<BasePlatformInfo> getPlatMapFromLocalCache() {
+        List<BasePlatformInfo> lst = localCacheBp.getLocalCache(platCodeMapCacheName, new TypeReference<List<BasePlatformInfo>>() {
+        });
+        return lst;
+    }
+
+    private List<BasePlatformInfo> getPlatMapFromActMgr() {
+        ResultVO<List<BasePlatformInfo>> rslt = actMgrService.getPlatformCode("{}");
+        if (VoHelper.ifSuccess(rslt)) {
+            return rslt.data;
+        }
+        return Collections.EMPTY_LIST;
     }
 
     @Override
@@ -262,7 +314,10 @@ public class ActMgrBpImpl implements IActMgrBp {
         }
         // 入参为老数据权限，将账号管理系统的账号权限替换到老数据权限中
         for (DataRuleSysVO sysDO : lstDr) {
-            mergeAct(sysDO);
+            if (ifUserNameInList(sysDO.userName)) {
+                // 在清单中的用户才使用新账号数据权限
+                mergeAct(sysDO);
+            }
         }
     }
 
