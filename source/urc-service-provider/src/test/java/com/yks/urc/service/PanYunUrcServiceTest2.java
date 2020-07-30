@@ -524,4 +524,10 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    public void getDataRuleByUser_Test() {
+        String json = "{\"lstUserName\":[\"panyun\"],\"ticket\":\"eb8c2851c3a268b8150807cffd263b5f\",\"operator\":\"panyun\",\"personName\":\"潘韵\",\"funcVersion\":\"56b0f8f25904a20b967d82e9cb357eb3\",\"moduleUrl\":\"/user/usermanagementlist/datapauthorization/\",\"requestId\":\"0730111825172309b52708272ae6bb6e\",\"deviceName\":\"Chrome浏览器\"}";
+        service.getDataRuleByUser(json);
+    }
 }

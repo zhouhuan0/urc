@@ -80,7 +80,7 @@ public class WJHService extends BaseServiceTest {
         RoleVO roleVO=new RoleVO();
         roleVO.setRoleId("1539160322094000002");
         lstRole.add(roleVO);
-        roleService.updateRolePermission("wujianghui", lstRole);
+//        roleService.updateRolePermission("wujianghui", lstRole);
     }
     
     

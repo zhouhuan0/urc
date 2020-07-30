@@ -111,6 +111,7 @@
 	                      #{sysKey} 
 	             </foreach>
        		 </if>
+            and udrs.data_rule_sys_id is not null
         </where>
     </select>
 
