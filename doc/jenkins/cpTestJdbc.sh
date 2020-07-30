@@ -10,6 +10,7 @@ cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/mai
 cp -rf ./doc/config文件/urcenter-test/urcenter/source/urc-mgr/src/main/resources/* ./source/urc-mgr/src/main/resources
 
 cp ./doc/config文件/urcenter-test/urcenter/source/urc-service-provider/src/main/resources/jdbc* ./source/urc-taskScheduler/src/main/resources/
+cp -rf ./doc/config文件/urcenter-test/urcenter/source/urc-taskScheduler/src/main/resources/* ./source/urc-taskScheduler/src/main/resources
 
 cd ./source
 

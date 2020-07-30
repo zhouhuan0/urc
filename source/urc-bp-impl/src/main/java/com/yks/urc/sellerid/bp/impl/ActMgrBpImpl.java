@@ -64,7 +64,7 @@ public class ActMgrBpImpl implements IActMgrBp {
                 new Date().getTime(),
                 StringUtility.convertToDate(req.getModifyDateStart(), null).getTime() + paramVO.minutes * 60 * 1000L))));
 
-        syncAct(req.getModifyDateStart(), req.getModifyDateEnd());
+        syncAct(paramVO, req.getModifyDateStart(), req.getModifyDateEnd());
 
         // 更新lastPoint
         configBp.update2Db(pointKey, req.getModifyDateEnd());
@@ -104,12 +104,12 @@ public class ActMgrBpImpl implements IActMgrBp {
         return configVO.lstUserName.contains(userName);
     }
 
-    public void syncAct(String dtModifyStart, String dtModifyEnd) throws Exception {
+    public void syncAct(TaskParamVO paramVO, String dtModifyStart, String dtModifyEnd) throws Exception {
         Request4GetUserAccountInfo req = new Request4GetUserAccountInfo();
         req.setModifyDateStart(dtModifyStart);
         req.setModifyDateEnd(dtModifyEnd);
         req.setPageNo(1);
-        req.setPageSize(500);
+        req.setPageSize(paramVO.pageSize);
         ResultVO<Response4GetUserAccountInfo> resp = getAccountInfoWithLog(req);
         if (!VoHelper.ifSuccess(resp)) {
             throw new Exception(serializeBp.obj2JsonNonEmpty(req));
