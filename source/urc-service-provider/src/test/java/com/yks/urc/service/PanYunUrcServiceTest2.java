@@ -527,7 +527,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getDataRuleByUser_Test() {
-        String json = "{\"lstUserName\":[\"panyun\"],\"ticket\":\"eb8c2851c3a268b8150807cffd263b5f\",\"operator\":\"panyun\",\"personName\":\"潘韵\",\"funcVersion\":\"56b0f8f25904a20b967d82e9cb357eb3\",\"moduleUrl\":\"/user/usermanagementlist/datapauthorization/\",\"requestId\":\"0730111825172309b52708272ae6bb6e\",\"deviceName\":\"Chrome浏览器\"}";
-        service.getDataRuleByUser(json);
+        String json = "{\"lstUserName\":[\"panyun\"],\"ticket\":\"4ec273ef50fa98f390dca6fc7fa7afef\",\"operator\":\"panyun1\",\"personName\":\"潘韵1\",\"funcVersion\":\"1ad42b3f589e1fb8da27ae531b3524d5\",\"moduleUrl\":\"/user/usermanagementlist/datapauthorization/\",\"requestId\":\"08011634002335597d3bdc451a868dab\",\"deviceName\":\"Chrome浏览器\"}";
+        System.out.println(serializeBp.obj2JsonNonEmpty(service.getDataRuleByUser(json)));
     }
 }

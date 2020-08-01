@@ -161,7 +161,7 @@ public class ActMgrBpImpl implements IActMgrBp {
         });
     }
 
-    private ISysDataruleContext getSysDataruleContext(String sysKey) {
+    public ISysDataruleContext getSysDataruleContext(String sysKey) {
         Map<String, ISysDataruleContext> map = BeanProvider.getBeansOfType(ISysDataruleContext.class);
         Iterator<Map.Entry<String, ISysDataruleContext>> it = map.entrySet().iterator();
         while (it.hasNext()) {
@@ -272,7 +272,7 @@ public class ActMgrBpImpl implements IActMgrBp {
         mapNew2Old.put("SE", "SHOPEE");
     }
 
-    public String getNewPlatCode(String oldPlatCode) throws Exception {
+    public String getNewPlatCode(String oldPlatCode) {
         // 老账号管理系统平台编码转新账号管理系统平台编码
         if (StringUtils.isBlank(oldPlatCode)) {
             return StringUtils.EMPTY;

@@ -6,6 +6,8 @@ import com.yks.urc.vo.*;
 import java.util.List;
 
 public interface IActMgrBp {
+    ISysDataruleContext getSysDataruleContext(String sysKey);
+
     /**
      * 老账号管理系统平台编码转新账号管理系统平台编码
      *
@@ -13,7 +15,7 @@ public interface IActMgrBp {
      * @Author panyun@youkeshu.com
      * @Date 2020-08-01 16:19
      */
-    String getNewPlatCode(String oldPlatCode) throws Exception;
+    String getNewPlatCode(String oldPlatCode);
 
     /**
      * 获取切换到新账号管理系统获取账号数据权限的平台二位编码

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
+import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1320,6 +1321,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
                             if (!StringUtility.isNullOrEmpty(expressionDO.getOperValues())) {
                                 String operValues = expressionDO.getOperValues();
                                 List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
+                                ISysDataruleContext sysDataruleContext = actMgrBp.getSysDataruleContext(syskeyList.get(j).getSysKey());
+                                if (sysDataruleContext != null) {
+                                    // 过滤被新账号管理系统接管的平台，不显示在用户中心数据权限配置页面
+                                    operValuesArr = sysDataruleContext.filterActMgrPlatCode(operValuesArr);
+                                }
                                 expression.setOperValuesArr(operValuesArr);
                             }
                             if (!StringUtility.isNullOrEmpty(expressionDO.getEntityCode())) {
