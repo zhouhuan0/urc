@@ -76,19 +76,19 @@ public class SysDataruleContextImplPls implements ISysDataruleContext {
             return;
         }
 
-        for (int i = 0; i < operValuesArr.size(); i++) {
-            OmsPlatformVO platformVO = serializeBp.json2ObjNew(operValuesArr.get(i), new TypeReference<OmsPlatformVO>() {
-            });
-            if (platformVO == null) {
-                continue;
-            }
-
-            if (Boolean.TRUE.equals(platformVO.isAll)) {
-                // 有所有账号权限时，可以清空账号数组
-                platformVO.lstShop = Collections.EMPTY_LIST;
-                operValuesArr.set(i, serializeBp.obj2JsonNonEmpty(platformVO));
-            }
-        }
+//        for (int i = 0; i < operValuesArr.size(); i++) {
+//            OmsPlatformVO platformVO = serializeBp.json2ObjNew(operValuesArr.get(i), new TypeReference<OmsPlatformVO>() {
+//            });
+//            if (platformVO == null) {
+//                continue;
+//            }
+//
+//            if (Boolean.TRUE.equals(platformVO.isAll)) {
+//                // 有所有账号权限时，可以清空账号数组
+//                platformVO.lstShop = Collections.EMPTY_LIST;
+//                operValuesArr.set(i, serializeBp.obj2JsonNonEmpty(platformVO));
+//            }
+//        }
     }
 
     public static List<String> getOperValuesArr(DataRuleSysVO sysVO) {
