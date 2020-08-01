@@ -745,6 +745,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private void sendToMq(List<DataRuleVO> dataRuleVOS) {
         // 发MQ前合并新数据权限
         for (DataRuleVO dataRuleVO : dataRuleVOS) {
+            if (CollectionUtils.isEmpty(dataRuleVO.lstDataRuleSys)) {
+                continue;
+            }
+            dataRuleVO.lstDataRuleSys.forEach(c -> {
+                if (StringUtils.isBlank(c.userName)) {
+                    c.userName = dataRuleVO.userName;
+                }
+            });
             actMgrBp.mergeAct(dataRuleVO.lstDataRuleSys);
         }
         mqBp.send2Mq(dataRuleVOS);

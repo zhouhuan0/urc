@@ -1,6 +1,7 @@
 package com.yks.urc.service;
 
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
+import com.yks.urc.service.api.IDataRuleService;
 import com.yks.urc.task.ActMgrSyncTask;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,14 @@ public class ActMgrSyncTaskTest extends BaseServiceTest {
                     "}");
             Thread.sleep(1000L);
         }
+    }
+
+    @Autowired
+    private IDataRuleService dataRuleService;
+
+
+    @Test
+    public void xxxTest() {
+        dataRuleService.sendMq("panyun", "008");
     }
 }
