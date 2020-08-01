@@ -183,6 +183,7 @@ public class DataRuleCpBpImpl implements IDataRuleCpBp {
                 mqVO.lstDataRuleSys.add(plsDr);
 
                 actMgrBp.mergeAct(mqVO.lstDataRuleSys);
+                dataRuleService.handleIfAll(mqVO.lstDataRuleSys);
                 mqBp.send2Mq(mqVO);
             }
         }

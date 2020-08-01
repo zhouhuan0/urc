@@ -10,6 +10,8 @@ import com.yks.urc.vo.*;
 public interface IDataRuleService {
     void sendMq(String userName, String sysKey);
 
+    void handleIfAll(List<DataRuleSysVO> lstDr);
+
     ResultVO<DataRuleTemplVO> getDataRuleTemplByTemplId(String jsonStr);
 
     ResultVO<PageResultVO> getDataRuleTempl(String jsonStr);

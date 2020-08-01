@@ -5,6 +5,7 @@ import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.OmsPlatformVO;
 import com.yks.urc.vo.PlatformAccount4Third;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,15 @@ public class SysDataruleContextImplOms implements ISysDataruleContext {
                 i--;
             }
         }
+        sysDataruleContextImplPls.handleIfAll(operValuesArr);
         return operValuesArr;
+    }
+
+    @Autowired
+    private SysDataruleContextImplPls sysDataruleContextImplPls;
+
+    @Override
+    public void handleIfAll(DataRuleSysVO sysVO) {
+        sysDataruleContextImplPls.handleIfAll(SysDataruleContextImplPls.getOperValuesArr(sysVO));
     }
 }

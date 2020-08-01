@@ -755,6 +755,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 }
             });
             actMgrBp.mergeAct(dataRuleVO.lstDataRuleSys);
+            handleIfAll(dataRuleVO.lstDataRuleSys);
         }
         mqBp.send2Mq(dataRuleVOS);
     }
@@ -1438,8 +1439,22 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleSysVO> lstDr = getDataRuleVOByDataRuleSys(lstDrSysGt);
         // 处理从账号管理系统同步过来的权限
         actMgrBp.mergeAct(lstDr);
-
+        handleIfAll(lstDr);
         return VoHelper.getSuccessResult(lstDr);
+    }
+
+    public void handleIfAll(List<DataRuleSysVO> lstDr) {
+        // 处理 isAll
+        if (CollectionUtils.isEmpty(lstDr)) {
+            return;
+        }
+        for (DataRuleSysVO sysVO : lstDr) {
+            ISysDataruleContext sysDataruleContext = actMgrBp.getSysDataruleContext(sysVO.sysKey);
+            if (sysDataruleContext == null) {
+                continue;
+            }
+            sysDataruleContext.handleIfAll(sysVO);
+        }
     }
 
     public void sendMq(String userName, String sysKey) {
@@ -1455,6 +1470,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         List<DataRuleSysVO> lstDr = getDataRuleVOByDataRuleSys(Arrays.asList(drs));
         // 处理从账号管理系统同步过来的权限
         actMgrBp.mergeAct(lstDr);
+        handleIfAll(lstDr);
 
         DataRuleVO dr = new DataRuleVO();
         dr.setUserName(userName);

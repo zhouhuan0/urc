@@ -32,6 +32,6 @@ public class ActMgrSyncTaskTest extends BaseServiceTest {
 
     @Test
     public void xxxTest() {
-        dataRuleService.sendMq("panyun", "008");
+        dataRuleService.sendMq("panyun", "001");
     }
 }
