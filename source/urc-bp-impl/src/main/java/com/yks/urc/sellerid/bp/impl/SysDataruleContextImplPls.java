@@ -95,7 +95,6 @@ public class SysDataruleContextImplPls implements ISysDataruleContext {
         if (sysVO == null || sysVO.row == null || CollectionUtils.isEmpty(sysVO.row.getSubWhereClause())) {
             return null;
         }
-        sysVO.row.getSubWhereClause().get(0).setOperValues(null);
         return sysVO.row.getSubWhereClause().get(0).getOperValuesArr();
     }
 
