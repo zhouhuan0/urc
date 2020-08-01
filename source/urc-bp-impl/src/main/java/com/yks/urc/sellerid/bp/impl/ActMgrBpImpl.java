@@ -79,7 +79,7 @@ public class ActMgrBpImpl implements IActMgrBp {
     }
 
 
-    private List<String> getPlatCode() {
+    public List<String> getPlatCode() {
         return serializeBp.json2ObjNew(configBp.getString("actMgr.platCode", "[\"SE\"]"), new TypeReference<List<String>>() {
         });
     }
@@ -272,7 +272,22 @@ public class ActMgrBpImpl implements IActMgrBp {
         mapNew2Old.put("SE", "SHOPEE");
     }
 
-    private List<String> getOldPlatCode(List<String> lstPlatCode) {
+    public String getNewPlatCode(String oldPlatCode) throws Exception {
+        // 老账号管理系统平台编码转新账号管理系统平台编码
+        if (StringUtils.isBlank(oldPlatCode)) {
+            return StringUtils.EMPTY;
+        }
+        List<BasePlatformInfo> lst = getAllPlatCode();
+        if (!CollectionUtils.isEmpty(lst)) {
+            Optional<BasePlatformInfo> op = lst.stream().filter(p -> StringUtility.stringEqualsIgnoreCase(oldPlatCode, p.getPlatformCodeOld())).findFirst();
+            if (op.isPresent()) {
+                return op.get().getPlatformCode();
+            }
+        }
+        return null;
+    }
+
+    private List<BasePlatformInfo> getAllPlatCode() {
         List<BasePlatformInfo> lst = getPlatMapFromLocalCache();
         if (CollectionUtils.isEmpty(lst)) {
             lst = getPlatMapFromActMgr();
@@ -281,7 +296,14 @@ public class ActMgrBpImpl implements IActMgrBp {
                 localCacheBp.setLocalCache(platCodeMapCacheName, lst, 1000 * 60 * 60 * 6L);
             }
         }
+        return lst;
+    }
 
+    private List<String> getOldPlatCode(List<String> lstPlatCode) {
+        if (CollectionUtils.isEmpty(lstPlatCode)) {
+            return Collections.EMPTY_LIST;
+        }
+        List<BasePlatformInfo> lst = getAllPlatCode();
         if (!CollectionUtils.isEmpty(lst)) {
             return lst.stream().filter(p -> lstPlatCode.contains(p.getPlatformCode())).map(p -> p.getPlatformCodeOld()).collect(Collectors.toList());
         }

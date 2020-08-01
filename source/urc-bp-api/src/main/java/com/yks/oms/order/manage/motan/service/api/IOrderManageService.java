@@ -1,7 +1,8 @@
 package com.yks.oms.order.manage.motan.service.api;
 
-import java.util.Map;
+import java.util.List;
 
+import com.yks.urc.vo.PlatformCodeVO4GetPlatformCode;
 import com.yks.urc.vo.ResultVO;
 
 public interface IOrderManageService {
@@ -34,5 +35,5 @@ public interface IOrderManageService {
      * @return
      * @version: 2019年5月20日 上午11:49:53
      */
-	ResultVO getAllOnlinePlatformCode();
+	ResultVO<List<PlatformCodeVO4GetPlatformCode>> getAllOnlinePlatformCode();
 }

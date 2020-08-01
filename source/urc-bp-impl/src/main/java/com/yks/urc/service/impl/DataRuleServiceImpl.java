@@ -1909,13 +1909,14 @@ public class DataRuleServiceImpl implements IDataRuleService {
             }
             return dataRuleService.getPlatformByConditions(jsonObject);
         } catch (Exception e) {
+            logger.error(jsonStr, e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取指定系统的平台编码失败.");
         }
 
     }
 
     @Override
-    public ResultVO getPlatformByConditions(JSONObject jsonObject) {
+    public ResultVO getPlatformByConditions(JSONObject jsonObject) throws Exception {
         String entityCode = jsonObject.getString("entityCode");//实体code【必填】例如oms为E_PlatformShopSite
         List<PlatformCodeVO4GetPlatformCode> platformCodes = new ArrayList<>();
         GetPlatformCodeRespVO getPlatformCodeRespVO = new GetPlatformCodeRespVO();
@@ -1923,8 +1924,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         //根据entityCode找到对应得platforid
         if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
             //通过调oms的接口获取销售账号
-            ResultVO resultVO = orderManageService.getAllOnlinePlatformCode();
-            getPlatformCodeRespVO.setList((List<PlatformCodeVO4GetPlatformCode>) resultVO.data);
+            ResultVO<List<PlatformCodeVO4GetPlatformCode>> resultVO = orderManageService.getAllOnlinePlatformCode();
+            if (!CollectionUtils.isEmpty(resultVO.data)) {
+                // 切换到新账号管理系统的平台不显示啦
+                resultVO.data = resultVO.data.stream().filter(c -> !actMgrBp.getPlatCode().contains(c.getPlatformCode())).collect(Collectors.toList());
+            }
+            getPlatformCodeRespVO.setList(resultVO.data);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);
         } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
             String platformCodes4E_PlsShopAccount = StringUtility.convertToString(configBp.getString("E_PlsShopAccount_PlatformCode"));
@@ -1935,44 +1940,11 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode = new PlatformCodeVO4GetPlatformCode();
                 platformCodeVO4GetPlatformCode.setPlatformCode(plat.getPlatformId());
                 platformCodeVO4GetPlatformCode.setPlatformName(plat.getPlatformName());
-                platformCodes.add(platformCodeVO4GetPlatformCode);
+                // 切换到新账号管理系统的平台不显示啦
+                if (!actMgrBp.getPlatCode().contains(actMgrBp.getNewPlatCode(plat.getPlatformId()))) {
+                    platformCodes.add(platformCodeVO4GetPlatformCode);
+                }
             }
-            // 刊登--->ebyay 只需要账号, 目前返回这4个平台
-        	/*PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode1 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode1.setPlatformCode("SHOPEE");
-        	platformCodeVO4GetPlatformCode1.setPlatformName("SHOPEE");
-        	platformCodes.add(platformCodeVO4GetPlatformCode1);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode2 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode2.setPlatformCode("eBay");
-        	platformCodeVO4GetPlatformCode2.setPlatformName("eBay");
-        	platformCodes.add(platformCodeVO4GetPlatformCode2);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode3 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode3.setPlatformCode("亚马逊");
-        	platformCodeVO4GetPlatformCode3.setPlatformName("亚马逊");
-        	platformCodes.add(platformCodeVO4GetPlatformCode3);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode4 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode4.setPlatformCode("LAZADA");
-        	platformCodeVO4GetPlatformCode4.setPlatformName("LAZADA");
-        	platformCodes.add(platformCodeVO4GetPlatformCode4);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode5 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode5.setPlatformCode("速卖通");
-        	platformCodeVO4GetPlatformCode5.setPlatformName("速卖通");
-        	platformCodes.add(platformCodeVO4GetPlatformCode5);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode6 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode6.setPlatformCode("JOOM");
-        	platformCodeVO4GetPlatformCode6.setPlatformName("JOOM");
-        	platformCodes.add(platformCodeVO4GetPlatformCode6);
-        	
-        	PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode7 = new PlatformCodeVO4GetPlatformCode();
-        	platformCodeVO4GetPlatformCode7.setPlatformCode("Jumia");
-        	platformCodeVO4GetPlatformCode7.setPlatformName("Jumia");
-        	platformCodes.add(platformCodeVO4GetPlatformCode7);*/
-
             getPlatformCodeRespVO.setList(platformCodes);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {

@@ -128,7 +128,7 @@ public interface IDataRuleService {
 	 * @return
 	 * @version: 2019年5月20日 上午11:47:20
 	 */
-	ResultVO getPlatformByConditions(JSONObject jsonObject);
+	ResultVO getPlatformByConditions(JSONObject jsonObject) throws Exception;
 
 	ResultVO getPlatformCode(String jsonStr);
 	
