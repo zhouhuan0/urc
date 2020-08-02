@@ -1398,6 +1398,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
                         String operValues = expressionDO.getOperValues();
                         List<String> operValuesArr = StringUtility.jsonToList(operValues, String.class);
                         expression.setOperValuesArr(operValuesArr);
+                        expressionDO.setOperValues(null);
                     }
                     if (!StringUtility.isNullOrEmpty(expressionDO.getEntityCode())) {
                         Entity entity = entityMapper.selectEntityByCode(expressionDO.getEntityCode());
