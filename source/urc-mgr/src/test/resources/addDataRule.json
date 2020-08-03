@@ -27,7 +27,7 @@
             "expressionId": 1545202513269003000,
             "fieldCode": "F_PlsShopAccount",
             "operValuesArr": ["{\"platformId\":\"eBay\",\"platformName\":\"eBay\",\"lstShop\":[{\"shopId\":\"12deeping\",\"shopName\":\"12deeping\"}]}", "{\"platformId\":\"LAZADA\",\"platformName\":\"LAZADA\",\"lstShop\":[{\"shopId\":\"adhere\",\"shopName\":\"adhere\"}]}", "{\"platformId\":\"SHOPEE\",\"platformName\":\"SHOPEE\",\"lstShop\":[{\"shopId\":\"aashop.id\",\"shopName\":\"aashop.id\"}]}"],
-            "parentExpressionId": 1545202513268002800
+            "parentExpressionId": 1545202513268003800
           }]
         }
       }]

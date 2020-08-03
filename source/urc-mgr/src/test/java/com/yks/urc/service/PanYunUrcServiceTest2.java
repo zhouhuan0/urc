@@ -533,7 +533,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Test
     public void getPlatformShopByEntityCode() throws Exception {
-        String jsonStr = "{\"entityCode\":\"E_PlsShopAccount\",\"lstSellerId\":[\"cn1525069322gjcn\",\"cn1525069561iluv\",\"123456\"],\"platformCode\":\"速卖通\"}";
+        String jsonStr = "{\"entityCode\":\"E_PlatformShopSite\",\"ticket\":\"1c7a3a0950cdbb54df53a5e2c2b9e2c9\",\"operator\":\"panyun\",\"personName\":\"潘韵\",\"funcVersion\":\"f0a0e5ec405fde2ecc1fc9f2259f3a4e\",\"moduleUrl\":\"/user/usermanagementlist/datapauthorization/\",\"requestId\":\"08031112341394f1bb8356d75600f01b\",\"deviceName\":\"Chrome浏览器\"}";
         ResultVO resultVO = dataRuleService.getPlatformCode(jsonStr);
         System.out.println(StringUtility.toJSONString(resultVO));
     }

@@ -3,9 +3,11 @@ package com.yks.urc.service.impl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -1938,6 +1940,9 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     }
 
+    @Autowired
+    private ISerializeBp serializeBp;
+
     @Override
     public ResultVO getPlatformByConditions(JSONObject jsonObject) throws Exception {
         String entityCode = jsonObject.getString("entityCode");//实体code【必填】例如oms为E_PlatformShopSite
@@ -1948,6 +1953,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if ("E_PlatformShopSite".equalsIgnoreCase(entityCode)) {
             //通过调oms的接口获取销售账号
             ResultVO<List<PlatformCodeVO4GetPlatformCode>> resultVO = orderManageService.getAllOnlinePlatformCode();
+            resultVO = serializeBp.json2ObjNew(serializeBp.obj2JsonNonEmpty(resultVO), new TypeReference<ResultVO<List<PlatformCodeVO4GetPlatformCode>>>() {
+            });
             if (!CollectionUtils.isEmpty(resultVO.data)) {
                 // 切换到新账号管理系统的平台不显示啦
                 resultVO.data = resultVO.data.stream().filter(c -> !actMgrBp.getPlatCode().contains(c.getPlatformCode())).collect(Collectors.toList());
