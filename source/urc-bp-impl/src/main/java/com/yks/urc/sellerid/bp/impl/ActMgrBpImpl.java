@@ -144,7 +144,7 @@ public class ActMgrBpImpl implements IActMgrBp {
         while (req.getPageNo() < totalPage) {
             // 下一页
             req.setPageNo(req.getPageNo() + 1);
-            resp = getAccountInfoWithLog(req);
+            resp = getAccountInfoWithLog(ctx, req);
             lstAct = resp.data.getList();
             // 入库
             if (!CollectionUtils.isEmpty(lstAct)) {
