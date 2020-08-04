@@ -32,7 +32,7 @@ public interface ISysDataruleContext {
     List<Integer> getRoleIds();
 
     /**
-     * 获取要发MQ的sysKey,pull新账号管理系统后调用
+     * 获取要更新最后修改时间的sysKey,pull新账号管理系统后调用;是否发MQ,在发MQ最后一环节，由 datarule.notSendMq.sysKey 配置决定
      *
      * @return
      * @Author panyun@youkeshu.com

@@ -104,10 +104,6 @@ public class SysDataruleContextImplKeFu implements ISysDataruleContext {
 
     @Override
     public List<String> getSendMqSysKey() {
-        // 客服已使用pull方式,不用发消息了
-        if (mqBp.getNotSendMqSysKey().contains(getSysKey())) {
-            return null;
-        }
         return Arrays.asList(getSysKey());
     }
 }

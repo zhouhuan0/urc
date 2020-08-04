@@ -398,10 +398,10 @@ public class ActMgrBpImpl implements IActMgrBp {
             lstRef.add(refVO);
         }
         userAccountRefMapper.insertOrUpdate(lstRef);
-        lstAct.forEach(u -> saveOneUser(u));
+        lstAct.forEach(u -> saveOneUser(ctx, u));
     }
 
-    private void saveOneUser(UserInfo4Third u) {
+    private void saveOneUser(ISysDataruleContext ctx, UserInfo4Third u) {
         // 处理 urc_data_rule 表
         String userName = u.getUserName();
         List<DataRuleDO> lstDr = dataRuleMapper.getDataRuleByUserName(Arrays.asList(userName));
@@ -418,7 +418,10 @@ public class ActMgrBpImpl implements IActMgrBp {
             dataRuleId = lstDr.get(0).getDataRuleId();
         }
         // 处理 urc_data_rule_sys 表
-        List<String> lstSysKey = Arrays.asList("001", "008");
+        List<String> lstSysKey = ctx.getSendMqSysKey();// Arrays.asList("001", "008");
+        if (CollectionUtils.isEmpty(lstSysKey)) {
+            return;
+        }
         for (String sysKey : lstSysKey) {
             DataRuleSysDO drs = dataRuleSysMapper.getDataRuleSysBy(userName, sysKey);
             if (drs == null) {
