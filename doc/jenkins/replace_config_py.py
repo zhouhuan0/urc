@@ -136,7 +136,10 @@ class ConfigReplace(object):
             if os.path.isdir(i_path):
                 self.list_file(i_path)
             else:
-                self.conf_files.append(i_path)
+                if (".DS_Store"!=i):
+                    # 忽略 mac 下的 .DS_Store 文件
+                    #print("f=", i)
+                    self.conf_files.append(i_path)
 
     # @staticmethod
     # def replace_config(file, conf_map, tmp_conf_path):

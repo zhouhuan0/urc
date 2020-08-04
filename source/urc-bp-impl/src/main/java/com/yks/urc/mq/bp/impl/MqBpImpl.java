@@ -63,7 +63,7 @@ public class MqBpImpl implements IMqBp {
     @Autowired
     private ISerializeBp serializeBp;
 
-    private List<String> getNotSendMqSysKey() {
+    public List<String> getNotSendMqSysKey() {
         return serializeBp.json2ObjNew(configBp.getString("datarule.notSendMq.sysKey", "[\"001\"]"), new TypeReference<List<String>>() {
         });
     }

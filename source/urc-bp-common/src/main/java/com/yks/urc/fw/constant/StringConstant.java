@@ -39,4 +39,7 @@ public class StringConstant {
 
     public static String E_PlsShopAccount = "E_PlsShopAccount";
     public static String F_PlsShopAccount = "F_PlsShopAccount";
+
+    public static String E_CustomerService = "E_CustomerService";
+    public static String F_CustomerService = "F_CustomerService";
 }

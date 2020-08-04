@@ -19,4 +19,24 @@ public interface ISysDataruleContext {
     List<String> filterActMgrPlatCode(List<String> operValuesArr);
 
     void handleIfAll(DataRuleSysVO sysVO);
+
+    String getLastPointKey();
+
+    /**
+     * 获取要pull的从新账号管理系统roleId,空表示所有
+     *
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2020-08-04 16:30
+     */
+    List<Integer> getRoleIds();
+
+    /**
+     * 获取要发MQ的sysKey,pull新账号管理系统后调用
+     *
+     * @return
+     * @Author panyun@youkeshu.com
+     * @Date 2020-08-04 16:33
+     */
+    List<String> getSendMqSysKey();
 }

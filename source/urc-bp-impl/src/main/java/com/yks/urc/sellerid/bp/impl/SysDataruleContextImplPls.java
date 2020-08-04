@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -98,9 +99,31 @@ public class SysDataruleContextImplPls implements ISysDataruleContext {
         return sysVO.row.getSubWhereClause().get(0).getOperValuesArr();
     }
 
+    public static String getLastPointKey(String sysKey) {
+        return String.format("sycActMgr.lastPoint.%s", sysKey);
+    }
+
     @Override
     public void handleIfAll(DataRuleSysVO sysVO) {
         handleIfAll(getOperValuesArr(sysVO));
+    }
+
+    @Override
+    public String getLastPointKey() {
+        return getLastPointKey(getSysKey());
+    }
+
+    @Override
+    public List<Integer> getRoleIds() {
+        return null;
+    }
+
+    @Autowired
+    private SysDataruleContextImplOms oms;
+
+    @Override
+    public List<String> getSendMqSysKey() {
+        return Arrays.asList(getSysKey(), oms.getSysKey());
     }
 
     public static void main(String[] args) {

@@ -28,9 +28,9 @@ public interface IActMgrBp {
 
     void doAccountSyncTask(String param) throws Exception;
 
-    void saveAct(List<UserInfo4Third> lstAct);
+    void saveAct(ISysDataruleContext ctx, List<UserInfo4Third> lstAct);
 
-    void syncAct(TaskParamVO taskParamVO, String dtModifyStart, String dtModifyEnd) throws Exception;
+    void syncAct(ISysDataruleContext ctx, TaskParamVO taskParamVO, String dtModifyStart, String dtModifyEnd) throws Exception;
 
     void mergeAct(List<DataRuleSysVO> lstDr);
 

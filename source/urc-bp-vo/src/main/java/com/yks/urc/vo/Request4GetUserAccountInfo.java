@@ -24,6 +24,11 @@ public class Request4GetUserAccountInfo {
     private String site;
 
     /**
+     * 角色ID
+     */
+    private List<Integer> roleIds;
+
+    /**
      * 更新时间（开始）
      */
     private String modifyDateStart;
@@ -42,6 +47,14 @@ public class Request4GetUserAccountInfo {
      * 每页条数
      */
     private int pageSize;
+
+    public List<Integer> getRoleIds() {
+        return roleIds;
+    }
+
+    public void setRoleIds(List<Integer> roleIds) {
+        this.roleIds = roleIds;
+    }
 
     public List<String> getUserNames() {
         return userNames;

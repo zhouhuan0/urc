@@ -24,4 +24,6 @@ public interface IMqBp {
      * @see
      */
     void send2Mq(List<DataRuleVO> dataRuleVOList);
+
+    List<String> getNotSendMqSysKey();
 }

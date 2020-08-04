@@ -2,6 +2,7 @@ package com.yks.urc.sellerid.bp.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
@@ -13,33 +14,35 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Component
-public class SysDataruleContextImplOms implements ISysDataruleContext {
+public class SysDataruleContextImplKeFu implements ISysDataruleContext {
     @Override
     public String getSysKey() {
-        return "001";
+        return "009";
     }
+
 
     @Override
     public String getEntityCode() {
-        return StringConstant.E_PlatformShopSite;
+        return StringConstant.E_CustomerService;
     }
 
     @Override
     public String getFieldCode() {
-        return StringConstant.F_PlatformShopSite;
+        return StringConstant.F_CustomerService;
     }
 
     @Override
     public String getQueryEntityCode() {
-        return StringConstant.E_PlatformShopSite;
+        return StringConstant.E_CustomerService;
     }
 
     @Override
     public String getPlatformId(PlatformAccount4Third t) {
-        return t.getPlatformCode();
+        return t.getPlatformCodeOld();
     }
 
     @Autowired
@@ -48,35 +51,17 @@ public class SysDataruleContextImplOms implements ISysDataruleContext {
     @Autowired
     private ISerializeBp serializeBp;
 
-
-    @Override
-    public List<String> filterActMgrPlatCode(List<String> operValuesArr) {
-        if (CollectionUtils.isEmpty(operValuesArr)) {
-            return operValuesArr;
-        }
-
-        for (int i = 0; i < operValuesArr.size(); i++) {
-            OmsPlatformVO platformVO = serializeBp.json2ObjNew(operValuesArr.get(i), new TypeReference<OmsPlatformVO>() {
-            });
-            if (platformVO == null) {
-                continue;
-            }
-
-            if (actMgrBp.getPlatCode().contains(platformVO.platformId)) {
-                operValuesArr.remove(i);
-                i--;
-            }
-        }
-        sysDataruleContextImplPls.handleIfAll(operValuesArr);
-        return operValuesArr;
-    }
-
     @Autowired
     private SysDataruleContextImplPls sysDataruleContextImplPls;
 
     @Override
+    public List<String> filterActMgrPlatCode(List<String> operValuesArr) {
+        return sysDataruleContextImplPls.filterActMgrPlatCode(operValuesArr);
+    }
+
+    @Override
     public void handleIfAll(DataRuleSysVO sysVO) {
-        sysDataruleContextImplPls.handleIfAll(SysDataruleContextImplPls.getOperValuesArr(sysVO));
+        sysDataruleContextImplPls.handleIfAll(sysVO);
     }
 
     @Override
@@ -86,11 +71,43 @@ public class SysDataruleContextImplOms implements ISysDataruleContext {
 
     @Override
     public List<Integer> getRoleIds() {
-        return null;
+//        0    账号管理员
+//        10    销售总监
+//        11    销售经理
+//        12    销售主管
+//
+//
+//        20    客服总监
+//        21    客服经理
+//        22    客服主管
+//        23    客服专员
+//
+//        101    财务专员
+//
+//        107    资产专员
+//        108    特殊总监
+        return Arrays.asList(0,
+                10,
+                11,
+                12,
+                20,
+                21,
+                22,
+                23,
+                101,
+                107,
+                108);
     }
+
+    @Autowired
+    private IMqBp mqBp;
 
     @Override
     public List<String> getSendMqSysKey() {
-        return Arrays.asList(getSysKey(), sysDataruleContextImplPls.getSysKey());
+        // 客服已使用pull方式,不用发消息了
+        if (mqBp.getNotSendMqSysKey().contains(getSysKey())) {
+            return null;
+        }
+        return Arrays.asList(getSysKey());
     }
 }

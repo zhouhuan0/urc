@@ -56,18 +56,31 @@ public class ActMgrBpImpl implements IActMgrBp {
         if (paramVO.minutes == null) {
             paramVO.minutes = 120;
         }
+        if (paramVO.pageSize == null) {
+            paramVO.pageSize = 100;
+        }
 
-        Request4GetAccountInfo req = new Request4GetAccountInfo();
-        String pointKey = "sycActMgr.lastPoint";
-        req.setModifyDateStart(configBp.getStringFromDb(pointKey, "2020-05-01 00:00:00"));
-        req.setModifyDateEnd(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(Math.min(
-                new Date().getTime(),
-                StringUtility.convertToDate(req.getModifyDateStart(), null).getTime() + paramVO.minutes * 60 * 1000L))));
+        List<ISysDataruleContext> lstCtx =
+                Arrays.asList(
+                        // OMS/PLS
+                        getSysDataruleContext("001"),
+                        // 客服
+                        getSysDataruleContext("009"));
 
-        syncAct(paramVO, req.getModifyDateStart(), req.getModifyDateEnd());
+        for (ISysDataruleContext ctx : lstCtx) {
+            Request4GetAccountInfo req = new Request4GetAccountInfo();
+            String pointKey = "sycActMgr.lastPoint";
+            pointKey = ctx.getLastPointKey();
+            req.setModifyDateStart(configBp.getStringFromDb(pointKey, "2020-07-01 00:00:00"));
+            req.setModifyDateEnd(StringUtility.getDateTime_yyyyMMddHHmmssSSS(new Date(Math.min(
+                    new Date().getTime() - 30 * 1000L,
+                    StringUtility.convertToDate(req.getModifyDateStart(), null).getTime() + paramVO.minutes * 60 * 1000L))));
 
-        // 更新lastPoint
-        configBp.update2Db(pointKey, req.getModifyDateEnd());
+            syncAct(ctx, paramVO, req.getModifyDateStart(), req.getModifyDateEnd());
+
+            // 更新lastPoint
+            configBp.update2Db(pointKey, req.getModifyDateEnd());
+        }
     }
 
     @Autowired
@@ -104,13 +117,14 @@ public class ActMgrBpImpl implements IActMgrBp {
         return configVO.lstUserName.contains(userName);
     }
 
-    public void syncAct(TaskParamVO paramVO, String dtModifyStart, String dtModifyEnd) throws Exception {
+    public void syncAct(ISysDataruleContext ctx, TaskParamVO paramVO, String dtModifyStart, String dtModifyEnd) throws Exception {
         Request4GetUserAccountInfo req = new Request4GetUserAccountInfo();
         req.setModifyDateStart(dtModifyStart);
         req.setModifyDateEnd(dtModifyEnd);
         req.setPageNo(1);
         req.setPageSize(paramVO.pageSize);
-        ResultVO<Response4GetUserAccountInfo> resp = getAccountInfoWithLog(req);
+        req.setRoleIds(ctx.getRoleIds());
+        ResultVO<Response4GetUserAccountInfo> resp = getAccountInfoWithLog(ctx, req);
         if (!VoHelper.ifSuccess(resp)) {
             throw new Exception(serializeBp.obj2JsonNonEmpty(req));
         }
@@ -121,9 +135,9 @@ public class ActMgrBpImpl implements IActMgrBp {
         List<UserInfo4Third> lstAct = resp.data.getList();
         // 入库
         if (!CollectionUtils.isEmpty(lstAct)) {
-            BeanProvider.getBean(IActMgrBp.class).saveAct(lstAct);
+            BeanProvider.getBean(IActMgrBp.class).saveAct(ctx, lstAct);
             // 发MQ
-            sendMq(lstAct);
+            sendMq(ctx, lstAct);
         }
 
         int totalPage = (int) (resp.data.getTotal() % req.getPageSize() > 0 ? resp.data.getTotal() / req.getPageSize() + 1 : resp.data.getTotal() / req.getPageSize());
@@ -134,15 +148,15 @@ public class ActMgrBpImpl implements IActMgrBp {
             lstAct = resp.data.getList();
             // 入库
             if (!CollectionUtils.isEmpty(lstAct)) {
-                BeanProvider.getBean(IActMgrBp.class).saveAct(lstAct);
+                BeanProvider.getBean(IActMgrBp.class).saveAct(ctx, lstAct);
                 // 发MQ
-                sendMq(lstAct);
+                sendMq(ctx, lstAct);
             }
         }
     }
 
-    private void sendMq(List<UserInfo4Third> lstAct) {
-        List<String> lstSysKey = getSysKey();
+    private void sendMq(ISysDataruleContext ctx, List<UserInfo4Third> lstAct) {
+        List<String> lstSysKey = ctx.getSendMqSysKey();
         if (CollectionUtils.isEmpty(lstAct) || CollectionUtils.isEmpty(lstSysKey)) {
             return;
         }
@@ -346,9 +360,9 @@ public class ActMgrBpImpl implements IActMgrBp {
     @Autowired
     private ITaskProvider taskProvider;
 
-    private ResultVO<Response4GetUserAccountInfo> getAccountInfoWithLog(Request4GetUserAccountInfo req) {
+    private ResultVO<Response4GetUserAccountInfo> getAccountInfoWithLog(ISysDataruleContext ctx, Request4GetUserAccountInfo req) {
         ResultVO<Response4GetUserAccountInfo> resp = actMgrService.getUserAccountInfo(serializeBp.obj2JsonNonEmpty(req));
-        taskProvider.writeInfoLog(String.format("getUserAccountInfo_%s_%s", req.getModifyDateStart(),
+        taskProvider.writeInfoLog(String.format("requestActMgr_%s_%s_%s", ctx.getQueryEntityCode(), req.getModifyDateStart(),
                 req.getModifyDateEnd()), String.format("%s\r\n%s", serializeBp.obj2JsonNonEmpty(req), serializeBp.obj2JsonNonEmpty(resp)));
         return resp;
     }
@@ -367,7 +381,7 @@ public class ActMgrBpImpl implements IActMgrBp {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void saveAct(List<UserInfo4Third> lstAct) {
+    public void saveAct(ISysDataruleContext ctx, List<UserInfo4Third> lstAct) {
         if (CollectionUtils.isEmpty(lstAct)) {
             return;
         }
@@ -377,7 +391,7 @@ public class ActMgrBpImpl implements IActMgrBp {
         for (UserInfo4Third u : lstAct) {
             ActmgrUserAccountRefVO refVO = new ActmgrUserAccountRefVO();
             refVO.setUserName(u.getUserName());
-            refVO.setEntityCode(StringConstant.E_PlatformShopSite);
+            refVO.setEntityCode(ctx.getQueryEntityCode());
             refVO.setActJson(serializeBp.obj2JsonNonEmpty(u));
             refVO.setCreater(sessionBp.getOperator());
             refVO.setModifier(sessionBp.getOperator());
