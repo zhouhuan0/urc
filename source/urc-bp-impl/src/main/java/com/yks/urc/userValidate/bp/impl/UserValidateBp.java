@@ -650,34 +650,15 @@ public class UserValidateBp implements IUserValidateBp {
                 if (deviceChange != null) {
                     return deviceChange;
                 }
-                //校验ticket
-//				if(!StringUtility.stringEqualsIgnoreCase(u.ticket, ticket)) {
-//					// 缓存不为null
-//					loginLogDO.remark=String.format("funcPermitValidate ,request:[%s],此次的ticket:[%s]};从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket));
-//					userLogBp.insertLog(loginLogDO);
-//					logger.error(String.format("funcPermitValidate login timeout request = %s ,ticket =%s;从redis中获取的ticket信息:[%s]", StringUtility.toJSONString(map), ticket, StringUtility.toJSONString(u.ticket)));
-//					return VoHelper.getResultVO("100002", "登录超时:ticket已过期");
-//				}
-
             }
             // 刷新数据库ticket过期时间
             ticketUpdateBp.refreshExpiredTime(operator,deviceType, ticket);
 
-         /*   if (lstWhiteApiUrl.contains(apiUrl)) {
-                return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确");
-            }*/
             if (this.lstWhiteApiUrl().contains(apiUrl)) {
                 return VoHelper.getResultVO(StringConstant.STATE_100006, "用户功能权限版本正确(请求api为白名单)");
             }
 
-            // 校验功能权限版本
-            String newFuncVersion = getFuncVersionFromDbOrCache(operator);
-            if (!StringUtility.stringEqualsIgnoreCase(urcVersion, newFuncVersion)) {
-                Map<String, String> dataMap = new HashMap<>();
-                dataMap.put("newFuncVersion", newFuncVersion);
-                logger.error(String.format("funcPermitValidate func error  request =%s ,newFuncVersion =%s", StringUtility.toJSONString(map), newFuncVersion));
-                return VoHelper.getResultVO("100007", "功能权限版本错误", dataMap);
-            }
+            // 不校验功能权限版本了
 
             // 校验是否有权限
             String sysKey = getSysKeyByApiUrl(apiUrl);
@@ -767,24 +748,24 @@ public class UserValidateBp implements IUserValidateBp {
     @Autowired
     private IPermitStatBp permitStatBp;
 
-    /**
-     * 从db或cache获取funcVersion
-     *
-     * @param userName
-     * @param
-     * @return
-     * @author panyun@youkeshu.com
-     * @date 2018年6月14日 下午4:43:27
-     */
-    public String getFuncVersionFromDbOrCache(String userName) {
-        String funcVersion = cacheBp.getFuncVersion(userName);
-        if (funcVersion == null) {
-            GetAllFuncPermitRespVO ca = permitStatBp.updateUserPermitCache(userName);
-            if (ca != null)
-                return ca.funcVersion;
-        }
-        return funcVersion;
-    }
+//    /**
+//     * 从db或cache获取funcVersion
+//     *
+//     * @param userName
+//     * @param
+//     * @return
+//     * @author panyun@youkeshu.com
+//     * @date 2018年6月14日 下午4:43:27
+//     */
+//    public String getFuncVersionFromDbOrCache(String userName) {
+//        String funcVersion = cacheBp.getFuncVersion(userName);
+//        if (funcVersion == null) {
+//            GetAllFuncPermitRespVO ca = permitStatBp.updateUserPermitCache(userName);
+//            if (ca != null)
+//                return ca.funcVersion;
+//        }
+//        return funcVersion;
+//    }
 
     /**
      * 判断是否有当前api权限
