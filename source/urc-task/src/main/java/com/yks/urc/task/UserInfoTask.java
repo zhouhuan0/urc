@@ -10,7 +10,7 @@ package com.yks.urc.task;
 
 import com.yks.pls.task.quatz.BaseTask;
 import com.yks.urc.session.bp.api.ISessionBp;
-import com.yks.urc.user.bp.impl.UserBpImpl;
+import com.yks.urc.user.bp.api.IUserBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class UserInfoTask extends BaseTask {
     private static Logger logger = LoggerFactory.getLogger(UserInfoTask.class);
 
     @Autowired
-    private UserBpImpl userBp;
+    private IUserBp userBp;
 
     @Autowired
     private ISessionBp sessionBp;
