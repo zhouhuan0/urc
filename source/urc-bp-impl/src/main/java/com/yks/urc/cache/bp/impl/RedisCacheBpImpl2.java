@@ -1,7 +1,6 @@
 package com.yks.urc.cache.bp.impl;
 
 import com.yks.distributed.cache.core.Cache;
-import com.yks.distributed.cache.core.DistributedCache;
 import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.entity.PermissionDO;
@@ -12,7 +11,6 @@ import com.yks.urc.log.LogLevel;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;

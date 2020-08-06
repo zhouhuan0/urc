@@ -1,38 +1,24 @@
 
 package com.yks.urc.service.impl;
 
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.github.stuxuhai.jpinyin.PinyinFormat;
-import com.github.stuxuhai.jpinyin.PinyinHelper;
-import com.yks.urc.enums.CommonMessageCodeEnum;
-import com.yks.urc.fw.StringUtil;
-import com.yks.distributed.lock.core.DistributedReentrantLock;
-import com.yks.urc.dingding.client.DingApiProxy;
-import com.yks.urc.dingding.client.vo.DingDeptVO;
-import com.yks.urc.dingding.client.vo.DingUserVO;
-import com.yks.urc.entity.*;
+import com.yks.urc.entity.CsPlatform;
+import com.yks.urc.entity.CsPlatformGroup;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.*;
-import com.yks.urc.operation.bp.api.IOperationBp;
+import com.yks.urc.mapper.CsPlatformGroupMapper;
+import com.yks.urc.mapper.CsPlatformMapper;
 import com.yks.urc.service.api.ICsService;
-import com.yks.urc.service.api.IPersonService;
-import com.yks.urc.vo.*;
-import com.yks.urc.vo.helper.Query;
+import com.yks.urc.vo.ResultVO;
 import com.yks.urc.vo.helper.VoHelper;
-import org.apache.commons.lang3.StringUtils;
-import org.h2.mvstore.DataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Date;
 
 @Service
 public class CsServiceImpl implements ICsService {

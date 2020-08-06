@@ -4,7 +4,6 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
-import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.dingding.client.vo.DingUserVO;
@@ -12,7 +11,6 @@ import com.yks.urc.entity.Organization;
 import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.enums.CommonMessageCodeEnum;
-import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
@@ -24,7 +22,10 @@ import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.IPersonService;
 import com.yks.urc.session.bp.api.ISessionBp;
-import com.yks.urc.vo.*;
+import com.yks.urc.vo.PageResultVO;
+import com.yks.urc.vo.PersonVO;
+import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.UserInfoVO;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -83,7 +84,6 @@ public class PersonServiceImpl implements IPersonService {
     }
 
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
-    DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
 
     @Autowired
     private ILockBp lockBp;

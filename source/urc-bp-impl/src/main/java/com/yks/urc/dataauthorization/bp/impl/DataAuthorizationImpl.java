@@ -10,17 +10,18 @@ package com.yks.urc.dataauthorization.bp.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.enums.CommonMessageCodeEnum;
-import com.yks.distributed.lock.core.DistributedReentrantLock;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.PlatformDO;
 import com.yks.urc.entity.ShopSiteDO;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.lock.bp.api.ILockBp;
 import com.yks.urc.mapper.PlatformMapper;
 import com.yks.urc.mapper.ShopSiteMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
@@ -64,17 +65,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Autowired
     private IOperationBp operationBp;
     @Autowired
-    private ICacheBp  cacheBp;
-    /**
-     *  ebay entity
-     */
-    private String E_PlsShopAccount ="E_PlsShopAccount";
-    /**
-     *  客服 entity
-     */
-    private String E_CustomerService ="E_CustomerService";
+    private ICacheBp cacheBp;
 
-    DistributedReentrantLock platformLock = new DistributedReentrantLock("syncPlatform");
+    private String syncPlatformLockName = "syncPlatform";
+
+    @Autowired
+    private ILockBp lockBp;
 
     /**
      * 同步平台信息
@@ -87,7 +83,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO syncPlatform(String operator) {
-        if (platformLock.tryLock()) {
+        if (lockBp.tryLock(syncPlatformLockName)) {
             try {
                 String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
                 //将拿到的结果转为json ,获取平台信息
@@ -97,14 +93,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
                 } else {
                     JSONArray dataArray = platformObject.getJSONArray("data");
                     List<PlatformResp> platformResps = StringUtility.jsonToList(dataArray.toString(), PlatformResp.class);
-                    platformResps =platformResps.stream().filter(distinctByKey(platformResp -> platformResp.code)).collect(Collectors.toList());
+                    platformResps = platformResps.stream().filter(distinctByKey(platformResp -> platformResp.code)).collect(Collectors.toList());
                     if (platformResps != null && platformResps.size() > 0) {
                         platformMapper.deletePlatform();
                         logger.info("清理平台表完成");
                         for (PlatformResp platformResp : platformResps) {
                             PlatformDO platformDO = new PlatformDO();
                             platformDO.setPlatformId(StringUtility.trimPattern_Private(platformResp.code, "\\s"));
-                            platformDO.setPlatformName(StringUtility.trimPattern_Private(platformResp.name,"\\s"));
+                            platformDO.setPlatformName(StringUtility.trimPattern_Private(platformResp.name, "\\s"));
                             platformDO.setCreateBy(operator);
                             platformDO.setModifiedBy(operator);
                             platformDO.setCreateTime(StringUtility.getDateTimeNow());
@@ -119,7 +115,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
             } catch (Exception e) {
                 throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步平台数据出错..", e);
             } finally {
-                platformLock.unlock();
+                lockBp.unlock(syncPlatformLockName);
             }
         } else {
 
@@ -136,7 +132,8 @@ public class DataAuthorizationImpl implements DataAuthorization {
         }
     }
 
-    DistributedReentrantLock shopSiteLock = new DistributedReentrantLock("syncShopSite");
+    private String syncShopSiteLockName = "syncShopSite";
+
     /**
      * 同步站点和店铺信息
      *
@@ -149,22 +146,22 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO syncShopSite(String operator) {
-        if (shopSiteLock.tryLock()) {
+        if (lockBp.tryLock(syncShopSiteLockName)) {
             try {
                 List<PlatformDO> platformDOS = platformMapper.selectAll();
-                if (platformDOS == null && platformDOS.size() ==0){
+                if (platformDOS == null && platformDOS.size() == 0) {
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "数据库查找的平台信息为空");
                 }
                 shopSiteMapper.deleteShopSite();
                 logger.info("清理账号站点表完成");
                 for (PlatformDO platformDO : platformDOS) {
                     // 将获取的平台进行转码
-                    String platforms = URLEncoder.encode(platformDO.getPlatformId(),"utf-8");
-                    StringBuffer url =new StringBuffer();
+                    String platforms = URLEncoder.encode(platformDO.getPlatformId(), "utf-8");
+                    StringBuffer url = new StringBuffer();
                     url.append(GET_SHOP_AND_SITE).append("&platform=").append(platforms);
-                    logger.info(String.format("请求的地址为:[%s ]",url));
+                    logger.info(String.format("请求的地址为:[%s ]", url));
                     String getShopAndSiteResult = HttpUtility.httpGet(String.valueOf(url));
-                    logger.info(String.format("获取的结果为:[%s ]",getShopAndSiteResult));
+                    logger.info(String.format("获取的结果为:[%s ]", getShopAndSiteResult));
                     if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
                         throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "获取账号站点信息为空");
                     }
@@ -178,17 +175,17 @@ public class DataAuthorizationImpl implements DataAuthorization {
 
                         for (ShopAndSiteResp shopAndSiteResp : shopAndSiteResps) {
                             // 组装数据入库
-                            ShopSiteDO shopSiteDO = assembleShopSiteDO(operator, shopSiteDOS, shopAndSiteResp);
+                             assembleShopSiteDO(operator, shopSiteDOS, shopAndSiteResp);
                             if (shopSiteDOS.size() >= 1000) {
                                 //去重
-                                shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
+                                shopSiteDOS = shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                                 shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                                 shopSiteDOS.clear();
                             }
                         }
                         if (shopSiteDOS.size() != 0) {
                             //去重
-                            shopSiteDOS =shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
+                            shopSiteDOS = shopSiteDOS.stream().filter(distinctByKey(ShopSiteDO::getShopSystem)).collect(Collectors.toList());
                             shopSiteMapper.insertBatchShopSite(shopSiteDOS);
                         }
                     }
@@ -200,7 +197,7 @@ public class DataAuthorizationImpl implements DataAuthorization {
             } catch (Exception e) {
                 throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步账号站点数据出错..", e);
             } finally {
-                shopSiteLock.unlock();
+                lockBp.unlock(syncShopSiteLockName);
             }
         } else {
             logger.info("同步userInfo数据正在执行...,");
@@ -217,7 +214,8 @@ public class DataAuthorizationImpl implements DataAuthorization {
     }
 
     /**
-     *  入缓存
+     * 入缓存
+     *
      * @param
      * @return
      * @Author lwx
@@ -254,13 +252,14 @@ public class DataAuthorizationImpl implements DataAuthorization {
             }
         });
         // 入 ebay缓存
-        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(ebayCache),E_PlsShopAccount);
+        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(ebayCache), StringConstant.E_PlsShopAccount);
         // 入客服缓存
-        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(customerCache),E_CustomerService);
+        cacheBp.setAllPlatformShop(StringUtility.toJSONString_NoException(customerCache), StringConstant.E_CustomerService);
     }
 
     /**
-     *   数据组装
+     * 数据组装
+     *
      * @param
      * @return
      * @Author lwx
@@ -268,12 +267,12 @@ public class DataAuthorizationImpl implements DataAuthorization {
      */
     public ShopSiteDO assembleShopSiteDO(String operator, List<ShopSiteDO> shopSiteDOS, ShopAndSiteResp shopAndSiteResp) {
         ShopSiteDO shopSiteDO = new ShopSiteDO();
-        shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code,"\\s"));
-        shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid,"\\s"));
-        shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system,"\\s"));
-        shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop,"\\s"));
-        shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code,"\\s"));
-        shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name,"\\s"));
+        shopSiteDO.setPlatformId(StringUtility.trimPattern_Private(shopAndSiteResp.platform_code, "\\s"));
+        shopSiteDO.setSellerId(StringUtility.trimPattern_Private(shopAndSiteResp.sellerid, "\\s"));
+        shopSiteDO.setShopSystem(StringUtility.trimPattern_Private(shopAndSiteResp.shop_system, "\\s"));
+        shopSiteDO.setShop(StringUtility.trimPattern_Private(shopAndSiteResp.shop, "\\s"));
+        shopSiteDO.setSiteId(StringUtility.trimPattern_Private(shopAndSiteResp.site_code, "\\s"));
+        shopSiteDO.setSiteName(StringUtility.trimPattern_Private(shopAndSiteResp.site_name, "\\s"));
         shopSiteDO.setCreateTime(StringUtility.getDateTimeNow());
         shopSiteDO.setCreateBy(operator);
         shopSiteDO.setModifiedTime(StringUtility.getDateTimeNow());
@@ -285,19 +284,19 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsPlatformVO> getPlatformList(String operator) {
         List<OmsPlatformVO> omsPlatformVoList = new ArrayList<>();
-       // String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
+        // String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
         //将拿到的结果转为json ,获取平台信息
-       // JSONObject platformObject = StringUtility.parseString(getPlatformResult);
-        List<PlatformDO> platformDOS =platformMapper.selectAll();
-        if (platformDOS != null && platformDOS.size() >0){
+        // JSONObject platformObject = StringUtility.parseString(getPlatformResult);
+        List<PlatformDO> platformDOS = platformMapper.selectAll();
+        if (platformDOS != null && platformDOS.size() > 0) {
             platformDOS.forEach(platformDO -> {
                 OmsPlatformVO omsPlatformVO = new OmsPlatformVO();
-                omsPlatformVO.platformId =platformDO.getPlatformId();
+                omsPlatformVO.platformId = platformDO.getPlatformId();
                 //如果没有name , 将id作为name
-                if (StringUtility.isNullOrEmpty(platformDO.getPlatformName())){
-                    omsPlatformVO.platformName =omsPlatformVO.platformId;
-                }else {
-                    omsPlatformVO.platformName=platformDO.getPlatformName();
+                if (StringUtility.isNullOrEmpty(platformDO.getPlatformName())) {
+                    omsPlatformVO.platformName = omsPlatformVO.platformId;
+                } else {
+                    omsPlatformVO.platformName = platformDO.getPlatformName();
                 }
                 omsPlatformVoList.add(omsPlatformVO);
             });
@@ -331,38 +330,38 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Override
     public List<OmsShopVO> getShopList(String operator, String platform) {
         List<OmsShopVO> omsShopVoList = new ArrayList<>();
-        if (StringUtility.isNullOrEmpty(platform)){
+        if (StringUtility.isNullOrEmpty(platform)) {
             return null;
         }
-       List<ShopSiteDO> shopSiteDOS= shopSiteMapper.selectShopSite(platform);
-        if (shopSiteDOS != null && shopSiteDOS.size() >0){
+        List<ShopSiteDO> shopSiteDOS = shopSiteMapper.selectShopSite(platform);
+        if (shopSiteDOS != null && shopSiteDOS.size() > 0) {
             shopSiteDOS.forEach(shopSiteDO -> {
                 OmsShopVO omsShopVO = new OmsShopVO();
-                OmsSiteVO omsSiteVO =new OmsSiteVO();
-                omsShopVO.shopId =shopSiteDO.getShopSystem();
+                OmsSiteVO omsSiteVO = new OmsSiteVO();
+                omsShopVO.shopId = shopSiteDO.getShopSystem();
                 if (StringUtility.isNullOrEmpty(omsShopVO.shopId)) {
                     return;
                 }
-                if (StringUtility.isNullOrEmpty(shopSiteDO.getShop())){
-                    omsShopVO.shopName=omsShopVO.shopId;
-                }else {
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getShop())) {
+                    omsShopVO.shopName = omsShopVO.shopId;
+                } else {
                     omsShopVO.shopName = shopSiteDO.getShop();
                 }
-                omsShopVO.lstSite =new ArrayList<>();
-                omsSiteVO.siteId =shopSiteDO.getSiteId();
-                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)){
+                omsShopVO.lstSite = new ArrayList<>();
+                omsSiteVO.siteId = shopSiteDO.getSiteId();
+                if (StringUtility.isNullOrEmpty(omsSiteVO.siteId)) {
                     return;
                 }
-                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())){
-                   omsSiteVO.siteName =omsSiteVO.siteId;
-                }else {
-                    omsSiteVO.siteName =shopSiteDO.getSiteName();
+                if (StringUtility.isNullOrEmpty(shopSiteDO.getSiteName())) {
+                    omsSiteVO.siteName = omsSiteVO.siteId;
+                } else {
+                    omsSiteVO.siteName = shopSiteDO.getSiteName();
                 }
                 omsShopVO.lstSite.add(omsSiteVO);
                 omsShopVoList.add(omsShopVO);
             });
         }
-    /*    *//*String url = GET_SHOP_AND_SITE + "&platform=" + platform;
+        /*    *//*String url = GET_SHOP_AND_SITE + "&platform=" + platform;
         String getShopAndSiteResult = HttpUtility.httpGet(url);
         if (StringUtility.isNullOrEmpty(getShopAndSiteResult)) {
             throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(),"获取站点信息为空");
@@ -416,16 +415,18 @@ public class DataAuthorizationImpl implements DataAuthorization {
             System.out.println(omsShopVO.shopName);
         }
     }
+
     /**
      * 对象去重构造器
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2018/10/17 15:48
      */
-    public static <T>Predicate<T> distinctByKey(Function<? super T,Object> keyExtractor){
-        Map<Object,Boolean> seen =new ConcurrentHashMap<>();
-        return object ->seen.putIfAbsent(keyExtractor.apply(object),Boolean.TRUE) ==null;
+    public static <T> Predicate<T> distinctByKey(Function<? super T, Object> keyExtractor) {
+        Map<Object, Boolean> seen = new ConcurrentHashMap<>();
+        return object -> seen.putIfAbsent(keyExtractor.apply(object), Boolean.TRUE) == null;
     }
 
 }
