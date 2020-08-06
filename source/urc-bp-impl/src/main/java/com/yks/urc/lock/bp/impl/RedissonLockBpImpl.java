@@ -55,11 +55,6 @@ public class RedissonLockBpImpl implements ILockBp {
 
     }
 
-    @Override
-    public Boolean tryLockSeparateWarehouse(String yksOrderId) {
-        return tryLock(getSeparateWarehouseLockName(yksOrderId));
-    }
-
     private String getLockName(String lockName) {
         return String.format("lk_%s", lockName);
     }
@@ -81,11 +76,6 @@ public class RedissonLockBpImpl implements ILockBp {
             logger.error(lockName, ex);
         }
         return false;
-    }
-
-    @Override
-    public void unlockSeparateWarehouse(String yksOrderId) {
-        unlock(getSeparateWarehouseLockName(yksOrderId));
     }
 
     @Override

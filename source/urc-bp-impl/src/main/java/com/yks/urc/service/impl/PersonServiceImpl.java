@@ -13,14 +13,17 @@ import com.yks.urc.entity.Person;
 import com.yks.urc.entity.PersonOrg;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.lock.bp.api.ILockBp;
 import com.yks.urc.mapper.IUserMapper;
 import com.yks.urc.mapper.OrganizationMapper;
 import com.yks.urc.mapper.PersonMapper;
 import com.yks.urc.mapper.PersonOrgMapper;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.service.api.IPersonService;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
@@ -82,84 +85,87 @@ public class PersonServiceImpl implements IPersonService {
     ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
     DistributedReentrantLock lock = new DistributedReentrantLock("SynPersonOrgFromDing");
 
+    @Autowired
+    private ILockBp lockBp;
+
+    private String syncDingDingLockName = "SynPersonOrgFromDing";
+
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public ResultVO SynPersonOrgFromDing(String userName) {
-        if (lock.tryLock()) {
-            logger.info("开始同步钉钉数据");
-            //得到钉钉所有的部门
-            try {
-                //先准备初始化参数
-                fixedThreadPool.submit(new Runnable() {
-                    @Transactional(rollbackFor = Exception.class)
-                    @Override
-                    public void run() {
-                        List<DingDeptVO> dingAllDept;
-                        try {
-                            dingAllDept = dingApiProxy.getDingAllDept();
-                            Map<String, List> initInfo = initInfoValues(dingAllDept, userName);
-
-                            //删除部门表org，删除人员表person,删除，关系表
-                            organizationMapper.deleteAllOrg();
-                            personMapper.deleteAllPerson();
-                            personOrgMapper.deleteAllPersonOrg();
-
-                            //初始化人员表person,org,personOrg
-                            List<Organization> orgList = initInfo.get("org");
-                            List<Person> personList = initInfo.get("person");
-                            List<PersonOrg> personOrgList = initInfo.get("personOrg");
-                            if (orgList != null && orgList.size() > 0) {
-                                //插入部门表
-                                organizationMapper.insertBatchOrg(orgList);
-                            }
-                            if (personList != null && personList.size() > 0) {
-                                //dingUserId + phoneNum作为维度去重Person
-                                Set<Person> setData = new HashSet<Person>();
-                                setData.addAll(personList);
-                                personList.clear();
-                                personList = new ArrayList<>(setData);
-                                //插入人员表
-                                personMapper.insertBatchPerson(personList);
-                            }
-
-                            if (personOrgList != null && personOrgList.size() > 0) {
-                                //插入部门人员表
-                                personOrgMapper.insertBatchPersonOrg(personOrgList);
-                            }
-
-                            operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
-                        } catch (Exception e) {
-                            logger.error("同步钉钉数据出错，message={}", e.getMessage());
-                            operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
-                            throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步钉钉数据出错..");
-                        }
-                    }
-                });
-
-                TaskVO taskVO = new TaskVO();
-                taskVO.taskId = "1";
-                return VoHelper.getSuccessResult(taskVO);
-
-            } catch (Exception e) {
-                logger.error("同步钉钉数据出错，message={}", e.getMessage());
-                operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
-                throw new URCBizException(CommonMessageCodeEnum.FAIL.getCode(), "同步钉钉数据出错..");
-            } finally {
-                lock.unlock();
-                logger.info("同步钉钉数据完成");
-            }
-        } else {
-            if ("system".equals(userName)) {
-                //手动触发正在执行..记录日志
-                operationBp.addLog(this.getClass().getName(), "手动触发正在执行..", null);
-            } else {
-                //定时任务触发正在执行..记录日志
-                operationBp.addLog(this.getClass().getName(), "定时任务正在执行..", null);
-            }
-            TaskVO taskVO = new TaskVO();
-            taskVO.taskId = "1";
-            return VoHelper.getSuccessResult(taskVO);
+    public void saveDingDingInfo(Map<String, List> initInfo) throws Exception {
+        if (CollectionUtils.isEmpty(initInfo)) {
+            return;
         }
+        //删除部门表org，删除人员表person,删除，关系表
+        organizationMapper.deleteAllOrg();
+        personMapper.deleteAllPerson();
+        personOrgMapper.deleteAllPersonOrg();
+
+        //初始化人员表person,org,personOrg
+        List<Organization> orgList = initInfo.get("org");
+        List<Person> personList = initInfo.get("person");
+        List<PersonOrg> personOrgList = initInfo.get("personOrg");
+        if (orgList != null && orgList.size() > 0) {
+            //插入部门表
+            organizationMapper.insertBatchOrg(orgList);
+        }
+        if (personList != null && personList.size() > 0) {
+            //dingUserId + phoneNum作为维度去重Person
+            Set<Person> setData = new HashSet<Person>();
+            setData.addAll(personList);
+            personList.clear();
+            personList = new ArrayList<>(setData);
+            //插入人员表
+            personMapper.insertBatchPerson(personList);
+        }
+
+        if (personOrgList != null && personOrgList.size() > 0) {
+            //插入部门人员表
+            personOrgMapper.insertBatchPersonOrg(personOrgList);
+        }
+
+        operationBp.addLog(this.getClass().getName(), "同步钉钉数据成功..", null);
+    }
+
+    @Autowired
+    private ISessionBp sessionBp;
+
+    public ResultVO pullAndSaveDingDingInfo() throws Exception {
+        if (!lockBp.tryLock(syncDingDingLockName)) {
+            return VoHelper.getSuccessResult("未获取到锁");
+        }
+
+        try {
+            // 获取组织架构
+            List<DingDeptVO> dingAllDept = dingApiProxy.getDingAllDept();
+            // 递归获取组织架构下的人员
+            Map<String, List> initInfo = initInfoValues(dingAllDept, sessionBp.getOperator());
+            // 入库
+            BeanProvider.getBean(IPersonService.class).saveDingDingInfo(initInfo);
+            return VoHelper.getSuccessResult("同步完成");
+        } catch (Exception ex) {
+            logger.error("pullAndSaveDingDingInfo", ex);
+            throw ex;
+        } finally {
+            lockBp.unlock(syncDingDingLockName);
+        }
+    }
+
+    @Override
+    public ResultVO SynPersonOrgFromDing(String userName) {
+        fixedThreadPool.submit(new Runnable() {
+            @Transactional(rollbackFor = Exception.class)
+            @Override
+            public void run() {
+                try {
+                    pullAndSaveDingDingInfo();
+                } catch (Exception e) {
+                    logger.error("同步钉钉数据出错", e);
+                    operationBp.addLog(this.getClass().getName(), "同步钉钉数据出错..", e);
+                }
+            }
+        });
+        return VoHelper.getSuccessResult("触发成功，请等待");
     }
 
 
@@ -292,10 +298,10 @@ public class PersonServiceImpl implements IPersonService {
     public ResultVO fuzzSearchPersonByName4Account(String operator, String userName, Integer exact, Integer pageData, Integer pageNum) {
         try {
             Integer start = 0;
-            if(pageNum != null && pageNum > 0) {
-                start = (pageNum - 1)* pageData;
+            if (pageNum != null && pageNum > 0) {
+                start = (pageNum - 1) * pageData;
             }
-            List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName,exact,start,pageData);
+            List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName, exact, start, pageData);
             return VoHelper.getSuccessResult(infoVOList);
         } catch (Exception e) {
             logger.error("未知错误", e);
@@ -307,7 +313,7 @@ public class PersonServiceImpl implements IPersonService {
     public ResultVO getDepartment(String orgLevel) {
         try {
             if (StringUtil.isEmpty(orgLevel)) {
-                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(),CommonMessageCodeEnum.PARAM_NULL.getDesc());
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
             }
             List<UserInfoVO> infoVOList = userMapper.getDepartmentByOrgLevel(Integer.valueOf(orgLevel));
 

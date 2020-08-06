@@ -1,8 +1,10 @@
 package com.yks.urc.user.bp.api;
 
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
+import com.yks.urc.entity.UserInfo;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.PageResultVO;
 import com.yks.urc.vo.ResultVO;
@@ -47,4 +49,5 @@ public interface IUserBp {
 
 	List<String> getUserName(String userName);
 
+    ResultVO updateAllUserInfo(List<UserInfo> userInfoList) throws Exception;
 }

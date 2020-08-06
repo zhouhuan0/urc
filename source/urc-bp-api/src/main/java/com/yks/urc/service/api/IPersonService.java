@@ -2,6 +2,10 @@ package com.yks.urc.service.api;
 
 import com.yks.urc.vo.PersonVO;
 import com.yks.urc.vo.ResultVO;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import java.util.List;
+import java.util.Map;
 
 public interface IPersonService {
 	
@@ -18,8 +22,8 @@ public interface IPersonService {
 	 * @return
 	 */
 	ResultVO getUserByUserInfo(PersonVO person,String pageNumber, String pageData);
-	
-	
+
+	void saveDingDingInfo(Map<String, List> initInfo) throws Exception;
 	
 	/**
 	 * 同步钉钉数据
@@ -27,6 +31,8 @@ public interface IPersonService {
 	 * @return
 	 */
 	ResultVO SynPersonOrgFromDing(String userName);
+
+	ResultVO pullAndSaveDingDingInfo() throws Exception;
 	/**
 	 * 通过名字模糊搜索用户信息
 	 * @param

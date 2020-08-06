@@ -9,6 +9,7 @@
 package com.yks.urc.task;
 
 import com.yks.pls.task.quatz.BaseTask;
+import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.impl.UserBpImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,21 +23,17 @@ public class UserInfoTask extends BaseTask {
     @Autowired
     private UserBpImpl userBp;
 
-    public static final String SYSTEM = "system";
-//	@Scheduled(cron = "0 0 2 * * ?")
-//    @Scheduled(cron = "0 0 */12 * * ?")
-    public void executeGetUserInfo() {
-        logger.info("开始同步用户数据");
-        try {
-            userBp.SynUserFromUserInfo(SYSTEM);
-            logger.info("用户数据同步完成");
-        } catch (Exception e) {
-            logger.error("同步用户数据出错:",e);
-        }
-    }
+    @Autowired
+    private ISessionBp sessionBp;
 
     @Override
     protected void doTaskSub(String param) throws Exception {
-        executeGetUserInfo();
+        logger.info("开始同步用户数据");
+        try {
+            userBp.SynUserFromUserInfo(sessionBp.getOperator());
+            logger.info("用户数据同步完成");
+        } catch (Exception e) {
+            logger.error("同步用户数据出错:", e);
+        }
     }
 }
