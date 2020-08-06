@@ -29,12 +29,6 @@ public class PermitRefreshTask extends BaseTask {
     @Autowired
     private IPermitInverseQueryBp permitInverseQueryBp;
 
-    //    @Scheduled(cron = "0/59 * * * * ?")
-//    public void doTaskSub() {
-//        permitInverseQueryBp.doTaskSub();
-//    }
-
-
     @Autowired
     private PermissionMapper permissionMapper;
 

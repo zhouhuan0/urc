@@ -11,6 +11,7 @@ import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.motan.MotanSession;
+import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.role.bp.api.IRoleLogBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IPermissionService;
@@ -275,17 +276,14 @@ public class RoleServiceImpl implements IRoleService {
             /*去重*/
             lstUserName = removeDuplicate(lstUserName);
             //保存权限改变的用户
-//            updateAffectedUserPermitCache.saveAffectedUser(lstUserName); //改为由定时任务执行
-            Long startTime = System.currentTimeMillis();
-            permitStatBp.updateUserPermitCache(lstUserName);
-            Long endTime = System.currentTimeMillis();
-            logger.info(String.format("updateUserPermitCache All 耗时 %s ms",(endTime - startTime)));
-
+            // 改为由定时任务执行
+            permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
         }
-        
-      
         return VoHelper.getSuccessResult();
     }
+
+    @Autowired
+    private IPermitRefreshTaskBp permitRefreshTaskBp;
 
     private void checkActive(RoleVO roleVO) {
         if (!roleVO.isForever()) {
@@ -723,10 +721,7 @@ public class RoleServiceImpl implements IRoleService {
         //删除角色的owner
         lstRoleId.stream().forEach(s -> ownerMapper.deleteOwnerByRoleId(s));
         //删除一个或多个角色时，将角色下的用户保存到urc_role_user_affected(等待定时updateUserPermitCache)
-        updateAffectedUserPermitCache.saveAffectedUser(userNames);
-        /*5、更新用户操作权限冗余表和缓存*/
-//        permitStatBp.updateUserPermitCache(userNames);
-
+        permitRefreshTaskBp.addPermitRefreshTask(userNames);
         
       //保存操作日志
         UrcLog urcLog = new UrcLog(operator, ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "删除角色", roleNames.toString(), jsonStr);
@@ -924,8 +919,9 @@ public class RoleServiceImpl implements IRoleService {
         }
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
-        /*4、更新用户操作权限冗余表和缓存*/
-        updateAffectedUserPermitCache.saveAffectedUser(userNames);
+        /*4、更新用户操作权限冗余表和缓存,入任务表，由定时任务处理 */
+        permitRefreshTaskBp.addPermitRefreshTask(userNames);
+//        updateAffectedUserPermitCache.saveAffectedUser(userNames);
 
         if (!CollectionUtils.isEmpty(roleIds)) {
             List<RoleDO> roleDOs = roleMapper.getRoleByRoleIds(roleIds);
@@ -1009,7 +1005,6 @@ public class RoleServiceImpl implements IRoleService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updateUsersOfRole(List<RoleVO> lstRole, String operator) {
-    	StringBuilder logStr = new StringBuilder();
         if (lstRole != null && lstRole.size() > 0) {
         	Set<String> roleNameList4Log = new HashSet<>();
         	Set<String> userNameList4Log = new HashSet<>();
@@ -1046,7 +1041,7 @@ public class RoleServiceImpl implements IRoleService {
                             userNames.add(userList.get(q).getUserName());
 //                            permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                         }
-                        updateAffectedUserPermitCache.saveAffectedUser(userNames);
+                        permitRefreshTaskBp.addPermitRefreshTask(userNames);
                     }
                     for (int j = 0; j < userNameList.size(); j++) {
                         UserRoleDO userRoleDO = new UserRoleDO();
@@ -1071,9 +1066,8 @@ public class RoleServiceImpl implements IRoleService {
                             List<String> userNames = new ArrayList<>();
                             for (int q = 0; q < userList.size(); q++) {
                                 userNames.add(userList.get(q).getUserName());
-//                                permitStatBp.updateUserPermitCache(userList.get(q).getUserName());
                             }
-                            updateAffectedUserPermitCache.saveAffectedUser(userNames);
+                            permitRefreshTaskBp.addPermitRefreshTask(userNames);
                         }
                         for (int j = 0; j < userNameList.size(); j++) {
                             UserRoleDO userRoleDO = new UserRoleDO();
@@ -1088,13 +1082,12 @@ public class RoleServiceImpl implements IRoleService {
                     }
                 }
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
-                	 List<String> userNames = new ArrayList<>();
+                    List<String> userNames = new ArrayList<>();
                     userRoleMapper.insertBatch(userRoleDOS);
                     for (int j = 0; j < userRoleDOS.size(); j++) {
                         userNames.add(userRoleDOS.get(j).getUserName());
-//                        permitStatBp.updateUserPermitCache(userRoleDOS.get(j).getUserName());
                     }
-                    updateAffectedUserPermitCache.saveAffectedUser(userNames);
+                    permitRefreshTaskBp.addPermitRefreshTask(userNames);
                 }
             }
           //保存操作日志
@@ -1251,8 +1244,7 @@ public class RoleServiceImpl implements IRoleService {
         UserRoleDO userRoleDO = new UserRoleDO();
         userRoleDO.setRoleId(roleId);
         List<String> lstUserName = userRoleMapper.getUserNameByRoleId(userRoleDO);
-        updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
-//        permitStatBp.updateUserPermitCache(lstUserName);
+        permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
         return VoHelper.getSuccessResult();
     }
 
@@ -1311,8 +1303,7 @@ public class RoleServiceImpl implements IRoleService {
                 operationBp.addLog(logger.getName(), String.format("设置角色过期:%s", StringUtility.toJSONString_NoException(lstRole)), null);
 
                 // 更新用户的权限：冗余表、缓存
-                updateAffectedUserPermitCache.saveAffectedUser(lstUserName);
-//                permitStatBp.updateUserPermitCache(lstUserName);
+                permitStatBp.updateUserPermitCache(lstUserName);
                 return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "处理完成");
             } else {
                 operationBp.addLog(logger.getName(), "没有角色过期", null);

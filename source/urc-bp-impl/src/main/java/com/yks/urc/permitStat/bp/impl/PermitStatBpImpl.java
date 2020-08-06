@@ -55,7 +55,6 @@ public class PermitStatBpImpl implements IPermitStatBp {
 		if (lstUserName == null || lstUserName.size() == 0) {
 			return;
 		}
-		permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
 		for (String userName : lstUserName) {
                 Long startTime = System.currentTimeMillis();
                 updateUserPermitCache(userName);

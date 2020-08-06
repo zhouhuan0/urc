@@ -246,60 +246,6 @@ public class PermissionServiceImpl implements IPermissionService {
 		} catch (Exception e) {
 			logger.error("saveSuperAdministrator error! {}",e);
 		}
-    	
-        
-        /*List<String> userNames = new ArrayList<>();
-        userNames.add("superAdministrator");
-        try {
-            updateAffectedUserPermitCache.saveAffectedUser(userNames);
-        } catch (Exception e) {
-            logger.error("Save super administrator to urc_role_user_affected exception when pushing menu tree",e);
-        }*/
-    }
-
-    /**
-     *  更新角色的权限, 角色下的用户 和缓存
-     * @param
-     * @return
-     * @Author lwx
-     * @Date 2018/11/12 12:00
-     */
-    private boolean updateRolePermissionAndCache(PermissionDO p) {
-        List<RolePermissionDO> rolePermissionDOS =rolePermissionMapper.getROlePermissionBySysKey(p.getSysKey());
-        if (CollectionUtils.isEmpty(rolePermissionDOS)){
-            return true;
-        }
-        List<Long> roleIds =new ArrayList<>();
-        rolePermissionDOS.forEach(rolePermissionDO -> {
-            if (rolePermissionDO.getRoleId() == null){
-                return;
-            }
-            //更新角色对应的权限,用户,缓存等
-            RolePermissionDO updatePermission =new RolePermissionDO();
-            updatePermission.setSysKey(rolePermissionDO.getSysKey());
-            updatePermission.setRoleId(rolePermissionDO.getRoleId());
-            updatePermission.setSelectedContext(p.getSysContext());
-            updatePermission.setModifiedBy(sessionBp.getOperator());
-            updatePermission.setModifiedTime(StringUtility.getDateTimeNow());
-            rolePermissionMapper.updateUserRoleByRoleId(updatePermission);
-            //获取所关联的角色id
-            roleIds.add(rolePermissionDO.getRoleId());
-        });
-        //去重
-        roleIds.stream().distinct();
-        Map dataMap =new HashMap();
-        dataMap.put("roleIds", roleIds);
-        /*3、获取roleIds角色对应的用户名*/
-        logger.info(String.format("获取的角色id为%s", roleIds));
-        if (CollectionUtils.isEmpty(roleIds)) {
-            logger.info("roleID 的集合为空");
-        }
-        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
-        logger.info(String.format("获取的用户名为%s", userNames));
-    /*4、更新用户操作权限冗余表和缓存*/
-        updateAffectedUserPermitCache.saveAffectedUser(userNames);
-//        permitStatBp.updateUserPermitCache(userNames);
-        return false;
     }
 
     @Override

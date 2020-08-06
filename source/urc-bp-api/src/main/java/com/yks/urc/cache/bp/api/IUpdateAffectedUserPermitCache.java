@@ -12,12 +12,6 @@ import java.util.List;
  */
 public interface IUpdateAffectedUserPermitCache {
     /**
-     * 删除角色时 将角色id和角色下的用户保存到urc_role_user_affected表
-     * @param userNames 用户域账号
-     */
-    void saveAffectedUser(List<String> userNames);
-
-    /**
      *刷新超级管理员的权限
      * @param roleId 角色id
      */

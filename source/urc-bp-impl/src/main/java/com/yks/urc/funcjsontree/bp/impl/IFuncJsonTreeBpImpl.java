@@ -18,6 +18,7 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.IRolePermissionMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.mapper.PermissionMapper;
+import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.vo.*;
@@ -207,11 +208,13 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
                 /*3、更新用户操作权限冗余表和缓存*/
         if (!CollectionUtils.isEmpty(userNames)) {
-            updateAffectedUserPermitCache.saveAffectedUser(userNames);
-//            permitStatBp.updateUserPermitCache(userNames);
+            permitRefreshTaskBp.addPermitRefreshTask(userNames);
         }
         return true;
     }
+
+    @Autowired
+    private IPermitRefreshTaskBp permitRefreshTaskBp;
 
     /**
      * 更新系统菜单树
@@ -326,9 +329,8 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
         logger.info(String.format("获取的用户名为%s", userNames));
         userNames = userNames.stream().distinct().collect(Collectors.toList());
-    /*4、更新用户操作权限冗余表和缓存*/
-        updateAffectedUserPermitCache.saveAffectedUser(userNames);
-//        permitStatBp.updateUserPermitCache(userNames);
+        /*4、更新用户操作权限冗余表和缓存*/
+        permitRefreshTaskBp.addPermitRefreshTask(userNames);
     }
 
     /**

@@ -108,7 +108,6 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 
     @Override
     public void doTaskSub(List<String> lstUser) {
-//        List<String> lstUser = userRoleMapper.getAllUserName();
         for (String userName : lstUser) {
             try {
                 GetAllFuncPermitRespVO respVO = permitStatBp.updateUserPermitCache(userName);
