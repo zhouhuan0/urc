@@ -417,7 +417,7 @@
 	uo.org_name AS orgName,uo.full_name_path AS parentOrgName
     FROM
         urc_user u
-        JOIN urc_person p ON u.ding_user_id = p.ding_user_id
+        JOIN urc_person p ON u.mobile = p.phone_num
         left join urc_person_org upo on p.ding_user_id = upo.ding_user_id
         LEFT JOIN urc_organization uo ON  upo.ding_org_id =uo.ding_org_id
     WHERE

@@ -41,7 +41,7 @@ public class TestOrgService extends BaseServiceTest {
 	@Test
 	public void testgetAllFuncPermit() throws Exception {
 		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
-		map.put("userName", "");
+		map.put("userName", "lengxiaoqin");
 		map.put("operator", operator);
 		//map.put("exact",1);
 		map.put("pageData",10);
@@ -49,11 +49,11 @@ public class TestOrgService extends BaseServiceTest {
 		String json = StringUtility.toJSONString(map);
 		MotanSession.initialSession(json);
 		resultVO = urcMgr.getUserInfoDetailByUserName(json);
-		map.put("orgLevel", "2");
-		map.put("operator", operator);
-		json = StringUtility.toJSONString(map);
-		MotanSession.initialSession(json);
-		resultVO = urcMgr.getDepartment(json);
+//		map.put("orgLevel", "2");
+//		map.put("operator", operator);
+//		json = StringUtility.toJSONString(map);
+//		MotanSession.initialSession(json);
+//		resultVO = urcMgr.getDepartment(json);
 		System.out.println(StringUtility.toJSONString(resultVO));
 
 	}
