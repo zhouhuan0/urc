@@ -41,7 +41,7 @@ public class TestOrgService extends BaseServiceTest {
 	@Test
 	public void testgetAllFuncPermit() throws Exception {
 		String jsonStr = "{\"data\":{\"sysKeys\":[]},\"operator\":\"zengzheng\"}";
-		map.put("userName", "");
+		map.put("userName", "yanyao");
 		map.put("operator", operator);
 		//map.put("exact",1);
 		map.put("pageData",10);

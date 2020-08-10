@@ -13,12 +13,16 @@ import com.yks.urc.sellerid.bp.api.ISellerIdBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.ResultVO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
 
 public class UrcMgrImpl implements IUrcMgr {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     @Autowired
     private IDataRuleService dataRuleService;
@@ -79,6 +83,7 @@ public class UrcMgrImpl implements IUrcMgr {
      * @Date 2020/5/21 16:13
      */
     @Override
+    @Log("根据用户账号信息模糊查询对应用户的详细信息")
     public ResultVO getUserInfoDetailByUserName(String json) throws Exception {
         JSONObject jsonObject = StringUtility.parseString(json);
         String operator = MotanSession.getRequest().getOperator();

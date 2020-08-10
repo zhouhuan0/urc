@@ -1,6 +1,7 @@
 
 package com.yks.urc.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.github.stuxuhai.jpinyin.PinyinFormat;
 import com.github.stuxuhai.jpinyin.PinyinHelper;
@@ -296,6 +297,7 @@ public class PersonServiceImpl implements IPersonService {
                 start = (pageNum - 1)* pageData;
             }
             List<UserInfoVO> infoVOList = userMapper.fuzzSearchUserByName4Account(userName,exact,start,pageData);
+            logger.info(String.format("fuzzSearchPersonByName4Account operator:%s,userName:%s,exact:%s,start:%s,pageData:%s  |   infoVOList:%s",userName,exact,start,pageData, JSON.toJSONString(infoVOList)));
             return VoHelper.getSuccessResult(infoVOList);
         } catch (Exception e) {
             logger.error("未知错误", e);
