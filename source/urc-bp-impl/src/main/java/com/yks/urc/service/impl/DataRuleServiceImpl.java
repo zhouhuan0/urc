@@ -1983,7 +1983,10 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 PlatformCodeVO4GetPlatformCode platformCodeVO4GetPlatformCode = new PlatformCodeVO4GetPlatformCode();
                 platformCodeVO4GetPlatformCode.setPlatformCode(platformDO.getPlatformId());
                 platformCodeVO4GetPlatformCode.setPlatformName(platformDO.getPlatformName());
-                platformCodes.add(platformCodeVO4GetPlatformCode);
+                // 切换到新账号管理系统的平台不显示啦
+                if (!actMgrBp.getPlatCode().contains(actMgrBp.getNewPlatCode(platformDO.getPlatformId()))) {
+                    platformCodes.add(platformCodeVO4GetPlatformCode);
+                }
             }
             getPlatformCodeRespVO.setList(platformCodes);
             return VoHelper.getSuccessResult(getPlatformCodeRespVO);
