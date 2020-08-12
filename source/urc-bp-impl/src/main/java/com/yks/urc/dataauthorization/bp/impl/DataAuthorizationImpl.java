@@ -10,6 +10,7 @@ package com.yks.urc.dataauthorization.bp.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.pls.task.quatz.ITaskProvider;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.PlatformDO;
@@ -72,6 +73,9 @@ public class DataAuthorizationImpl implements DataAuthorization {
     @Autowired
     private ILockBp lockBp;
 
+    @Autowired
+    private ITaskProvider taskProvider;
+
     /**
      * 同步平台信息
      *
@@ -85,9 +89,11 @@ public class DataAuthorizationImpl implements DataAuthorization {
     public ResultVO syncPlatform(String operator) {
         if (lockBp.tryLock(syncPlatformLockName)) {
             try {
-                String getPlatformResult = HttpUtility.httpGet(GET_PLATFORM);
+                String strResp = HttpUtility.httpGet(GET_PLATFORM);
+                taskProvider.writeInfoLog(String.format("requestOldActMgr_GET_PLATFORM"), String.format("%s\r\n%s", GET_PLATFORM, strResp));
+
                 //将拿到的结果转为json ,获取平台信息
-                JSONObject platformObject = StringUtility.parseString(getPlatformResult);
+                JSONObject platformObject = StringUtility.parseString(strResp);
                 if (platformObject.getInteger("state") != 200) {
                     throw new URCBizException("请求平台信息异常", ErrorCode.E_000000);
                 } else {
