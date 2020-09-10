@@ -97,15 +97,21 @@ public class PersonServiceImpl implements IPersonService {
         if (CollectionUtils.isEmpty(initInfo)) {
             return;
         }
-        //删除部门表org，删除人员表person,删除，关系表
-        organizationMapper.deleteAllOrg();
-        personMapper.deleteAllPerson();
-        personOrgMapper.deleteAllPersonOrg();
 
         //初始化人员表person,org,personOrg
         List<Organization> orgList = initInfo.get("org");
         List<Person> personList = initInfo.get("person");
         List<PersonOrg> personOrgList = initInfo.get("personOrg");
+
+        if (CollectionUtils.isEmpty(orgList) || CollectionUtils.isEmpty(personList) || CollectionUtils.isEmpty(personOrgList)) {
+            return;
+        }
+
+        //删除部门表org，删除人员表person,删除，关系表
+        organizationMapper.deleteAllOrg();
+        personMapper.deleteAllPerson();
+        personOrgMapper.deleteAllPersonOrg();
+
         if (orgList != null && orgList.size() > 0) {
             //插入部门表
             organizationMapper.insertBatchOrg(orgList);
