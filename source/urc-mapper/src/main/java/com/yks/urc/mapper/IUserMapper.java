@@ -177,4 +177,6 @@ public interface IUserMapper {
     List<UserInfoVO> getDepartmentByOrgLevel(Integer orgLevel);
 
     List<OrgTreeAndUserVO> getAllUser();
+
+    List<UserAndPersonDO>  selectUserNameAndPeronName(@Param("lstUserName") List<String> lstUserName);
 }

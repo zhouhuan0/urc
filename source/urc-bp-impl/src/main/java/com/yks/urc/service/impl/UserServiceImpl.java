@@ -1,9 +1,7 @@
 package com.yks.urc.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +50,7 @@ import com.yks.urc.vo.UserVO;
 import com.yks.urc.vo.WarehourseResponseVO;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.springframework.util.CollectionUtils;
 
 @Component
 public class UserServiceImpl implements IUserService {
@@ -560,6 +559,31 @@ public class UserServiceImpl implements IUserService {
         resultVO.msg = "搜索用户上网账号和用户名成功";
         resultVO.state = CommonMessageCodeEnum.SUCCESS.getCode();
         return resultVO;
+    }
+
+    @Override
+    public ResultVO searchMatchUserPerson(String jsonStr) {
+        try {
+            String keys = StringUtility.parseString(jsonStr).getString("keys");
+            if(StringUtility.isNullOrEmpty(keys)){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            }
+            List<String> lstUserName = JSONArray.parseArray(keys, String.class);
+            Map<String, Object> resultMap = new HashMap<>();
+            List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronName(lstUserName);
+            List<String> notOkList = new ArrayList<>();
+            if(!CollectionUtils.isEmpty(userAndPersonDOS)){
+                List<String> collect = userAndPersonDOS.stream().map(UserAndPersonDO::getUserName).collect(Collectors.toList());
+                lstUserName.removeAll(collect);
+                notOkList = lstUserName;
+            }
+            resultMap.put("notOkList",notOkList);
+            resultMap.put("okList",userAndPersonDOS == null ? Collections.EMPTY_LIST : userAndPersonDOS);
+            return VoHelper.getSuccessResult(resultMap);
+        } catch (Exception e) {
+            logger.error("searchMatchUserPerson error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "精确匹配搜索用户账号失败");
+        }
     }
 }
 

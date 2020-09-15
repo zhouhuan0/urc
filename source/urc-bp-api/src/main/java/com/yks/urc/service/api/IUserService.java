@@ -117,4 +117,6 @@ public interface IUserService {
 	ResultVO  getWarehouse(String josnStr) ;
 
 	ResultVO searchUserPerson(String jsonStr);
+
+	ResultVO searchMatchUserPerson(String jsonStr);
 }

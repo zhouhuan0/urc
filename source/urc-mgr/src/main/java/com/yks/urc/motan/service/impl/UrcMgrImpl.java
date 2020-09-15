@@ -158,4 +158,10 @@ public class UrcMgrImpl implements IUrcMgr {
     public ResultVO getAllOrgTreeAndUser(){
         return organizationService.getAllOrgTreeAndUserV2();
     }
+
+    @Log("精确匹配批量搜索用户账号")
+    @Override
+    public ResultVO  searchMatchUserPerson(String jsonStr)  {
+        return userService.searchMatchUserPerson(jsonStr);
+    }
 }

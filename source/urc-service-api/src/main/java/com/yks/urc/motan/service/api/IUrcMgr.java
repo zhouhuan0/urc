@@ -85,4 +85,11 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO getAllOrgTreeAndUser();
+
+    /**
+     *精确匹配批量搜索用户账号
+     * @param jsonStr
+     * @return
+     */
+    ResultVO searchMatchUserPerson(String jsonStr);
 }

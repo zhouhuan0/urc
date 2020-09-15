@@ -39,4 +39,12 @@ public class UserserviceTest extends BaseServiceTest {
         System.out.println(resultVO);
     }
 
+    @Test
+    public void test_searchMatchUserPerson(){
+        ResultVO resultVO = userService.searchMatchUserPerson("{\n" +
+                " \"keys\":[\"zhouhuan\",\"zhoukun1\"]\n" +
+                "}");
+        System.out.println(StringUtility.toJSONString(resultVO));
+    }
+
 }

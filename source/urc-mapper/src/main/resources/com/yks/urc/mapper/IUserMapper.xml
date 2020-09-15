@@ -446,4 +446,20 @@
         select po.ding_org_id `dingOrgId`,u.user_name `key`,chinese_name title
         from urc_person_org po inner join urc_user u on u.ding_user_id=po.ding_user_id
     </select>
+
+    <select id="selectUserNameAndPeronName" resultType="com.yks.urc.entity.UserAndPersonDO">
+        select uu.user_name as userName,up.person_name as personName
+        from urc_user uu LEFT JOIN urc_person up
+        ON uu.mobile=up.phone_num
+        <where>
+            uu.user_name in
+            <foreach collection="lstUserName" open="(" separator="," close=")" item="userName">
+                #{userName}
+            </foreach>
+            or up.person_name_collage in
+            <foreach collection="lstUserName" open="(" separator="," close=")" item="userName">
+                #{userName}
+            </foreach>
+        </where>
+    </select>
 </mapper>
