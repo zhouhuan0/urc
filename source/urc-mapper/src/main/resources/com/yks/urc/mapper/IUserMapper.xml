@@ -456,10 +456,6 @@
             <foreach collection="lstUserName" open="(" separator="," close=")" item="userName">
                 #{userName}
             </foreach>
-            or up.person_name_collage in
-            <foreach collection="lstUserName" open="(" separator="," close=")" item="userName">
-                #{userName}
-            </foreach>
         </where>
     </select>
 </mapper>
