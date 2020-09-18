@@ -571,16 +571,16 @@ public class UserServiceImpl implements IUserService {
             List<String> lstUserName = JSONArray.parseArray(keys, String.class);
             Map<String, Object> resultMap = new HashMap<>();
             List<UserAndPersonDO> userAndPersonDOS = iUserMapper.selectUserNameAndPeronName(lstUserName);
-            List<Map<String,Object>> notOkList = new ArrayList<>();
+            List<UserAndPersonDO> notOkList = new ArrayList<>();
             if(!CollectionUtils.isEmpty(userAndPersonDOS)){
                 List<String> collect = userAndPersonDOS.stream().map(UserAndPersonDO::getUserName).collect(Collectors.toList());
                 lstUserName.removeAll(collect);
             }
 
             for (String s : lstUserName) {
-                Map<String, Object> map = new HashMap<>();
-                map.put("userName",s);
-                notOkList.add(map);
+                UserAndPersonDO userAndPersonDO = new UserAndPersonDO();
+                userAndPersonDO.setUserName(s);
+                notOkList.add(userAndPersonDO);
             }
             resultMap.put("notOkList",notOkList);
             resultMap.put("okList",userAndPersonDOS == null ? Collections.EMPTY_LIST : userAndPersonDOS);
