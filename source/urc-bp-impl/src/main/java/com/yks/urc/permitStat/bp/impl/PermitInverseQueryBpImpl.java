@@ -145,8 +145,10 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
             });
         }
         fixedThreadPool.shutdown();
-        while (fixedThreadPool.isTerminated()) {//等待所有任务都执行结束
-           return;
+        while (true) {//等待所有任务都执行结束
+            if(fixedThreadPool.isTerminated()){
+                return;
+            }
         }
     }
 
