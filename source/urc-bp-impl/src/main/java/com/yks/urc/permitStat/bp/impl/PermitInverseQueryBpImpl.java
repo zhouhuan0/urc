@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +54,8 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 
     @Autowired
     private ISerializeBp serializeBp;
+
+    private ExecutorService fixedThreadPool;
     
     private static String excelTemp = "/opt/tmp/";
 
@@ -108,31 +112,41 @@ public class PermitInverseQueryBpImpl implements IPermitInverseQueryBp {
 
     @Override
     public void doTaskSub(List<String> lstUser) {
+        fixedThreadPool = Executors.newFixedThreadPool(5);
         for (String userName : lstUser) {
-            try {
-                GetAllFuncPermitRespVO respVO = permitStatBp.updateUserPermitCache(userName);
-                if (respVO == null || CollectionUtils.isEmpty(respVO.lstUserSysVO)) {
-                    permitItemUserMapper.deleteByUserName(userName);
-                    continue;
-                }
-                permitItemUserMapper.deleteByUserName(userName);
-                Set<FunctionVO> lstAllKey = new HashSet<>();
+            fixedThreadPool.submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        GetAllFuncPermitRespVO respVO = permitStatBp.updateUserPermitCache(userName);
+                        if (respVO == null || CollectionUtils.isEmpty(respVO.lstUserSysVO)) {
+                            permitItemUserMapper.deleteByUserName(userName);
+                            return;
+                        }
+                        permitItemUserMapper.deleteByUserName(userName);
+                        Set<FunctionVO> lstAllKey = new HashSet<>();
 
-                for (UserSysVO userSysVO : respVO.lstUserSysVO) {
-                    if (userSysVO == null || StringUtils.isBlank(userSysVO.context)) {
-                        continue;
-                    }
-                    SystemRootVO rootVO = serializeBp.json2ObjNew(userSysVO.context, new TypeReference<SystemRootVO>() {
-                    });
-                    lstAllKey.addAll(getAllPermitItem(rootVO));
+                        for (UserSysVO userSysVO : respVO.lstUserSysVO) {
+                            if (userSysVO == null || StringUtils.isBlank(userSysVO.context)) {
+                                continue;
+                            }
+                            SystemRootVO rootVO = serializeBp.json2ObjNew(userSysVO.context, new TypeReference<SystemRootVO>() {
+                            });
+                            lstAllKey.addAll(getAllPermitItem(rootVO));
 //                    scanMenu(rootVO.system.name, rootVO, lstAllKey);
+                        }
+                        if (!CollectionUtils.isEmpty(lstAllKey)) {
+                            permitItemUserMapper.addOrUpdatePermitItemUser(lstAllKey.stream().collect(Collectors.toList()), userName);
+                        }
+                    } catch (Exception ex) {
+                        logger.error(userName, ex);
+                    }
                 }
-                if (!CollectionUtils.isEmpty(lstAllKey)) {
-                    permitItemUserMapper.addOrUpdatePermitItemUser(lstAllKey.stream().collect(Collectors.toList()), userName);
-                }
-            } catch (Exception ex) {
-                logger.error(userName, ex);
-            }
+            });
+        }
+        fixedThreadPool.shutdown();
+        while (fixedThreadPool.isTerminated()) {//等待所有任务都执行结束
+           return;
         }
     }
 
