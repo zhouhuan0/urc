@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.Enum.PlatFormEnum;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
@@ -1846,13 +1847,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
             //通过调oms的接口获取销售账号
             return getSellerIdByOmsInterface(platformCode, keys);
         } else if ("E_PlsShopAccount".equalsIgnoreCase(entityCode)) {
+            //转换下平台code,刷数据时是用的订单里的数据导致平台code不一致
+            String plat = PlatFormEnum.getPlat(platformCode);
             // 刊登--->ebyay 只需要账号, 目前返回这4个平台
            /* platformIds.add("shopee");
             platformIds.add("ebay");
             platformIds.add("亚马逊");
             platformIds.add("lazada");
             platformIds.add("速卖通");*/
-            return dataRuleService.appointPlatformShopSiteBykeys(operator, platformCode, keys);
+            return dataRuleService.appointPlatformShopSiteBykeys(operator, plat, keys);
         } else if (entityCode.equalsIgnoreCase("E_CustomerService")) {
             //客服系统 --> 平台账号  站点
             return dataRuleService.appointPlatformShopSiteBykeys(operator, platformCode, keys);
