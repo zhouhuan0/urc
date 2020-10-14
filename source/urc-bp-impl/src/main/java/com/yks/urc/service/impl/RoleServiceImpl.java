@@ -1018,8 +1018,7 @@ public class RoleServiceImpl implements IRoleService {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不属于该角色的owner" + lstRole.get(i), ErrorCode.E_000003);
                     }
                 }
-                UserRoleDO userRole = new UserRoleDO();
-                List<UserRoleDO> userRoleDOS = new ArrayList<>();
+
                 List<String> userNameList = roleVO.getLstUserName();
                 userNameList4Log.addAll(userNameList);
                 if (userNameList == null || userNameList.size() <= 0 && lstRole.size() > 1) {
@@ -1027,6 +1026,7 @@ public class RoleServiceImpl implements IRoleService {
                     throw new URCBizException(CommonMessageCodeEnum.HANDLE_DATA_EXCEPTION.getCode(), "请至少选择一个用户");
                 }
 
+                /*UserRoleDO userRole = new UserRoleDO();
                 userRole.setRoleId(Long.valueOf(roleVO.getRoleId()));
                 List<UserDO> userList = userMapper.getUserByRoleId(userRole);
                 if (roleMapper.isSuperAdminAccount(operator)) {
@@ -1080,14 +1080,27 @@ public class RoleServiceImpl implements IRoleService {
                             userRoleDOS.add(userRoleDO);
                         }
                     }
+                }*/
+                List<UserRoleDO> userRoleDOS = new ArrayList<>();
+                for (int j = 0; j < userNameList.size(); j++) {
+                    UserRoleDO userRoleDO = new UserRoleDO();
+                    userRoleDO.setUserName(userNameList.get(j));
+                    userRoleDO.setRoleId(Long.valueOf(roleVO.getRoleId()));
+                    userRoleDO.setCreateBy(operator);
+                    userRoleDO.setCreateTime(new Date());
+                    userRoleDO.setModifiedBy(operator);
+                    userRoleDO.setModifiedTime(new Date());
+                    userRoleDOS.add(userRoleDO);
                 }
+
                 if (userRoleDOS != null && userRoleDOS.size() > 0) {
-                    List<String> userNames = new ArrayList<>();
+                    userRoleMapper.deleteByRoleId(Long.valueOf(roleVO.getRoleId()));
                     userRoleMapper.insertBatch(userRoleDOS);
+                   /* List<String> userNames = new ArrayList<>();
                     for (int j = 0; j < userRoleDOS.size(); j++) {
                         userNames.add(userRoleDOS.get(j).getUserName());
-                    }
-                    permitRefreshTaskBp.addPermitRefreshTask(userNames);
+                    }*/
+                    permitRefreshTaskBp.addPermitRefreshTask(userNameList);
                 }
             }
           //保存操作日志
