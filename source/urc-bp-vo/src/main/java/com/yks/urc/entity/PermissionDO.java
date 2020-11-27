@@ -32,6 +32,44 @@ public class PermissionDO {
     private String sysContext;
 
     private String apiUrlPrefixJson;
+
+    /**
+     * 是否ERP内部系统  0:不是  1:是
+     */
+    private Integer isInternalSystem;
+    /**
+     * 状态 0:禁用 1:启用
+     */
+    private Integer status;
+    /**
+     * 备注
+     */
+    private String remark;
+
+    public Integer getIsInternalSystem() {
+        return isInternalSystem;
+    }
+
+    public void setIsInternalSystem(Integer isInternalSystem) {
+        this.isInternalSystem = isInternalSystem;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     public Long getId() {
         return id;
     }

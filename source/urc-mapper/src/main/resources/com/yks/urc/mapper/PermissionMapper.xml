@@ -9,6 +9,9 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="is_internal_system"  property="isInternalSystem"/>
+        <result column="status"  property="status"/>
+        <result column="remark"  property="remark"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.PermissionDO">
         <result column="sys_context" jdbcType="LONGVARCHAR" property="sysContext"/>
@@ -22,7 +25,7 @@
 
 
     <sql id="Base_Column_List">
-    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time
+    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time,is_internal_system,status,remark
   </sql>
     <sql id="Blob_Column_List">
     sys_context

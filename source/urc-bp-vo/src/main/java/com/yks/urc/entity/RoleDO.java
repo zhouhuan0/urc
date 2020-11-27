@@ -57,6 +57,16 @@ public class RoleDO {
     private String remark;
 
     /**
+     * 类型 1:角色  2:岗位
+     */
+    private Integer roleType;
+    /**
+     * 岗位更新时间
+     */
+    private Date positionModifiedTime;
+
+
+    /**
      *   角色-功能权限关系表
      */
     private RolePermissionDO permissionDO;

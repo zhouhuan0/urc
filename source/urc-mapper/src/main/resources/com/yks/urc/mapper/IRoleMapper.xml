@@ -15,6 +15,8 @@
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="role_type"  property="roleType"/>
+        <result column="position_modified_time"  property="positionModifiedTime"/>
     </resultMap>
 
 
@@ -49,7 +51,7 @@
 
     <sql id="Base_Column_List">
      id,role_id, role_name, is_active, is_authorizable, is_forever, effective_time, expire_time,
-     create_time, create_by, modified_time, modified_by,remark
+     create_time, create_by, modified_time, modified_by,remark,role_type,position_modified_time
    </sql>
 
     <insert id="insert" parameterType="com.yks.urc.entity.RoleDO">
