@@ -122,6 +122,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     p.setApiUrlPrefixJson(StringUtility.toJSONString_NoException(root.apiUrlPrefix));
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
+                    p.setIsInternalSystem(root.system.isInternalSystem == null ? 1 : root.system.isInternalSystem );
                     // 将API 前缀置为null. 在存入sysContext
                     root.apiUrlPrefix = null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));

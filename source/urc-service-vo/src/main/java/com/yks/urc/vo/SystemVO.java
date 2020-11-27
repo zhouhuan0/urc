@@ -24,4 +24,6 @@ public class SystemVO implements Serializable {
     
 
     public String url;
+
+    public Integer isInternalSystem;
 }

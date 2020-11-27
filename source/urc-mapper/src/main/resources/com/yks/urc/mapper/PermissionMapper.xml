@@ -74,7 +74,7 @@
 
     <insert id="insertSysPermitDefine">
         insert into urc_permission (id, sys_name, sys_key,create_by, create_time, modified_by, modified_time,
-        sys_context,api_url_prefix_json)
+        sys_context,api_url_prefix_json,is_internal_system)
         values
         <foreach collection="lstPermit" item="mem" index="index"
                  separator=",">
@@ -82,7 +82,7 @@
             #{mem.id,jdbcType=BIGINT}, #{mem.sysName,jdbcType=CHAR}, #{mem.sysKey,jdbcType=CHAR},
             #{mem.createBy,jdbcType=VARCHAR}, #{mem.createTime,jdbcType=TIMESTAMP},
             #{mem.modifiedBy,jdbcType=VARCHAR},#{mem.modifiedTime,jdbcType=TIMESTAMP},
-            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR}
+            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{isInternalSystem}
             )
         </foreach>
     </insert>
@@ -126,7 +126,7 @@
 
     <update id="updateSysContextBySysKey">
         update urc_permission
-        set sys_name =#{sysName},api_url_prefix_json =#{apiUrlPrefixJson}, sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3)
+        set sys_name =#{sysName},api_url_prefix_json =#{apiUrlPrefixJson}, sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3),is_internal_system = #{isInternalSystem}
         where sys_key=#{sysKey}
     </update>
 
