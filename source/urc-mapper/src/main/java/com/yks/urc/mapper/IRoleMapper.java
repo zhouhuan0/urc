@@ -219,4 +219,6 @@ public interface IRoleMapper {
     Long selectAllSuperAdministrator();
 
     List<String> getAllAdminRoleId();
+
+    int insertOrUpdate(RoleDO roleDO);
 }

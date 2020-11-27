@@ -64,8 +64,6 @@ public class RoleDO {
      * 岗位更新时间
      */
     private Date positionModifiedTime;
-
-
     /**
      *   角色-功能权限关系表
      */
@@ -74,6 +72,22 @@ public class RoleDO {
     private List<RolePermissionDO> permissionDOList;
 
     private List<UserRoleDO> userRoleDOS;
+
+    public Integer getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Integer roleType) {
+        this.roleType = roleType;
+    }
+
+    public Date getPositionModifiedTime() {
+        return positionModifiedTime;
+    }
+
+    public void setPositionModifiedTime(Date positionModifiedTime) {
+        this.positionModifiedTime = positionModifiedTime;
+    }
 
     public Long getId() {
         return id;

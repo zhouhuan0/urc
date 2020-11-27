@@ -59,12 +59,12 @@
      (role_id,role_name, is_active,
       is_authorizable, is_forever, effective_time,
       expire_time, create_time, create_by,
-      modified_time, modified_by,remark)
+      modified_time, modified_by,remark,role_type,position_modified_time)
     values
      (#{roleId,jdbcType=TINYINT}, #{roleName,jdbcType=VARCHAR}, #{isActive,jdbcType=TINYINT},
       #{isAuthorizable,jdbcType=TINYINT}, #{isForever,jdbcType=TINYINT}, #{effectiveTime,jdbcType=TIMESTAMP},
       #{expireTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=VARCHAR},
-      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR})
+      #{modifiedTime,jdbcType=TIMESTAMP}, #{modifiedBy,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},#{roleType},#{positionModifiedTime})
   </insert>
    <update id="updateByRoleId" parameterType="com.yks.urc.entity.RoleDO">
       update urc_role
@@ -95,6 +95,12 @@
           </if>
           <if test="remark != null and remark != ''">
               remark = #{remark,jdbcType=VARCHAR},
+          </if>
+          <if test="roleType != null ">
+              role_type = #{roleType},
+          </if>
+          <if test="positionModifiedTime != null ">
+              position_modified_time = #{positionModifiedTime},
           </if>
       </set>
       where role_id = #{roleId,jdbcType=TINYINT}
@@ -444,5 +450,26 @@
         WHERE ur.user_name = #{userName}
     </select>
 
-
+    <insert id="insertOrUpdate" parameterType="com.yks.urc.entity.RoleDO">
+        insert into urc_role
+        (role_id,role_name, is_active,
+        is_authorizable, is_forever, effective_time,
+        expire_time, create_time, create_by,
+        modified_time, modified_by,remark,role_type,position_modified_time)
+       values
+       (#{roleId}, #{roleName}, #{isActive},
+       #{isAuthorizable}, #{isForever}, #{effectiveTime},
+       #{expireTime}, #{createTime}, #{createBy},
+       #{modifiedTime}, #{modifiedBy}, #{remark},#{roleType},#{positionModifiedTime})
+       ON DUPLICATE KEY UPDATE
+        role_name = VALUES(role_name),
+        modified_by = VALUES(modified_by),
+        is_active = VALUES(is_active),
+        effective_time = VALUES(effective_time),
+        expire_time = VALUES(expire_time),
+        position_modified_time = VALUES(position_modified_time),
+        is_forever = VALUES(is_forever),
+        remark = VALUES(remark),
+        is_authorizable = VALUES(is_authorizable)
+    </insert>
 </mapper>

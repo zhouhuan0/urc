@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.enums.RoleLogEnum;
 import com.yks.urc.fw.BeanProvider;
@@ -334,6 +335,8 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setModifiedBy(operator);
             roleDO.setModifiedTime(new Date());
             checkEffective(roleDO);
+            //标识为角色
+            roleDO.setRoleType(UrcConstant.RoleType.role);
             int rtn = roleMapper.insert(roleDO);
             //owner 入库操作
             insetOwnerDO(roleVO, roleId, operator);
@@ -359,6 +362,8 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setModifiedTime(new Date());
             roleDO.setRoleId(opRoleDO.getRoleId());
             checkEffective(roleDO);
+            //标识为角色
+            roleDO.setRoleType(UrcConstant.RoleType.role);
             roleMapper.updateByRoleId(roleDO);
             //删除原有的owner ,插入新的owner
             ownerMapper.deleteOwnerByRoleId(Long.valueOf(roleVO.roleId));
@@ -1147,6 +1152,8 @@ public class RoleServiceImpl implements IRoleService {
         roleDO.setCreateBy(operator);
         roleDO.setModifiedBy(operator);
         roleDO.setModifiedTime(StringUtility.getDateTimeNow());
+        //标识为角色
+        roleDO.setRoleType(UrcConstant.RoleType.role);
         roleMapper.insert(roleDO);
         //复制对应角色的owner, roleId 为复制后的角色的roleId ,owner 为源角色的owner, 创建者为当前操作人
         List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleId);

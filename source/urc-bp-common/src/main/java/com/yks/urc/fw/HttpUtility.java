@@ -122,8 +122,11 @@ public class HttpUtility {
 			httpPost = new HttpPost(url);
 			// 设置参数
 
-			StringEntity se = new StringEntity(paramBody);
-			httpPost.setEntity(se);
+			if (!StringUtility.isNullOrEmpty(paramBody)){
+				StringEntity se = new StringEntity(paramBody);
+				httpPost.setEntity(se);
+			}
+
 			RequestConfig requestConfig = RequestConfig.custom().setConnectTimeout(30 * 1000)
 						.setSocketTimeout(120 * 1000).build();
 			httpPost.setConfig(requestConfig);
