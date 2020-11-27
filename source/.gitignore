@@ -1,1 +1,4 @@
-/.project
+*.project
+*.prefs
+*.iml
+\.idea/
