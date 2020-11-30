@@ -75,7 +75,7 @@ public class HrBpImpl implements IHrBp {
             RoleDO roleDO = new RoleDO();
             roleDO.setRoleType(UrcConstant.RoleType.position);
             roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
-            roleDO.setAuthorizable(Boolean.FALSE);
+            roleDO.setIsAuthorizable(0);
             roleDO.setCreateBy(positionVO.getOperator());
             roleDO.setForever(Boolean.TRUE);
             roleDO.setModifiedBy(positionVO.getOperator());
@@ -89,6 +89,8 @@ public class HrBpImpl implements IHrBp {
             if(roleByRoleId == null){
                 addPosition(roleDO);
             }else {
+                roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
+                roleDO.setRemark(roleByRoleId.getRemark());
                 updatePosition(roleDO);
             }
         }

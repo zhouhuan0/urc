@@ -303,7 +303,7 @@
     <!--分页条件查询 , 包含owner-->
     <select id="listRolesByPage" parameterType="java.util.HashMap" resultMap="BaseResultMap">
         select  u.role_id, u.role_name, u.is_active, u.is_authorizable, u.is_forever, u.effective_time, u.expire_time,
-        u.create_time, u.create_by, u.modified_time, u.modified_by,u.remark
+        u.create_time, u.create_by, u.modified_time, u.modified_by,u.remark,u.role_type,u.position_modified_time
         from urc_role u
         <where>
             <!-- 是否启用-->
@@ -465,8 +465,6 @@
         role_name = VALUES(role_name),
         modified_by = VALUES(modified_by),
         is_active = VALUES(is_active),
-        effective_time = VALUES(effective_time),
-        expire_time = VALUES(expire_time),
         position_modified_time = VALUES(position_modified_time),
         is_forever = VALUES(is_forever),
         remark = VALUES(remark),

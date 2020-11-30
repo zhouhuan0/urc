@@ -53,7 +53,7 @@ public class RoleMapperTest extends BaseMapperTest {
     public void testInsert() {
         RoleDO roleDO = new RoleDO();
         roleDO.setActive(Boolean.TRUE);
-        roleDO.setAuthorizable(Boolean.TRUE);
+        roleDO.setIsAuthorizable(1);
         roleDO.setCreateBy("admin");
         roleDO.setEffectiveTime(new Date());
         roleDO.setCreateTime(new Date());

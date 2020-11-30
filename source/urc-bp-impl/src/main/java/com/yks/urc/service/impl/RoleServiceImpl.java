@@ -1,24 +1,37 @@
 package com.yks.urc.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.constant.UrcConstant;
+import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.enums.RoleLogEnum;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtil;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.mapper.*;
 import com.yks.urc.motan.MotanSession;
+import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
+import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.role.bp.api.IRoleLogBp;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IPermissionService;
+import com.yks.urc.service.api.IRoleService;
+import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -27,34 +40,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.Enum.ModuleCodeEnum;
-import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
-import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.RoleOwnerDO;
-import com.yks.urc.entity.RolePermissionDO;
-import com.yks.urc.entity.UrcLog;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserRoleDO;
-import com.yks.urc.exception.ErrorCode;
-import com.yks.urc.exception.URCBizException;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IRolePermissionMapper;
-import com.yks.urc.mapper.IUserMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
-import com.yks.urc.mapper.PermissionMapper;
-import com.yks.urc.mapper.RoleOwnerMapper;
-import com.yks.urc.operation.bp.api.IOperationBp;
-import com.yks.urc.permitStat.bp.api.IPermitStatBp;
-import com.yks.urc.seq.bp.api.ISeqBp;
-import com.yks.urc.service.api.IRoleService;
-import com.yks.urc.session.bp.api.ISessionBp;
-import com.yks.urc.user.bp.api.IUrcLogBp;
-import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.helper.VoHelper;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 角色操作service实现类
@@ -186,11 +173,19 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleDO roleDO : roleDOS) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(roleDO, roleVO);
+            roleVO.setAuthorizable((roleDO.getIsAuthorizable() != null && roleDO.getIsAuthorizable() == 1) ? true : false);
+            roleVO.setIsSupperAdmin((roleDO.getIsAuthorizable() == null || roleDO.getIsAuthorizable() != 2) ? false : true);
             roleVO.setRoleId(roleDO.getRoleId().toString());
             roleVO.setCreateTimeStr(roleDO.getCreateTime() != null ? DateUtil.formatDate(roleDO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null);
-            roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
+            if(roleDO.getRoleType() != null && StringUtility.stringEqualsIgnoreCaseObj(roleDO.getRoleType(),UrcConstant.RoleType.position)){
+                roleVO.setModifiedTimeStr(roleDO.getPositionModifiedTime() != null ? DateUtil.formatDate(roleDO.getPositionModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
+            }else{
+                roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
+            }
+
             roleVO.setExpireTimeStr(roleDO.getExpireTime() != null ? DateUtil.formatDate(roleDO.getExpireTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setEffectiveTimeStr(roleDO.getEffectiveTime() != null ? DateUtil.formatDate(roleDO.getEffectiveTime(), "yyyy-MM-dd HH:mm:ss") : null);
+
             roleVOS.add(roleVO);
             List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleDO.getRoleId());
             if (ownerDOS != null && ownerDOS.size() != 0) {
@@ -334,6 +329,7 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setCreateTime(new Date());
             roleDO.setModifiedBy(operator);
             roleDO.setModifiedTime(new Date());
+            roleDO.setIsAuthorizable(roleVO.isAuthorizable() ? 1 : 0);
             checkEffective(roleDO);
             //标识为角色
             roleDO.setRoleType(UrcConstant.RoleType.role);
@@ -361,6 +357,7 @@ public class RoleServiceImpl implements IRoleService {
             roleDO.setModifiedBy(operator);
             roleDO.setModifiedTime(new Date());
             roleDO.setRoleId(opRoleDO.getRoleId());
+            roleDO.setIsAuthorizable(roleVO.isAuthorizable() ? 1 : 0);
             checkEffective(roleDO);
             //标识为角色
             roleDO.setRoleType(UrcConstant.RoleType.role);

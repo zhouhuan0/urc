@@ -21,7 +21,7 @@ public class RoleDO {
     /**
      * 是否管理员角色
      */
-    private boolean isAuthorizable;
+    private Integer isAuthorizable;
     /**
      * 是否永久有效
      */
@@ -121,12 +121,12 @@ public class RoleDO {
         isActive = active;
     }
 
-    public boolean isAuthorizable() {
+    public Integer getIsAuthorizable() {
         return isAuthorizable;
     }
 
-    public void setAuthorizable(boolean authorizable) {
-        isAuthorizable = authorizable;
+    public void setIsAuthorizable(Integer isAuthorizable) {
+        this.isAuthorizable = isAuthorizable;
     }
 
     public boolean isForever() {

@@ -1,10 +1,8 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UserDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.vo.UserVO;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +31,7 @@ public class UserRoleMapperTest extends BaseMapperTest {
     public void testInsert() {
         RoleDO roleDO = new RoleDO();
         roleDO.setActive(Boolean.TRUE);
-        roleDO.setAuthorizable(Boolean.TRUE);
+        roleDO.setIsAuthorizable(1);
         roleDO.setCreateBy("admin");
         roleDO.setEffectiveTime(new Date());
         roleDO.setCreateTime(new Date());

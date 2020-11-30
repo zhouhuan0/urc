@@ -96,6 +96,29 @@ public class RoleVO implements Serializable {
      */
     public List<NameVO> lstOwnerInfo;
 
+    private boolean isSupperAdmin;
+
+    /**
+     * 类型 1:角色  2:岗位
+     */
+    private Integer roleType;
+
+    public Integer getRoleType() {
+        return roleType;
+    }
+
+    public void setRoleType(Integer roleType) {
+        this.roleType = roleType;
+    }
+
+    public boolean getIsSupperAdmin() {
+        return isSupperAdmin;
+    }
+
+    public void setIsSupperAdmin(boolean isSupperAdmin) {
+        this.isSupperAdmin = isSupperAdmin;
+    }
+
     public Integer getId() {
         return id;
     }
