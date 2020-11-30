@@ -32,7 +32,7 @@ public interface IUserBp {
 
 
 	/**
-	 * 获取用户所有系统功能权限及version
+	 * 获取用户所有系统功能权限及version(排除外部系统的功能权限)
 	 * @param operator
 	 * @return
 	 * @author panyun@youkeshu.com

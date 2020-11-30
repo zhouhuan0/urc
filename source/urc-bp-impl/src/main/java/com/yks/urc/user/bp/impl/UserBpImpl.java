@@ -50,6 +50,8 @@ public class UserBpImpl implements IUserBp {
 
     @Autowired
     private UserTicketMapper userTicketMapper;
+    @Autowired
+    private PermissionMapper permissionMapper;
     /**
      * token 请求地址
      */
@@ -450,11 +452,16 @@ public class UserBpImpl implements IUserBp {
                 permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
                 Collections.sort(permitCache.lstUserSysVO, myUserSysVOComparator);
                 for (UserSysVO us : permitCache.lstUserSysVO) {
+                    //排除外部系统
+                    if(!permissionMapper.isInternalSystem(us.sysKey)){
+                        continue;
+                    }
                     permitCache.lstSysRoot.add(us.context);
                 }
                 permitCache.lstUserSysVO = null;
             }
         }
+
         if (permitCache != null) {
             permitCache.lstUserSysVO = null;
             if (permitCache.lstSysRoot == null) {

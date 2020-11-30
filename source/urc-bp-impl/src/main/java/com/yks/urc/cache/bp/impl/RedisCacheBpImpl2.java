@@ -8,11 +8,13 @@ import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
+import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.vo.GetAllFuncPermitRespVO;
 import com.yks.urc.vo.UserSysVO;
 import com.yks.urc.vo.UserVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
@@ -22,6 +24,9 @@ import java.util.*;
 public class RedisCacheBpImpl2 implements ICacheBp {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     Map<String, Cache> mapCache = new HashMap<>();
+
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     /**
      * 获取用户基础信息缓存,2天
@@ -197,6 +202,12 @@ public class RedisCacheBpImpl2 implements ICacheBp {
                 String key = it.next();
                 if (StringUtility.stringEqualsIgnoreCase("NA", key))
                     continue;
+
+                //排除外部系统
+                if(!permissionMapper.isInternalSystem(key)){
+                    continue;
+                }
+
                 if(!CollectionUtils.isEmpty(sysKeys)){
                 	for (String sysKey : sysKeys) {
 						if(key.equals(sysKey)){

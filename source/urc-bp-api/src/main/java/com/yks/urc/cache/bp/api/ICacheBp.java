@@ -15,7 +15,7 @@ public interface ICacheBp {
 	String getWhiteApi(String str);
 
 	/**
-	 * 获取用户所有系统的功能权限
+	 * 获取用户所有系统的功能权限(内部ERP系统)
 	 * @param userName
 	 * @return
 	 * @author panyun@youkeshu.com

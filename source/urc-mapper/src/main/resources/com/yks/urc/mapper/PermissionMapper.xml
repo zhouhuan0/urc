@@ -164,4 +164,7 @@
         DELETE FROM urc_permission WHERE  sys_key=#{sysKey}
     </delete>
 
+    <select id="isInternalSystem" resultType="boolean">
+        SELECT is_internal_system from urc_permission where sys_key=#{sysKey}
+    </select>
 </mapper>

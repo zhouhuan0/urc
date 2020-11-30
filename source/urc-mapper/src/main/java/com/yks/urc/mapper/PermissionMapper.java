@@ -122,4 +122,10 @@ public interface PermissionMapper {
     int deleteSysPermissionBySysKey(String sysKey);
 
 
+    /**
+     *  是否为内部ERP系统
+     * @param sysKey
+     * @return
+     */
+    boolean isInternalSystem(String sysKey);
 }
