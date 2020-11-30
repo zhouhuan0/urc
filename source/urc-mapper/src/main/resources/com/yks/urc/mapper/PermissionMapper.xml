@@ -126,7 +126,14 @@
 
     <update id="updateSysContextBySysKey">
         update urc_permission
-        set sys_name =#{sysName},api_url_prefix_json =#{apiUrlPrefixJson}, sys_context=#{sysContext},modified_by=#{modifiedBy},modified_time=now(3),is_internal_system = #{isInternalSystem}
+        <set>
+            sys_name =#{sysName},
+            api_url_prefix_json =#{apiUrlPrefixJson},
+            sys_context=#{sysContext},
+            <if test="isInternalSystem != null"> is_internal_system = #{isInternalSystem},</if>
+            modified_by=#{modifiedBy},
+            modified_time=now(3)
+        </set>
         where sys_key=#{sysKey}
     </update>
 
