@@ -58,7 +58,7 @@ public interface IRolePermissionMapper {
 
 
 	/**
-	 * 获取多个角色已有的功能权限超管
+	 * 获取多个角色已有的功能权限超管(不包含已禁用状态的系统功能权限)
 	 * @param permissionDO
 	 * @return
 	 */

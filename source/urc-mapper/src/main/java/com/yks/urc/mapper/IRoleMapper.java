@@ -79,7 +79,7 @@ public interface IRoleMapper {
     List<RoleDO> getRoleByRoleIds(@Param("roleIds") List<Long> roleIds);
 
     /**
-     * Description: 根据roleId获取角色详情信息 包括角色-权限  用户-角色关系
+     * Description: 根据roleId获取角色详情信息 包括角色-权限  用户-角色关系(不包含已禁用系统的功能权限)
      *
      * @param :
      * @return:

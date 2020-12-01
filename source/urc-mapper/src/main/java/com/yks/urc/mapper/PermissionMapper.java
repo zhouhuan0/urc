@@ -67,7 +67,7 @@ public interface PermissionMapper {
     Map<String, PermissionDO> getSysContextByRoleId(@Param("roleId") Long roleId);
 
     /**
-     * 得到所有的sys_key
+     * 得到所有的sys_key(不包含禁用状态的系统)
      *
      * @return
      */
@@ -89,10 +89,14 @@ public interface PermissionMapper {
      */
     int updateSysContextBySysKeyCondition(PermissionDO p);
 
+    /**
+     * (不包含禁用状态的系统)
+     * @return
+     */
     List<PermissionDO> getAllSysPermit();
 
     /**
-     * Description: 获取系统功能权限Map集合
+     * Description: 获取系统功能权限Map集合(包含禁用状态的系统)
      *
      * @param :
      * @return:
@@ -130,7 +134,7 @@ public interface PermissionMapper {
     boolean isInternalSystem(String sysKey);
 
     /**
-     * 获取所有的系统key和名称
+     * 获取所有的系统key和名称(包含禁用状态的系统)
      * @return
      */
     List<PermissionDO> getAllSystem();

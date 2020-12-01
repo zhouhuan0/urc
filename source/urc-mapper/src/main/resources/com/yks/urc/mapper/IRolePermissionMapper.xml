@@ -84,10 +84,13 @@
     </select>
 
     <select id="getRoleSuperAdminPermission" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
-    SELECT sys_key, selected_context FROM urc_role_permission
+    SELECT urp.sys_key, urp.selected_context
+    FROM urc_role_permission urp
+    inner join urc_permission up
+    on urp.sys_key = up.sys_key and up.status = 1
     <where>
         <if test="roleId != null ">
-            role_id=#{roleId}
+            urp.role_id=#{roleId}
         </if>
     </where>
 </select>
@@ -225,6 +228,7 @@
         FROM urc_user_role ur
         INNER JOIN urc_role r on ur.role_id =r.role_id
         inner JOIN urc_role_permission up on ur.role_id =up.role_id
+        INNER JOIN urc_permission p on up.sys_key = p.sys_key and p.status = 1
         WHERE r.is_active=1 AND r.is_authorizable = 1 AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
         <if test="userName !=null and userName !=''">
          AND   ur.user_name =#{userName}
