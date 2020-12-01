@@ -92,4 +92,32 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO searchMatchUserPerson(String jsonStr);
+
+    /**
+     * 系统下拉框列表
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getSystem(String jsonStr);
+
+    /**
+     * 获取系统的功能权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getSystemPermission(String jsonStr);
+
+    /**
+     * 系统管理编辑
+     * @param jsonStr
+     * @return
+     */
+    ResultVO editSystemInfo(String jsonStr);
+
+    /**
+     * 获取系统信息列表
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getSystemInfo(String jsonStr);
 }

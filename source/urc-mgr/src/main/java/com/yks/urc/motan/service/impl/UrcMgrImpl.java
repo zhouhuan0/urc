@@ -1,6 +1,7 @@
 package com.yks.urc.motan.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
@@ -13,6 +14,7 @@ import com.yks.urc.sellerid.bp.api.ISellerIdBp;
 import com.yks.urc.service.api.*;
 import com.yks.urc.vo.DataRuleSysVO;
 import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,5 +165,37 @@ public class UrcMgrImpl implements IUrcMgr {
     @Override
     public ResultVO  searchMatchUserPerson(String jsonStr)  {
         return userService.searchMatchUserPerson(jsonStr);
+    }
+
+    @Autowired
+    private ISystemService systemService;
+
+    @Override
+    @Log("获取系统下拉框列表")
+    public ResultVO getSystem(String jsonStr) {
+        return systemService.getSystemList();
+    }
+
+    @Override
+    @Log("获取系统的功能权限")
+    public ResultVO getSystemPermission(String jsonStr) {
+        return systemService.getSystemPermission(jsonStr);
+    }
+
+    @Override
+    @Log("系统管理编辑")
+    public ResultVO editSystemInfo(String jsonStr) {
+        try {
+            return systemService.getUpdateSystemInfo(jsonStr);
+        } catch (Exception e) {
+            logger.error("getUpdateSystemInfo error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "系统信息更新失败");
+        }
+    }
+
+    @Override
+    @Log("获取系统信息列表")
+    public ResultVO getSystemInfo(String jsonStr) {
+        return systemService.getSystemInfoList(jsonStr);
     }
 }

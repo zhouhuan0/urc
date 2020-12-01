@@ -152,6 +152,15 @@
             <if test="modifiedBy != null and modifiedBy !=''">
                 modified_by=#{modifiedBy},
             </if>
+            <if test="isInternalSystem != null">
+                is_internal_system = #{isInternalSystem},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="remark != null">
+                remark = #{remark},
+            </if>
                 modified_time=now(3)
         </set>
         where sys_key=#{sysKey}
@@ -173,5 +182,36 @@
 
     <select id="isInternalSystem" resultType="boolean">
         SELECT is_internal_system from urc_permission where sys_key=#{sysKey}
+    </select>
+
+    <select id="getAllSystem" resultType="com.yks.urc.entity.PermissionDO">
+         SELECT sys_key,sys_name from urc_permission
+    </select>
+
+    <select id="selectSelective" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        ,
+        <include refid="Blob_Column_List"/>
+        from urc_permission
+        <where>
+            <if test="sysKey != null">and sys_key = #{sysKey}</if>
+            <if test="status != null">and status = #{status}</if>
+            <if test="isInternalSystem != null">and is_internal_system = #{isInternalSystem}</if>
+        </where>
+    </select>
+
+    <select id="selectSystemInfoPage" resultMap="ResultMapWithBLOBs">
+        select
+        <include refid="Base_Column_List"/>
+        from urc_permission
+        <where>
+            <if test="sysKey != null">and sys_key = #{sysKey}</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        order by create_time
+        <if test="startIndex != null and pageData != null">
+            limit #{startIndex},#{pageData}
+        </if>
     </select>
 </mapper>

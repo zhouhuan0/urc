@@ -128,4 +128,14 @@ public interface PermissionMapper {
      * @return
      */
     boolean isInternalSystem(String sysKey);
+
+    /**
+     * 获取所有的系统key和名称
+     * @return
+     */
+    List<PermissionDO> getAllSystem();
+
+    List<PermissionDO> selectSelective(PermissionDO permissionDO);
+
+    List<PermissionDO> selectSystemInfoPage(@Param("sysKey") String sysKey,@Param("status")Integer status,@Param("pageData")Integer pageData,@Param("startIndex")Integer startIndex);
 }

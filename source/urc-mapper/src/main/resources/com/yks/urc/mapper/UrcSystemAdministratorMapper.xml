@@ -125,4 +125,36 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <delete id="deleteBySysKey">
+     delete from urc_system_administrator
+     where sys_key = #{sysKey}
+  </delete>
+
+  <insert id="insertBatch" parameterType="list">
+     insert into urc_system_administrator (sys_key, user_name,
+      type, creator, modifier,
+      create_time, modified_time)
+    values
+    <foreach collection="list"  item="item" separator="," index="index">
+      (#{item.sysKey}, #{item.userName},
+      #{item.type}, #{item.creator}, #{item.modifier},
+      #{item.createTime}, #{item.modifiedTime})
+    </foreach>
+    on DUPLICATE key update
+    modified_time=values(modified_time),
+    modifier=values(modifier)
+  </insert>
+
+  <select id="selectBySysKey" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from urc_system_administrator
+    <where>
+      sys_key in
+      <foreach collection="list" index="index" separator="," item="item" open="(" close=")">
+         #{item}
+      </foreach>
+    </where>
+  </select>
 </mapper>
