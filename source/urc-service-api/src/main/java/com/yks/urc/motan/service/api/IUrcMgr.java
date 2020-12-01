@@ -92,4 +92,18 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO searchMatchUserPerson(String jsonStr);
+
+    /**
+     *获取岗位用户列表
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserByPosition(String jsonStr);
+
+    /**
+     *设置为超级管理员
+     * @param jsonStr
+     * @return
+     */
+    ResultVO setSupperAdmin(String jsonStr);
 }

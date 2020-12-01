@@ -1,28 +1,17 @@
 package com.yks.urc.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
-import com.yks.urc.entity.PlatformDO;
-import com.yks.urc.entity.ShopSiteDO;
-import com.yks.urc.entity.UserAndPersonDO;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserPersonParamDO;
+import com.yks.urc.entity.*;
+import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.exception.URCServiceException;
 import com.yks.urc.fw.HttpUtility2;
+import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
@@ -34,23 +23,19 @@ import com.yks.urc.service.api.IUserService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
-import com.yks.urc.vo.BasicDataVO;
-import com.yks.urc.vo.CategoryResponseVO;
-import com.yks.urc.vo.DataColumnVO;
-import com.yks.urc.vo.GetAllFuncPermitRespVO;
-import com.yks.urc.vo.OmsPlatformVO;
-import com.yks.urc.vo.OmsShopVO;
-import com.yks.urc.vo.OmsSiteVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.SkuCategoryVO;
-import com.yks.urc.vo.SysAuthWayVO;
-import com.yks.urc.vo.SysKeysVO;
-import com.yks.urc.vo.UserVO;
-import com.yks.urc.vo.WarehourseResponseVO;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class UserServiceImpl implements IUserService {
@@ -84,7 +69,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO syncUserInfo(String operator) {
         ResultVO resultVO = new ResultVO();
-        
+
         try {
         	dataAuthorization.syncShopSite(operator);
             resultVO = userBp.SynUserFromUserInfo(operator);
@@ -214,7 +199,7 @@ public class UserServiceImpl implements IUserService {
             if(null != jsonObject.getJSONObject(StringConstant.data)){
             	sysKeysVO =StringUtility.parseObject(jsonObject.getJSONObject(StringConstant.data).toString(),SysKeysVO.class);
             }
-            
+
             return userBp.getAllFuncPermit(operator,null != sysKeysVO ? sysKeysVO.getSysKeys() : null);
         } catch (Exception ex) {
             logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);
@@ -391,7 +376,7 @@ public class UserServiceImpl implements IUserService {
         return rslt;
     }
 
-    
+
     @Override
     public ResultVO getBasicDataList(String jsonStr) {
         ResultVO resultVO = new ResultVO();
@@ -404,7 +389,7 @@ public class UserServiceImpl implements IUserService {
                 return VoHelper.getResultVO(CommonMessageCodeEnum.PARAM_NULL.getCode(), "操作人员不能为空");
             }
             response = HttpUtility2.postForm(castInfo, null, null);
-            
+
             List<CategoryResponseVO> categoryResponseVOs  = StringUtility.json2ObjNew(response, new TypeReference<List<CategoryResponseVO>>() {
     		});
             /*JSONArray jsonArray = JSONArray.parseArray(response);
@@ -588,6 +573,80 @@ public class UserServiceImpl implements IUserService {
         } catch (Exception e) {
             logger.error("searchMatchUserPerson error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "精确匹配搜索用户账号失败");
+        }
+    }
+
+    @Override
+    public ResultVO getUserByPosition(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //获取岗位id
+            String positionIdStr = jsonObject.getString("positionIds");
+            if(StringUtility.isNullOrEmpty(positionIdStr)){
+                return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), CommonMessageCodeEnum.PARAM_NULL.getDesc());
+            }
+            List<String> positionIds = JSONArray.parseArray(positionIdStr, String.class);
+            /*组装查询条件queryMap*/
+            Map<String, Object> queryMap = new HashMap<>();
+            int pageNumber = jsonObject.getInteger("pageNumber");
+            int pageData = jsonObject.getInteger("pageData");
+            if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+                throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
+            }
+            int currPage = pageNumber;
+            int pageSize = pageData;
+            queryMap.put("currIndex", (currPage - 1) * pageSize);
+            queryMap.put("pageSize", pageSize);
+            queryMap.put("positionIds", positionIds);
+            //获得数据
+            List<UserByPosition> list = iUserMapper.getUserByPosition(queryMap);
+            //获得总数
+            int total = iUserMapper.getUserByPositionCount(queryMap);;
+            PageResultVO pageResultVO = new PageResultVO(list, total, queryMap.get("pageSize").toString());
+            return VoHelper.getSuccessResult(pageResultVO);
+        } catch (Exception e) {
+            logger.error("getUserByPosition error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取岗位用户列表失败");
+        }
+    }
+
+    @Override
+    public ResultVO setSupperAdmin(String jsonStr) {
+        try{
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            String operator = jsonObject.getString("operator");
+
+            if (StringUtility.isNullOrEmpty(operator)) {
+                throw new URCBizException("operator为空", ErrorCode.E_000002);
+            }
+            //判断用户是不是超级管理员
+            boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
+            if (StringUtility.isNullOrEmpty(jsonObject.getString("positionId"))) {
+                throw new URCBizException("positionId为空", ErrorCode.E_000002);
+            }
+            if(isSuperAdmin) {
+                long positionId = jsonObject.getLong("positionId");
+                String isSupperAdmin = jsonObject.getString("isSupperAdmin");
+                RoleDO role = new RoleDO();
+                //岗位id
+                role.setRoleId(positionId);
+                //是否是超管
+                if ("0".equals(isSupperAdmin)) {
+                    //0 :否 1:是
+                    role.setIsAuthorizable(0);
+                } else if ("1".equals(isSupperAdmin)) {
+                    role.setIsAuthorizable(2);
+                }
+                //修改人
+                role.setModifiedBy(operator);
+                iUserMapper.setSupperAdmin(role);
+                return VoHelper.getSuccessResult();
+            }
+            return VoHelper.getSuccessResult("不是超管用户不能操作");
+        } catch (Exception e) {
+            logger.error("setSupperAdmin error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "设为超管失败失败");
         }
     }
 }

@@ -119,4 +119,8 @@ public interface IUserService {
 	ResultVO searchUserPerson(String jsonStr);
 
 	ResultVO searchMatchUserPerson(String jsonStr);
+
+	ResultVO getUserByPosition(String jsonStr);
+
+	ResultVO setSupperAdmin(String jsonStr);
 }

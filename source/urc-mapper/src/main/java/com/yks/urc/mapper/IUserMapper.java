@@ -1,14 +1,12 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.*;
-import com.yks.urc.vo.NameVO;
-import com.yks.urc.vo.OrgTreeAndUserVO;
-import com.yks.urc.vo.UserInfoVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface IUserMapper {
     int deleteByPrimaryKey(Long id);
@@ -179,4 +177,11 @@ public interface IUserMapper {
     List<OrgTreeAndUserVO> getAllUser();
 
     List<UserAndPersonDO>  selectUserNameAndPeronName(@Param("lstUserName") List<String> lstUserName);
+
+    List<UserByPosition> getUserByPosition(Map<String, Object> queryMap);
+
+    int getUserByPositionCount(Map<String, Object> queryMap);
+
+    int setSupperAdmin(RoleDO role);
+
 }

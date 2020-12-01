@@ -164,4 +164,16 @@ public class UrcMgrImpl implements IUrcMgr {
     public ResultVO  searchMatchUserPerson(String jsonStr)  {
         return userService.searchMatchUserPerson(jsonStr);
     }
+
+    @Override
+    @Log("获取岗位用户列表")
+    public ResultVO getUserByPosition(String jsonStr) {
+        return userService.getUserByPosition(jsonStr);
+    }
+
+    @Override
+    @Log("设置为超级管理员")
+    public ResultVO setSupperAdmin(String jsonStr) {
+        return userService.setSupperAdmin(jsonStr);
+    }
 }
