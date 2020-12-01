@@ -17,6 +17,7 @@ import com.yks.urc.entity.UrcSystemAdministrator;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.mapper.UrcSystemAdministratorMapper;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
@@ -50,6 +51,8 @@ public class SystemServiceImpl implements ISystemService {
     private ISerializeBp serializeBp;
     @Autowired
     private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
+    @Autowired
+    private IRoleMapper roleMapper;
 
     @Override
     public ResultVO getSystemList() {
@@ -82,6 +85,13 @@ public class SystemServiceImpl implements ISystemService {
     public ResultVO getUpdateSystemInfo(String jsonStr){
         RequestVO<UpdateSystemVO> requestVO = serializeBp.json2ObjNew(jsonStr, new TypeReference<RequestVO<UpdateSystemVO>>() {
         });
+
+        //判断用户是不是超级管理员
+        boolean isSuperAdmin = roleMapper.isSuperAdminAccount(requestVO.operator);
+        if(!isSuperAdmin){
+            VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(),"当前用户不是超级管理员,无法进行操作");
+        }
+
         UpdateSystemVO updateSystemVO = requestVO.data;
         if (StringUtility.isNullOrEmpty(updateSystemVO.sysKey)) {
             return VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_NULL.getCode(), "系统key不能为空");

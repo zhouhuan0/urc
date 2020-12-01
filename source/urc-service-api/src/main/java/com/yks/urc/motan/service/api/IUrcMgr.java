@@ -94,7 +94,6 @@ public interface IUrcMgr {
     ResultVO searchMatchUserPerson(String jsonStr);
 
     /**
-<<<<<<< HEAD
      * 系统下拉框列表
      * @param jsonStr
      * @return
