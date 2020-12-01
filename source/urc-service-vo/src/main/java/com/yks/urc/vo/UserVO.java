@@ -131,4 +131,9 @@ public class UserVO implements Serializable {
      */
     public  Long loginTime;
 
+    /**
+     *  岗位
+     */
+    public List<PositionInfoVO> positions;
+
 }

@@ -3,10 +3,8 @@ package com.yks.urc.user.bp.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.comparator.impl.UserSysVOComparator;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.entity.UserInfo;
-import com.yks.urc.entity.UserLoginLogDO;
-import com.yks.urc.entity.UserTicketDO;
+import com.yks.urc.constant.UrcConstant;
+import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -200,17 +198,26 @@ public class UserBpImpl implements IUserBp {
         // List<String> userNames =new ArrayList<>();
         for (UserVO userVO1 : userVOS) {
             userVO1.activeTimeStr = DateUtil.formatDate(userVO1.activeTime, "yyyy-MM-dd HH:mm:ss");
-            // 查询角色 , 有的用户可能没有角色,则不装载角色,角色为空
-            List<String> roleNameList = roleMapper.selectRoleNameByUserName(userVO1.userName);
-            if (roleNameList.size() == 0) {
+            // 查询角色或岗位 , 有的用户可能没有角色,则不装载角色,角色为空
+            List<RoleDO> roleDOS = roleMapper.selectRoleByUserName(userVO1.userName);
+            if (roleDOS.size() == 0) {
                 userVO1.roles = null;
+                userVO1.positions = null;
             } else {
                 //组装角色
                 userVO1.roles = new ArrayList<>();
-                for (String roleName : roleNameList) {
-                    RoleVO roleVO = new RoleVO();
-                    roleVO.roleName = roleName;
-                    userVO1.roles.add(roleVO);
+                //组装岗位
+                userVO1.positions = new ArrayList<>();
+                for (RoleDO roleDO : roleDOS) {
+                    if(StringUtility.stringEqualsIgnoreCaseObj(UrcConstant.RoleType.position,roleDO.getRoleType())){
+                        PositionInfoVO positionInfoVO = new PositionInfoVO();
+                        positionInfoVO.positionName= roleDO.getRoleName();
+                        userVO1.positions.add(positionInfoVO);
+                    }else{
+                        RoleVO roleVO = new RoleVO();
+                        roleVO.roleName = roleDO.getRoleName();
+                        userVO1.roles.add(roleVO);
+                    }
                 }
             }
             // 4.组装userVo

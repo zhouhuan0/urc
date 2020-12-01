@@ -93,13 +93,11 @@ public interface IRoleMapper {
     /**
      * 根据用户名 获取角色名称
      *
-     * @param userNames
+     * @param userName
      * @return String
      * @Author linwanxian@youkeshu.com
      * @Date 2018/6/11 16:57
      */
-    List<String> selectRoleNameByUserName(@Param("userNames") List<String>userNames);
-
     List<String> selectRoleNameByUserName(@Param("userName") String userName);
     List<String> getFuncJsonByUserAndSysKey(@Param("userName") String userName, @Param("sysKey") String sysKey);
     List<SystemKeyContext> getFuncJsonListByUserAndSysKey(@Param("userName") String userName, @Param("sysKeyList") List<String> sysKey);
@@ -221,4 +219,6 @@ public interface IRoleMapper {
     List<String> getAllAdminRoleId();
 
     int insertOrUpdate(RoleDO roleDO);
+
+    List<RoleDO> selectRoleByUserName(@Param("userName") String userName);
 }
