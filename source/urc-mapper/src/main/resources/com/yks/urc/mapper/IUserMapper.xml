@@ -458,4 +458,43 @@
             </foreach>
         </where>
     </select>
+
+    <select id="getUserByPosition" resultType="com.yks.urc.vo.UserByPosition">
+        select
+            t.role_id positionId,
+            t.role_name positionName,
+            t2.chinese_name userName
+        from urc_role t
+        left join urc_user_role t1 on t.role_id = t1.role_id
+        left join urc_user t2 on t1.user_name = t2.user_name
+        <include refid="positionCondition"/>
+        order by t.role_id desc
+        limit #{currIndex},#{pageSize}
+    </select>
+
+    <select id="getUserByPositionCount" resultType="java.lang.Integer">
+        select
+            count(1)
+        from urc_role t
+        left join urc_user_role t1 on t.role_id = t1.role_id
+        left join urc_user t2 on t1.user_name = t2.user_name
+        <include refid="positionCondition"/>
+    </select>
+    <sql id="positionCondition">
+        where t2.is_active = 1
+        and t.role_type = 2
+        AND (t.is_forever=1 or now() BETWEEN t.effective_time and t.expire_time)
+        and t.role_id in
+        <foreach collection="positionIds" open="(" separator="," close=")" item="positionId">
+            #{positionId}
+        </foreach>
+    </sql>
+
+    <update id="setSupperAdmin" parameterType="com.yks.urc.entity.RoleDO">
+    update urc_role
+    set is_authorizable = #{isAuthorizable,jdbcType=TINYINT},
+      modified_by = #{modifiedBy,jdbcType=VARCHAR},
+      modified_time = now()
+    where role_id = #{roleId}
+  </update>
 </mapper>

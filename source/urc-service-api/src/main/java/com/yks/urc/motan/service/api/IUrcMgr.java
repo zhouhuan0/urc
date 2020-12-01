@@ -94,6 +94,7 @@ public interface IUrcMgr {
     ResultVO searchMatchUserPerson(String jsonStr);
 
     /**
+<<<<<<< HEAD
      * 系统下拉框列表
      * @param jsonStr
      * @return
@@ -120,4 +121,18 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO getSystemInfo(String jsonStr);
+
+     /**
+     *获取岗位用户列表
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserByPosition(String jsonStr);
+
+    /**
+     *设置为超级管理员
+     * @param jsonStr
+     * @return
+     */
+    ResultVO setSupperAdmin(String jsonStr);
 }
