@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class AuthWayBpImpl implements AuthWayBp {
@@ -60,20 +61,15 @@ public class AuthWayBpImpl implements AuthWayBp {
         } else {
             //先查询该用户是哪些系统的数据管理员
             List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
-            if(!CollectionUtils.isEmpty(keys)){
-                //组装sysAuthWayVO
-                lstAuthWayVOS = this.AssembleSysAuthWay(keys);
-            }else{
-                boolean isAdmin = roleMapper.isAdminAccount(operator);
-                if (isAdmin == true) {
-                    //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色
-                    List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
-                    //组装sysAuthWayVO
-                    lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
-                } else {
-                    lstAuthWayVOS = null;
-                }
+            boolean isAdmin = roleMapper.isAdminAccount(operator);
+            if (isAdmin) {
+                //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色
+                List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+                keys.addAll(getSysKey);
+                keys = keys.stream().distinct().collect(Collectors.toList());
             }
+            //组装sysAuthWayVO
+            lstAuthWayVOS = this.AssembleSysAuthWay(keys);
         }
         return lstAuthWayVOS;
     }

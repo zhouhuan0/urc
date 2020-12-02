@@ -21,4 +21,9 @@ public interface IHrBp {
      * 岗位信息同步(从人事系统同步)
      */
    void  positionSync() throws Exception;
+
+    /**
+     * 异步执行拉取岗位信息
+     */
+   void asynPullPosition();
 }

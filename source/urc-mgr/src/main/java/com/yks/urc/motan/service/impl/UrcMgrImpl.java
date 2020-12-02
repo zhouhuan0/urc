@@ -6,6 +6,7 @@ import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
+import com.yks.urc.hr.bp.api.IHrBp;
 import com.yks.urc.log.Log;
 import com.yks.urc.log.LogLevel;
 import com.yks.urc.motan.MotanSession;
@@ -33,6 +34,8 @@ public class UrcMgrImpl implements IUrcMgr {
     IPermissionService permissionService;
     @Autowired
     IPositionGroupService positionGroupService;
+    @Autowired
+    private IHrBp hrBp;
 
 
     @Override
@@ -242,6 +245,13 @@ public class UrcMgrImpl implements IUrcMgr {
     @Log("添加或更新权限组")
     public ResultVO addOrUpdatePermissionGroup(String jsonStr) {
         return positionGroupService.addOrUpdatePermissionGroup(jsonStr);
+    }
+
+    @Override
+    @Log("手动同步拉取岗位信息")
+    public ResultVO syncPositionInfo(String jsonStr) {
+        hrBp.asynPullPosition();
+        return VoHelper.getSuccessResult();
     }
 
 }

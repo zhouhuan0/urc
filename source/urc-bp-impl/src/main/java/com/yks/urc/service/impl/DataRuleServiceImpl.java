@@ -1250,14 +1250,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
                 List<String> sysKeys = new ArrayList<>();
                 //如果不是超管,而且是查别人的权限,只能看到自己有权限系统功能权限
                 if(!isSuperAdmin && !StringUtility.stringEqualsIgnoreCase(lstUserName.get(i),operator)){
-                    if(CollectionUtils.isEmpty(keys)){
-                        if (roleMapper.isAdminAccount(operator)) {
-                            //sysKeys = userRoleMapper.getSysKeyByUser(operator);
-                            sysKeys = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
-                        }
-                    }else{
-                        sysKeys = keys;
+                    if (roleMapper.isAdminAccount(operator)) {
+                        //sysKeys = userRoleMapper.getSysKeyByUser(operator);
+                        List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+                        sysKeys.addAll(keys);
+                        sysKeys.addAll(getSysKey);
                     }
+                    sysKeys = sysKeys.stream().distinct().collect(Collectors.toList());
                 }
                 //sysKeys.add(sysKey);
 

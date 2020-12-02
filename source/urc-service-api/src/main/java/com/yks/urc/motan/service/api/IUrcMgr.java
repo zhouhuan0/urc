@@ -170,4 +170,11 @@ public interface IUrcMgr {
      */
     ResultVO addOrUpdatePermissionGroup(String jsonStr);
 
+    /**
+     *手动同步拉取岗位信息
+     * @param jsonStr
+     * @return
+     */
+    ResultVO syncPositionInfo(String jsonStr);
+
 }

@@ -15,9 +15,11 @@ import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.fw.BeanProvider;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.hr.bp.api.IHrBp;
+import com.yks.urc.lock.bp.api.ILockBp;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
@@ -48,52 +50,77 @@ public class HrBpImpl implements IHrBp {
     @Autowired
     private IRoleMapper roleMapper;
     @Autowired
-    private ISessionBp sessionBp;
+    private IHrBp hrBpr;
     @Autowired
     private IUserRoleMapper userRoleMapper;
     @Autowired
     private IPermitRefreshTaskBp permitRefreshTaskBp;
+    @Autowired
+    private ILockBp lockBp;
+    private String synPosition = "synPosition";
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void positionSync() throws Exception {
-        String url = configBp.getString("GET_POSITION_URL", "http://ykshr.kokoerp.com/api/Position/getAllList");
-        String sendPost = HttpUtility.sendPost(url, null);
-        logger.info("request position,url:{},response:{}",url,sendPost);
-        if (StringUtility.isNullOrEmpty(sendPost)) {
-            logger.error("同步岗位失败,人事系统接口无响应");
+        if(!lockBp.tryLock(synPosition)){
             return;
         }
-
-        JSONObject jsonObject = StringUtility.parseString(sendPost);
-        if(!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"),CommonMessageCodeEnum.SUCCESS.getCode())){
-            logger.error("同步岗位失败,人事系统接报错",sendPost);
-            return;
-        }
-
-        List<PositionVO> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), PositionVO.class);
-        for (PositionVO positionVO : list) {
-            RoleDO roleDO = new RoleDO();
-            roleDO.setRoleType(UrcConstant.RoleType.position);
-            roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
-            roleDO.setIsAuthorizable(0);
-            roleDO.setCreateBy(positionVO.getOperator());
-            roleDO.setForever(Boolean.TRUE);
-            roleDO.setModifiedBy(positionVO.getOperator());
-            roleDO.setCreateTime(positionVO.getCreateTime());
-            roleDO.setModifiedTime(new Date());
-            roleDO.setRoleId(positionVO.getId());
-            roleDO.setPositionModifiedTime(positionVO.getModifiedTime());
-            roleDO.setRoleName(positionVO.getName());
-            RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
-            //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
-            if(roleByRoleId == null){
-                addPosition(roleDO);
-            }else {
-                roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
-                roleDO.setRemark(roleByRoleId.getRemark());
-                updatePosition(roleDO);
+        try {
+            String url = configBp.getString("GET_POSITION_URL", "http://ykshr.kokoerp.com/api/Position/getAllList");
+            String sendPost = HttpUtility.sendPost(url, null);
+            logger.info("request position,url:{},response:{}",url,sendPost);
+            if (StringUtility.isNullOrEmpty(sendPost)) {
+                logger.error("同步岗位失败,人事系统接口无响应");
+                return;
             }
+
+            JSONObject jsonObject = StringUtility.parseString(sendPost);
+            if(!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"),CommonMessageCodeEnum.SUCCESS.getCode())){
+                logger.error("同步岗位失败,人事系统接报错",sendPost);
+                return;
+            }
+
+            List<PositionVO> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), PositionVO.class);
+            for (PositionVO positionVO : list) {
+                RoleDO roleDO = new RoleDO();
+                roleDO.setRoleType(UrcConstant.RoleType.position);
+                roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
+                roleDO.setIsAuthorizable(0);
+                roleDO.setCreateBy(positionVO.getOperator());
+                roleDO.setForever(Boolean.TRUE);
+                roleDO.setModifiedBy(positionVO.getOperator());
+                roleDO.setCreateTime(positionVO.getCreateTime());
+                roleDO.setModifiedTime(new Date());
+                roleDO.setRoleId(positionVO.getId());
+                roleDO.setPositionModifiedTime(positionVO.getModifiedTime());
+                roleDO.setRoleName(positionVO.getName());
+                RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
+                //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
+                if(roleByRoleId == null){
+                    addPosition(roleDO);
+                }else {
+                    roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
+                    roleDO.setRemark(roleByRoleId.getRemark());
+                    updatePosition(roleDO);
+                }
+            }
+        } finally {
+            lockBp.unlock(synPosition);
         }
+    }
+
+    @Override
+    public void asynPullPosition() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    hrBpr.positionSync();
+                } catch (Exception e) {
+                    logger.error("岗位数据同步出错:", e);
+                }
+            }
+        }).start();
     }
 
     private void addPosition(RoleDO roleDO) throws Exception {
