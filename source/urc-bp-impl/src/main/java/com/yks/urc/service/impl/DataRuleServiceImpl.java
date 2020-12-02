@@ -1,14 +1,34 @@
 package com.yks.urc.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.Enum.PlatFormEnum;
+import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.config.bp.api.IConfigBp;
+import com.yks.urc.constant.UrcConstant;
+import com.yks.urc.entity.*;
+import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.exception.ErrorCode;
+import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.DateUtil;
+import com.yks.urc.fw.StringUtil;
+import com.yks.urc.fw.StringUtility;
+import com.yks.urc.mapper.*;
+import com.yks.urc.mq.bp.api.IMqBp;
 import com.yks.urc.sellerid.bp.api.IActMgrBp;
 import com.yks.urc.sellerid.bp.api.ISysDataruleContext;
+import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.service.api.IDataRuleService;
+import com.yks.urc.user.bp.api.IUrcLogBp;
+import com.yks.urc.vo.*;
+import com.yks.urc.vo.helper.Query;
+import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.BeanUtils;
@@ -16,70 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.yks.urc.enums.CommonMessageCodeEnum;
-import com.yks.urc.fw.StringUtil;
-import com.yks.oms.order.manage.motan.service.api.IOrderManageService;
-import com.yks.urc.Enum.ModuleCodeEnum;
-import com.yks.urc.authway.bp.api.AuthWayBp;
-import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.config.bp.api.IConfigBp;
-import com.yks.urc.entity.CsPlatform;
-import com.yks.urc.entity.CsPlatformGroup;
-import com.yks.urc.entity.DataRuleColDO;
-import com.yks.urc.entity.DataRuleDO;
-import com.yks.urc.entity.DataRuleSysDO;
-import com.yks.urc.entity.DataRuleTemplDO;
-import com.yks.urc.entity.Entity;
-import com.yks.urc.entity.ExpressionDO;
-import com.yks.urc.entity.Field;
-import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.PlatformDO;
-import com.yks.urc.entity.ShopSiteDO;
-import com.yks.urc.entity.UrcLog;
-import com.yks.urc.entity.UserDO;
-import com.yks.urc.exception.ErrorCode;
-import com.yks.urc.exception.URCBizException;
-import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.CsPlatformGroupMapper;
-import com.yks.urc.mapper.CsPlatformMapper;
-import com.yks.urc.mapper.EntityMapper;
-import com.yks.urc.mapper.FieldMapper;
-import com.yks.urc.mapper.IDataRuleColMapper;
-import com.yks.urc.mapper.IDataRuleMapper;
-import com.yks.urc.mapper.IDataRuleSysMapper;
-import com.yks.urc.mapper.IDataRuleTemplMapper;
-import com.yks.urc.mapper.IExpressionMapper;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IUserRoleMapper;
-import com.yks.urc.mapper.PermissionMapper;
-import com.yks.urc.mapper.PlatformMapper;
-import com.yks.urc.mapper.ShopSiteMapper;
-import com.yks.urc.mq.bp.api.IMqBp;
-import com.yks.urc.seq.bp.api.ISeqBp;
-import com.yks.urc.service.api.IDataRuleService;
-import com.yks.urc.service.api.IUserService;
-import com.yks.urc.user.bp.api.IUrcLogBp;
-import com.yks.urc.vo.CsCodeNameVO;
-import com.yks.urc.vo.DataRuleColVO;
-import com.yks.urc.vo.DataRuleSysVO;
-import com.yks.urc.vo.DataRuleTemplVO;
-import com.yks.urc.vo.DataRuleVO;
-import com.yks.urc.vo.ExpressionVO;
-import com.yks.urc.vo.GetPlatformCodeRespVO;
-import com.yks.urc.vo.OmsPlatformVO;
-import com.yks.urc.vo.OmsShopVO;
-import com.yks.urc.vo.OmsSiteVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.PlatformCodeVO4GetPlatformCode;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.SysAuthWayVO;
-import com.yks.urc.vo.helper.Query;
-import com.yks.urc.vo.helper.VoHelper;
 import org.springframework.util.StopWatch;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 〈一句话功能简述〉
@@ -139,7 +99,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
     private CsPlatformGroupMapper csPlatformGroupMapper;
 
     @Autowired
-    private IUserService userService;
+    private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
 
 
     @Autowired
@@ -159,6 +119,8 @@ public class DataRuleServiceImpl implements IDataRuleService {
 
     @Autowired(required = false)
     private IOrderManageService orderManageService;
+    @Autowired
+    private IRolePermissionMapper rolePermissionMapper;
     /**
      * ebay 缓存
      */
@@ -1278,17 +1240,25 @@ public class DataRuleServiceImpl implements IDataRuleService {
 /*        if(StringUtility.isNullOrEmpty(sysKey)){
             return VoHelper.getSuccessResult((Object) "sysKey为空");
         }*/
-
+        List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+        boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         if (lstUserName != null && lstUserName.size() > 0) {
             for (int i = 0; i < lstUserName.size(); i++) {
                 UserDO userDO = new UserDO();
                 userDO.setUserName(lstUserName.get(i));
                 List<String> sysKeys = new ArrayList<>();
-                if (roleMapper.isAdminAccount(operator)) {
-                    sysKeys = userRoleMapper.getSysKeyByUser(operator);
+                //如果不是超管,而且是查别人的权限,只能看到自己有权限系统功能权限
+                if(!isSuperAdmin && !StringUtility.stringEqualsIgnoreCase(lstUserName.get(i),operator)){
+                    if(CollectionUtils.isEmpty(keys)){
+                        if (roleMapper.isAdminAccount(operator)) {
+                            //sysKeys = userRoleMapper.getSysKeyByUser(operator);
+                            sysKeys = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+                        }
+                    }else{
+                        sysKeys = keys;
+                    }
                 }
-
                 //sysKeys.add(sysKey);
 
                 //通过用户名得到DataRuleSysId\SysKey\SysName

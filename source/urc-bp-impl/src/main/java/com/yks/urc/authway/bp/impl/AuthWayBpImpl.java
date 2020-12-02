@@ -9,6 +9,7 @@
 package com.yks.urc.authway.bp.impl;
 
 import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -17,6 +18,7 @@ import com.yks.urc.vo.AuthWayVO;
 import com.yks.urc.vo.SysAuthWayVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,8 @@ public class AuthWayBpImpl implements AuthWayBp {
     private AuthWayMapper authWayMapper;
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
 
     /**
      * 1. 首先通过用户判断是否是管理员 2. 通过管理员拿到对应的system_key,若是超管, 获取所有的sys_key , 3. sys_key 拿到对应的业务系统实体
@@ -54,14 +58,21 @@ public class AuthWayBpImpl implements AuthWayBp {
             //组装sysAuthWayVO
             lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
         } else {
-            boolean isAdmin = roleMapper.isAdminAccount(operator);
-            if (isAdmin == true) {
-                //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色
-                List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+            //先查询该用户是哪些系统的数据管理员
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+            if(!CollectionUtils.isEmpty(keys)){
                 //组装sysAuthWayVO
-                lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
-            } else {
-                lstAuthWayVOS = null;
+                lstAuthWayVOS = this.AssembleSysAuthWay(keys);
+            }else{
+                boolean isAdmin = roleMapper.isAdminAccount(operator);
+                if (isAdmin == true) {
+                    //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色
+                    List<String> getSysKey = rolePermissionMapper.getSysKetByRoleAndUserName(operator);
+                    //组装sysAuthWayVO
+                    lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
+                } else {
+                    lstAuthWayVOS = null;
+                }
             }
         }
         return lstAuthWayVOS;

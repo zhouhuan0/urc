@@ -45,7 +45,7 @@ public interface IDataRuleSysMapper {
     List<DataRuleSysDO> getDataRuleSysDatas(@Param("dataRuleId") Long dataRuleId);
 
     /**
-     * 根据用户名查询sys-id
+     * 根据用户名查询sys-id (不包含已禁用系统)
      *
      * @param userDO
      * @return

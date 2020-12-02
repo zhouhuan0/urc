@@ -17,8 +17,8 @@ public interface UrcConstant {
 
     interface AdministratorType{
         //功能管理员
-        byte dataAdministrator = 1;
+        Byte dataAdministrator = 1;
         //数据管理员
-        byte functionAdministrator = 2;
+        Byte functionAdministrator = 2;
     }
 }

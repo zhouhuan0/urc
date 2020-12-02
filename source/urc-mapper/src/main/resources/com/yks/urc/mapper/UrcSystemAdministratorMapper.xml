@@ -157,4 +157,12 @@
       </foreach>
     </where>
   </select>
+
+  <select id="selectSysKeyByAdministratorType" resultType="string">
+    select distinct up.sys_key
+    from urc_system_administrator usa
+    inner join urc_permission up
+    on up.sys_key = usa.sys_key and up.status = 1
+    where usa.user_name = #{userName} and usa.type = #{type}
+  </select>
 </mapper>

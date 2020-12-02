@@ -23,4 +23,7 @@ public interface UrcSystemAdministratorMapper {
     int insertBatch(@Param("list") List<UrcSystemAdministrator> list);
 
     List<UrcSystemAdministrator> selectBySysKey(@Param("list") List<String> sysKeys);
+
+    //根据管理员类型查询管理员拥有权限的启用状态系统
+    List<String> selectSysKeyByAdministratorType(@Param("userName") String userName,@Param("type")Integer type);
 }
