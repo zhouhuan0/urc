@@ -238,4 +238,10 @@ public class UrcMgrImpl implements IUrcMgr {
         return positionGroupService.deletePermissionGroup(jsonStr);
     }
 
+    @Override
+    @Log("添加或更新权限组")
+    public ResultVO addOrUpdatePermissionGroup(String jsonStr) {
+        return positionGroupService.addOrUpdatePermissionGroup(jsonStr);
+    }
+
 }

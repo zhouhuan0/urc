@@ -163,4 +163,11 @@ public interface IUrcMgr {
      */
     ResultVO deletePermissionGroup(String jsonStr);
 
+    /**
+     *添加或更新权限组
+     * @param jsonStr
+     * @return
+     */
+    ResultVO addOrUpdatePermissionGroup(String jsonStr);
+
 }

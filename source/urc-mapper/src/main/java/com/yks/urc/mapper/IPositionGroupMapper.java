@@ -1,6 +1,7 @@
 package com.yks.urc.mapper;
 
 import com.yks.urc.entity.PositionGroupVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
@@ -16,4 +17,6 @@ public interface IPositionGroupMapper {
     int getPermissionGroupByUserCount(Map<String, Object> queryMap);
 
     int deletePermissionGroup(String groupId);
+
+    boolean existSuperAdmin(@Param("positionIds") List<Long> positionIds);
 }

@@ -38,4 +38,15 @@
         delete from urc_position_group
         where group_id = #{groupId}
     </delete>
+
+    <select id="existSuperAdmin" resultType="boolean">
+        select
+            count(t.role_id)> 0
+        from urc_role t
+        where t.is_authorizable = 2
+        and  t.role_id in
+        <foreach collection="positionIds" item="positionId" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </select>
 </mapper>

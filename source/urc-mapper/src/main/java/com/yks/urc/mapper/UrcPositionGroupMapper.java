@@ -14,4 +14,7 @@ public interface UrcPositionGroupMapper {
     int updateByPrimaryKeySelective(UrcPositionGroup record);
 
     int updateByPrimaryKey(UrcPositionGroup record);
+
+    void deleteByGroupId(Long groupId);
+
 }

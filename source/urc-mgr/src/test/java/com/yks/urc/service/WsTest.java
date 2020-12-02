@@ -92,4 +92,13 @@ public class WsTest extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
 
     }
+
+    @Test
+    public void test7() {
+        String json = "{\"data\":{\"groupId\":\"123\",\"groupName\":\"123\",\"positionIds\":[\"123\",\"321\"],\"selectedContext\":[{\"sysContext\":\"zz\",\"sysKey\":\"zz\"},{\"sysContext\":\"ss\",\"sysKey\":\"ss\"}]}}";
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.addOrUpdatePermissionGroup(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
+    }
 }

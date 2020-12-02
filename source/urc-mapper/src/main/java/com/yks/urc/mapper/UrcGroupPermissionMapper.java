@@ -16,4 +16,6 @@ public interface UrcGroupPermissionMapper {
     int updateByPrimaryKeyWithBLOBs(UrcGroupPermission record);
 
     int updateByPrimaryKey(UrcGroupPermission record);
+
+    int deleteByGroupId(Long groupId);
 }

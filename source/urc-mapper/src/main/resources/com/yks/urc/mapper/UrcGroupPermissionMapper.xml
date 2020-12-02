@@ -137,4 +137,9 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <delete id="deleteByGroupId" parameterType="java.lang.Long">
+    delete from urc_group_permission
+    where group_id = #{groupId}
+  </delete>
 </mapper>
