@@ -221,4 +221,6 @@ public interface IRoleMapper {
     int insertOrUpdate(RoleDO roleDO);
 
     List<RoleDO> selectRoleByUserName(@Param("userName") String userName);
+
+    boolean isGroupAccount(long positionId);
 }

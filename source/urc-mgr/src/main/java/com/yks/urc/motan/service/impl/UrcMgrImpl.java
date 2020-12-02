@@ -211,4 +211,16 @@ public class UrcMgrImpl implements IUrcMgr {
     public ResultVO setSupperAdmin(String jsonStr) {
         return userService.setSupperAdmin(jsonStr);
     }
+
+    @Override
+    @Log("获取当前用户能授权的功能权限-岗位权限调用")
+    public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr) {
+        return userService.getUserAuthorizablePermissionForPosition(jsonStr);
+    }
+
+    @Override
+    @Log("保存岗位功能权限")
+    public ResultVO savePositionPermission(String jsonStr) {
+        return userService.savePositionPermission(jsonStr);
+    }
 }

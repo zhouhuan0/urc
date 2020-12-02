@@ -479,4 +479,9 @@
         INNER JOIN urc_user u on up.user_name =u.user_name
         WHERE u.user_name =#{userName}
     </select>
+
+    <!--判断给定的岗位是不是在权限组里-->
+    <select id="isGroupAccount" resultType="Boolean">
+        select COUNT(t.id) > 0  from urc_position_group t where t.is_delete = 0 and t.position_id = #{positionId}
+    </select>
 </mapper>

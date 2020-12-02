@@ -497,4 +497,15 @@
       modified_time = now()
     where role_id = #{roleId}
   </update>
+
+    <select id="getUserAuthorizablePermissionForPosition" resultType="com.yks.urc.entity.PermissionDO" parameterType="java.lang.String">
+       select
+        t1.sys_key,
+        t1.sys_context
+       from urc_system_administrator t
+       left join urc_permission t1 on t.sys_key = t1.sys_key
+       where user_name = #{operator}
+          and t1.status = 1
+          and t.type = 1
+    </select>
 </mapper>

@@ -134,4 +134,18 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO setSupperAdmin(String jsonStr);
+
+    /**
+     *获取当前用户能授权的功能权限-岗位权限调用
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getUserAuthorizablePermissionForPosition(String jsonStr);
+
+    /**
+     *保存岗位功能权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO savePositionPermission(String jsonStr);
 }

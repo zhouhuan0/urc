@@ -185,7 +185,8 @@ public class RoleServiceImpl implements IRoleService {
 
             roleVO.setExpireTimeStr(roleDO.getExpireTime() != null ? DateUtil.formatDate(roleDO.getExpireTime(), "yyyy-MM-dd HH:mm:ss") : null);
             roleVO.setEffectiveTimeStr(roleDO.getEffectiveTime() != null ? DateUtil.formatDate(roleDO.getEffectiveTime(), "yyyy-MM-dd HH:mm:ss") : null);
-
+            //区分角色和岗位 1:角色  2:岗位
+            roleVO.setRoleType(roleDO.getRoleType() == 2 ? 2 : 1);
             roleVOS.add(roleVO);
             List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByRoleId(roleDO.getRoleId());
             if (ownerDOS != null && ownerDOS.size() != 0) {

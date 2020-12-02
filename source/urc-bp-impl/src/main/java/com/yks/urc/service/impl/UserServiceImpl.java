@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.mchange.lang.LongUtils;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
@@ -15,10 +16,8 @@ import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
-import com.yks.urc.mapper.IRoleMapper;
-import com.yks.urc.mapper.IUserMapper;
-import com.yks.urc.mapper.PlatformMapper;
-import com.yks.urc.mapper.ShopSiteMapper;
+import com.yks.urc.mapper.*;
+import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.api.IUserBp;
@@ -57,6 +56,12 @@ public class UserServiceImpl implements IUserService {
     private ISessionBp sessionBp;
     @Autowired
     private IUserMapper iUserMapper;
+    @Autowired
+    private IRolePermissionMapper rolePermitMapper;
+    @Autowired
+    private IPermitRefreshTaskBp permitRefreshTaskBp;
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -627,27 +632,109 @@ public class UserServiceImpl implements IUserService {
             }
             if(isSuperAdmin) {
                 long positionId = jsonObject.getLong("positionId");
-                String isSupperAdmin = jsonObject.getString("isSupperAdmin");
-                RoleDO role = new RoleDO();
-                //岗位id
-                role.setRoleId(positionId);
-                //是否是超管
-                if ("0".equals(isSupperAdmin)) {
-                    //0 :否 1:是
-                    role.setIsAuthorizable(0);
-                } else if ("1".equals(isSupperAdmin)) {
-                    role.setIsAuthorizable(2);
+                //判断是不是在权限组
+                boolean isGroupAccount = roleMapper.isGroupAccount(positionId);
+                if (!isGroupAccount) {
+                    String isSupperAdmin = jsonObject.getString("isSupperAdmin");
+                    RoleDO role = new RoleDO();
+                    //岗位id
+                    role.setRoleId(positionId);
+                    //是否是超管
+                    if ("0".equals(isSupperAdmin)) {
+                        //0 :否 1:是
+                        role.setIsAuthorizable(0);
+                    } else if ("1".equals(isSupperAdmin)) {
+                        role.setIsAuthorizable(2);
+                    }
+                    //修改人
+                    role.setModifiedBy(operator);
+                    iUserMapper.setSupperAdmin(role);
+                    return VoHelper.getSuccessResult();
                 }
-                //修改人
-                role.setModifiedBy(operator);
-                iUserMapper.setSupperAdmin(role);
-                return VoHelper.getSuccessResult();
             }
             return VoHelper.getSuccessResult("不是超管用户不能操作");
         } catch (Exception e) {
             logger.error("setSupperAdmin error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "设为超管失败失败");
         }
+    }
+
+    @Override
+    public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr) {
+        try{
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            String operator = jsonObject.getString("operator");
+
+            if (StringUtility.isNullOrEmpty(operator)) {
+                throw new URCBizException("operator为空", ErrorCode.E_000002);
+            }
+            //通过当前用户获得权限
+            List<PermissionDO> list = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
+            return VoHelper.getSuccessResult(list);
+        } catch (Exception e) {
+            logger.error("getUserAuthorizablePermissionForPosition error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取权限列表失败");
+        }
+    }
+
+    @Override
+    public ResultVO savePositionPermission(String jsonStr) {
+        try{
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            long positionId = jsonObject.getLong("positionId");
+
+            if (positionId == 0) {
+                throw new URCBizException("positionId为空", ErrorCode.E_000002);
+            }
+            //通过当前用户获得权限
+            List<RolePermissionDO> lstRolePermit = new ArrayList<RolePermissionDO>();
+            //取权限数据
+            JSONArray jsonArray = jsonObject.getJSONArray("selectedContext");
+            if (null != jsonArray && jsonArray.size() > 0) {
+                for (int i = 0; i < jsonArray.size(); i++) {
+                    JSONObject unitjsonObject = (JSONObject) jsonArray.get(i);
+                    RolePermissionDO rp = new RolePermissionDO();
+                    rp.setRoleId(positionId);
+                    rp.setSysKey(unitjsonObject.getString("sysKey"));
+                    rp.setSelectedContext(unitjsonObject.getString("sysContext"));
+                    rp.setCreateTime(new Date());
+                    rp.setCreateBy(sessionBp.getOperator());
+                    rp.setModifiedBy(sessionBp.getOperator());
+                    rp.setModifiedTime(rp.getCreateTime());
+                    lstRolePermit.add(rp);
+                }
+                //入库
+                rolePermitMapper.insertBatch(lstRolePermit);
+            }
+            //获取角色原关联的用户userName
+            UserRoleDO userRoleDO = new UserRoleDO();
+            userRoleDO.setRoleId(positionId);
+            List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
+            //更新用户功能权限缓存
+            List<String> lstUserName = new ArrayList<>();
+            //添加角色原来关联的用户列表
+            if (oldRelationUsers != null && !oldRelationUsers.isEmpty()) {
+                lstUserName.addAll(oldRelationUsers);
+            }
+            if (!lstUserName.isEmpty()) {
+                /*去重*/
+                lstUserName = removeDuplicate(lstUserName);
+                //保存权限改变的用户
+                // 改为由定时任务执行
+                permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
+            }
+            return VoHelper.getSuccessResult();
+        } catch (Exception e) {
+            logger.error("savePositionPermission error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "保存岗位功能权限失败");
+        }
+    }
+
+    private List<String> removeDuplicate(List<String> lstUserName) {
+        HashSet h = new HashSet(lstUserName);
+        lstUserName.clear();
+        lstUserName.addAll(h);
+        return lstUserName;
     }
 }
 
