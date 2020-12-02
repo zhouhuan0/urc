@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yks.urc.mapper.IPositionGroupMapper">
+
+    <select id="getPermissionGroupByUser" resultType="com.yks.urc.entity.PositionGroupVO">
+        select
+        (select pg.group_name from urc_position_group pg where pg.group_id = t.group_id and pg.is_delete = 0 limit 1) groupName,
+        (select pg.create_time from urc_position_group pg where pg.group_id = t.group_id and pg.is_delete = 0 limit 1) createdTime,
+        (select group_concat(ur.role_name) from urc_role ur left join urc_position_group pg on ur.role_id =
+        pg.position_id where pg.group_id = t.group_id and pg.is_delete = 0) positionNames,
+        t.group_id groupId
+        from (select distinct t.group_id
+        from urc_position_group t
+        <include refid="gropCondition"/>
+        order by t.id desc
+        ) t
+        limit #{currIndex},#{pageSize}
+    </select>
+
+    <select id="getPermissionGroupByUserCount" resultType="java.lang.Integer">
+        select
+        count(distinct t.group_id)
+        from urc_position_group t
+        <include refid="gropCondition"/>
+    </select>
+    <sql id="gropCondition">
+        where
+        t.is_delete = 0
+        <if test="userName != null and userName != ''">
+            and t.creator = #{userName}
+        </if>
+        <if test="groupName != null and groupName != ''">
+            and t.group_name = #{groupName}
+        </if>
+    </sql>
+
+    <delete id="deletePermissionGroup" parameterType="java.lang.String">
+        delete from urc_position_group
+        where group_id = #{groupId}
+    </delete>
+</mapper>

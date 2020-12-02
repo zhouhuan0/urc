@@ -148,4 +148,19 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO savePositionPermission(String jsonStr);
+
+    /**
+     *获取用户的权限组
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getPermissionGroupByUser(String jsonStr);
+
+    /**
+     *删除权限组信息
+     * @param jsonStr
+     * @return
+     */
+    ResultVO deletePermissionGroup(String jsonStr);
+
 }

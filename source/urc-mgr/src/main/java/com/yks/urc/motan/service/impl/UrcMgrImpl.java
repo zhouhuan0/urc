@@ -31,6 +31,8 @@ public class UrcMgrImpl implements IUrcMgr {
 
     @Autowired
     IPermissionService permissionService;
+    @Autowired
+    IPositionGroupService positionGroupService;
 
 
     @Override
@@ -223,4 +225,17 @@ public class UrcMgrImpl implements IUrcMgr {
     public ResultVO savePositionPermission(String jsonStr) {
         return userService.savePositionPermission(jsonStr);
     }
+
+    @Override
+    @Log("获取用户的权限组")
+    public ResultVO getPermissionGroupByUser(String jsonStr) {
+        return positionGroupService.getPermissionGroupByUser(jsonStr);
+    }
+
+    @Override
+    @Log("删除权限组信息")
+    public ResultVO deletePermissionGroup(String jsonStr) {
+        return positionGroupService.deletePermissionGroup(jsonStr);
+    }
+
 }
