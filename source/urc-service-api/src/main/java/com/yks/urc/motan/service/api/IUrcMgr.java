@@ -184,4 +184,11 @@ public interface IUrcMgr {
      */
     ResultVO getPermissionGroupInfo(String jsonStr);
 
+    /**
+     * 获取用户功能权限(非erp系统的功能权限)
+     *
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getAllFuncPermitForOtherSystem(String jsonStr);
 }

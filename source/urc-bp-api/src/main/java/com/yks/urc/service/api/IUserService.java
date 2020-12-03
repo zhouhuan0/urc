@@ -127,4 +127,6 @@ public interface IUserService {
 	ResultVO getUserAuthorizablePermissionForPosition(String jsonStr);
 
 	ResultVO savePositionPermission(String jsonStr);
+
+	ResultVO  getAllFuncPermitForOtherSystem(String jsonStr);
 }

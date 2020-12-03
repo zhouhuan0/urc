@@ -826,6 +826,23 @@ public class UserServiceImpl implements IUserService {
         lstUserName.addAll(h);
         return lstUserName;
     }
+
+    @Log("getAllFuncPermitForOtherSystem")
+    @Override
+    public ResultVO getAllFuncPermitForOtherSystem(String jsonStr) {
+        try {
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+            String operator = jsonObject.getString(StringConstant.operator);
+            SysKeysVO sysKeysVO = new SysKeysVO();
+            if(null != jsonObject.getJSONObject(StringConstant.data)){
+                sysKeysVO =StringUtility.parseObject(jsonObject.getJSONObject(StringConstant.data).toString(),SysKeysVO.class);
+            }
+            return userBp.getAllFuncPermitForOtherSystem(operator,null != sysKeysVO ? sysKeysVO.getSysKeys() : null);
+        } catch (Exception ex) {
+            logger.error(String.format("getAllFuncPermitForOtherSystem:%s", jsonStr), ex);
+            return VoHelper.getErrorResult();
+        }
+    }
 }
 
 

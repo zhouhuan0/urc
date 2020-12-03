@@ -260,4 +260,10 @@ public class UrcMgrImpl implements IUrcMgr {
         return positionGroupService.getPermissionGroupInfo(jsonStr);
     }
 
+    @Override
+    @Log("获取用户功能权限(非erp系统的功能权限)")
+    public ResultVO getAllFuncPermitForOtherSystem(String jsonStr) {
+        return userService.getAllFuncPermitForOtherSystem(jsonStr);
+    }
+
 }

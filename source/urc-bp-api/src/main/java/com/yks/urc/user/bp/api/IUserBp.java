@@ -45,4 +45,13 @@ public interface IUserBp {
 	List<String> getUserName(String userName);
 
     ResultVO updateAllUserInfo(List<UserInfo> userInfoList) throws Exception;
+
+	/**
+	 * 获取用户所有系统功能权限(非erp系统的功能权限)
+	 * @param operator
+	 * @return
+	 * @author panyun@youkeshu.com
+	 * @date 2018年6月14日 下午12:58:45
+	 */
+	ResultVO getAllFuncPermitForOtherSystem(String operator,List<String> sysKeys);
 }

@@ -163,6 +163,39 @@ public class UserBpImpl implements IUserBp {
         return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
     }
 
+    @Override
+    public ResultVO getAllFuncPermitForOtherSystem(String operator, List<String> sysKeys) {
+        // 先从缓存取
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys);
+        if (permitCache == null) {
+            // 从DB取,并更新缓存
+            permitCache = permitStatBp.updateUserPermitCache(operator);
+            if (permitCache.lstUserSysVO != null && permitCache.lstUserSysVO.size() > 0) {
+                permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
+                Collections.sort(permitCache.lstUserSysVO, myUserSysVOComparator);
+                for (UserSysVO us : permitCache.lstUserSysVO) {
+                    //排除erp部系统
+                    if(permissionMapper.isInternalSystem(us.sysKey)){
+                        continue;
+                    }
+                    permitCache.lstSysRoot.add(us.context);
+                }
+                permitCache.lstUserSysVO = null;
+            }
+        }
+
+        if (permitCache != null) {
+            permitCache.lstUserSysVO = null;
+            if (permitCache.lstSysRoot == null) {
+                permitCache.lstSysRoot = new ArrayList<>();
+            }
+            if (permitCache.funcVersion == null) {
+                permitCache.funcVersion = StringUtility.Empty;
+            }
+        }
+        return VoHelper.getSuccessResult(permitCache);
+    }
+
     /**
      * 搜索用户 , 首先拿到和用户 相关的所有信息, 再根据用户名去查询
      *
