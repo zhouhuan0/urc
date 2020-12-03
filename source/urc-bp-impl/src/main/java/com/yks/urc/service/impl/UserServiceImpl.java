@@ -3,7 +3,6 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.mchange.lang.LongUtils;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
@@ -68,6 +67,8 @@ public class UserServiceImpl implements IUserService {
     private ISerializeBp serializeBp;
     @Autowired
     PermitItemPositionMapper permitItemPositionMapper;
+    @Autowired
+    private PermissionMapper permissionMapper;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -668,15 +669,21 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr) {
         try{
-            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
             String operator = jsonObject.getString("operator");
 
             if (StringUtility.isNullOrEmpty(operator)) {
                 throw new URCBizException("operator为空", ErrorCode.E_000002);
             }
-            //通过当前用户获得权限
-            List<PermissionDO> list = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
-            return VoHelper.getSuccessResult(list);
+            List<PermissionDO> permissionVOs = new ArrayList<>();
+            //有超管岗位就可以拥有所有功能权限
+            if (roleMapper.isSuperAdminAccount(operator)) {
+                permissionVOs = permissionMapper.getAllSysKey();
+            }else {
+                //通过当前用户获得权限
+                permissionVOs = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
+            }
+            return VoHelper.getSuccessResult(permissionVOs);
         } catch (Exception e) {
             logger.error("getUserAuthorizablePermissionForPosition error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取权限列表失败");
