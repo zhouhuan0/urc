@@ -106,6 +106,17 @@ public class WsTest extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
 
     }
+    @Test
+    public void test8() {
+        Map map = new HashMap();
+        map.put("groupId", "123");
+        Map map2 = new HashMap();
+        map2.put("data", map);
+        String json = StringUtility.toJSONString(map2);
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.getPermissionGroupInfo(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
 
+    }
 
 }

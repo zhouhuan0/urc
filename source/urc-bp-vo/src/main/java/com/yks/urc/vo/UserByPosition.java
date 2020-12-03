@@ -17,6 +17,11 @@ public class UserByPosition {
      */
     private String userName;
 
+    /**
+     * 是否启用:0-禁用,1-启用
+     */
+    private Integer isActive;
+
     public String getPositionId() {
         return positionId;
     }
@@ -39,5 +44,13 @@ public class UserByPosition {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public Integer getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(Integer isActive) {
+        this.isActive = isActive;
     }
 }

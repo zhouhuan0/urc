@@ -254,4 +254,10 @@ public class UrcMgrImpl implements IUrcMgr {
         return VoHelper.getSuccessResult();
     }
 
+    @Override
+    @Log("获取权限组详情")
+    public ResultVO getPermissionGroupInfo(String jsonStr) {
+        return positionGroupService.getPermissionGroupInfo(jsonStr);
+    }
+
 }

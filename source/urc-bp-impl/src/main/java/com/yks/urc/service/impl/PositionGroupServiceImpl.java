@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.entity.PositionGroupVO;
+import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UrcGroupPermission;
 import com.yks.urc.entity.UrcPositionGroup;
 import com.yks.urc.enums.CommonMessageCodeEnum;
@@ -15,8 +16,7 @@ import com.yks.urc.mapper.UrcGroupPermissionMapper;
 import com.yks.urc.mapper.UrcPositionGroupMapper;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.service.api.IPositionGroupService;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -154,6 +154,34 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         } catch (Exception e) {
             logger.error("addOrUpdatePermissionGroup error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "添加或更新权限组失败");
+        }
+    }
+
+    @Override
+    public ResultVO getPermissionGroupInfo(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //权限组id
+            String groupId = jsonObject.getString("groupId");
+            if (!StringUtil.isNum(groupId)) {
+                throw new URCBizException("groupId不能为空", ErrorCode.E_000003);
+            }
+            PositionGroupInfo result = new PositionGroupInfo();
+            //获的权限id和名称
+            String name = positionGroupMapper.getPermissionGroupName(groupId);
+            result.setGroupId(groupId);
+            result.setGroupName(name);
+            //获得岗位信息
+            List<UserByPosition> positions = positionGroupMapper.getPositions(groupId);
+            result.setPositions(positions);
+            //获得权限信息
+            List<PermissionVO> selectedContext = positionGroupMapper.getSelectedContext(groupId);
+            result.setSelectedContext(selectedContext);
+            return VoHelper.getSuccessResult(result);
+        } catch (Exception e) {
+            logger.error("getPermissionGroupInfo error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取权限组详情失败");
         }
     }
 }

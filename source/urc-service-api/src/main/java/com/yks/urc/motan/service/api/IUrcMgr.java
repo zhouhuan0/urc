@@ -177,4 +177,11 @@ public interface IUrcMgr {
      */
     ResultVO syncPositionInfo(String jsonStr);
 
+    /**
+     *获取权限组详情
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getPermissionGroupInfo(String jsonStr);
+
 }

@@ -49,4 +49,26 @@
             #{positionId}
         </foreach>
     </select>
+
+    <select id="getPermissionGroupName" resultType="java.lang.String">
+        select distinct group_name from urc_position_group where group_id = #{groupId}
+    </select>
+
+    <select id="getPositions" resultType="com.yks.urc.vo.UserByPosition">
+        select
+            t.is_active isActive,
+            t.role_id,
+            t.role_name
+        from urc_role t
+            left join  urc_position_group t1 on t.role_id=t1.position_id
+        where t1.group_id = #{groupId}
+    </select>
+
+    <select id="getSelectedContext" resultType="com.yks.urc.vo.PermissionVO">
+        select
+            sys_key sysKey,
+            selected_context sysContext
+        from urc_group_permission
+        where group_id = #{groupId}
+    </select>
 </mapper>
