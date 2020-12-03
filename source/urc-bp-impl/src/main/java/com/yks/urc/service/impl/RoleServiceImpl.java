@@ -110,6 +110,8 @@ public class RoleServiceImpl implements IRoleService {
         Integer searchType = jsonObject.getInteger("searchType");
         //搜索内容,多个值用 ','隔开
         String searchContent = jsonObject.getString("searchContent");
+        //1:角色 2:岗位
+        Integer roleType = jsonObject.getInteger("roleType");
         if (StringUtil.isEmpty(operator)) {
             throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
         }
@@ -173,13 +175,15 @@ public class RoleServiceImpl implements IRoleService {
         for (RoleDO roleDO : roleDOS) {
             RoleVO roleVO = new RoleVO();
             BeanUtils.copyProperties(roleDO, roleVO);
-            roleVO.setAuthorizable((roleDO.getIsAuthorizable() != null && roleDO.getIsAuthorizable() == 1) ? true : false);
-            roleVO.setIsSupperAdmin((roleDO.getIsAuthorizable() == null || roleDO.getIsAuthorizable() != 2) ? false : true);
             roleVO.setRoleId(roleDO.getRoleId().toString());
             roleVO.setCreateTimeStr(roleDO.getCreateTime() != null ? DateUtil.formatDate(roleDO.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null);
             if(roleDO.getRoleType() != null && StringUtility.stringEqualsIgnoreCaseObj(roleDO.getRoleType(),UrcConstant.RoleType.position)){
                 roleVO.setModifiedTimeStr(roleDO.getPositionModifiedTime() != null ? DateUtil.formatDate(roleDO.getPositionModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
+                //岗位才展示是否超级管理员
+                roleVO.setIsSupperAdmin((roleDO.getIsAuthorizable() == null || roleDO.getIsAuthorizable() != 2) ? false : true);
             }else{
+                //角色才展示是否管理员
+                roleVO.setAuthorizable((roleDO.getIsAuthorizable() != null && roleDO.getIsAuthorizable() == 1) ? true : false);
                 roleVO.setModifiedTimeStr(roleDO.getModifiedTime() != null ? DateUtil.formatDate(roleDO.getModifiedTime(), "yyyy-MM-dd HH:mm:ss") : null);
             }
 
@@ -198,7 +202,7 @@ public class RoleServiceImpl implements IRoleService {
                 }
             }
         }
-        //超级管理员不显示
+        //角色是超级管理员不显示,岗位的要展示
         List<String> adminRoleIds = roleMapper.getAllAdminRoleId();
         if (!CollectionUtils.isEmpty(adminRoleIds)) {
             roleVOS.removeIf(roleVO -> adminRoleIds.contains(roleVO.roleId));

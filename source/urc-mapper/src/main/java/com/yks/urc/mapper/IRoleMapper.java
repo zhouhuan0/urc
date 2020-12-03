@@ -216,6 +216,10 @@ public interface IRoleMapper {
      */
     Long selectAllSuperAdministrator();
 
+    /**
+     * 只查询是超管的角色(不包含岗位是超管的)
+     * @return
+     */
     List<String> getAllAdminRoleId();
 
     int insertOrUpdate(RoleDO roleDO);

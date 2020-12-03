@@ -276,7 +276,7 @@
         SELECT role_id
         FROM urc_role
         <where>
-            is_authorizable = 2 and is_active = 1
+            is_authorizable = 2 and is_active = 1 and role_type = 1
             and (is_forever = 1 or (NOW() BETWEEN effective_time and expire_time))
         </where>
     </select>
@@ -313,6 +313,9 @@
             </if>
             <if test ="isAdmin != null">
                 and u.is_authorizable =#{isAdmin}
+            </if>
+            <if test ="roleType != null">
+                and u.role_type =#{roleType}
             </if>
             <if test="createBy != null and createBy != ''">
                 and   (
@@ -369,6 +372,9 @@
             </if>
             <if test ="isAdmin != null">
                 and u.is_authorizable =#{isAdmin}
+            </if>
+            <if test ="roleType != null">
+                and u.role_type =#{roleType}
             </if>
             <if test="createBy != null and createBy != ''">
                 and   (
