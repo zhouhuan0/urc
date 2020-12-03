@@ -1,14 +1,19 @@
 package com.yks.urc.service;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcMgr;
-import com.yks.urc.vo.ResultVO;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
+import com.yks.urc.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class WsTest extends BaseServiceTest {
     @Autowired
@@ -58,7 +63,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test4() {
-        String json = "{\"data\":{\"positionId\":\"123\",\"selectedContext\":[{\"sysContext\":\"zz\",\"sysKey\":\"zz\"},{\"sysContext\":\"ss\",\"sysKey\":\"ss\"}]}}";
+        String json = "{\"data\":{\"positionId\":\"123\",\"selectedContext\":[{\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"000-000001\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"000-000001-000003-001\\\",\\\"name\\\":\\\"查看\\\"}],\\\"key\\\":\\\"000-000001-000003\\\",\\\"module\\\":[],\\\"name\\\":\\\"绩效考评\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/index/console/gradeevaluate/\\\"},{\\\"function\\\":[{\\\"key\\\":\\\"000-000001-000004-001\\\",\\\"name\\\":\\\"查看\\\"},{\\\"key\\\":\\\"000-000001-000004-002\\\",\\\"name\\\":\\\"下载通知\\\"}],\\\"key\\\":\\\"000-000001-000004\\\",\\\"module\\\":[],\\\"name\\\":\\\"刊登通知\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/index/console/publishnotification/\\\"}],\\\"name\\\":\\\"工作台\\\",\\\"url\\\":\\\"/index/\\\"},{\\\"key\\\":\\\"000-000003\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"000-000003-000001-001\\\",\\\"name\\\":\\\"编辑\\\"}],\\\"key\\\":\\\"000-000003-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"新功能介绍\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/index/notice/introduction/\\\"}],\\\"name\\\":\\\"公告栏\\\",\\\"url\\\":\\\"/index/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"000\\\",\\\"name\\\":\\\"首页\\\",\\\"url\\\":\\\"/index/\\\"}}\",\"sysKey\":\"001\"}]}}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.savePositionPermission(json);
         System.out.println(StringUtility.toJSONString(resultVO));
@@ -101,4 +106,6 @@ public class WsTest extends BaseServiceTest {
         System.out.println(StringUtility.toJSONString(resultVO));
 
     }
+
+
 }

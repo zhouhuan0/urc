@@ -18,6 +18,7 @@ import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.log.Log;
 import com.yks.urc.mapper.*;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.user.bp.api.IUserBp;
@@ -25,6 +26,7 @@ import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,10 @@ public class UserServiceImpl implements IUserService {
     private IPermitRefreshTaskBp permitRefreshTaskBp;
     @Autowired
     private IUserRoleMapper userRoleMapper;
+    @Autowired
+    private ISerializeBp serializeBp;
+    @Autowired
+    PermitItemPositionMapper permitItemPositionMapper;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -691,6 +697,7 @@ public class UserServiceImpl implements IUserService {
             //取权限数据
             JSONArray jsonArray = jsonObject.getJSONArray("selectedContext");
             if (null != jsonArray && jsonArray.size() > 0) {
+                List<String> list = new ArrayList<String>();
                 for (int i = 0; i < jsonArray.size(); i++) {
                     JSONObject unitjsonObject = (JSONObject) jsonArray.get(i);
                     RolePermissionDO rp = new RolePermissionDO();
@@ -702,9 +709,29 @@ public class UserServiceImpl implements IUserService {
                     rp.setModifiedBy(sessionBp.getOperator());
                     rp.setModifiedTime(rp.getCreateTime());
                     lstRolePermit.add(rp);
+                    //拼接权限字符串
+                    list.addAll(concatData(unitjsonObject.getString("sysContext")));
                 }
+                rolePermitMapper.deleteByRoleIdInSysKey(positionId+"",null);
                 //入库
                 rolePermitMapper.insertBatch(lstRolePermit);
+                //写入关联表
+                if(!CollectionUtils.isEmpty(list)){
+                    List<PermitItemPosition> param = list.stream().map(e->{
+                        PermitItemPosition vo = new PermitItemPosition();
+                        vo.setPermitKey(e);
+                        vo.setPositionId(positionId);
+                        vo.setModifier(sessionBp.getOperator());
+                        vo.setCreator(sessionBp.getOperator());
+                        vo.setCreatedTime(new Date());
+                        vo.setModifiedTime(new Date());
+                        return vo;
+                    }).collect(Collectors.toList());
+                    //先删后插
+                    permitItemPositionMapper.deleteBypositionId(positionId);
+                    //插入新关系
+                    permitItemPositionMapper.insertPosition(param);
+                }
             }
             //获取角色原关联的用户userName
             UserRoleDO userRoleDO = new UserRoleDO();
@@ -730,6 +757,69 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
+    public List<String> concatData(String sysContext){
+        List<String> list = new ArrayList<String>();
+        Set<FunctionVO> lstAllKey = new HashSet<>();
+        if (StringUtils.isBlank(sysContext)) {
+            return list;
+        }
+        SystemRootVO rootVO = serializeBp.json2ObjNew(sysContext, new TypeReference<SystemRootVO>() {
+        });
+        lstAllKey.addAll(getAllPermitItem(rootVO));
+        list = lstAllKey.stream().map(e->e.key).collect(Collectors.toList());
+        return list;
+        }
+
+    private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {
+        List<MenuVO> menu1 = rootVO.menu;
+        if (CollectionUtils.isEmpty(menu1)) {
+            return;
+        }
+        for (int j = 0; j < menu1.size(); j++) {
+            MenuVO curMemu = menu1.get(j);
+//            lstAllKey.add(curMemu.key);
+            scanModule(String.format("%s-%s", sysName, curMemu.name), curMemu.module, lstAllKey);
+        }
+    }
+
+    private void scanModule(String parentName, List<ModuleVO> lstModule, Set<FunctionVO> lstAllKey) {
+        if (CollectionUtils.isEmpty(lstModule)) {
+            return;
+        }
+        for (ModuleVO moduleVO : lstModule) {
+            if (CollectionUtils.isEmpty(moduleVO.module) && CollectionUtils.isEmpty(moduleVO.function)) {
+                FunctionVO fKey = new FunctionVO();
+                fKey.key = moduleVO.key;
+                fKey.name = String.format("%s-%s", parentName, moduleVO.name);
+                lstAllKey.add(fKey);
+            } else {
+                scanModule(String.format("%s-%s", parentName, moduleVO.name), moduleVO.module, lstAllKey);
+                scanFunction(String.format("%s-%s", parentName, moduleVO.name), moduleVO.function, lstAllKey);
+            }
+        }
+    }
+    private Set<FunctionVO> getAllPermitItem(SystemRootVO rootVO) {
+        Set<FunctionVO> lstAllKey = new HashSet<>();
+        scanMenu(rootVO.system.name, rootVO, lstAllKey);
+        return lstAllKey;
+    }
+
+    private void scanFunction(String parentName, List<FunctionVO> lstFunction, Set<FunctionVO> lstAllKey) {
+        if (CollectionUtils.isEmpty(lstFunction)) {
+            return;
+        }
+        for (FunctionVO f : lstFunction) {
+            if (CollectionUtils.isEmpty(f.function)) {
+                f.name = String.format("%s-%s", parentName, f.name);
+                lstAllKey.add(f);
+            } else {
+                scanFunction(f.name, f.function, lstAllKey);
+            }
+        }
+    }
+    /**
+     * 去重
+     */
     private List<String> removeDuplicate(List<String> lstUserName) {
         HashSet h = new HashSet(lstUserName);
         lstUserName.clear();

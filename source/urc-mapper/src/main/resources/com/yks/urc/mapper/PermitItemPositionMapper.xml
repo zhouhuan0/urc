@@ -114,4 +114,21 @@
       modified_time = #{modifiedTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+  <delete id="deleteBypositionId" parameterType="java.lang.Long">
+    delete from permit_item_position
+    where position_id = #{positionId}
+  </delete>
+
+  <insert id="insertPosition" parameterType="com.yks.urc.entity.PermitItemPosition">
+    insert into permit_item_position ( permit_key, position_id,
+      creator, created_time, modifier,
+      modified_time)
+    values
+    <foreach collection="list"  item="item" separator="," index="index">
+    ( #{item.permitKey}, #{item.positionId},
+      #{item.creator}, #{item.createdTime}, #{item.modifier},
+      #{item.modifiedTime})
+    </foreach>
+  </insert>
 </mapper>

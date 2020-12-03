@@ -2,6 +2,8 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.PermitItemPosition;
 
+import java.util.List;
+
 public interface PermitItemPositionMapper {
     int deleteByPrimaryKey(Long id);
 
@@ -14,4 +16,8 @@ public interface PermitItemPositionMapper {
     int updateByPrimaryKeySelective(PermitItemPosition record);
 
     int updateByPrimaryKey(PermitItemPosition record);
+
+    void deleteBypositionId(long positionId);
+
+    void insertPosition(List<PermitItemPosition> list);
 }
