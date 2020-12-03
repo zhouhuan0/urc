@@ -185,6 +185,20 @@ public interface IUrcMgr {
     ResultVO getPermissionGroupInfo(String jsonStr);
 
     /**
+     *获取岗位列表
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getPositionList(String jsonStr);
+
+    /**
+     *获取岗位的功能权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getPositionPermission(String jsonStr);
+
+    /**
      * 获取用户功能权限(非erp系统的功能权限)
      *
      * @param jsonStr

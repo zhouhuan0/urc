@@ -57,8 +57,8 @@
     <select id="getPositions" resultType="com.yks.urc.vo.UserByPosition">
         select
             t.is_active isActive,
-            t.role_id,
-            t.role_name
+            t.role_id positionId,
+            t.role_name positionName
         from urc_role t
             left join  urc_position_group t1 on t.role_id=t1.position_id
         where t1.group_id = #{groupId}
@@ -70,5 +70,21 @@
             selected_context sysContext
         from urc_group_permission
         where group_id = #{groupId}
+    </select>
+
+    <select id="getPositionList" resultType="com.yks.urc.vo.UserByPosition">
+        select
+            t.is_active isActive,
+            t.role_id positionId,
+            t.role_name positionName
+        from urc_role t where t.role_name like CONCAT(CONCAT('%',#{positionName},'%'))
+    </select>
+
+    <select id="getPositionPermission" resultType="com.yks.urc.vo.PermissionVO">
+        select
+            sys_key sysKey,
+            selected_context sysContext
+        from urc_role_permission
+        where role_id = #{positionId}
     </select>
 </mapper>

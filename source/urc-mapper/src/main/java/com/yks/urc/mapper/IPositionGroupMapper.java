@@ -27,4 +27,8 @@ public interface IPositionGroupMapper {
     List<UserByPosition> getPositions(String groupId);
 
     List<PermissionVO> getSelectedContext(String groupId);
+
+    List<UserByPosition> getPositionList(String positionName);
+
+    List<PermissionVO> getPositionPermission(String positionId);
 }

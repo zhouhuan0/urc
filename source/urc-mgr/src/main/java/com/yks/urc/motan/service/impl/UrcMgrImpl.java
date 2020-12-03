@@ -261,6 +261,18 @@ public class UrcMgrImpl implements IUrcMgr {
     }
 
     @Override
+    @Log("获取岗位列表")
+    public ResultVO getPositionList(String jsonStr) {
+        return positionGroupService.getPositionList(jsonStr);
+    }
+
+    @Override
+    @Log("获取岗位的功能权限")
+    public ResultVO getPositionPermission(String jsonStr) {
+        return positionGroupService.getPositionPermission(jsonStr);
+    }
+
+    @Override
     @Log("获取用户功能权限(非erp系统的功能权限)")
     public ResultVO getAllFuncPermitForOtherSystem(String jsonStr) {
         return userService.getAllFuncPermitForOtherSystem(jsonStr);

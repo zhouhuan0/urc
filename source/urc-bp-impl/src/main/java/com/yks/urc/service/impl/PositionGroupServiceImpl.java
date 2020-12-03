@@ -82,7 +82,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             //权限组id
             String groupId = jsonObject.getString("groupId");
-            if (!StringUtil.isNum(groupId)) {
+            if (StringUtil.isEmpty(groupId)) {
                 throw new URCBizException("groupId不能为空", ErrorCode.E_000003);
             }
             //获得数据
@@ -164,7 +164,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             //权限组id
             String groupId = jsonObject.getString("groupId");
-            if (!StringUtil.isNum(groupId)) {
+            if (StringUtil.isEmpty(groupId)) {
                 throw new URCBizException("groupId不能为空", ErrorCode.E_000003);
             }
             PositionGroupInfo result = new PositionGroupInfo();
@@ -183,6 +183,40 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             logger.error("getPermissionGroupInfo error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取权限组详情失败");
         }
+    }
+
+    @Override
+    public ResultVO getPositionList(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //权限组名称
+            String positionName = jsonObject.getString("positionName");
+            List<UserByPosition> positions = positionGroupMapper.getPositionList(positionName);
+            return VoHelper.getSuccessResult(positions);
+        } catch (Exception e) {
+            logger.error("getPositionList error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取岗位列表失败");
+        }
+    }
+
+    @Override
+    public ResultVO getPositionPermission(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //岗位id
+            String positionId = jsonObject.getString("positionId");
+            if (StringUtil.isEmpty(positionId)) {
+                throw new URCBizException("positionId不能为空", ErrorCode.E_000003);
+            }
+            List<PermissionVO> permissionVO = positionGroupMapper.getPositionPermission(positionId);
+            return VoHelper.getSuccessResult(permissionVO);
+        } catch (Exception e) {
+            logger.error("getPositionPermission error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取岗位的功能权限失败");
+        }
+
     }
 }
 

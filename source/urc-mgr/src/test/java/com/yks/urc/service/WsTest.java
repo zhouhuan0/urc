@@ -119,4 +119,30 @@ public class WsTest extends BaseServiceTest {
 
     }
 
+    @Test
+    public void test9() {
+        Map map = new HashMap();
+        map.put("positionName", "123");
+        Map map2 = new HashMap();
+        map2.put("data", map);
+        String json = StringUtility.toJSONString(map2);
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.getPositionList(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
+    }
+
+    @Test
+    public void test10() {
+        Map map = new HashMap();
+        map.put("positionId", "123");
+        Map map2 = new HashMap();
+        map2.put("data", map);
+        String json = StringUtility.toJSONString(map2);
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.getPositionPermission(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
+    }
+
 }
