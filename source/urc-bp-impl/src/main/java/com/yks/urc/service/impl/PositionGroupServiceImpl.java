@@ -2,11 +2,14 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.entity.PositionGroupVO;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UrcGroupPermission;
 import com.yks.urc.entity.UrcPositionGroup;
 import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.excel.FileUpDownLoadUtils;
+import com.yks.urc.excel.PositionInfoExcelExport;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtil;
@@ -15,15 +18,16 @@ import com.yks.urc.mapper.IPositionGroupMapper;
 import com.yks.urc.mapper.UrcGroupPermissionMapper;
 import com.yks.urc.mapper.UrcPositionGroupMapper;
 import com.yks.urc.seq.bp.api.ISeqBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IPositionGroupService;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import java.util.*;
 
@@ -39,6 +43,12 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     UrcGroupPermissionMapper urcGroupPermissionMapper;
     @Autowired
     private ISeqBp seqBp;
+    @Autowired
+    private PositionInfoExcelExport positionInfoExcelExport;
+    @Autowired
+    private ISerializeBp serializeBp;
+
+    private static String excelTemp = "/opt/tmp/";
 
     @Override
     public ResultVO getPermissionGroupByUser(String jsonStr) {
@@ -218,6 +228,83 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         }
 
     }
+
+    @Override
+    public ResultVO getPositionInfoByPermitKey(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //权限组名称
+            String lstPermitKeyStr = jsonObject.getString("lstPermitKey");
+            List<String> lstPermitKey = JSONArray.parseArray(lstPermitKeyStr, String.class);
+            //用户名
+            String positionIdStr = jsonObject.getString("positionIds");
+            List<String> positionIds = JSONArray.parseArray(positionIdStr, String.class);
+            /*组装查询条件queryMap*/
+            Map<String, Object> queryMap = new HashMap<>();
+            int pageNumber = jsonObject.getInteger("pageNumber");
+            int pageData = jsonObject.getInteger("pageData");
+            if (!StringUtil.isNum(pageNumber) || !StringUtil.isNum(pageData)) {
+                throw new URCBizException("pageNumber or  pageData is not a num", ErrorCode.E_000003);
+            }
+            int currPage = pageNumber;
+            int pageSize = pageData;
+            queryMap.put("currIndex", (currPage - 1) * pageSize);
+            queryMap.put("pageSize", pageSize);
+            queryMap.put("lstPermitKey", lstPermitKey);
+            queryMap.put("positionIds", positionIds);
+            //获得数据
+            List<UserByPosition> list = positionGroupMapper.getPositionInfoByPermitKey(queryMap);
+            //获得总数
+            int total = positionGroupMapper.getPositionInfoByPermitKeyCount(queryMap);
+            PageResultVO pageResultVO = new PageResultVO(list, total, queryMap.get("pageSize").toString());
+            return VoHelper.getSuccessResult(pageResultVO);
+        } catch (Exception e) {
+            logger.error("getPermissionGroupByUser error!", e);
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "获取用户的权限组失败");
+        }
+    }
+
+    @Override
+    public ResultVO exportPositionInfoByPermitKey(String jsonStr) {
+        try {
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            //权限组名称
+            String lstPermitKeyStr = jsonObject.getString("lstPermitKey");
+            List<String> lstPermitKey = JSONArray.parseArray(lstPermitKeyStr, String.class);
+            //用户名
+            String positionIdStr = jsonObject.getString("positionIds");
+            List<String> positionIds = JSONArray.parseArray(positionIdStr, String.class);
+            Map<String, Object> queryMap = new HashMap<>();
+            queryMap.put("lstPermitKey", lstPermitKey);
+            queryMap.put("positionIds", positionIds);
+            //获得总数
+            int total = positionGroupMapper.getPositionInfoByPermitKeyCount(queryMap);
+            queryMap.put("currIndex", 0);
+            queryMap.put("pageSize", total);
+            List<UserByPosition> list = positionGroupMapper.getPositionInfoByPermitKey(queryMap);
+            String downloadFileUrl = downloadByData(list);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(),downloadFileUrl);
+        } catch (Exception e) {
+            logger.error(String.format("exportPositionInfoByPermitKey error ! json:%s", jsonStr),e);
+        }
+        return VoHelper.getErrorResult();
+    }
+
+    /**
+     * 生成excle
+     * @param list
+     * @return
+     */
+    private String downloadByData(List<UserByPosition> list) {
+        Date now = new Date();
+        String fileName = excelTemp + "positon-"+now.getTime() +".xlsx";
+        positionInfoExcelExport.setList(list);
+        positionInfoExcelExport.setExportFilePath(fileName);
+        positionInfoExcelExport.initExportExcel();
+        String result = FileUpDownLoadUtils.getDownloadUrl("http://www.soter.youkeshu.com/yks/file/server/", fileName);
+        return result;
+    }
+
 }
-
-

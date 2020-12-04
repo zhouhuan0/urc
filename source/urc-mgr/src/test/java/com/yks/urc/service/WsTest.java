@@ -145,4 +145,22 @@ public class WsTest extends BaseServiceTest {
 
     }
 
+    @Test
+    public void test11() {
+        String json ="{\"data\":{\"pageData\":100,\"pageNumber\":1,\"lstPermitKey\":[\"000-000001-000003-001\",\"000-000001-000004-001\"],\"positionIds\":[\"1606805482420000065\"]}}";
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.getPositionInfoByPermitKey(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
+    }
+
+    @Test
+    public void test12() {
+        String json ="{\"data\":{\"pageData\":100,\"pageNumber\":1,\"lstPermitKey\":[\"000-000001-000003-001\",\"000-000001-000004-001\"],\"positionIds\":[\"1606805482420000065\"]}}";
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.exportPositionInfoByPermitKey(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+
+    }
+
 }

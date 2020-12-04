@@ -47,4 +47,17 @@ public interface IPositionGroupService {
      * @return
      */
     ResultVO getPositionPermission(String jsonStr);
+
+    /**
+     * 根据权限key查询岗位或岗位用户
+     * @return
+     */
+    ResultVO getPositionInfoByPermitKey(String jsonStr);
+
+    /**
+     * 导出根据权限key查询岗位或岗位用户数据
+     * @param jsonStr
+     * @return
+     */
+    ResultVO exportPositionInfoByPermitKey(String jsonStr);
 }

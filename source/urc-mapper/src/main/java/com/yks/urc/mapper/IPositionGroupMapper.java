@@ -31,4 +31,8 @@ public interface IPositionGroupMapper {
     List<UserByPosition> getPositionList(String positionName);
 
     List<PermissionVO> getPositionPermission(String positionId);
+
+    List<UserByPosition> getPositionInfoByPermitKey(Map<String, Object> queryMap);
+
+    int getPositionInfoByPermitKeyCount(Map<String, Object> queryMap);
 }

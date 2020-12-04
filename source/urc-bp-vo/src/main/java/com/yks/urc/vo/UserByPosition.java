@@ -22,6 +22,11 @@ public class UserByPosition {
      */
     private Integer isActive;
 
+    /**
+     * 权限名称
+     */
+    private String permitName;
+
     public String getPositionId() {
         return positionId;
     }
@@ -52,5 +57,13 @@ public class UserByPosition {
 
     public void setIsActive(Integer isActive) {
         this.isActive = isActive;
+    }
+
+    public String getPermitName() {
+        return permitName;
+    }
+
+    public void setPermitName(String permitName) {
+        this.permitName = permitName;
     }
 }

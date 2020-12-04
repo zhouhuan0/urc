@@ -278,4 +278,16 @@ public class UrcMgrImpl implements IUrcMgr {
         return userService.getAllFuncPermitForOtherSystem(jsonStr);
     }
 
+    @Override
+    @Log("根据权限key查询岗位或岗位用户")
+    public ResultVO getPositionInfoByPermitKey(String jsonStr) {
+        return positionGroupService.getPositionInfoByPermitKey(jsonStr);
+    }
+
+    @Override
+    @Log("导出根据权限key查询岗位或岗位用户数据")
+    public ResultVO exportPositionInfoByPermitKey(String jsonStr) {
+        return positionGroupService.exportPositionInfoByPermitKey(jsonStr);
+    }
+
 }
