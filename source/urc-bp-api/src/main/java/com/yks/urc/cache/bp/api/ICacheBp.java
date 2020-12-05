@@ -21,7 +21,7 @@ public interface ICacheBp {
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月21日 下午3:30:56
 	 */
-	GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys);
+	GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Boolean isErpSysyem);
 
 	void insertUser(UserVO u);
      //存入白名单到redis

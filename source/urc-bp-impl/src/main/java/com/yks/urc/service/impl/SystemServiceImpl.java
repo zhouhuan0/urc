@@ -82,15 +82,15 @@ public class SystemServiceImpl implements ISystemService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO getUpdateSystemInfo(String jsonStr){
+    public ResultVO updateSystemInfo(String jsonStr){
         RequestVO<UpdateSystemVO> requestVO = serializeBp.json2ObjNew(jsonStr, new TypeReference<RequestVO<UpdateSystemVO>>() {
         });
 
         //判断用户是不是超级管理员
-        boolean isSuperAdmin = roleMapper.isSuperAdminAccount(requestVO.operator);
+       /* boolean isSuperAdmin = roleMapper.isSuperAdminAccount(requestVO.operator);
         if(!isSuperAdmin){
             VoHelper.getErrorResult(CommonMessageCodeEnum.PARAM_INVALID.getCode(),"当前用户不是超级管理员,无法进行操作");
-        }
+        }*/
 
         UpdateSystemVO updateSystemVO = requestVO.data;
         if (StringUtility.isNullOrEmpty(updateSystemVO.sysKey)) {
@@ -99,7 +99,7 @@ public class SystemServiceImpl implements ISystemService {
         PermissionDO p = new PermissionDO();
         p.setSysKey(updateSystemVO.sysKey);
         p.setStatus(updateSystemVO.status);
-        p.setRemark(updateSystemVO.remark);
+        p.setRemark(updateSystemVO.remark == null ? "": updateSystemVO.remark);
         permissionMapper.updateSysContextBySysKeyCondition(p);
 
         //先删除在插入数据
@@ -156,7 +156,7 @@ public class SystemServiceImpl implements ISystemService {
             }
             Map<String,Object> resultMap = new HashMap<>();
             //分页查询系统信息
-            List<PermissionDO> permissionDOS = permissionMapper.selectSystemInfoPage(sysKey,status,pageNumber,(pageNumber-1)*pageData);
+            List<PermissionDO> permissionDOS = permissionMapper.selectSystemInfoPage(sysKey,status,pageData,(pageNumber-1)*pageData);
             //查询总数
             List<PermissionDO> list = permissionMapper.selectSystemInfoPage(sysKey, status, null, null);
             if(CollectionUtils.isEmpty(permissionDOS)){
@@ -178,13 +178,11 @@ public class SystemServiceImpl implements ISystemService {
                 updateSystemVO.sysKey = aDo.getSysKey();
                 updateSystemVO.sysName = aDo.getSysName();
                 updateSystemVO.createdTime = aDo.getCreateTime() != null ? DateUtil.formatDate(aDo.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null;
-
+                updateSystemVO.dataAdministrators = Collections.EMPTY_LIST;
+                updateSystemVO.functionAdministrators = Collections.EMPTY_LIST;
                 //获取系统的管理人员
                 List<UrcSystemAdministrator> urcSystemAdministratorList = listMap.get(aDo.getSysKey());
-                if(CollectionUtils.isEmpty(urcSystemAdministratorList)){
-                    updateSystemVO.dataAdministrators = Collections.EMPTY_LIST;
-                    updateSystemVO.functionAdministrators = Collections.EMPTY_LIST;
-                }else{
+                if(!CollectionUtils.isEmpty(urcSystemAdministratorList)){
                     //按管理员类型分组
                     Map<Byte, List<UrcSystemAdministrator>> map = urcSystemAdministratorList.stream().collect(Collectors.groupingBy(UrcSystemAdministrator::getType));
                     for (Byte aByte : map.keySet()) {

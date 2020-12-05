@@ -3,6 +3,7 @@ package com.yks.urc.cache.bp.impl;
 import com.yks.distributed.cache.core.Cache;
 import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
@@ -188,7 +189,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return String.format("user_sys_func_%s", userName);
     }
 
-    public GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys) {
+    public GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Boolean isErpSysyem) {
         Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
         if (mapHash != null && mapHash.size() > 0) {
             // 按sysKeyr排序，前端顶部导航栏依赖此顺序
@@ -203,9 +204,25 @@ public class RedisCacheBpImpl2 implements ICacheBp {
                 if (StringUtility.stringEqualsIgnoreCase("NA", key))
                     continue;
 
-                //排除外部系统
-                if(!permissionMapper.isInternalSystem(key)){
+                PermissionDO permissionBySysKey = permissionMapper.getPermissionBySysKey(key);
+                if(permissionBySysKey == null){
                     continue;
+                }
+
+                //过滤禁用状态的系统
+                if(permissionBySysKey.getStatus() != null && StringUtility.stringEqualsIgnoreCaseObj(permissionBySysKey.getStatus(),0)){
+                    continue;
+                }
+
+                if(isErpSysyem != null){
+                    boolean internalSystem = StringUtility.stringEqualsIgnoreCaseObj(permissionBySysKey.getIsInternalSystem(), 1) ? true : false;
+                    //排除外部系统
+                    if(isErpSysyem && !internalSystem){
+                        continue;
+                     //排除内部系统
+                    }else if(!isErpSysyem && internalSystem){
+                        continue;
+                    }
                 }
 
                 if(!CollectionUtils.isEmpty(sysKeys)){

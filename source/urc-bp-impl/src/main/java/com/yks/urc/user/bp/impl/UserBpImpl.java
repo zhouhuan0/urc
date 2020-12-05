@@ -166,7 +166,7 @@ public class UserBpImpl implements IUserBp {
     @Override
     public ResultVO getAllFuncPermitForOtherSystem(String operator, List<String> sysKeys) {
         // 先从缓存取
-        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys);
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,false);
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
@@ -484,7 +484,7 @@ public class UserBpImpl implements IUserBp {
     @Override
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator, List<String> sysKeys) {
         // 先从缓存取
-        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys);
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,true);
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);

@@ -17,7 +17,7 @@ public interface ISystemService {
     ResultVO getSystemPermission(String jsonStr);
 
     //系统信息更新
-    ResultVO getUpdateSystemInfo(String jsonStr);
+    ResultVO updateSystemInfo(String jsonStr);
 
     //获取系统信息列表
     ResultVO getSystemInfoList(String jsonStr);

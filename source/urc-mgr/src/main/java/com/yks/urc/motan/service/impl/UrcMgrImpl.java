@@ -191,9 +191,9 @@ public class UrcMgrImpl implements IUrcMgr {
     @Log("系统管理编辑")
     public ResultVO editSystemInfo(String jsonStr) {
         try {
-            return systemService.getUpdateSystemInfo(jsonStr);
+            return systemService.updateSystemInfo(jsonStr);
         } catch (Exception e) {
-            logger.error("getUpdateSystemInfo error!", e);
+            logger.error("updateSystemInfo error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "系统信息更新失败");
         }
     }

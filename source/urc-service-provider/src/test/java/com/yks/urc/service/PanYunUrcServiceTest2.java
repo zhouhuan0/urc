@@ -337,7 +337,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         e.context = "110 context";
 //        permitCache.lstUserSysVO.add(e);
         cacheBp.insertUserFunc(u.userName, permitCache);
-        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName, null);
+        GetAllFuncPermitRespVO pRslt = cacheBp.getUserFunc(u.userName, null,null);
         System.out.println(String.format("---------%s", StringUtility.toJSONString_NoException(pRslt)));
 
 
