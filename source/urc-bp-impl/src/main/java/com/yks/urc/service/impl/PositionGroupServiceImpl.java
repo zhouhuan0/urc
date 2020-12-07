@@ -237,6 +237,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             //权限组名称
             String lstPermitKeyStr = jsonObject.getString("lstPermitKey");
             List<String> lstPermitKey = JSONArray.parseArray(lstPermitKeyStr, String.class);
+            //查询数量控制
+            if (CollectionUtils.isEmpty(lstPermitKey) || lstPermitKey.size() < 1 || lstPermitKey.size() > 5) {
+                return VoHelper.getErrorResult(ErrorCode.E_000003.getState(), "只能选择1-5个权限查询 ");
+            }
             //用户名
             String positionIdStr = jsonObject.getString("positionIds");
             List<String> positionIds = JSONArray.parseArray(positionIdStr, String.class);
@@ -273,6 +277,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             //权限组名称
             String lstPermitKeyStr = jsonObject.getString("lstPermitKey");
             List<String> lstPermitKey = JSONArray.parseArray(lstPermitKeyStr, String.class);
+            //查询数量控制
+            if (CollectionUtils.isEmpty(lstPermitKey) || lstPermitKey.size() < 1 || lstPermitKey.size() > 5) {
+                return VoHelper.getErrorResult(ErrorCode.E_000003.getState(), "只能选择1-5个权限查询 ");
+            }
             //用户名
             String positionIdStr = jsonObject.getString("positionIds");
             List<String> positionIds = JSONArray.parseArray(positionIdStr, String.class);
