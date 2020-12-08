@@ -129,6 +129,7 @@ public class RoleServiceImpl implements IRoleService {
         queryMap.put("pageSize", pageSize);
         queryMap.put("isAdmin", isAuthorizable);
         queryMap.put("isActive", isActive);
+        queryMap.put("roleType",roleType);
         if (searchType != null) {
             switch (searchType) {
                 case 0:
