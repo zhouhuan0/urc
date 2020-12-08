@@ -79,6 +79,7 @@
             t.role_name positionName
         from urc_role t
         where t.role_type =2
+        and t.is_authorizable != 2
         and t.role_name like CONCAT(CONCAT('%',#{positionName},'%'))
     </select>
 
