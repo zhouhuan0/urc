@@ -27,6 +27,7 @@ import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.ldap.bp.api.ILdapBp;
+import com.yks.urc.mapper.IPermitRefreshTaskMapper;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.motan.MotanSession;
@@ -485,15 +486,20 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
 
     @Autowired
     private PermitRefreshTask permitRefreshTask;
+    @Autowired
+    IPermitRefreshTaskMapper permitRefreshTaskMapper;
 
     @Test
     public void doPermitRefreshTask_Test() {
-        PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
-        mem.setTaskParam("[\"panyun1\"]");
+        /*PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
+        mem.setTaskParam("[\"panyun1\"]");*/
+        PermitRefreshTaskVO mem = permitRefreshTaskMapper.selectByPrimaryKey(16108L);
         permitRefreshTask.doOne(mem);
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
+        permitRefreshTaskMapper.updateTaskStatus(mem);
 
-        mem.setTaskParam("[\"001\"]");
+        //System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
+
+      //  mem.setTaskParam("[\"001\"]");
 //        permitRefreshTask.doTwo(mem);
     }
 
