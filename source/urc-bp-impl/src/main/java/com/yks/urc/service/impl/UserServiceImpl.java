@@ -624,10 +624,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultVO setSupperAdmin(String jsonStr) {
+    public ResultVO setSupperAdmin(String jsonStr,String operator) {
         try{
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
-            String operator = jsonObject.getString("operator");
+            //String operator = jsonObject.getString("operator");
 
             if (StringUtility.isNullOrEmpty(operator)) {
                 throw new URCBizException("operator为空", ErrorCode.E_000002);
@@ -667,10 +667,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr) {
+    public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr,String operator) {
         try{
             JSONObject jsonObject = StringUtility.parseString(jsonStr);
-            String operator = jsonObject.getString("operator");
+            //String operator = jsonObject.getString("operator");
 
             if (StringUtility.isNullOrEmpty(operator)) {
                 throw new URCBizException("operator为空", ErrorCode.E_000002);

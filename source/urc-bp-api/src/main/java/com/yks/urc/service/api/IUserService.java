@@ -122,9 +122,9 @@ public interface IUserService {
 
 	ResultVO getUserByPosition(String jsonStr);
 
-	ResultVO setSupperAdmin(String jsonStr);
+	ResultVO setSupperAdmin(String jsonStr,String operator);
 
-	ResultVO getUserAuthorizablePermissionForPosition(String jsonStr);
+	ResultVO getUserAuthorizablePermissionForPosition(String jsonStr,String operator);
 
 	ResultVO savePositionPermission(String jsonStr);
 

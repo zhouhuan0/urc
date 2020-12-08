@@ -214,13 +214,15 @@ public class UrcMgrImpl implements IUrcMgr {
     @Override
     @Log("设置为超级管理员")
     public ResultVO setSupperAdmin(String jsonStr) {
-        return userService.setSupperAdmin(jsonStr);
+        String operator = MotanSession.getRequest().getOperator();
+        return userService.setSupperAdmin(jsonStr,operator);
     }
 
     @Override
     @Log("获取当前用户能授权的功能权限-岗位权限调用")
     public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr) {
-        return userService.getUserAuthorizablePermissionForPosition(jsonStr);
+        String operator = MotanSession.getRequest().getOperator();
+        return userService.getUserAuthorizablePermissionForPosition(jsonStr,operator);
     }
 
     @Override

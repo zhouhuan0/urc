@@ -36,13 +36,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test2() {
-        Map map = new HashMap();
-        map.put("operator", "wensheng");
-        map.put("positionId", "1606805482420000065");
-        map.put("isSupperAdmin", "1");
-        Map map2 = new HashMap();
-        map2.put("data", map);
-        String json = StringUtility.toJSONString(map2);
+        String json = "{\"data\":{\"positionId\":\"79\",\"isSupperAdmin\":1},\"ticket\":\"5adf338494b39326142c88e777cf2db5\",\"operator\":\"wensheng\",\"personName\":\"文胜\",\"funcVersion\":\"557a74e41f37da5c73a4193e7f008809\",\"moduleUrl\":\"/user/rolemanagement/\",\"requestId\":\"120815320501962f1fcd61d526a84c40\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.setSupperAdmin(json);
         System.out.println(StringUtility.toJSONString(resultVO));
@@ -51,9 +45,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test3() {
-        Map map = new HashMap();
-        map.put("operator", "wensheng");
-        String json = StringUtility.toJSONString(map);
+        String json = "{\"data\":{},\"ticket\":\"5adf338494b39326142c88e777cf2db5\",\"operator\":\"wensheng\",\"personName\":\"文胜\",\"funcVersion\":\"557a74e41f37da5c73a4193e7f008809\",\"moduleUrl\":\"/user/rolemanagement/\",\"requestId\":\"120815320501962f1fcd61d526a84c40\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.getUserAuthorizablePermissionForPosition(json);
         System.out.println(StringUtility.toJSONString(resultVO));
@@ -113,7 +105,7 @@ public class WsTest extends BaseServiceTest {
     @Test
     public void test9() {
         Map map = new HashMap();
-        map.put("positionName", "JavaA");
+        map.put("positionName", "");
         Map map2 = new HashMap();
         map2.put("data", map);
         String json = StringUtility.toJSONString(map2);

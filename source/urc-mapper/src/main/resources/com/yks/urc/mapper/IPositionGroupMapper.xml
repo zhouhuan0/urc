@@ -80,7 +80,9 @@
         from urc_role t
         where t.role_type =2
         and t.is_authorizable != 2
+        <if test="positionName != null and positionName != ''">
         and t.role_name like CONCAT(CONCAT('%',#{positionName},'%'))
+        </if>
     </select>
 
     <select id="getPositionPermission" resultType="com.yks.urc.vo.PermissionVO">
