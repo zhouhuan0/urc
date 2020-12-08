@@ -232,7 +232,8 @@ public class UrcMgrImpl implements IUrcMgr {
     @Override
     @Log("获取用户的权限组")
     public ResultVO getPermissionGroupByUser(String jsonStr) {
-        return positionGroupService.getPermissionGroupByUser(jsonStr);
+        String operator = MotanSession.getRequest().getOperator();
+        return positionGroupService.getPermissionGroupByUser(jsonStr,operator);
     }
 
     @Override

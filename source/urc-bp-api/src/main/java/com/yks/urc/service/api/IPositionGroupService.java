@@ -10,7 +10,7 @@ public interface IPositionGroupService {
      * @param
      * @return
      */
-    ResultVO getPermissionGroupByUser(String jsonStr);
+    ResultVO getPermissionGroupByUser(String jsonStr,String operator);
 
     /**
      * 通过groupId删除权限组

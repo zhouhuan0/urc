@@ -53,9 +53,7 @@ public class WsTest extends BaseServiceTest {
     public void test3() {
         Map map = new HashMap();
         map.put("operator", "wensheng");
-        Map map2 = new HashMap();
-        map2.put("data", map);
-        String json = StringUtility.toJSONString(map2);
+        String json = StringUtility.toJSONString(map);
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.getUserAuthorizablePermissionForPosition(json);
         System.out.println(StringUtility.toJSONString(resultVO));
@@ -71,14 +69,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test5() {
-        Map map = new HashMap();
-        map.put("pageNumber", 1);
-        map.put("pageData", 100);
-        // map.put("groupName", "wsGroup");
-        map.put("userName", "wensheng");
-        Map map2 = new HashMap();
-        map2.put("data", map);
-        String json = StringUtility.toJSONString(map2);
+        String json = "{\"data\":{\"pageNumber\":1,\"pageData\":100,\"userName\":\"wensheng\"},\"ticket\":\"617791bb38d16a793e78ba9cfb29e18c\",\"operator\":\"wensheng\",\"personName\":\"dingjinfeng\",\"funcVersion\":\"308a2ccc6be755b9d8630549541eb270\",\"moduleUrl\":\"/account/manage/appeal/\",\"requestId\":\"11051519151069194701f431c2a7b00f\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.getPermissionGroupByUser(json);
         System.out.println(StringUtility.toJSONString(resultVO));

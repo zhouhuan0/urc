@@ -51,14 +51,16 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private static String excelTemp = "/opt/tmp/";
 
     @Override
-    public ResultVO getPermissionGroupByUser(String jsonStr) {
+    public ResultVO getPermissionGroupByUser(String jsonStr, String operator) {
         try {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             //权限组名称
             String groupName = jsonObject.getString("groupName");
             //用户名
-            String userName = jsonObject.getString("userName");
+            if (StringUtil.isEmpty(operator)) {
+                throw new URCBizException("operator is empty", ErrorCode.E_000003);
+            }
             /*组装查询条件queryMap*/
             Map<String, Object> queryMap = new HashMap<>();
             int pageNumber = jsonObject.getInteger("pageNumber");
@@ -71,7 +73,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             queryMap.put("currIndex", (currPage - 1) * pageSize);
             queryMap.put("pageSize", pageSize);
             queryMap.put("groupName", groupName);
-            queryMap.put("userName", userName);
+            queryMap.put("userName", operator);
             //获得数据
             List<PositionGroupVO> list = positionGroupMapper.getPermissionGroupByUser(queryMap);
             //获得总数
