@@ -756,30 +756,42 @@ public class RoleServiceImpl implements IRoleService {
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
                 RoleDO roleDo = roleMapper.getRoleByRoleId(lstRoleId.get(i));
-                if (roleDo != null && roleDo.getRoleId() != null) {
+                if(roleDo == null){
+                    continue;
+                }
+
+                //角色要判断用户是超级管理员或者当前用户是该角色的owner才能看到数据
+                if(StringUtility.stringEqualsIgnoreCaseObj(roleDo.getRoleType(),UrcConstant.RoleType.role)) {
                     if (!roleMapper.isSuperAdminAccount(operator) && !isOwner(operator, roleDo.getRoleId())) {
                         throw new URCBizException("当前用户不是超级管理员，并且当前用户不是该角色的owner" + lstRoleId.get(i), ErrorCode.E_000003);
                     }
-                    RolePermissionDO permissionDO = new RolePermissionDO();
-                    permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
-                    List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
-                    if (rolePermissionList != null && rolePermissionList.size() > 0) {
-                        for (RolePermissionDO rolePermissionDO : rolePermissionList) {
-                            PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
-                            String contextJson = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
-                            PermissionVO permissionVO = new PermissionVO();
-                            permissionVO.setSysKey(rolePermissionDO.getSysKey());
-                            permissionVO.setSysContext(handleSuperAdmin(contextJson, rolePermissionDO.getSysKey(), operator));
-                            permissionVOs.add(permissionVO);
-                        }
-                    }
-                    RoleVO roleVO = new RoleVO();
-                    roleVO.roleId = lstRoleId.get(i);
-                    roleVO.roleName = roleDo.getRoleName();
-                    roleVO.selectedContext = permissionVOs;
-                    roleVoList.add(roleVO);
                 }
+
+                RolePermissionDO permissionDO = new RolePermissionDO();
+                permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
+                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
+                if (rolePermissionList != null && rolePermissionList.size() > 0) {
+                    for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+                        PermissionDO permission = permissionMapper.getPermissionBySysKey(rolePermissionDO.getSysKey());
+                        String contextJson = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permission.getSysContext());
+                        PermissionVO permissionVO = new PermissionVO();
+                        permissionVO.setSysKey(rolePermissionDO.getSysKey());
+                        //角色
+                        if(StringUtility.stringEqualsIgnoreCaseObj(roleDo.getRoleType(),UrcConstant.RoleType.role)){
+                            permissionVO.setSysContext(handleSuperAdmin(contextJson, rolePermissionDO.getSysKey(), operator));
+                        }else{
+                         //岗位
+                            permissionVO.setSysContext(contextJson);
+                        }
+                        permissionVOs.add(permissionVO);
+                    }
+                }
+                RoleVO roleVO = new RoleVO();
+                roleVO.roleId = lstRoleId.get(i);
+                roleVO.roleName = roleDo.getRoleName();
+                roleVO.selectedContext = permissionVOs;
+                roleVoList.add(roleVO);
             }
         }
         return VoHelper.getSuccessResult(roleVoList);
