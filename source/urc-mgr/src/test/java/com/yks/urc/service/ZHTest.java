@@ -75,13 +75,16 @@ public class ZHTest extends BaseServiceTest {
     @Test
     public void test_FuncPermit(){
         Map map = new HashMap();
+        map.put("id", "85");
+        map.put("name", "testZhou");
         //map.put("sysKeys", "001");
         Map map2 = new HashMap();
         map2.put("operator", "zhouhuan");
-        map2.put("data", map);
+        map2.put("data", Arrays.asList(map));
         String jsonStr = StringUtility.toJSONString(map2);
-        ResultVO<GetAllFuncPermitRespVO> allFuncPermit = userService.getAllFuncPermit(jsonStr);
-        ResultVO allFuncPermitForOtherSystem = urcMgr.getAllFuncPermitForOtherSystem(jsonStr);
+       // ResultVO<GetAllFuncPermitRespVO> allFuncPermit = userService.getAllFuncPermit(jsonStr);
+       // ResultVO allFuncPermitForOtherSystem = urcMgr.getAllFuncPermitForOtherSystem(jsonStr);
+        ResultVO resultVO = urcMgr.updatePosition(jsonStr);
         System.out.println("=================");
     }
 }

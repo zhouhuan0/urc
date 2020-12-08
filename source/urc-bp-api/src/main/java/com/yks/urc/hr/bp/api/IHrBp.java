@@ -9,6 +9,8 @@
  */
 package com.yks.urc.hr.bp.api;
 
+import com.yks.urc.vo.ResultVO;
+
 /**
  * @author zhouhuan
  * @version 1.0
@@ -26,4 +28,11 @@ public interface IHrBp {
      * 异步执行拉取岗位信息
      */
    void asynPullPosition();
+
+    /**
+     * 岗位信息更新
+     * @param jsonStr
+     * @return
+     */
+    ResultVO updatePosition(String jsonStr);
 }

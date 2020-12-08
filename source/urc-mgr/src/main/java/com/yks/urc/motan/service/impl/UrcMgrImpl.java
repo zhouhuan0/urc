@@ -291,4 +291,10 @@ public class UrcMgrImpl implements IUrcMgr {
         return positionGroupService.exportPositionInfoByPermitKey(jsonStr);
     }
 
+    @Override
+    @Log("岗位信息更新")
+    public ResultVO updatePosition(String jsonStr) {
+        return hrBp.updatePosition(jsonStr);
+    }
+
 }

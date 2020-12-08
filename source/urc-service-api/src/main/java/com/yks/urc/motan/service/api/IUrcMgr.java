@@ -219,4 +219,11 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO exportPositionInfoByPermitKey(String jsonStr);
+
+    /**
+     *岗位信息更新
+     * @param jsonStr
+     * @return
+     */
+    ResultVO updatePosition(String jsonStr);
 }
