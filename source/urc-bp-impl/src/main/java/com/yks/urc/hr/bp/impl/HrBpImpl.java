@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author zhouhuan
@@ -96,9 +97,9 @@ public class HrBpImpl implements IHrBp {
                 roleDO.setRoleName(positionVO.getName());
                 RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
                 //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
-                if(roleByRoleId == null){
+                if (roleByRoleId == null) {
                     addPosition(roleDO);
-                }else {
+                } else {
                     roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
                     roleDO.setRemark(roleByRoleId.getRemark());
                     updatePosition(roleDO);
@@ -214,7 +215,8 @@ public class HrBpImpl implements IHrBp {
             logger.error("获取岗位用户关系失败",sendPost);
             return Collections.emptyList();
         }
-       return StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), String.class);
+        List<String> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), String.class);
+        return CollectionUtils.isEmpty(list) ? Collections.EMPTY_LIST : list.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
