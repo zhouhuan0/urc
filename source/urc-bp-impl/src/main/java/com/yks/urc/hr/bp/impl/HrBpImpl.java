@@ -148,7 +148,7 @@ public class HrBpImpl implements IHrBp {
     }
 
     private void updatePosition(RoleDO roleDO)throws Exception{
-        int i = roleMapper.insertOrUpdate(roleDO);
+        int i = roleMapper.updateByRoleId(roleDO);
         if(i>0){
             UserRoleDO ur = new UserRoleDO();
             ur.setRoleId(roleDO.getRoleId());
@@ -247,9 +247,9 @@ public class HrBpImpl implements IHrBp {
                     roleDO.setRoleName(positionVO.getName());
                     addPosition(roleDO);
                 }else {
-                    roleByRoleId.setPositionModifiedTime(positionVO.getModifiedTime() == null ? roleByRoleId.getPositionModifiedTime() : positionVO.getModifiedTime());
+                    roleByRoleId.setPositionModifiedTime(positionVO.getModifiedTime());
                     roleByRoleId.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
-                    roleByRoleId.setRoleName(positionVO.getName() == null ? roleByRoleId.getRoleName() : positionVO.getName());
+                    roleByRoleId.setRoleName(positionVO.getName());
                     roleByRoleId.setModifiedTime(new Date());
                     updatePosition(roleByRoleId);
                 }
