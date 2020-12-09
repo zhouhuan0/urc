@@ -25,7 +25,7 @@ public interface IPositionGroupService {
      * @param jsonStr
      * @return
      */
-    ResultVO addOrUpdatePermissionGroup(String jsonStr);
+    ResultVO addOrUpdatePermissionGroup(String jsonStr,String operator);
 
     /**
      * 获取权限组详情

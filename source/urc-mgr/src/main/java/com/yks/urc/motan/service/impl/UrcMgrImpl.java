@@ -247,7 +247,8 @@ public class UrcMgrImpl implements IUrcMgr {
     @Override
     @Log("添加或更新权限组")
     public ResultVO addOrUpdatePermissionGroup(String jsonStr) {
-        return positionGroupService.addOrUpdatePermissionGroup(jsonStr);
+        String operator = MotanSession.getRequest().getOperator();
+        return positionGroupService.addOrUpdatePermissionGroup(jsonStr,operator);
     }
 
     @Override

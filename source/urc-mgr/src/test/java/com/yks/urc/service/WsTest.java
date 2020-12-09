@@ -45,9 +45,9 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test3() {
-        String json = "{\"data\":{},\"ticket\":\"5adf338494b39326142c88e777cf2db5\",\"operator\":\"wensheng\",\"personName\":\"文胜\",\"funcVersion\":\"557a74e41f37da5c73a4193e7f008809\",\"moduleUrl\":\"/user/rolemanagement/\",\"requestId\":\"120815320501962f1fcd61d526a84c40\",\"deviceName\":\"Chrome浏览器\"}";
+        String json = "{\"data\":{\"groupName\":\"test\",\"selectedContext\":[{\"sysKey\":\"017\",\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"017-000002\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"017-000002-000001-001\\\",\\\"name\\\":\\\"查看\\\"}],\\\"key\\\":\\\"017-000002-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"主体管理\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/account/material/mainBody/\\\"}],\\\"name\\\":\\\"账号资料\\\",\\\"url\\\":\\\"/account/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"017\\\",\\\"name\\\":\\\"账号\\\",\\\"url\\\":\\\"/account/\\\"}}\"}],\"positions\":[]},\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"chenhuili\",\"personName\":\"陈慧丽\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091111537941783dd4daad6995ab07\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
-        ResultVO resultVO = urcMgr.getUserAuthorizablePermissionForPosition(json);
+        ResultVO resultVO = urcMgr.addOrUpdatePermissionGroup(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 
@@ -83,7 +83,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test7() {
-        String json = "{\"data\":{\"groupId\":\"123\",\"groupName\":\"123\",\"positionIds\":[\"123\",\"321\"],\"selectedContext\":[{\"sysContext\":\"zz\",\"sysKey\":\"zz\"},{\"sysContext\":\"ss\",\"sysKey\":\"ss\"}]}}";
+        String json = "{\"data\":{\"groupName\":\"test\",\"selectedContext\":[{\"sysKey\":\"017\",\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"017-000002\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"017-000002-000001-001\\\",\\\"name\\\":\\\"查看\\\"}],\\\"key\\\":\\\"017-000002-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"主体管理\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/account/material/mainBody/\\\"}],\\\"name\\\":\\\"账号资料\\\",\\\"url\\\":\\\"/account/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"017\\\",\\\"name\\\":\\\"账号\\\",\\\"url\\\":\\\"/account/\\\"}}\"}],\"positions\":[]},\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"chenhuili\",\"personName\":\"陈慧丽\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091111537941783dd4daad6995ab07\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.addOrUpdatePermissionGroup(json);
         System.out.println(StringUtility.toJSONString(resultVO));

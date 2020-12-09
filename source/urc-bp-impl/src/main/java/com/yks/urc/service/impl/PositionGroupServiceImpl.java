@@ -107,11 +107,11 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     }
 
     @Override
-    public ResultVO addOrUpdatePermissionGroup(String jsonStr) {
+    public ResultVO addOrUpdatePermissionGroup(String jsonStr,String operator) {
         try {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
-            String operator = jsonObject.getString("operator");
+            //String operator = jsonObject.getString("operator");
             //权限组id
             String groupId = jsonObject.getString("groupId");
             String groupName = jsonObject.getString("groupName");
@@ -120,7 +120,13 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             String selectedContext = jsonObject.getString("selectedContext");
             List<Map> selectedContextmap = JSONArray.parseArray(selectedContext, Map.class);
             //校验岗位是不是包含超管岗位
-            boolean existSuperAdmin = positionGroupMapper.existSuperAdmin(positionIds);
+            boolean existSuperAdmin = true;
+            if(!CollectionUtils.isEmpty(positionIds)) {
+                 existSuperAdmin = positionGroupMapper.existSuperAdmin(positionIds);
+            }else{
+                //岗位信息为空不需要判断超管
+                existSuperAdmin = false;
+            }
             if(!existSuperAdmin) {
                 Long newGroupId = null;
                 if (StringUtils.isEmpty(groupId)) {
