@@ -92,7 +92,7 @@ public class WsTest extends BaseServiceTest {
     @Test
     public void test8() {
         Map map = new HashMap();
-        map.put("groupId", "123");
+        map.put("groupId", "1607493661846000004");
         Map map2 = new HashMap();
         map2.put("data", map);
         String json = StringUtility.toJSONString(map2);
@@ -104,11 +104,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test9() {
-        Map map = new HashMap();
-        map.put("positionName", "");
-        Map map2 = new HashMap();
-        map2.put("data", map);
-        String json = StringUtility.toJSONString(map2);
+        String json = "{\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"chenhuili\",\"personName\":\"陈慧丽\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091508431467d73c5065d9ebb3d956\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.getPositionList(json);
         System.out.println(StringUtility.toJSONString(resultVO));

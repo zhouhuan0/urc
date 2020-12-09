@@ -221,7 +221,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             //权限组名称
-            String positionName = jsonObject.getString("positionName");
+            String positionName = null;
+            if(null != jsonObject) {
+                 positionName = jsonObject.getString("positionName");
+            }
             List<UserByPosition> positions = positionGroupMapper.getPositionList(positionName);
             return VoHelper.getSuccessResult(positions);
         } catch (Exception e) {
