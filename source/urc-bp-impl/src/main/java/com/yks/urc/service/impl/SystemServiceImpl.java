@@ -100,6 +100,7 @@ public class SystemServiceImpl implements ISystemService {
         p.setSysKey(updateSystemVO.sysKey);
         p.setStatus(updateSystemVO.status);
         p.setRemark(updateSystemVO.remark == null ? "": updateSystemVO.remark);
+        p.setModifiedBy(requestVO.operator);
         permissionMapper.updateSysContextBySysKeyCondition(p);
 
         //先删除在插入数据
