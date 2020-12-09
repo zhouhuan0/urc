@@ -151,6 +151,18 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         positionGroup.setCreateTime(new Date());
                         urcPositionGroupMapper.insert(positionGroup);
                     }
+                }else{
+                    //岗位为空也要加入一条
+                    UrcPositionGroup positionGroup = new UrcPositionGroup();
+                    positionGroup.setGroupId(newGroupId);
+                    positionGroup.setPositionId(null);
+                    positionGroup.setGroupName(groupName);
+                    positionGroup.setIsDelete((byte) 0);
+                    positionGroup.setCreator(operator);
+                    positionGroup.setModifier(operator);
+                    positionGroup.setModifiedTime(new Date());
+                    positionGroup.setCreateTime(new Date());
+                    urcPositionGroupMapper.insert(positionGroup);
                 }
                 if(selectedContextmap != null && selectedContextmap.size() > 0) {
                     for (Map map : selectedContextmap) {

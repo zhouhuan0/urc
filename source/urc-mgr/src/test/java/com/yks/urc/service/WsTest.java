@@ -45,7 +45,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test3() {
-        String json = "{\"data\":{\"groupName\":\"test\",\"selectedContext\":[{\"sysKey\":\"017\",\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"017-000002\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"017-000002-000001-001\\\",\\\"name\\\":\\\"查看\\\"}],\\\"key\\\":\\\"017-000002-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"主体管理\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/account/material/mainBody/\\\"}],\\\"name\\\":\\\"账号资料\\\",\\\"url\\\":\\\"/account/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"017\\\",\\\"name\\\":\\\"账号\\\",\\\"url\\\":\\\"/account/\\\"}}\"}],\"positions\":[]},\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"chenhuili\",\"personName\":\"陈慧丽\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091111537941783dd4daad6995ab07\",\"deviceName\":\"Chrome浏览器\"}";
+        String json = "{\"data\":{\"groupName\":\"wwtest\",\"selectedContext\":[{\"sysKey\":\"017\",\"sysContext\":\"{\\\"menu\\\":[{\\\"key\\\":\\\"017-000002\\\",\\\"module\\\":[{\\\"function\\\":[{\\\"key\\\":\\\"017-000002-000001-001\\\",\\\"name\\\":\\\"查看\\\"}],\\\"key\\\":\\\"017-000002-000001\\\",\\\"module\\\":[],\\\"name\\\":\\\"主体管理\\\",\\\"pageFullPathName\\\":\\\"\\\",\\\"show\\\":1,\\\"url\\\":\\\"/account/material/mainBody/\\\"}],\\\"name\\\":\\\"账号资料\\\",\\\"url\\\":\\\"/account/\\\"}],\\\"system\\\":{\\\"key\\\":\\\"017\\\",\\\"name\\\":\\\"账号\\\",\\\"url\\\":\\\"/account/\\\"}}\"}],\"positions\":[]},\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"wensheng\",\"personName\":\"文胜\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091111537941783dd4daad6995ab07\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.addOrUpdatePermissionGroup(json);
         System.out.println(StringUtility.toJSONString(resultVO));
@@ -61,7 +61,7 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test5() {
-        String json = "{\"data\":{\"pageNumber\":1,\"pageData\":100,\"userName\":\"wensheng\"},\"ticket\":\"617791bb38d16a793e78ba9cfb29e18c\",\"operator\":\"wensheng\",\"personName\":\"dingjinfeng\",\"funcVersion\":\"308a2ccc6be755b9d8630549541eb270\",\"moduleUrl\":\"/account/manage/appeal/\",\"requestId\":\"11051519151069194701f431c2a7b00f\",\"deviceName\":\"Chrome浏览器\"}";
+        String json = "{\"data\":{\"pageNumber\":1,\"pageData\":100},\"ticket\":\"617791bb38d16a793e78ba9cfb29e18c\",\"operator\":\"wensheng\",\"personName\":\"dingjinfeng\",\"funcVersion\":\"308a2ccc6be755b9d8630549541eb270\",\"moduleUrl\":\"/account/manage/appeal/\",\"requestId\":\"11051519151069194701f431c2a7b00f\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
         ResultVO resultVO = urcMgr.getPermissionGroupByUser(json);
         System.out.println(StringUtility.toJSONString(resultVO));
