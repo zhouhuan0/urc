@@ -20,6 +20,8 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 @Component
@@ -43,57 +45,86 @@ public class PermitRefreshTask extends BaseTask {
 
     @Override
     protected void doTaskSub(String param) throws Exception {
-        Integer pageSize = 1000;
+        Integer pageSize = 10;
         List<PermitRefreshTaskVO> lstToDo = permitRefreshTaskMapper.selectToDo(pageSize);
         if (CollectionUtils.isEmpty(lstToDo)) {
             return;
         }
 
-        for (PermitRefreshTaskVO mem : lstToDo) {
-            if (StringUtility.stringEqualsIgnoreCaseObj(PermitRefreshTaskTypeEnum.REFRESH_USER.getCode(), mem.getTaskType())) {
-                doOne(mem);
-            } else if (StringUtility.stringEqualsIgnoreCaseObj(PermitRefreshTaskTypeEnum.REFRESH_SYS.getCode(), mem.getTaskType())) {
-                doTwo(mem);
+        //按类型分组
+        Map<Integer, List<PermitRefreshTaskVO>> listMap = lstToDo.stream().collect(Collectors.groupingBy(PermitRefreshTaskVO::getTaskType));
+        for (Integer integer : listMap.keySet()) {
+            List<PermitRefreshTaskVO> permitRefreshTaskVOS = listMap.get(integer);
+            if(CollectionUtils.isEmpty(permitRefreshTaskVOS)){
+                continue;
             }
-            permitRefreshTaskMapper.updateTaskStatus(mem);
+            if (StringUtility.stringEqualsIgnoreCaseObj(PermitRefreshTaskTypeEnum.REFRESH_USER.getCode(), integer)) {
+                doOne(permitRefreshTaskVOS);
+            } else if (StringUtility.stringEqualsIgnoreCaseObj(PermitRefreshTaskTypeEnum.REFRESH_SYS.getCode(), integer)) {
+                doTwo(permitRefreshTaskVOS);
+            }
         }
     }
 
-    public void doTwo(PermitRefreshTaskVO mem) {
+    public void doTwo(List<PermitRefreshTaskVO> memList) {
         try {
-            if (StringUtils.isBlank(mem.getTaskParam())) {
-                mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+            List<String> lstSysKey = new ArrayList<>();
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                if (StringUtils.isBlank(permitRefreshTaskVO.getTaskParam())) {
+                    continue;
+                }
+                List<String> sysKeyList = serializeBp.json2ObjNew(permitRefreshTaskVO.getTaskParam(), new TypeReference<ArrayList<String>>() {
+                });
+                if (CollectionUtils.isEmpty(sysKeyList)) {
+                    continue;
+                }
+                lstSysKey.addAll(sysKeyList);
             }
-            List<String> lstSysKey = serializeBp.json2ObjNew(mem.getTaskParam(), new TypeReference<ArrayList<String>>() {
-            });
-            if (CollectionUtils.isEmpty(lstSysKey)) {
-                mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
-            } else {
-                permitInverseQueryBp.updatePermitItemInfo(lstSysKey);
+            //系统去重
+            List<String> list = lstSysKey.stream().distinct().collect(Collectors.toList());
+            permitInverseQueryBp.updatePermitItemInfo(list);
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                permitRefreshTaskVO.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+                permitRefreshTaskMapper.updateTaskStatus(permitRefreshTaskVO);
             }
-            mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+
         } catch (Exception ex) {
-            mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.FAILED.getCode()));
-            logger.error(serializeBp.obj2Json(mem), ex);
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                permitRefreshTaskVO.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.FAILED.getCode()));
+                permitRefreshTaskMapper.updateTaskStatus(permitRefreshTaskVO);
+            }
+            logger.error("doTwo error", ex);
         }
     }
 
-    public void doOne(PermitRefreshTaskVO mem) {
+    public void doOne(List<PermitRefreshTaskVO> memList) {
         try {
-            if (StringUtils.isBlank(mem.getTaskParam())) {
-                mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+            List<String> lstUserName = new ArrayList<>();
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                if (StringUtils.isBlank(permitRefreshTaskVO.getTaskParam())) {
+                    continue;
+                }
+                List<String> userNameList = serializeBp.json2ObjNew(permitRefreshTaskVO.getTaskParam(), new TypeReference<ArrayList<String>>() {
+                });
+                if (CollectionUtils.isEmpty(userNameList)) {
+                   continue;
+                }
+                lstUserName.addAll(userNameList);
             }
-            List<String> lstUserName = serializeBp.json2ObjNew(mem.getTaskParam(), new TypeReference<ArrayList<String>>() {
-            });
-            if (CollectionUtils.isEmpty(lstUserName)) {
-                mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
-            } else {
-                permitInverseQueryBp.doTaskSub(lstUserName);
+            //账号去重
+            List<String> list = lstUserName.stream().distinct().collect(Collectors.toList());
+            permitInverseQueryBp.doTaskSub(list);
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                permitRefreshTaskVO.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+                permitRefreshTaskMapper.updateTaskStatus(permitRefreshTaskVO);
             }
-            mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));
+
         } catch (Exception ex) {
-            mem.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.FAILED.getCode()));
-            logger.error(serializeBp.obj2Json(mem), ex);
+            for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
+                permitRefreshTaskVO.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.FAILED.getCode()));
+                permitRefreshTaskMapper.updateTaskStatus(permitRefreshTaskVO);
+            }
+            logger.error("doOne error", ex);
         }
     }
 }

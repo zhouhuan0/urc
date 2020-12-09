@@ -494,8 +494,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
         /*PermitRefreshTaskVO mem = new PermitRefreshTaskVO();
         mem.setTaskParam("[\"panyun1\"]");*/
         PermitRefreshTaskVO mem = permitRefreshTaskMapper.selectByPrimaryKey(16108L);
-        permitRefreshTask.doOne(mem);
-        permitRefreshTaskMapper.updateTaskStatus(mem);
+        permitRefreshTask.doOne(Arrays.asList(mem));
 
         //System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("panyun1", null)));
 
