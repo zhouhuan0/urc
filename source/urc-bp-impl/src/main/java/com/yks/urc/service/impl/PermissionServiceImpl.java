@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.RolePermissionDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
@@ -64,7 +63,7 @@ public class PermissionServiceImpl implements IPermissionService {
     @Autowired
     ICacheBp cacheBp;
 
-    private IUserPermissionCacheMapper permissionCacheMapper;
+    private IUserMapper iUserMapper;
     @Autowired
     private IUserValidateBp userValidateBp;
     @Autowired
@@ -262,12 +261,23 @@ public class PermissionServiceImpl implements IPermissionService {
                 permissionVOs.add(permissionVO);
             }
         } else {
-            //业务管理员
+            //查询用户是否拥有系统功能管理员
+            List<PermissionDO> userAuthorizablePermissionForPosition = iUserMapper.getUserAuthorizablePermissionForPosition(userName);
+            for (PermissionDO permissionDO : userAuthorizablePermissionForPosition) {
+                PermissionVO permissionVO = new PermissionVO();
+                permissionVO.setSysKey(permissionDO.getSysKey());
+                permissionVO.setSysContext(permissionDO.getSysContext());
+                permissionVOs.add(permissionVO);
+            }
+            List<String> collect = userAuthorizablePermissionForPosition.stream().map(PermissionDO::getSysKey).collect(Collectors.toList());
+            //兼容角色部分功能权限
             List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+            //去除是功能管理员的系统
+            lstSysKey.removeAll(collect);
             if (lstSysKey != null && lstSysKey.size() > 0) {
 //                lstSysKey.remove("004");
                 for (String sysKey : lstSysKey) {
-                    // 获取用户sys的功能权限json
+                    // 获取用户sys的功能权限json (查询是业务管理员的权限)
                     List<String> lstFuncJson = roleMapper.getBizAdminFuncJsonByUserAndSysKey(userName, sysKey);
                     if (lstFuncJson != null && lstFuncJson.size() > 0) {
                         // 合并json树
