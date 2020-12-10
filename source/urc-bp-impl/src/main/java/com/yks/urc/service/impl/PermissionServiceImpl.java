@@ -63,6 +63,7 @@ public class PermissionServiceImpl implements IPermissionService {
     @Autowired
     ICacheBp cacheBp;
 
+    @Autowired
     private IUserMapper iUserMapper;
     @Autowired
     private IUserValidateBp userValidateBp;
