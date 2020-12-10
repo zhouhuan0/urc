@@ -1,5 +1,6 @@
 package com.yks.urc.service.api;
 
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.vo.*;
 
 import java.util.List;
@@ -129,4 +130,11 @@ public interface IUserService {
 	ResultVO savePositionPermission(String jsonStr);
 
 	ResultVO  getAllFuncPermitForOtherSystem(String jsonStr);
+
+    /**
+     * 保存更新岗位功能权限(调用需谨慎,如果permissionDOList传空和null时视为清除岗位的功能权限)
+     * @param permissionDOList
+     * @param positionId
+     */
+    void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId);
 }

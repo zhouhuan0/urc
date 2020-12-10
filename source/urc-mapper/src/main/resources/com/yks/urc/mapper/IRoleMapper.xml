@@ -185,6 +185,7 @@
         from urc_user_role ur
         inner join urc_role r ON ur.role_id=r.role_id
         inner join urc_role_permission rp ON rp.role_id=r.role_id
+        inner join urc_permission up on up.sys_key = rp.sys_key and up.status = 1
         WHERE ur.user_name=#{userName} and rp.sys_key=#{sysKey}
         AND r.is_active=1
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
@@ -194,6 +195,7 @@
         from urc_user_role ur
             inner join urc_role r ON ur.role_id=r.role_id
             inner join urc_role_permission rp ON rp.role_id=r.role_id
+            inner join urc_permission up on up.sys_key = rp.sys_key and up.status = 1
         <where>
             ur.user_name=#{userName}
             AND r.is_active=1
@@ -215,6 +217,7 @@
         from urc_user_role ur
         inner join urc_role r ON ur.role_id=r.role_id
         inner join urc_role_permission rp ON rp.role_id=r.role_id
+        inner join urc_permission up on up.sys_key = rp.sys_key and up.status = 1
         WHERE ur.user_name=#{userName} and rp.sys_key=#{sysKey}
         AND r.is_active=1 and r.is_authorizable=1 
 		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
