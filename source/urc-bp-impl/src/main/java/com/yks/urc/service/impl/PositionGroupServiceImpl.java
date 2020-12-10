@@ -315,7 +315,13 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             queryMap.put("currIndex", 0);
             queryMap.put("pageSize", total);
             List<UserByPosition> list = positionGroupMapper.getPositionInfoByPermitKey(queryMap);
-            String downloadFileUrl = downloadByData(list);
+            boolean flag = true;
+            if(CollectionUtils.isEmpty(positionIds)){
+                flag = false;
+            }else{
+                flag = true;
+            }
+            String downloadFileUrl = downloadByData(list,flag);
             return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(),downloadFileUrl);
         } catch (Exception e) {
             logger.error(String.format("exportPositionInfoByPermitKey error ! json:%s", jsonStr),e);
@@ -328,9 +334,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
      * @param list
      * @return
      */
-    private String downloadByData(List<UserByPosition> list) {
+    private String downloadByData(List<UserByPosition> list,boolean flag) {
         Date now = new Date();
         String fileName = excelTemp + "positon-"+now.getTime() +".xlsx";
+        positionInfoExcelExport.setFlag(flag);
         positionInfoExcelExport.setList(list);
         positionInfoExcelExport.setExportFilePath(fileName);
         positionInfoExcelExport.initExportExcel();

@@ -19,6 +19,8 @@ public class PositionInfoExcelExport extends AbstractExcelExport {
 	private Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	
 	List<UserByPosition> list;
+	//是个有用户名
+	boolean flag = true;
 	@Override
 	void writeExcelData() {
 		if (CollectionUtils.isEmpty(list)) {
@@ -40,7 +42,9 @@ public class PositionInfoExcelExport extends AbstractExcelExport {
 
         row.createCell(0).setCellValue(StringUtility.convertToString(userByPosition.getPermitName()));
         row.createCell(1).setCellValue(StringUtility.convertToString(userByPosition.getPositionName()));
-        row.createCell(2).setCellValue(StringUtility.convertToString(userByPosition.getUserName()));
+        if(flag) {
+            row.createCell(2).setCellValue(StringUtility.convertToString(userByPosition.getUserName()));
+        }
 		
 	}
 
@@ -50,7 +54,9 @@ public class PositionInfoExcelExport extends AbstractExcelExport {
         excelTitle = new ArrayList<String>();
         excelTitle.add("权限名称");
         excelTitle.add("岗位名称");
-        excelTitle.add("用户名");
+        if(flag) {
+            excelTitle.add("用户名");
+        }
         Row titleRow = sheet.createRow(TITLE_ROW_NUM);
 
         int titleLength = excelTitle.size();
@@ -66,5 +72,13 @@ public class PositionInfoExcelExport extends AbstractExcelExport {
 
     public void setList(List<UserByPosition> list) {
         this.list = list;
+    }
+
+    public boolean isFlag() {
+        return flag;
+    }
+
+    public void setFlag(boolean flag) {
+        this.flag = flag;
     }
 }
