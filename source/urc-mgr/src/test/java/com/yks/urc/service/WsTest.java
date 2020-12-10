@@ -104,9 +104,9 @@ public class WsTest extends BaseServiceTest {
 
     @Test
     public void test9() {
-        String json = "{\"ticket\":\"7b59d8dba4d3bcfaec01f054a3a10bb5\",\"operator\":\"chenhuili\",\"personName\":\"陈慧丽\",\"funcVersion\":\"d4b849668905dbf8c0e7482b2e013cb1\",\"moduleUrl\":\"/user/rolemanagement/pmGroup/edit/\",\"requestId\":\"12091508431467d73c5065d9ebb3d956\",\"deviceName\":\"Chrome浏览器\"}";
+        String json = "{\"data\":{\"lstPermitKey\":[\"001-000006-000010-001\"],\"pageData\":20,\"pageNumber\":1},\"ticket\":\"818e25f494a1f24c39e9a4f0ff8f6327\",\"operator\":\"wensheng\",\"personName\":\"文胜\",\"funcVersion\":\"96a0b0b0048712e3c51623c7520a9a6f\",\"moduleUrl\":\"/user/userAuthorization/\",\"requestId\":\"3308085888778b010808a4a37a76\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
-        ResultVO resultVO = urcMgr.getPositionList(json);
+        ResultVO resultVO = urcMgr.getPositionInfoByPermitKey(json);
         System.out.println(StringUtility.toJSONString(resultVO));
 
     }
