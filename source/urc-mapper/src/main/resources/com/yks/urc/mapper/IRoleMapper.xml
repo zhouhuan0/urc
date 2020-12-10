@@ -329,6 +329,9 @@
                         #{roleId}
                     </foreach>
                 </if>
+                <if test="roleType == null or roleType == 2">
+                    or u.role_type = 2
+                </if>
                 )
             </if>
             <if test="roleNames != null and roleNames.size()>0">
@@ -387,6 +390,9 @@
                     <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
                         #{roleId}
                     </foreach>
+                </if>
+                <if test="roleType == null or roleType == 2">
+                    or u.role_type = 2
                 </if>
                 )
             </if>
