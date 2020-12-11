@@ -3,7 +3,8 @@ package com.yks.urc.Enum;
 
 public enum ModuleCodeEnum {
     USER_MANAGERMENT(1,"用户管理"),
-    ROLE_MANAGERMENT(2,"角色管理");
+    ROLE_MANAGERMENT(2,"岗位角色管理"),
+    SYSTEM_MANAGERMENT(3,"系统管理");
   
 	/**
 	 * Module_Code

@@ -11,8 +11,10 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.PermissionDO;
+import com.yks.urc.entity.UrcLog;
 import com.yks.urc.entity.UrcSystemAdministrator;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.fw.DateUtil;
@@ -22,6 +24,7 @@ import com.yks.urc.mapper.PermissionMapper;
 import com.yks.urc.mapper.UrcSystemAdministratorMapper;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.ISystemService;
+import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.slf4j.Logger;
@@ -52,7 +55,7 @@ public class SystemServiceImpl implements ISystemService {
     @Autowired
     private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
     @Autowired
-    private IRoleMapper roleMapper;
+    private IUrcLogBp iUrcLogBp;
 
     @Override
     public ResultVO getSystemList() {
@@ -137,6 +140,9 @@ public class SystemServiceImpl implements ISystemService {
         if (!CollectionUtils.isEmpty(list)) {
             urcSystemAdministratorMapper.insertBatch(list);
         }
+        //保存操作日志
+        UrcLog urcLog = new UrcLog(requestVO.operator, ModuleCodeEnum.SYSTEM_MANAGERMENT.getStatus(), "系统编辑修改", updateSystemVO.sysName, jsonStr);
+        iUrcLogBp.insertUrcLog(urcLog);
         return VoHelper.getSuccessResult();
     }
 

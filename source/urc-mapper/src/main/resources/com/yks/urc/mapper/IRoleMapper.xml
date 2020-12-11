@@ -499,4 +499,8 @@
     <select id="isGroupAccount" resultType="Boolean">
         select COUNT(t.id) > 0  from urc_position_group t where t.is_delete = 0 and t.position_id = #{positionId}
     </select>
+
+    <select id="getRoleName" resultType="string">
+      select role_name from urc_user where role_id = #{roleId}
+   </select>
 </mapper>

@@ -227,4 +227,6 @@ public interface IRoleMapper {
     List<RoleDO> selectRoleByUserName(@Param("userName") String userName);
 
     boolean isGroupAccount(long positionId);
+
+    String getRoleName(Long roleId);
 }

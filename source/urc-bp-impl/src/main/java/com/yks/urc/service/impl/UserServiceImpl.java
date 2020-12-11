@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
@@ -20,6 +21,7 @@ import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -71,6 +73,8 @@ public class UserServiceImpl implements IUserService {
     private PermissionMapper permissionMapper;
     @Autowired
     private IUserService userService;
+    @Autowired
+    private IUrcLogBp iUrcLogBp;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -667,6 +671,8 @@ public class UserServiceImpl implements IUserService {
                 iUserMapper.setSupperAdmin(role);
                 //保存岗位功能权限
                 userService.doSavePositionPermission(permissionDOList,positionId);
+                UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位设置超管",String.format("%s -> %s",roleMapper.getRoleName(positionId),StringUtility.stringEqualsIgnoreCase("1",isSupperAdmin) ? "是":"否"), jsonStr);
+                iUrcLogBp.insertUrcLog(urcLog);
                 return VoHelper.getSuccessResult();
             }else{
                 return VoHelper.getFail("该岗位已存在权限组中不能操作");
@@ -714,6 +720,9 @@ public class UserServiceImpl implements IUserService {
             });
             //保存岗位功能权限
             userService.doSavePositionPermission(permissionDOList,positionId);
+            //保存操作日志
+            UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位分配权限",roleMapper.getRoleName(positionId) , jsonStr);
+            iUrcLogBp.insertUrcLog(urcLog);
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             logger.error("savePositionPermission error!", e);
