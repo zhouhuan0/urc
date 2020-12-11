@@ -34,7 +34,7 @@ public class PositionSyncTask extends BaseTask {
     protected void doTaskSub(String param) throws Exception {
         try {
             logger.info("岗位数据同步开始");
-            hrBp.positionSync();
+            hrBp.positionSync(true);
             logger.info("岗位数据同步完成");
         } catch (Exception e) {
             logger.error("岗位数据同步出错:", e);

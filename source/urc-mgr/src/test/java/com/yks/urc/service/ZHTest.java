@@ -9,19 +9,19 @@
  */
 package com.yks.urc.service;
 
+import com.yks.urc.authway.bp.api.AuthWayBp;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.service.api.IUrcMgr;
+import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.service.api.IUserService;
 import com.yks.urc.task.PositionSyncTask;
-import com.yks.urc.vo.GetAllFuncPermitRespVO;
-import com.yks.urc.vo.PageResultVO;
-import com.yks.urc.vo.ResultVO;
-import com.yks.urc.vo.UserVO;
+import com.yks.urc.vo.*;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -71,20 +71,11 @@ public class ZHTest extends BaseServiceTest {
         ResultVO resultVO = urcMgr.editSystemInfo(json);
         System.out.println("=================");
     }
-
+    @Autowired
+    private AuthWayBp authWayBp;
     @Test
     public void test_FuncPermit(){
-        Map map = new HashMap();
-        map.put("id", "85");
-        map.put("name", "testZhou");
-        //map.put("sysKeys", "001");
-        Map map2 = new HashMap();
-        map2.put("operator", "zhouhuan");
-        map2.put("data", Arrays.asList(map));
-        String jsonStr = StringUtility.toJSONString(map2);
-       // ResultVO<GetAllFuncPermitRespVO> allFuncPermit = userService.getAllFuncPermit(jsonStr);
-       // ResultVO allFuncPermitForOtherSystem = urcMgr.getAllFuncPermitForOtherSystem(jsonStr);
-        ResultVO resultVO = urcMgr.updatePosition(jsonStr);
+        List<SysAuthWayVO> zhangqinghui = authWayBp.getMyAuthWay("zhangqinghui");
         System.out.println("=================");
     }
 }

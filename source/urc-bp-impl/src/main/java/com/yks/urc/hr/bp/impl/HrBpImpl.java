@@ -15,10 +15,10 @@ import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.enums.CommonMessageCodeEnum;
+import com.yks.urc.fw.DateUtil;
 import com.yks.urc.fw.HttpUtility;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.hr.bp.api.IHrBp;
-import com.yks.urc.lock.bp.api.ILockBp;
 import com.yks.urc.mapper.IRoleMapper;
 import com.yks.urc.mapper.IUserRoleMapper;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
@@ -56,57 +56,69 @@ public class HrBpImpl implements IHrBp {
     private IUserRoleMapper userRoleMapper;
     @Autowired
     private IPermitRefreshTaskBp permitRefreshTaskBp;
-    @Autowired
-    private ILockBp lockBp;
-    private String synPosition = "synPosition";
+
+    private String SynPositionPoint = "SYN_POSITION_POINT";
+    private String URL = "GET_POSITION_URL";
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void positionSync() throws Exception {
-        if(!lockBp.tryLock(synPosition)){
+    public void positionSync(boolean ifBymodifiedTime) throws Exception {
+        Date date = new Date();
+        String url = configBp.getString(URL, "http://ykshr.kokoerp.com/api/Position/getAllList");
+        Map<String, String> headMap = new HashMap<>();
+        headMap.put("Content-Type", "application/json");
+        String paramBody = null;
+        if(ifBymodifiedTime){
+            //获取同步时间点
+            String modifiedTime = configBp.getString(SynPositionPoint, "2019-01-01 00:00:00");
+            JSONObject data = new JSONObject();
+            JSONObject object = new JSONObject();
+            object.put("modifiedTime", DateUtil.String2Date(modifiedTime, DateUtil.YYYY_MM_DD_HH_MM_SS).getTime());
+            data.put("data", object);
+            paramBody = data.toJSONString();
+        }
+
+        String sendPost = HttpUtility.postHasHeaders(url, headMap, paramBody, "utf-8");
+        logger.info("request position,url:{},response:{}", url, sendPost);
+        if (StringUtility.isNullOrEmpty(sendPost)) {
+            logger.error("同步岗位失败,人事系统接口无响应");
             return;
         }
-        try {
-            String url = configBp.getString("GET_POSITION_URL", "http://ykshr.kokoerp.com/api/Position/getAllList");
-            String sendPost = HttpUtility.sendPost(url, null);
-            logger.info("request position,url:{},response:{}",url,sendPost);
-            if (StringUtility.isNullOrEmpty(sendPost)) {
-                logger.error("同步岗位失败,人事系统接口无响应");
-                return;
-            }
 
-            JSONObject jsonObject = StringUtility.parseString(sendPost);
-            if(!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"),CommonMessageCodeEnum.SUCCESS.getCode())){
-                logger.error("同步岗位失败,人事系统接报错",sendPost);
-                return;
-            }
+        JSONObject jsonObject = StringUtility.parseString(sendPost);
+        if (!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"), CommonMessageCodeEnum.SUCCESS.getCode())) {
+            logger.error("同步岗位失败,人事系统接报错", sendPost);
+            return;
+        }
 
-            List<PositionVO> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), PositionVO.class);
-            for (PositionVO positionVO : list) {
-                RoleDO roleDO = new RoleDO();
-                roleDO.setRoleType(UrcConstant.RoleType.position);
-                roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
-                roleDO.setIsAuthorizable(0);
-                roleDO.setCreateBy(positionVO.getOperator());
-                roleDO.setForever(Boolean.TRUE);
-                roleDO.setModifiedBy(positionVO.getOperator());
-                roleDO.setCreateTime(positionVO.getCreateTime());
-                roleDO.setModifiedTime(new Date());
-                roleDO.setRoleId(positionVO.getId());
-                roleDO.setPositionModifiedTime(positionVO.getModifiedTime());
-                roleDO.setRoleName(positionVO.getName());
-                RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
-                //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
-                if (roleByRoleId == null) {
-                    addPosition(roleDO);
-                } else {
-                    roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
-                    roleDO.setRemark(roleByRoleId.getRemark());
-                    updatePosition(roleDO);
-                }
+        List<PositionVO> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), PositionVO.class);
+        for (PositionVO positionVO : list) {
+            RoleDO roleDO = new RoleDO();
+            roleDO.setRoleType(UrcConstant.RoleType.position);
+            roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
+            roleDO.setIsAuthorizable(0);
+            roleDO.setCreateBy(positionVO.getOperator());
+            roleDO.setForever(Boolean.TRUE);
+            roleDO.setModifiedBy(positionVO.getOperator());
+            roleDO.setCreateTime(positionVO.getCreateTime());
+            roleDO.setModifiedTime(new Date());
+            roleDO.setRoleId(positionVO.getId());
+            roleDO.setPositionModifiedTime(positionVO.getModifiedTime());
+            roleDO.setRoleName(positionVO.getName());
+            RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
+            //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
+            if (roleByRoleId == null) {
+                addPosition(roleDO);
+            } else {
+                roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
+                roleDO.setRemark(roleByRoleId.getRemark());
+                updatePosition(roleDO);
             }
-        } finally {
-            lockBp.unlock(synPosition);
+        }
+
+        if(ifBymodifiedTime){
+            //更新同步时间点
+            configBp.update2Db(SynPositionPoint, DateUtil.formatDate(date, DateUtil.YYYY_MM_DD_HH_MM_SS));
         }
     }
 
@@ -116,7 +128,7 @@ public class HrBpImpl implements IHrBp {
             @Override
             public void run() {
                 try {
-                    hrBpr.positionSync();
+                    hrBpr.positionSync(false);
                 } catch (Exception e) {
                     logger.error("岗位数据同步出错:", e);
                 }
@@ -126,7 +138,7 @@ public class HrBpImpl implements IHrBp {
 
     private void addPosition(RoleDO roleDO) throws Exception {
         int i = roleMapper.insertOrUpdate(roleDO);
-        if(i>0){
+        if (i > 0) {
             List<String> lstUserName = getUserByPosition(roleDO.getId());
             List<UserRoleDO> userRoleDOS = new ArrayList<>();
             for (String userName : lstUserName) {
@@ -141,20 +153,20 @@ public class HrBpImpl implements IHrBp {
             }
             /*删除原有用户-角色关系数据*/
             userRoleMapper.deleteByRoleId(roleDO.getRoleId());
-            if (!CollectionUtils.isEmpty(lstUserName)){
+            if (!CollectionUtils.isEmpty(lstUserName)) {
                 /*批量新增用户-角色关系数据*/
                 userRoleMapper.insertBatch(userRoleDOS);
             }
         }
     }
 
-    private void updatePosition(RoleDO roleDO)throws Exception{
+    private void updatePosition(RoleDO roleDO) throws Exception {
         int i = roleMapper.updateByRoleId(roleDO);
-        if(i>0){
+        if (i > 0) {
             UserRoleDO ur = new UserRoleDO();
             ur.setRoleId(roleDO.getRoleId());
             //查询之前已有的用户-岗位关系数据
-            List<String> oldUserList= userRoleMapper.getUserNameByRoleId(ur);
+            List<String> oldUserList = userRoleMapper.getUserNameByRoleId(ur);
             List<String> copyOldUserList = new ArrayList<>(oldUserList);
             List<String> newUserName = getUserByPosition(roleDO.getRoleId());
             List<String> copyNewUserName = new ArrayList<>(newUserName);
@@ -172,7 +184,7 @@ public class HrBpImpl implements IHrBp {
 
             /*删除原有用户-岗位关系数据*/
             userRoleMapper.deleteByRoleId(roleDO.getRoleId());
-            if (!CollectionUtils.isEmpty(userRoleDOS)){
+            if (!CollectionUtils.isEmpty(userRoleDOS)) {
                 /*批量添加用户-岗位关系数据*/
                 userRoleMapper.insertBatch(userRoleDOS);
             }
@@ -182,7 +194,7 @@ public class HrBpImpl implements IHrBp {
             //相比之前要删除的用户
             copyOldUserList.removeAll(copyNewUserName);
             newUserName.addAll(copyOldUserList);
-            if(!CollectionUtils.isEmpty(newUserName)){
+            if (!CollectionUtils.isEmpty(newUserName)) {
                 //有变动的用户需要重新处理功能权限数据
                 permitRefreshTaskBp.addPermitRefreshTask(newUserName);
             }
@@ -191,6 +203,7 @@ public class HrBpImpl implements IHrBp {
 
     /**
      * 根据岗位ID请求岗位下的用户
+     *
      * @param positionId
      * @return
      * @throws Exception
@@ -202,17 +215,17 @@ public class HrBpImpl implements IHrBp {
         JSONObject data = new JSONObject();
         JSONObject object = new JSONObject();
         object.put("positionId", positionId);
-        data.put("data",object);
-        String sendPost = HttpUtility.postHasHeaders(url,headMap, data.toJSONString(), "utf-8");
-        logger.info("request getUserNameByPositionId,url:{},paramBody:{},response:{}",url,object.toJSONString(),sendPost);
+        data.put("data", object);
+        String sendPost = HttpUtility.postHasHeaders(url, headMap, data.toJSONString(), "utf-8");
+        logger.info("request getUserNameByPositionId,url:{},paramBody:{},response:{}", url, object.toJSONString(), sendPost);
         if (StringUtility.isNullOrEmpty(sendPost)) {
             logger.error("获取岗位用户关系失败,人事系统接口无响应");
             return Collections.emptyList();
         }
 
         JSONObject jsonObject = StringUtility.parseString(sendPost);
-        if(!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"),CommonMessageCodeEnum.SUCCESS.getCode())){
-            logger.error("获取岗位用户关系失败",sendPost);
+        if (!StringUtility.stringEqualsIgnoreCase(jsonObject.getString("state"), CommonMessageCodeEnum.SUCCESS.getCode())) {
+            logger.error("获取岗位用户关系失败", sendPost);
             return Collections.emptyList();
         }
         List<String> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), String.class);
@@ -223,18 +236,18 @@ public class HrBpImpl implements IHrBp {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO updatePosition(String jsonStr) {
         String data = StringUtility.parseString(jsonStr).getString("data");
-        if(StringUtility.isNullOrEmpty(data)){
+        if (StringUtility.isNullOrEmpty(data)) {
             return VoHelper.getSuccessResult();
         }
         List<PositionVO> list = StringUtility.jsonToList(data, PositionVO.class);
         for (PositionVO positionVO : list) {
             try {
-                if(positionVO.getId() == null){
+                if (positionVO.getId() == null) {
                     continue;
                 }
                 RoleDO roleByRoleId = roleMapper.getRoleByRoleId(positionVO.getId().toString());
                 //没有说明是新增的岗位,新增的岗位是没有任何功能权限直接做入库操作就好
-                if(roleByRoleId == null){
+                if (roleByRoleId == null) {
                     RoleDO roleDO = new RoleDO();
                     roleDO.setRoleType(UrcConstant.RoleType.position);
                     roleDO.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
@@ -248,7 +261,7 @@ public class HrBpImpl implements IHrBp {
                     roleDO.setPositionModifiedTime(positionVO.getModifiedTime());
                     roleDO.setRoleName(positionVO.getName());
                     addPosition(roleDO);
-                }else {
+                } else {
                     roleByRoleId.setPositionModifiedTime(positionVO.getModifiedTime());
                     roleByRoleId.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
                     roleByRoleId.setRoleName(positionVO.getName());
@@ -256,7 +269,7 @@ public class HrBpImpl implements IHrBp {
                     updatePosition(roleByRoleId);
                 }
             } catch (Exception e) {
-                logger.error("updatePosition error;",StringUtility.toJSONString(positionVO));
+                logger.error("updatePosition error;", StringUtility.toJSONString(positionVO));
             }
         }
         return VoHelper.getSuccessResult();
