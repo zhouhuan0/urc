@@ -132,9 +132,9 @@ public interface IUserService {
 	ResultVO  getAllFuncPermitForOtherSystem(String jsonStr);
 
     /**
-     * 保存更新岗位功能权限(调用需谨慎,如果permissionDOList传空和null时视为清除岗位的功能权限)
+     * 保存更新岗位功能权限(调用需谨慎,如果permissionDOList传空和null时视为清除岗位的功能权限,超管operator传null)
      * @param permissionDOList
      * @param positionId
      */
-    void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId);
+    void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId,String operator) throws Exception;
 }

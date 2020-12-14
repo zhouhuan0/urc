@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
@@ -75,6 +76,10 @@ public class UserServiceImpl implements IUserService {
     private IUserService userService;
     @Autowired
     private IUrcLogBp iUrcLogBp;
+    @Autowired
+    private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
+    @Autowired
+    private IRolePermissionMapper rolePermissionMapper;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -125,9 +130,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
-        //首先要判断该用户是否是超级管理员或业务管理员
+        //查询用户系统数据管理员
+        List<String> list = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
-            return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "非管理员无法查看此数据");
+            //首先要判断该用户是否是超级管理员或业务管理员或系统数据管理员
+            if(CollectionUtils.isEmpty(list)){
+                return VoHelper.getResultVO(CommonMessageCodeEnum.FAIL.getCode(), "非管理员无法查看此数据");
+            }
         }
         return userBp.getUsersByUserInfo(operator, userVO, pageNumber, pageData);
     }
@@ -670,7 +679,7 @@ public class UserServiceImpl implements IUserService {
                 role.setModifiedBy(operator);
                 iUserMapper.setSupperAdmin(role);
                 //保存岗位功能权限
-                userService.doSavePositionPermission(permissionDOList,positionId);
+                userService.doSavePositionPermission(permissionDOList,positionId,null);
                 UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位设置超管",String.format("%s -> %s",roleMapper.getRoleName(positionId),StringUtility.stringEqualsIgnoreCase("1",isSupperAdmin) ? "是":"否"), jsonStr);
                 iUrcLogBp.insertUrcLog(urcLog);
                 return VoHelper.getSuccessResult();
@@ -719,7 +728,7 @@ public class UserServiceImpl implements IUserService {
             List<PermissionDO> permissionDOList = serializeBp.json2ObjNew(jsonObject.getString("selectedContext"), new TypeReference<List<PermissionDO>>() {
             });
             //保存岗位功能权限
-            userService.doSavePositionPermission(permissionDOList,positionId);
+            userService.doSavePositionPermission(permissionDOList,positionId,sessionBp.getOperator());
             //保存操作日志
             UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位分配权限",roleMapper.getRoleName(positionId) , jsonStr);
             iUrcLogBp.insertUrcLog(urcLog);
@@ -732,49 +741,61 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void doSavePositionPermission(List<PermissionDO> permissionDOList,long positionId){
-        if(CollectionUtils.isEmpty(permissionDOList)){
-            rolePermitMapper.deleteByRoleIdInSysKey(positionId+"",null);
-            //先删后插
-            permitItemPositionMapper.deleteBypositionId(positionId);
-        }else{
-            //通过当前用户获得权限
-            List<RolePermissionDO> lstRolePermit = new ArrayList<RolePermissionDO>();
-            List<String> list = new ArrayList<String>();
-            for (PermissionDO permissionDO : permissionDOList) {
-                RolePermissionDO rp = new RolePermissionDO();
-                rp.setRoleId(positionId);
-                rp.setSysKey(permissionDO.getSysKey());
-                rp.setSelectedContext(permissionDO.getSysContext());
-                rp.setCreateTime(new Date());
-                rp.setCreateBy(sessionBp.getOperator());
-                rp.setModifiedBy(sessionBp.getOperator());
-                rp.setModifiedTime(rp.getCreateTime());
-                lstRolePermit.add(rp);
-                //拼接权限字符串
-                list.addAll(concatData(permissionDO.getSysContext()));
-            }
-            rolePermitMapper.deleteByRoleIdInSysKey(positionId+"",null);
-            //入库
-            rolePermitMapper.insertBatch(lstRolePermit);
-            //写入关联表
-            if(!CollectionUtils.isEmpty(list)){
-                List<PermitItemPosition> param = list.stream().map(e->{
-                    PermitItemPosition vo = new PermitItemPosition();
-                    vo.setPermitKey(e);
-                    vo.setPositionId(positionId);
-                    vo.setModifier(sessionBp.getOperator());
-                    vo.setCreator(sessionBp.getOperator());
-                    vo.setCreatedTime(new Date());
-                    vo.setModifiedTime(new Date());
-                    return vo;
-                }).collect(Collectors.toList());
-                //先删后插
-                permitItemPositionMapper.deleteBypositionId(positionId);
-                //插入新关系
-                permitItemPositionMapper.insertPosition(param);
+    public void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId, String operator) throws Exception {
+        List<String> roleSysKey = new ArrayList<String>();
+        if (!StringUtil.isEmpty(operator)) {
+            //查询用户可以授权的系统
+            roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
+            //不是超管也不是任何系统的功能管理员时直接抛异常
+            if(CollectionUtils.isEmpty(roleSysKey)){
+                throw new Exception("用户既不是超管也不是系统功能管理员,无法分配权限!");
             }
         }
+
+        //通过当前用户获得权限
+        List<RolePermissionDO> lstRolePermit = new ArrayList<>();
+        for (PermissionDO permissionDO : permissionDOList) {
+            RolePermissionDO rp = new RolePermissionDO();
+            rp.setRoleId(positionId);
+            rp.setSysKey(permissionDO.getSysKey());
+            rp.setSelectedContext(permissionDO.getSysContext());
+            rp.setCreateTime(new Date());
+            rp.setCreateBy(sessionBp.getOperator());
+            rp.setModifiedBy(sessionBp.getOperator());
+            rp.setModifiedTime(rp.getCreateTime());
+            lstRolePermit.add(rp);
+        }
+        //先删除岗位权限,在插入
+        rolePermitMapper.deleteByRoleIdInSysKey(positionId + "", roleSysKey);
+        if(!CollectionUtils.isEmpty(lstRolePermit)){
+            rolePermitMapper.insertBatch(lstRolePermit);
+        }
+
+        RolePermissionDO permissionDO = new RolePermissionDO();
+        permissionDO.setRoleId(positionId);
+        List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+        List<String> list = new ArrayList<>();
+        for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+            //拼接权限字符串
+            list.addAll(concatData(rolePermissionDO.getSelectedContext()));
+        }
+        //写入关联表
+        if (!CollectionUtils.isEmpty(list)) {
+            List<PermitItemPosition> param = list.stream().map(e -> {
+                PermitItemPosition vo = new PermitItemPosition();
+                vo.setPermitKey(e);
+                vo.setPositionId(positionId);
+                vo.setModifier(sessionBp.getOperator());
+                vo.setCreator(sessionBp.getOperator());
+                vo.setCreatedTime(new Date());
+                vo.setModifiedTime(new Date());
+                return vo;
+            }).collect(Collectors.toList());
+            //先删后插
+            permitItemPositionMapper.deleteBypositionId(positionId);
+            permitItemPositionMapper.insertPosition(param);
+        }
+
 
         //获取角色原关联的用户userName
         UserRoleDO userRoleDO = new UserRoleDO();
