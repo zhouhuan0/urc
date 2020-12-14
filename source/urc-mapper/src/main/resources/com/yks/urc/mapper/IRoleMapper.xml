@@ -501,6 +501,6 @@
     </select>
 
     <select id="getRoleName" resultType="string">
-      select role_name from urc_user where role_id = #{roleId}
+      select role_name from urc_role where role_id = #{roleId}
    </select>
 </mapper>
