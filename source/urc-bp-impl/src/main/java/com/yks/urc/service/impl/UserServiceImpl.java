@@ -737,7 +737,7 @@ public class UserServiceImpl implements IUserService {
             return VoHelper.getSuccessResult();
         } catch (Exception e) {
             logger.error("savePositionPermission error!", e);
-            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "保存岗位功能权限失败");
+            return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "保存岗位功能权限失败,"+e.getMessage());
         }
     }
 
@@ -750,7 +750,7 @@ public class UserServiceImpl implements IUserService {
             roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
             //不是超管也不是任何系统的功能管理员时直接抛异常
             if(CollectionUtils.isEmpty(roleSysKey)){
-                throw new Exception("用户既不是超管也不是系统功能管理员,无法分配权限!");
+                throw new Exception("当前用户不是任何系统功能管理员,无法分配权限!");
             }
         }
 
