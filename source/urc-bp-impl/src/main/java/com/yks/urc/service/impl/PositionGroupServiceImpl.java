@@ -211,18 +211,19 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                 List<String> roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
                 for (String positionId : positionList) {
                     rolePermitMapper.deleteByRoleIdInSysKey(positionId, roleSysKey);
-                    for (PermissionDO permissionDO : permissionDOList) {
-                        RolePermissionDO rp = new RolePermissionDO();
-                        rp.setRoleId(Long.parseLong(positionId));
-                        rp.setSysKey(permissionDO.getSysKey());
-                        rp.setSelectedContext(permissionDO.getSysContext());
-                        rp.setCreateTime(new Date());
-                        rp.setCreateBy(sessionBp.getOperator());
-                        rp.setModifiedBy(sessionBp.getOperator());
-                        rp.setModifiedTime(rp.getCreateTime());
-                        lstRolePermit.add(rp);
+                    if(!CollectionUtils.isEmpty(permissionDOList)) {
+                        for (PermissionDO permissionDO : permissionDOList) {
+                            RolePermissionDO rp = new RolePermissionDO();
+                            rp.setRoleId(Long.parseLong(positionId));
+                            rp.setSysKey(permissionDO.getSysKey());
+                            rp.setSelectedContext(permissionDO.getSysContext());
+                            rp.setCreateTime(new Date());
+                            rp.setCreateBy(sessionBp.getOperator());
+                            rp.setModifiedBy(sessionBp.getOperator());
+                            rp.setModifiedTime(rp.getCreateTime());
+                            lstRolePermit.add(rp);
+                        }
                     }
-
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(positionId));
                     List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
