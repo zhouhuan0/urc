@@ -508,4 +508,8 @@
           and t1.status = 1
           and t.type = 1
     </select>
+
+    <select id="findAll" resultType="java.lang.String">
+       select user_name from urc_user where is_active = 1
+    </select>
 </mapper>

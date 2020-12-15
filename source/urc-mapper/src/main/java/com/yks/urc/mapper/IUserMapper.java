@@ -185,4 +185,6 @@ public interface IUserMapper {
     int setSupperAdmin(RoleDO role);
 
     List<PermissionDO> getUserAuthorizablePermissionForPosition(String operator);
+
+    List<String> findAll();
 }
