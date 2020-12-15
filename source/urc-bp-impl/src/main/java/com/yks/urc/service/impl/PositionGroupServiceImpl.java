@@ -3,10 +3,9 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.yks.urc.entity.PositionGroupVO;
-import com.yks.urc.entity.RoleDO;
-import com.yks.urc.entity.UrcGroupPermission;
-import com.yks.urc.entity.UrcPositionGroup;
+import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.constant.UrcConstant;
+import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.excel.FileUpDownLoadUtils;
 import com.yks.urc.excel.PositionInfoExcelExport;
@@ -14,12 +13,13 @@ import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
-import com.yks.urc.mapper.IPositionGroupMapper;
-import com.yks.urc.mapper.UrcGroupPermissionMapper;
-import com.yks.urc.mapper.UrcPositionGroupMapper;
+import com.yks.urc.mapper.*;
+import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
 import com.yks.urc.seq.bp.api.ISeqBp;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IPositionGroupService;
+import com.yks.urc.session.bp.api.ISessionBp;
+import com.yks.urc.user.bp.api.IUrcLogBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.VoHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +30,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class PositionGroupServiceImpl implements IPositionGroupService {
@@ -47,6 +48,22 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private PositionInfoExcelExport positionInfoExcelExport;
     @Autowired
     private ISerializeBp serializeBp;
+    @Autowired
+    private IRolePermissionMapper rolePermitMapper;
+    @Autowired
+    private IRolePermissionMapper rolePermissionMapper;
+    @Autowired
+    PermitItemPositionMapper permitItemPositionMapper;
+    @Autowired
+    private ISessionBp sessionBp;
+    @Autowired
+    private IUserRoleMapper userRoleMapper;
+    @Autowired
+    private IPermitRefreshTaskBp permitRefreshTaskBp;
+    @Autowired
+    private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
+    @Autowired
+    private IUrcLogBp iUrcLogBp;
 
     private static String excelTemp = "/opt/tmp/";
 
@@ -107,7 +124,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     }
 
     @Override
-    public ResultVO addOrUpdatePermissionGroup(String jsonStr,String operator) {
+    public ResultVO addOrUpdatePermissionGroup(String jsonStr, String operator) {
         try {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
@@ -118,27 +135,30 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             String positionIdStr = jsonObject.getString("positionIds");
             List<Long> positionIds = JSONArray.parseArray(positionIdStr, Long.class);
             String selectedContext = jsonObject.getString("selectedContext");
+            List<PermissionDO> permissionDOList = serializeBp.json2ObjNew(jsonObject.getString("selectedContext"), new TypeReference<List<PermissionDO>>() {
+            });
             List<Map> selectedContextmap = JSONArray.parseArray(selectedContext, Map.class);
             //校验岗位是不是包含超管岗位
             boolean existSuperAdmin = true;
-            if(!CollectionUtils.isEmpty(positionIds)) {
-                 existSuperAdmin = positionGroupMapper.existSuperAdmin(positionIds);
-            }else{
+            if (!CollectionUtils.isEmpty(positionIds)) {
+                existSuperAdmin = positionGroupMapper.existSuperAdmin(positionIds);
+            } else {
                 //岗位信息为空不需要判断超管
                 existSuperAdmin = false;
             }
-            if(!existSuperAdmin) {
+            if (!existSuperAdmin) {
                 Long newGroupId = null;
                 if (StringUtils.isEmpty(groupId)) {
-                     newGroupId = seqBp.getNextRoleId();
-                }else {
+                    newGroupId = seqBp.getNextRoleId();
+                } else {
                     newGroupId = Long.parseLong(groupId);
                     //删除旧数据
                     urcPositionGroupMapper.deleteByGroupId(newGroupId);
                     urcGroupPermissionMapper.deleteByGroupId(newGroupId);
                 }
-                if(positionIds != null && positionIds.size() > 0){
-                    for(Long positionId:positionIds) {
+                List<String> positionList = new ArrayList<String>();
+                if (positionIds != null && positionIds.size() > 0) {
+                    for (Long positionId : positionIds) {
                         //入库权限分组表
                         UrcPositionGroup positionGroup = new UrcPositionGroup();
                         positionGroup.setGroupId(newGroupId);
@@ -150,8 +170,9 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         positionGroup.setModifiedTime(new Date());
                         positionGroup.setCreateTime(new Date());
                         urcPositionGroupMapper.insert(positionGroup);
+                        positionList.add(positionId + "");
                     }
-                }else{
+                } else {
                     //岗位为空也要加入一条
                     UrcPositionGroup positionGroup = new UrcPositionGroup();
                     positionGroup.setGroupId(newGroupId);
@@ -164,7 +185,8 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     positionGroup.setCreateTime(new Date());
                     urcPositionGroupMapper.insert(positionGroup);
                 }
-                if(selectedContextmap != null && selectedContextmap.size() > 0) {
+                //List<String> syskeyList = new ArrayList<String>();
+                if (selectedContextmap != null && selectedContextmap.size() > 0) {
                     for (Map map : selectedContextmap) {
                         //入库权限组功能
                         UrcGroupPermission groupPermission = new UrcGroupPermission();
@@ -176,7 +198,76 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         groupPermission.setModifiedTime(new Date());
                         groupPermission.setCreateTime(new Date());
                         urcGroupPermissionMapper.insert(groupPermission);
+                        //syskeyList.add(map.get("sysKey").toString());
                     }
+                }
+                //保存操作日志
+                UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "权限组保存或更新",groupName , jsonStr);
+                iUrcLogBp.insertUrcLog(urcLog);
+                //权限控制
+                //先删除岗位权限,在插入
+                List<RolePermissionDO> lstRolePermit = new ArrayList<>();
+                //查询用户可以授权的系统
+                List<String> roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
+                for (String positionId : positionList) {
+                    rolePermitMapper.deleteByRoleIdInSysKey(positionId, roleSysKey);
+                    for (PermissionDO permissionDO : permissionDOList) {
+                        RolePermissionDO rp = new RolePermissionDO();
+                        rp.setRoleId(Long.parseLong(positionId));
+                        rp.setSysKey(permissionDO.getSysKey());
+                        rp.setSelectedContext(permissionDO.getSysContext());
+                        rp.setCreateTime(new Date());
+                        rp.setCreateBy(sessionBp.getOperator());
+                        rp.setModifiedBy(sessionBp.getOperator());
+                        rp.setModifiedTime(rp.getCreateTime());
+                        lstRolePermit.add(rp);
+                    }
+
+                    RolePermissionDO permissionDO = new RolePermissionDO();
+                    permissionDO.setRoleId(Long.parseLong(positionId));
+                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                    List<String> list = new ArrayList<>();
+                    for (RolePermissionDO rolePermissionDO : rolePermissionList) {
+                        //拼接权限字符串
+                        list.addAll(concatData(rolePermissionDO.getSelectedContext()));
+                    }
+                    //写入关联表
+                    if (!CollectionUtils.isEmpty(list)) {
+                        List<PermitItemPosition> param = list.stream().map(e -> {
+                            PermitItemPosition vo = new PermitItemPosition();
+                            vo.setPermitKey(e);
+                            vo.setPositionId(Long.parseLong(positionId));
+                            vo.setModifier(sessionBp.getOperator());
+                            vo.setCreator(sessionBp.getOperator());
+                            vo.setCreatedTime(new Date());
+                            vo.setModifiedTime(new Date());
+                            return vo;
+                        }).collect(Collectors.toList());
+                        //先删后插
+                        permitItemPositionMapper.deleteBypositionId(Long.parseLong(positionId));
+                        permitItemPositionMapper.insertPosition(param);
+                    }
+
+                    //获取角色原关联的用户userName
+                    UserRoleDO userRoleDO = new UserRoleDO();
+                    userRoleDO.setRoleId(Long.parseLong(positionId));
+                    List<String> oldRelationUsers = userRoleMapper.getUserNameByRoleId(userRoleDO);
+                    //更新用户功能权限缓存
+                    List<String> lstUserName = new ArrayList<>();
+                    //添加角色原来关联的用户列表
+                    if (oldRelationUsers != null && !oldRelationUsers.isEmpty()) {
+                        lstUserName.addAll(oldRelationUsers);
+                    }
+                    if (!lstUserName.isEmpty()) {
+                        /*去重*/
+                        lstUserName = removeDuplicate(lstUserName);
+                        //保存权限改变的用户
+                        // 改为由定时任务执行
+                        permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
+                    }
+                }
+                if (!CollectionUtils.isEmpty(lstRolePermit)) {
+                    rolePermitMapper.insertBatch(lstRolePermit);
                 }
                 return VoHelper.getSuccessResult();
             }
@@ -222,8 +313,8 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             //权限组名称
             String positionName = null;
-            if(null != jsonObject) {
-                 positionName = jsonObject.getString("positionName");
+            if (null != jsonObject) {
+                positionName = jsonObject.getString("positionName");
             }
             List<UserByPosition> positions = positionGroupMapper.getPositionList(positionName);
             return VoHelper.getSuccessResult(positions);
@@ -316,27 +407,28 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             queryMap.put("pageSize", total);
             List<UserByPosition> list = positionGroupMapper.getPositionInfoByPermitKey(queryMap);
             boolean flag = true;
-            if(CollectionUtils.isEmpty(positionIds)){
+            if (CollectionUtils.isEmpty(positionIds)) {
                 flag = false;
-            }else{
+            } else {
                 flag = true;
             }
-            String downloadFileUrl = downloadByData(list,flag);
-            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(),downloadFileUrl);
+            String downloadFileUrl = downloadByData(list, flag);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(), downloadFileUrl);
         } catch (Exception e) {
-            logger.error(String.format("exportPositionInfoByPermitKey error ! json:%s", jsonStr),e);
+            logger.error(String.format("exportPositionInfoByPermitKey error ! json:%s", jsonStr), e);
         }
         return VoHelper.getErrorResult();
     }
 
     /**
      * 生成excle
+     *
      * @param list
      * @return
      */
-    private String downloadByData(List<UserByPosition> list,boolean flag) {
+    private String downloadByData(List<UserByPosition> list, boolean flag) {
         Date now = new Date();
-        String fileName = excelTemp + "positon-"+now.getTime() +".xlsx";
+        String fileName = excelTemp + "positon-" + now.getTime() + ".xlsx";
         positionInfoExcelExport.setFlag(flag);
         positionInfoExcelExport.setList(list);
         positionInfoExcelExport.setExportFilePath(fileName);
@@ -345,4 +437,75 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         return result;
     }
 
+    /**
+     * 去重
+     */
+    private List<String> removeDuplicate(List<String> lstUserName) {
+        HashSet h = new HashSet(lstUserName);
+        lstUserName.clear();
+        lstUserName.addAll(h);
+        return lstUserName;
+    }
+
+    public List<String> concatData(String sysContext) {
+        List<String> list = new ArrayList<String>();
+        Set<FunctionVO> lstAllKey = new HashSet<>();
+        if (StringUtils.isBlank(sysContext)) {
+            return list;
+        }
+        SystemRootVO rootVO = serializeBp.json2ObjNew(sysContext, new TypeReference<SystemRootVO>() {
+        });
+        lstAllKey.addAll(getAllPermitItem(rootVO));
+        list = lstAllKey.stream().map(e -> e.key).collect(Collectors.toList());
+        return list;
+    }
+
+    private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {
+        List<MenuVO> menu1 = rootVO.menu;
+        if (CollectionUtils.isEmpty(menu1)) {
+            return;
+        }
+        for (int j = 0; j < menu1.size(); j++) {
+            MenuVO curMemu = menu1.get(j);
+//            lstAllKey.add(curMemu.key);
+            scanModule(String.format("%s-%s", sysName, curMemu.name), curMemu.module, lstAllKey);
+        }
+    }
+
+    private void scanModule(String parentName, List<ModuleVO> lstModule, Set<FunctionVO> lstAllKey) {
+        if (CollectionUtils.isEmpty(lstModule)) {
+            return;
+        }
+        for (ModuleVO moduleVO : lstModule) {
+            if (CollectionUtils.isEmpty(moduleVO.module) && CollectionUtils.isEmpty(moduleVO.function)) {
+                FunctionVO fKey = new FunctionVO();
+                fKey.key = moduleVO.key;
+                fKey.name = String.format("%s-%s", parentName, moduleVO.name);
+                lstAllKey.add(fKey);
+            } else {
+                scanModule(String.format("%s-%s", parentName, moduleVO.name), moduleVO.module, lstAllKey);
+                scanFunction(String.format("%s-%s", parentName, moduleVO.name), moduleVO.function, lstAllKey);
+            }
+        }
+    }
+
+    private Set<FunctionVO> getAllPermitItem(SystemRootVO rootVO) {
+        Set<FunctionVO> lstAllKey = new HashSet<>();
+        scanMenu(rootVO.system.name, rootVO, lstAllKey);
+        return lstAllKey;
+    }
+
+    private void scanFunction(String parentName, List<FunctionVO> lstFunction, Set<FunctionVO> lstAllKey) {
+        if (CollectionUtils.isEmpty(lstFunction)) {
+            return;
+        }
+        for (FunctionVO f : lstFunction) {
+            if (CollectionUtils.isEmpty(f.function)) {
+                f.name = String.format("%s-%s", parentName, f.name);
+                lstAllKey.add(f);
+            } else {
+                scanFunction(f.name, f.function, lstAllKey);
+            }
+        }
+    }
 }
