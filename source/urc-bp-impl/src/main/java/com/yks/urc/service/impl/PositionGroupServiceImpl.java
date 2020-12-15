@@ -64,6 +64,8 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private UrcSystemAdministratorMapper urcSystemAdministratorMapper;
     @Autowired
     private IUrcLogBp iUrcLogBp;
+    @Autowired
+    private IRoleMapper roleMapper;
 
     private static String excelTemp = "/opt/tmp/";
 
@@ -138,6 +140,16 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             List<PermissionDO> permissionDOList = serializeBp.json2ObjNew(jsonObject.getString("selectedContext"), new TypeReference<List<PermissionDO>>() {
             });
             List<Map> selectedContextmap = JSONArray.parseArray(selectedContext, Map.class);
+            List<String> roleSysKey = new ArrayList<>();
+            //查询用户可以授权的系统
+            boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
+            if(!isSuperAdmin){
+                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
+            }
+            if(!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)){
+                return VoHelper.getFail("当前用户没有可分配的系统功能权限");
+            }
+
             //校验岗位是不是包含超管岗位
             boolean existSuperAdmin = true;
             if (!CollectionUtils.isEmpty(positionIds)) {
@@ -207,8 +219,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                 //权限控制
                 //先删除岗位权限,在插入
                 List<RolePermissionDO> lstRolePermit = new ArrayList<>();
-                //查询用户可以授权的系统
-                List<String> roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
+
                 for (String positionId : positionList) {
                     rolePermitMapper.deleteByRoleIdInSysKey(positionId, roleSysKey);
                     if(!CollectionUtils.isEmpty(permissionDOList)) {
@@ -222,6 +233,9 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                             rp.setModifiedBy(sessionBp.getOperator());
                             rp.setModifiedTime(rp.getCreateTime());
                             lstRolePermit.add(rp);
+                        }
+                        if (!CollectionUtils.isEmpty(lstRolePermit)) {
+                            rolePermitMapper.insertBatch(lstRolePermit);
                         }
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
@@ -266,9 +280,6 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         // 改为由定时任务执行
                         permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
                     }
-                }
-                if (!CollectionUtils.isEmpty(lstRolePermit)) {
-                    rolePermitMapper.insertBatch(lstRolePermit);
                 }
                 return VoHelper.getSuccessResult();
             }
