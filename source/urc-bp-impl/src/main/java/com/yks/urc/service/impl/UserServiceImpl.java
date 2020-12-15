@@ -727,8 +727,10 @@ public class UserServiceImpl implements IUserService {
             }
             List<PermissionDO> permissionDOList = serializeBp.json2ObjNew(jsonObject.getString("selectedContext"), new TypeReference<List<PermissionDO>>() {
             });
+            //判断用户是不是超级管理员
+            boolean isSuperAdmin = roleMapper.isSuperAdminAccount(sessionBp.getOperator());
             //保存岗位功能权限
-            userService.doSavePositionPermission(permissionDOList,positionId,sessionBp.getOperator());
+            userService.doSavePositionPermission(permissionDOList,positionId,isSuperAdmin? null : sessionBp.getOperator());
             //保存操作日志
             UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位分配权限",roleMapper.getRoleName(positionId) , jsonStr);
             iUrcLogBp.insertUrcLog(urcLog);
