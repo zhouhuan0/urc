@@ -85,7 +85,8 @@
         from urc_data_rule_sys us
         left join urc_data_rule_col ud on us.data_rule_sys_id = ud.data_rule_sys_id
         left join urc_expression ue on us.data_rule_sys_id = ue.data_rule_sys_id
-        where us.data_rule_id = #{dataRuleId,jdbcType=BIGINT}
+        left join urc_permission up on us.sys_key = up.sys_key
+        where us.data_rule_id = #{dataRuleId,jdbcType=BIGINT} and up.status = 1
     </select>
 
 
@@ -232,7 +233,9 @@
     </delete>
 
     <select id="getTemplOwnSysByDataRuleId" resultType="java.lang.String">
-        select sys_key from urc_data_rule_sys where data_rule_id=  #{dataRuleId,jdbcType=BIGINT}
+        select udrs.sys_key from urc_data_rule_sys udrs
+        left join urc_permission up on udrs.sys_key = up.sys_key
+        where udrs.data_rule_id=  #{dataRuleId,jdbcType=BIGINT} and up.status = 1
     </select>
 
     <select id="getUserOwnSysByUserName" resultType="java.lang.String">

@@ -162,11 +162,13 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
         String valFlag = jsonObject.getString("valFlag");
         if (!isSuperAdmin && "1".equals(valFlag)) {
+            //先查询该用户是哪些系统的数据管理员
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
             Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
-            if (isBizAdmin) {
-                checkSysPermission(operator, templId);
-            } else {
+            if (!isBizAdmin && CollectionUtils.isEmpty(keys)) {
                 throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能选择该方案", operator));
+            } else {
+                checkSysPermission(operator, templId,keys);
             }
         }
         DataRuleTemplVO dataRuleTemplVO = new DataRuleTemplVO();
@@ -238,17 +240,26 @@ public class DataRuleServiceImpl implements IDataRuleService {
     /**
      * Description: 判断当前用户对应权限的系统是否包含 方案对应的系统
      *
-     * @param :
+     * @param :keys(用户属于数据管理员的系统)
      * @return:
      * @auther: lvcr
      * @date: 2018/7/4 17:38
      * @see
      */
-    private void checkSysPermission(String operator, Long templId) {
-        /*获取方案对应的数据权限系统*/
+    private void checkSysPermission(String operator, Long templId,List<String> keys) {
+        List<String> templOwnSyss = dataRuleSysMapper.getTemplOwnSysByDataRuleId(templId);
+        Map<String, PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
+        for (String templOwnSys : templOwnSyss) {
+            Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator, templOwnSys);
+            if (!isSysAdmin && !keys.contains(templOwnSys)) {
+                PermissionDO permissionDO = permissionDOMap.get(templOwnSys);
+                throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]不是系统[%s]的业务管理员或数据管理员,不能操作该方案,您可以选择其他方案或新建方案", operator, permissionDO == null ? "未知": permissionDO.getSysName()));
+            }
+        }
+       /* *//*获取方案对应的数据权限系统*//*
         List<String> templOwnSyss = new ArrayList<>();
         templOwnSyss = dataRuleSysMapper.getTemplOwnSysByDataRuleId(templId);
-        /*获取用户对应的数据权限系统*/
+        *//*获取用户对应的数据权限系统*//*
         List<String> operatorOwnSyss = new ArrayList<>();
         operatorOwnSyss = userRoleMapper.getUserOwnSysByUserName(operator);
         Map<String, PermissionDO> permissionDOMap = permissionMapper.perMissionMap();
@@ -261,17 +272,15 @@ public class DataRuleServiceImpl implements IDataRuleService {
                     }
                 }
             }
-            throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]没有该方案对应系统权限，例如[%s]", operator, diffSyss.toString().substring(0, diffSyss.toString().length() - 1)));
+            throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]没有该方案[%s]对应系统权限,不能操作该方案,您可以选择其他方案或新建方案", operator, diffSyss.toString().substring(0, diffSyss.toString().length() - 1)));
         } else {
             for (String templOwnSys : templOwnSyss) {
                 Boolean isSysAdmin = roleMapper.isSysAdminAccount(operator, templOwnSys);
-                if (!isSysAdmin) {
-                    throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]不是系统[%s]的业务管理员，不能操作该方案", operator, permissionDOMap.get(templOwnSys).getSysName()));
+                if (!isSysAdmin && !keys.contains(templOwnSys)) {
+                    throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]不是系统[%s]的业务管理员或数据管理员,不能操作该方案,您可以选择其他方案或新建方案", operator, permissionDOMap.get(templOwnSys).getSysName()));
                 }
             }
-
-
-        }
+        }*/
     }
 
     private void setEntityNameAndFieldName(List<DataRuleSysDO> dataRuleSyAndOpers, Map<String, Entity> entityMap, Map<String, Field> fieldMap) {
@@ -402,10 +411,12 @@ public class DataRuleServiceImpl implements IDataRuleService {
         /*非超级管理员用户需要校验当前用户是否与方案模板对应拥有系统匹配*/
         if (!isSuperAdmin) {
             Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
-            if (isBizAdmin) {
-                checkSysPermission(operator, templId);
-            } else {
+            //先查询该用户是哪些系统的数据管理员
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+            if (!isBizAdmin && CollectionUtils.isEmpty(keys)) {
                 throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能操作该方案", operator));
+            } else {
+                checkSysPermission(operator, templId,keys);
             }
         }
         /*3、获取该模板对应的数据权限对应系统数据*/

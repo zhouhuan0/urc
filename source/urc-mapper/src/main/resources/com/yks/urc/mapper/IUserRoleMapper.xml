@@ -245,10 +245,11 @@
 
 
     <select id="getUserOwnSysByUserName" resultType="java.lang.String">
-        select sys_key from urc_user_role uur
+        select urp.sys_key from urc_user_role uur
         left join urc_role ur on uur.role_id=ur.role_id
         left join urc_role_permission urp on uur.role_id = urp.role_id
-        where uur.user_name= #{userName,jdbcType=VARCHAR}
+        left join urc_permission up on urp.sys_key = up.sys_key
+        where uur.user_name= #{userName,jdbcType=VARCHAR} and up.status = 1
     </select>
     <select id="getAllUserName" resultType="java.lang.String">
         select distinct user_name
