@@ -112,7 +112,7 @@ public class HrBpImpl implements IHrBp {
             } else {
                 roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
                 roleDO.setRemark(roleByRoleId.getRemark());
-                updatePosition(roleDO);
+                updatePosition(roleDO,!StringUtility.stringEqualsIgnoreCaseObj(roleDO.isActive(),roleByRoleId.isActive()));
             }
         }
 
@@ -160,7 +160,7 @@ public class HrBpImpl implements IHrBp {
         }
     }
 
-    private void updatePosition(RoleDO roleDO) throws Exception {
+    private void updatePosition(RoleDO roleDO,boolean statusChange) throws Exception {
         int i = roleMapper.updateByRoleId(roleDO);
         if (i > 0) {
             UserRoleDO ur = new UserRoleDO();
@@ -188,11 +188,13 @@ public class HrBpImpl implements IHrBp {
                 /*批量添加用户-岗位关系数据*/
                 userRoleMapper.insertBatch(userRoleDOS);
             }
-
-            //相比之前新增的用户
-            newUserName.removeAll(oldUserList);
             //相比之前要删除的用户
             copyOldUserList.removeAll(copyNewUserName);
+            //如果岗位状态没变化只需要更新新增和删除人员的功能权限
+            if(!statusChange){
+                //相比之前新增的用户
+                newUserName.removeAll(oldUserList);
+            }
             newUserName.addAll(copyOldUserList);
             if (!CollectionUtils.isEmpty(newUserName)) {
                 //有变动的用户需要重新处理功能权限数据
@@ -262,11 +264,12 @@ public class HrBpImpl implements IHrBp {
                     roleDO.setRoleName(positionVO.getName());
                     addPosition(roleDO);
                 } else {
+                    Boolean statusChange = !StringUtility.stringEqualsIgnoreCaseObj(positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE, roleByRoleId.isActive());
                     roleByRoleId.setPositionModifiedTime(positionVO.getModifiedTime());
                     roleByRoleId.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
                     roleByRoleId.setRoleName(positionVO.getName());
                     roleByRoleId.setModifiedTime(new Date());
-                    updatePosition(roleByRoleId);
+                    updatePosition(roleByRoleId,statusChange);
                 }
             } catch (Exception e) {
                 logger.error("updatePosition error;", StringUtility.toJSONString(positionVO));
