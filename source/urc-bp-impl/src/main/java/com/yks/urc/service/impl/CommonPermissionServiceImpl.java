@@ -38,28 +38,62 @@ public class CommonPermissionServiceImpl implements ICommonPermissionService {
     public void authorize() {
         //查找通用角色id
         RoleDO role = roleMapper.getByRoleName(ROLE_NAME);
-        //删除以前通用角色的所有人
-        userRoleMapper.deleteByRoleId(role.getRoleId());
+        //获得已分配权限的人
+        UserRoleDO userRoleDO = new UserRoleDO();
+        userRoleDO.setRoleId(role.getRoleId());
+        List<String> permissionList = userRoleMapper.getUserNameByRoleId(userRoleDO);
         //获得所有人
         List<String> lstUserName = userMapper.findAll();
-        int total = lstUserName.size();
-        int pageSize = 500;
-        if (total > pageSize) {
-            int count = total / pageSize;
-            int remainder = total % pageSize;
-            if (remainder > 0) {
-                count++;
-            }
-            for (int i = 0; i < count; i++) {
-                if (total < (i + 1) * pageSize) {
-                    dealUser(lstUserName.subList(i * pageSize, total), role.getRoleId());
-                } else {
-                    dealUser(lstUserName.subList(i * pageSize, (i + 1) * pageSize), role.getRoleId());
-                }
-            }
-        } else {
-            dealUser(lstUserName, role.getRoleId());
+        //要删除的
+        List<String> deleteList = getData(permissionList, lstUserName);
+        if(!CollectionUtils.isEmpty(deleteList)) {
+            userRoleMapper.deleteUserRoleInUserName(null, deleteList);
         }
+        //要添加的
+        List<String> addList = getData(lstUserName, permissionList);
+        if(!CollectionUtils.isEmpty(addList)) {
+            int total = addList.size();
+            int pageSize = 500;
+            if (total > pageSize) {
+                int count = total / pageSize;
+                int remainder = total % pageSize;
+                if (remainder > 0) {
+                    count++;
+                }
+                for (int i = 0; i < count; i++) {
+                    if (total < (i + 1) * pageSize) {
+                        dealUser(addList.subList(i * pageSize, total), role.getRoleId());
+                    } else {
+                        dealUser(addList.subList(i * pageSize, (i + 1) * pageSize), role.getRoleId());
+                    }
+                }
+            } else {
+                dealUser(addList, role.getRoleId());
+            }
+        }
+    }
+
+    /**
+     * 获得在listOne中不在listTwo的数据
+     *
+     * @param listOne
+     * @param listTwo
+     * @return
+     */
+    private List<String> getData(List<String> listOne, List<String> listTwo) {
+        if (CollectionUtils.isEmpty(listOne)) {
+            return null;
+        }
+        if (CollectionUtils.isEmpty(listTwo)) {
+            return listOne;
+        }
+        List<String> result = new ArrayList<String>();
+        for (String str : listOne) {
+            if (!listTwo.contains(str)) {
+                result.add(str);
+            }
+        }
+        return result;
     }
 
     /**
