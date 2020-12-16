@@ -1,6 +1,7 @@
 
 package com.yks.urc.service.impl;
 
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.mapper.IRoleMapper;
@@ -32,12 +33,24 @@ public class CommonPermissionServiceImpl implements ICommonPermissionService {
     private IRoleMapper roleMapper;
     @Autowired
     private IUserMapper userMapper;
-    private final static String ROLE_NAME = "通用角色";
+    @Autowired
+    private IConfigBp configBp;
+    private final static String ROLE_NAME = "ROLE_NAME";
 
     @Override
     public void authorize() {
+        //获得角色名
+        String roleName = configBp.getString(ROLE_NAME);
+        if(null == roleName){
+            logger.info("CommonPermissionServiceImpl:名称不能为空");
+            return;
+        }
         //查找通用角色id
-        RoleDO role = roleMapper.getByRoleName(ROLE_NAME);
+        RoleDO role = roleMapper.getByRoleName(roleName);
+        logger.info("CommonPermissionServiceImpl-名称为：" + roleName);
+        if(null == role){
+            return;
+        }
         //获得已分配权限的人
         UserRoleDO userRoleDO = new UserRoleDO();
         userRoleDO.setRoleId(role.getRoleId());
