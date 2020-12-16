@@ -236,6 +236,8 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         }
                         if (!CollectionUtils.isEmpty(lstRolePermit)) {
                             rolePermitMapper.insertBatch(lstRolePermit);
+                            //清空集合
+                            lstRolePermit.clear();
                         }
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
