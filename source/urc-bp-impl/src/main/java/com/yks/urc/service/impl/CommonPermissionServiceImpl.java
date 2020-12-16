@@ -60,7 +60,9 @@ public class CommonPermissionServiceImpl implements ICommonPermissionService {
         //要删除的
         List<String> deleteList = getData(permissionList, lstUserName);
         if(!CollectionUtils.isEmpty(deleteList)) {
-            userRoleMapper.deleteUserRoleInUserName(null, deleteList);
+            UserRoleDO userRole = new UserRoleDO();
+            userRole.setRoleId(role.getRoleId());
+            userRoleMapper.deleteUserRoleInUserName(userRole, deleteList);
         }
         //要添加的
         List<String> addList = getData(lstUserName, permissionList);
