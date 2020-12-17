@@ -189,7 +189,7 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         return String.format("user_sys_func_%s", userName);
     }
 
-    public GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Boolean isErpSysyem) {
+    public GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Integer sysType) {
         Map<String, String> mapHash = getCache(getCacheKey_UserSysFunc(userName)).getAll();
         if (mapHash != null && mapHash.size() > 0) {
             // 按sysKeyr排序，前端顶部导航栏依赖此顺序
@@ -214,13 +214,9 @@ public class RedisCacheBpImpl2 implements ICacheBp {
                     continue;
                 }
 
-                if(isErpSysyem != null){
-                    boolean internalSystem = StringUtility.stringEqualsIgnoreCaseObj(permissionBySysKey.getIsInternalSystem(), 1) ? true : false;
-                    //排除外部系统
-                    if(isErpSysyem && !internalSystem){
-                        continue;
-                     //排除内部系统
-                    }else if(!isErpSysyem && internalSystem){
+                if(sysType != null){
+                    //排除系统
+                    if(!StringUtility.stringEqualsIgnoreCaseObj(permissionBySysKey.getSysType(), sysType) ){
                         continue;
                     }
                 }

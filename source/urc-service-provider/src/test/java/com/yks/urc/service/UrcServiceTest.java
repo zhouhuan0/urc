@@ -11,6 +11,7 @@ package com.yks.urc.service;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.RoleDO;
 import com.yks.urc.fw.EncryptHelper;
 import com.yks.urc.fw.StringUtility;
@@ -110,7 +111,7 @@ public class UrcServiceTest extends BaseServiceTest {
 	}
 	@Test
 	public void testGetAllFuncPermit() {
-		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("linwanxian",null)));
+		System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("linwanxian",null, UrcConstant.SysType.ERP)));
 	}
 
 	public void test_funcPermitValidate() {

@@ -3,6 +3,7 @@ package com.yks.urc.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.UserPermitStatDO;
 import com.yks.urc.enums.CommonMessageCodeEnum;
@@ -122,7 +123,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     p.setApiUrlPrefixJson(StringUtility.toJSONString_NoException(root.apiUrlPrefix));
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
-                    p.setIsInternalSystem(root.system.isInternalSystem == null ? 1 : root.system.isInternalSystem );
+                    p.setSysType(root.system.sysType == null ? UrcConstant.SysType.ERP : root.system.sysType );
                     // 将API 前缀置为null. 在存入sysContext
                     root.apiUrlPrefix = null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));

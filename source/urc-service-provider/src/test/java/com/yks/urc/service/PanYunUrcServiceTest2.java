@@ -16,6 +16,7 @@ import com.yks.distributed.cache.core.DistributedCacheBuilder;
 import com.yks.mq.client.MQConsumerClient;
 import com.yks.mq.client.MQConsumerClient.MessageCallBack;
 import com.yks.urc.cache.bp.api.ICacheBp;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.dingding.client.vo.DingDeptVO;
 import com.yks.urc.entity.PermissionDO;
@@ -175,7 +176,7 @@ public class PanYunUrcServiceTest2 extends BaseServiceTest {
     @Test
     public void getAllFuncPermit_Test() {
         System.out.println(serializeBp.obj2Json(permitStatBp.updateUserPermitCache("xujianping")));
-        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("xujianping", null)));
+        System.out.println(StringUtility.toJSONString_NoException(userBp.getAllFuncPermit("xujianping", null, UrcConstant.SysType.ERP)));
     }
 
     @Test

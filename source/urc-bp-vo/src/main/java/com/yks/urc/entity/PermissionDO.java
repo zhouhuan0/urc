@@ -34,9 +34,9 @@ public class PermissionDO {
     private String apiUrlPrefixJson;
 
     /**
-     * 是否ERP内部系统  0:不是  1:是
+     * 系统类型  0:erp系统(内部系统)  1:FBA系统
      */
-    private Integer isInternalSystem;
+    private Integer sysType;
     /**
      * 状态 0:禁用 1:启用
      */
@@ -46,12 +46,12 @@ public class PermissionDO {
      */
     private String remark;
 
-    public Integer getIsInternalSystem() {
-        return isInternalSystem;
+    public Integer getSysType() {
+        return sysType;
     }
 
-    public void setIsInternalSystem(Integer isInternalSystem) {
-        this.isInternalSystem = isInternalSystem;
+    public void setSysType(Integer sysType) {
+        this.sysType = sysType;
     }
 
     public Integer getStatus() {

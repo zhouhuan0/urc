@@ -181,7 +181,7 @@ public class SystemServiceImpl implements ISystemService {
                 UpdateSystemVO updateSystemVO = new UpdateSystemVO();
                 updateSystemVO.remark = aDo.getRemark();
                 updateSystemVO.status = aDo.getStatus();
-                updateSystemVO.isInternalSystem = aDo.getIsInternalSystem();
+                updateSystemVO.isInternalSystem = StringUtility.stringEqualsIgnoreCaseObj(aDo.getSysType(),UrcConstant.SysType.ERP) ? 1 : 0;
                 updateSystemVO.sysKey = aDo.getSysKey();
                 updateSystemVO.sysName = aDo.getSysName();
                 updateSystemVO.createdTime = aDo.getCreateTime() != null ? DateUtil.formatDate(aDo.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null;

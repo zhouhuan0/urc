@@ -21,4 +21,11 @@ public interface UrcConstant {
         //功能管理员
         Byte functionAdministrator = 1;
     }
+
+    interface SysType{
+        //erp系统(内部系统)
+        int ERP = 0;
+        //FBA系统
+        int FBA = 1;
+    }
 }

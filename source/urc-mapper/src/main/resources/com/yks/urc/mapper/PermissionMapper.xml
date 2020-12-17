@@ -9,7 +9,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
-        <result column="is_internal_system"  property="isInternalSystem"/>
+        <result column="sys_type"  property="sysType"/>
         <result column="status"  property="status"/>
         <result column="remark"  property="remark"/>
     </resultMap>
@@ -25,7 +25,7 @@
 
 
     <sql id="Base_Column_List">
-    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time,is_internal_system,status,remark
+    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time,sys_type,status,remark
   </sql>
     <sql id="Blob_Column_List">
     sys_context
@@ -74,7 +74,7 @@
 
     <insert id="insertSysPermitDefine">
         insert into urc_permission (id, sys_name, sys_key,create_by, create_time, modified_by, modified_time,
-        sys_context,api_url_prefix_json,is_internal_system)
+        sys_context,api_url_prefix_json,sys_type)
         values
         <foreach collection="lstPermit" item="mem" index="index"
                  separator=",">
@@ -82,7 +82,7 @@
             #{mem.id,jdbcType=BIGINT}, #{mem.sysName,jdbcType=CHAR}, #{mem.sysKey,jdbcType=CHAR},
             #{mem.createBy,jdbcType=VARCHAR}, #{mem.createTime,jdbcType=TIMESTAMP},
             #{mem.modifiedBy,jdbcType=VARCHAR},#{mem.modifiedTime,jdbcType=TIMESTAMP},
-            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{isInternalSystem}
+            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{sysType}
             )
         </foreach>
     </insert>
@@ -130,7 +130,7 @@
             sys_name =#{sysName},
             api_url_prefix_json =#{apiUrlPrefixJson},
             sys_context=#{sysContext},
-            <if test="isInternalSystem != null"> is_internal_system = #{isInternalSystem},</if>
+            <if test="sysType != null"> sys_type = #{sysType},</if>
             modified_by=#{modifiedBy},
             modified_time=now(3)
         </set>
@@ -152,8 +152,8 @@
             <if test="modifiedBy != null and modifiedBy !=''">
                 modified_by=#{modifiedBy},
             </if>
-            <if test="isInternalSystem != null">
-                is_internal_system = #{isInternalSystem},
+            <if test="sysType != null">
+                sys_type = #{sysType},
             </if>
             <if test="status != null">
                 status = #{status},
@@ -180,8 +180,8 @@
         DELETE FROM urc_permission WHERE  sys_key=#{sysKey}
     </delete>
 
-    <select id="isInternalSystem" resultType="boolean">
-        SELECT is_internal_system from urc_permission where sys_key=#{sysKey}
+    <select id="getSysType" resultType="integer">
+        SELECT sys_type from urc_permission where sys_key=#{sysKey}
     </select>
 
     <select id="getAllSystem" resultType="com.yks.urc.entity.PermissionDO">
@@ -197,7 +197,7 @@
         <where>
             <if test="sysKey != null">and sys_key = #{sysKey}</if>
             <if test="status != null">and status = #{status}</if>
-            <if test="isInternalSystem != null">and is_internal_system = #{isInternalSystem}</if>
+            <if test="sysType != null">and sys_type = #{sysType}</if>
         </where>
     </select>
 

@@ -27,6 +27,8 @@ public class StringConstant {
     public static String URC_PERMIT_KEY = "004-000001";
     public static String URC_SYS_KEY = "004";
 
+    public final static String sysType = "sysType";
+
     /**
      * OMS账号
      *

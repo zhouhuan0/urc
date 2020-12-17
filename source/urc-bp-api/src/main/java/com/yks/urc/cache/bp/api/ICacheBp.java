@@ -15,13 +15,13 @@ public interface ICacheBp {
 	String getWhiteApi(String str);
 
 	/**
-	 * 获取用户所有系统的功能权限(内部ERP系统)
+	 * 获取用户所有系统的功能权限
 	 * @param userName
 	 * @return
 	 * @author panyun@youkeshu.com
 	 * @date 2018年6月21日 下午3:30:56
 	 */
-	GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Boolean isErpSysyem);
+	GetAllFuncPermitRespVO getUserFunc(String userName,List<String> sysKeys,Integer sysType);
 
 	void insertUser(UserVO u);
      //存入白名单到redis

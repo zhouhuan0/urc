@@ -127,11 +127,11 @@ public interface PermissionMapper {
 
 
     /**
-     *  是否为内部ERP系统
+     *  获取系统类型
      * @param sysKey
      * @return
      */
-    boolean isInternalSystem(String sysKey);
+    Integer getSysType(String sysKey);
 
     /**
      * 获取所有的系统key和名称(包含禁用状态的系统)

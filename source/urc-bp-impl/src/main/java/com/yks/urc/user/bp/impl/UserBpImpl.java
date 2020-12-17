@@ -166,7 +166,7 @@ public class UserBpImpl implements IUserBp {
     @Override
     public ResultVO getAllFuncPermitForOtherSystem(String operator, List<String> sysKeys) {
         // 先从缓存取
-        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,false);
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,UrcConstant.SysType.FBA);
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
@@ -174,8 +174,8 @@ public class UserBpImpl implements IUserBp {
                 permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
                 Collections.sort(permitCache.lstUserSysVO, myUserSysVOComparator);
                 for (UserSysVO us : permitCache.lstUserSysVO) {
-                    //排除erp部系统
-                    if(permissionMapper.isInternalSystem(us.sysKey)){
+                    //排除系统
+                    if(!StringUtility.stringEqualsIgnoreCaseObj(permissionMapper.getSysType(us.sysKey),UrcConstant.SysType.FBA)){
                         continue;
                     }
                     permitCache.lstSysRoot.add(us.context);
@@ -482,9 +482,9 @@ public class UserBpImpl implements IUserBp {
     UserSysVOComparator myUserSysVOComparator = new UserSysVOComparator();
 
     @Override
-    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator, List<String> sysKeys) {
+    public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator, List<String> sysKeys,Integer sysType) {
         // 先从缓存取
-        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,true);
+        GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,sysType);
         if (permitCache == null) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
@@ -492,8 +492,8 @@ public class UserBpImpl implements IUserBp {
                 permitCache.lstSysRoot = new ArrayList<>(permitCache.lstUserSysVO.size());
                 Collections.sort(permitCache.lstUserSysVO, myUserSysVOComparator);
                 for (UserSysVO us : permitCache.lstUserSysVO) {
-                    //排除外部系统
-                    if(!permissionMapper.isInternalSystem(us.sysKey)){
+                    //排除系统
+                    if(!StringUtility.stringEqualsIgnoreCaseObj(permissionMapper.getSysType(us.sysKey),sysType)){
                         continue;
                     }
                     permitCache.lstSysRoot.add(us.context);
