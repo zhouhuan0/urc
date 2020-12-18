@@ -145,6 +145,9 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
             if(!isSuperAdmin){
                 roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
+            }else{
+                //超管也只能一个个系统处理
+                roleSysKey = permitItemPositionMapper.findOneSystemKey(sysType);
             }
             if(!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)){
                 return VoHelper.getFail("当前用户没有可分配的系统功能权限");
@@ -260,8 +263,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                             vo.setModifiedTime(new Date());
                             return vo;
                         }).collect(Collectors.toList());
+                        //sys_key 转换成 permit_key
+                        List<String> permitKeys = changeKey(roleSysKey);
                         //先删后插
-                        permitItemPositionMapper.deleteBypositionId(Long.parseLong(positionId));
+                        permitItemPositionMapper.deleteBypositionIdAndKey(Long.parseLong(positionId),permitKeys);
                         permitItemPositionMapper.insertPosition(param);
                     }
 
@@ -290,6 +295,24 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             logger.error("addOrUpdatePermissionGroup error!", e);
             return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "添加或更新权限组失败");
         }
+    }
+
+    /**
+     * sys_key 转换成 permit_key
+     * @param list
+     * @return
+     */
+    private List<String> changeKey(List<String> list){
+        if(CollectionUtils.isEmpty(list)){
+            return null;
+        }
+        List <String> permissions = permitItemPositionMapper.getPermission(list);
+        List<String> result = new ArrayList<>();
+        for (String str : permissions) {
+            //拼接权限字符串
+            result.addAll(concatData(str));
+        }
+        return result;
     }
 
     @Override
