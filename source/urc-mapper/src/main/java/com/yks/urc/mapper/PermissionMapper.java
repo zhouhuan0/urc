@@ -149,4 +149,11 @@ public interface PermissionMapper {
     List<PermissionDO> selectSelective(PermissionDO permissionDO);
 
     List<PermissionDO> selectSystemInfoPage(@Param("sysKey") String sysKey,@Param("status")Integer status,@Param("sysType") String sysType,@Param("pageData")Integer pageData,@Param("startIndex")Integer startIndex);
+
+    /**
+     * 通过系统类型得到的sys_key(不包含禁用状态的系统)
+     *
+     * @return
+     */
+    List<PermissionDO> getSysKey(@Param("sysType")String sysType);
 }

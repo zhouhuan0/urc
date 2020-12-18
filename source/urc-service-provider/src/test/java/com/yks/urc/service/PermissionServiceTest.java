@@ -36,14 +36,7 @@ public class PermissionServiceTest extends BaseServiceTest {
     @Autowired
     private ISerializeBp serializeBp;
 
-    @Test
-    public void getUserAuthorizablePermission() {
-        ResultVO resultVO = permissionService.getUserAuthorizablePermission("hehuake");
-        System.out.println(serializeBp.obj2Json(resultVO));
-        resultVO = permissionService.getUserAuthorizablePermission("panyun");
-        System.out.println(serializeBp.obj2Json(resultVO));
 
-    }
 
     @Autowired
     private IRoleService roleService;

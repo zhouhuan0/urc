@@ -336,7 +336,7 @@ public class UrcServiceImpl implements IUrcService {
     public ResultVO getUserAuthorizablePermission(String jsonStr) {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
-        return permissionService.getUserAuthorizablePermission(operator);
+        return permissionService.getUserAuthorizablePermission(operator,"0");
     }
 
     @Override

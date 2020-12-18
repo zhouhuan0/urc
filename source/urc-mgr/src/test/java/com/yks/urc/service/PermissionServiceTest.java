@@ -30,12 +30,7 @@ public class PermissionServiceTest extends BaseServiceTest {
     }
 
 
-    @Test
-    public void getUserAuthorizablePermission(){
-        ResultVO resultVO = permissionService.getUserAuthorizablePermission("huanghongfei");
-        System.out.println(resultVO);
 
-    }
 
 
 }

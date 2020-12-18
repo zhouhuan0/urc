@@ -228,4 +228,9 @@
             limit #{startIndex},#{pageData}
         </if>
     </select>
+
+    <select id="getSysKey" resultType="com.yks.urc.entity.PermissionDO">
+		SELECT sys_key, sys_context FROM  urc_permission where status = 1
+            <if test="sysType != null">and sys_type = #{sysType}</if>
+    </select>
 </mapper>

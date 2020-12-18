@@ -6,12 +6,12 @@ import com.yks.urc.mapper.IPermitRefreshTaskMapper;
 import com.yks.urc.motan.MotanSession;
 import com.yks.urc.motan.service.api.IUrcMgr;
 import com.yks.urc.service.api.ICommonPermissionService;
+import com.yks.urc.service.api.IPermissionService;
 import com.yks.urc.task.PermitRefreshTask;
 import com.yks.urc.vo.ResultVO;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -164,7 +164,7 @@ public class WsTest extends BaseServiceTest {
         long start = System.currentTimeMillis();
         List<PermitRefreshTaskVO> mem = permitRefreshTaskMapper.selectToDo(20);
         permitRefreshTask.doOne(mem);
-        System.out.println(System.currentTimeMillis()-start);
+        System.out.println(System.currentTimeMillis() - start);
         System.out.println("zzz");
     }
 
@@ -172,7 +172,7 @@ public class WsTest extends BaseServiceTest {
     public void test14() {
         String json = "{\"data\":{\"pageNumber\":1,\"pageData\":20,\"sysType\":0},\"ticket\":\"b16330ed049b30b08258c6e3f4be4e18\",\"operator\":\"wensheng\",\"personName\":\"wensheng\",\"funcVersion\":\"0956cd73c1b876c4ad229923d063f7de\",\"moduleUrl\":\"/user/sysManage/\",\"requestId\":\"5209427d9d6c775c118d790b31\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
-        ResultVO resultVO =urcMgr.getSystemInfo(json);
+        ResultVO resultVO = urcMgr.getSystemInfo(json);
         System.out.println(StringUtility.toJSONString(resultVO));
     }
 
@@ -181,7 +181,19 @@ public class WsTest extends BaseServiceTest {
     public void test15() {
         String json = "{\"ticket\":\"b16330ed049b30b08258c6e3f4be4e18\",\"operator\":\"wensheng\",\"personName\":\"wensheng\",\"funcVersion\":\"0956cd73c1b876c4ad229923d063f7de\",\"moduleUrl\":\"/user/sysManage/\",\"requestId\":\"5209427d9d6c775c118d790b31\",\"deviceName\":\"Chrome浏览器\"}";
         MotanSession.initialSession(json);
-        ResultVO resultVO =urcMgr.getSystem(json);
+        ResultVO resultVO = urcMgr.getSystem(json);
         System.out.println(StringUtility.toJSONString(resultVO));
+    }
+
+    @Autowired
+    private IPermissionService permissionService;
+
+    @Test
+    public void test16() {
+        //ceshi11a
+        ResultVO resultVO = permissionService.getUserAuthorizablePermission("ceshi11a", "0");
+        System.out.println(StringUtility.toJSONString(resultVO));
+        System.out.println("zzzzzz");
+
     }
 }

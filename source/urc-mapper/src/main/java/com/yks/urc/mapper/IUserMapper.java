@@ -187,4 +187,6 @@ public interface IUserMapper {
     List<PermissionDO> getUserAuthorizablePermissionForPosition(String operator);
 
     List<String> findAll();
+
+    List<PermissionDO> getUserPermission(@Param("operator") String operator,@Param("sysType") String sysType);
 }

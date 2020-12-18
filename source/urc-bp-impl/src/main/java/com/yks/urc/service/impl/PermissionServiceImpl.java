@@ -251,11 +251,16 @@ public class PermissionServiceImpl implements IPermissionService {
     }
 
     @Override
-    public ResultVO getUserAuthorizablePermission(String userName) {
+    public ResultVO getUserAuthorizablePermission(String userName,String sysType) {
         List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
         if (roleMapper.isSuperAdminAccount(userName)) {
+            List<PermissionDO> lstSysKey = null;
             //查询所有的角色功能权限
-            List<PermissionDO> lstSysKey = permissionMapper.getAllSysKey();
+            if(StringUtils.isEmpty(sysType)) {
+                 lstSysKey = permissionMapper.getAllSysKey();
+            }else{
+                lstSysKey = permissionMapper.getSysKey(sysType);
+            }
             for (PermissionDO permission : lstSysKey) {
                 PermissionVO permissionVO = new PermissionVO();
                 permissionVO.setSysKey(permission.getSysKey());
@@ -264,7 +269,12 @@ public class PermissionServiceImpl implements IPermissionService {
             }
         } else {
             //查询用户是否拥有系统功能管理员
-            List<PermissionDO> userAuthorizablePermissionForPosition = iUserMapper.getUserAuthorizablePermissionForPosition(userName);
+            List<PermissionDO> userAuthorizablePermissionForPosition = null;
+            if(StringUtils.isEmpty(sysType)) {
+                userAuthorizablePermissionForPosition = iUserMapper.getUserAuthorizablePermissionForPosition(userName);
+            }else {
+                userAuthorizablePermissionForPosition = iUserMapper.getUserPermission(userName, sysType);
+            }
             for (PermissionDO permissionDO : userAuthorizablePermissionForPosition) {
                 PermissionVO permissionVO = new PermissionVO();
                 permissionVO.setSysKey(permissionDO.getSysKey());
@@ -273,7 +283,12 @@ public class PermissionServiceImpl implements IPermissionService {
             }
             List<String> collect = userAuthorizablePermissionForPosition.stream().map(PermissionDO::getSysKey).collect(Collectors.toList());
             //兼容角色部分功能权限
-            List<String> lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+            List<String> lstSysKey = null;
+            if(StringUtils.isEmpty(sysType)) {
+                 lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+            }else{
+                lstSysKey = userRoleMapper.getSysKeyByUserAndType(userName,sysType);
+            }
             //去除是功能管理员的系统
             lstSysKey.removeAll(collect);
             if (lstSysKey != null && lstSysKey.size() > 0) {
@@ -456,7 +471,8 @@ public class PermissionServiceImpl implements IPermissionService {
 
     @Override
     public List<String> getUserAuthorizableSysKey(String operator) {
-        ResultVO<List<PermissionVO>> rslt = getUserAuthorizablePermission(operator);
+        //角色只有ERP系统
+        ResultVO<List<PermissionVO>> rslt = getUserAuthorizablePermission(operator,"0");
         return rslt.data.stream().map(c -> c.getSysKey()).distinct().collect(Collectors.toList());
     }
 

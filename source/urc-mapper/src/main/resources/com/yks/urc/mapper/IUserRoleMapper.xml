@@ -270,5 +270,17 @@
         order by r.role_id;
     </select>
 
-
+    <select id="getSysKeyByUserAndType" resultType="java.lang.String">
+        select distinct p.sys_key
+        from urc_user_role u
+        INNER JOIN urc_role r on u.role_id =r.role_id
+        INNER JOIN urc_role_permission p on r.role_id=p.role_id
+        INNER JOIN urc_permission up on up.sys_key = p.sys_key and up.status = 1
+        where u.user_name =#{userName}
+        AND r.is_active=1
+		AND (r.is_forever=1 or now() BETWEEN r.effective_time and r.expire_time)
+        <if test="sysType != null">and up.sys_type = #{sysType}</if>
+		AND p.sys_key is not null
+		order by p.sys_key
+    </select>
 </mapper>

@@ -144,12 +144,7 @@ public class WJHService extends BaseServiceTest {
     }
     
     
-    @Test
-    public void getUserAuthorizablePermission() throws Exception{
-    	
-    	System.out.println(StringUtility.toJSONString(permissionService.getUserAuthorizablePermission("yanxianbiao")));
 
-    }
 
     @Test
     public void getPlatformShopByEntityCode() throws Exception{

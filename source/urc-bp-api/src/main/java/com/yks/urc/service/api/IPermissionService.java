@@ -16,7 +16,7 @@ public interface IPermissionService {
 	 * @param operator
 	 * @return
 	 */
-	ResultVO getUserAuthorizablePermission(String operator);
+	ResultVO getUserAuthorizablePermission(String operator,String sysType);
 
 	ResultVO getUserPermissionList(String jsonStr);
 	/**

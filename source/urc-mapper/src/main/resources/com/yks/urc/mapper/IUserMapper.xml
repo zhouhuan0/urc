@@ -512,4 +512,16 @@
     <select id="findAll" resultType="java.lang.String">
        select user_name from urc_user where is_active = 1
     </select>
+
+    <select id="getUserPermission" resultType="com.yks.urc.entity.PermissionDO" parameterType="java.lang.String">
+       select
+        t1.sys_key,
+        t1.sys_context
+       from urc_system_administrator t
+       left join urc_permission t1 on t.sys_key = t1.sys_key
+       where t.user_name = #{operator}
+          and t1.status = 1
+          and t.type = 1
+        <if test="sysType != null">and sys_type = #{sysType}</if>
+    </select>
 </mapper>
