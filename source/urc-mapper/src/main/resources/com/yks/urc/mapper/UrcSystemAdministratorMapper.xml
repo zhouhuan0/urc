@@ -165,7 +165,7 @@
     on up.sys_key = usa.sys_key and up.status = 1
     where usa.user_name = #{userName} and usa.type = #{type}
     <if test="sysType != null" >
-      and up.sysType = #{sysType}
+      and up.sys_type = #{sysType}
     </if>
   </select>
 </mapper>
