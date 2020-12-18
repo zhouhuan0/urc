@@ -136,5 +136,5 @@ public interface IUserService {
      * @param permissionDOList
      * @param positionId
      */
-    void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId,String operator,Integer sysType) throws Exception;
+    void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId,String operator,boolean isSuper,Integer sysType) throws Exception;
 }

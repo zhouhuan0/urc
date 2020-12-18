@@ -131,4 +131,34 @@
       #{item.modifiedTime})
     </foreach>
   </insert>
+
+  <delete id="deleteBypositionIdAndKey">
+    delete from permit_item_position
+    where position_id = #{positionId}
+    <if test=" roleSysKey !=null and roleSysKey.size >0 ">
+      AND   permit_key  IN
+      <foreach collection="roleSysKey" index="index" item="sysYey" open="(" separator="," close=")">
+        #{sysYey}
+      </foreach>
+    </if>
+  </delete>
+
+  <select id="getPermission" resultType="string">
+    select sys_context
+    from  urc_permission
+    where status = 1
+    and sys_key in
+    <foreach collection="list" index="index" item="sysYey" open="(" separator="," close=")">
+      #{sysYey}
+    </foreach>
+  </select>
+
+  <select id="findOneSystemKey" resultType="string">
+    select sys_key
+    from urc_permission
+    where status = 1
+    <if test="sysType != null" >
+      and sys_type = #{sysType}
+    </if>
+  </select>
 </mapper>

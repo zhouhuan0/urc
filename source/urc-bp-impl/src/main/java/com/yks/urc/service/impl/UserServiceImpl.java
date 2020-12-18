@@ -683,7 +683,7 @@ public class UserServiceImpl implements IUserService {
                 role.setModifiedBy(operator);
                 iUserMapper.setSupperAdmin(role);
                 //保存岗位功能权限
-                userService.doSavePositionPermission(permissionDOList,positionId,null,null);
+                userService.doSavePositionPermission(permissionDOList,positionId,operator,true,null);
                 UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位设置超管",String.format("%s -> %s",roleMapper.getRoleName(positionId),StringUtility.stringEqualsIgnoreCase("1",isSupperAdmin) ? "是":"否"), jsonStr);
                 iUrcLogBp.insertUrcLog(urcLog);
                 return VoHelper.getSuccessResult();
@@ -745,7 +745,7 @@ public class UserServiceImpl implements IUserService {
             //判断用户是不是超级管理员
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(sessionBp.getOperator());
             //保存岗位功能权限
-            userService.doSavePositionPermission(permissionDOList,positionId,isSuperAdmin? null : sessionBp.getOperator(),sysType);
+            userService.doSavePositionPermission(permissionDOList,positionId,sessionBp.getOperator(),isSuperAdmin,sysType);
             //保存操作日志
             UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位分配权限",roleMapper.getRoleName(positionId) , jsonStr);
             iUrcLogBp.insertUrcLog(urcLog);
@@ -758,15 +758,18 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId, String operator,Integer sysType) throws Exception {
+    public void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId, String operator,boolean isSuper,Integer sysType) throws Exception {
         List<String> roleSysKey = new ArrayList<String>();
-        if (!StringUtil.isEmpty(operator)) {
+        if (!isSuper) {
             //查询用户可以授权的系统
             roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
             //不是超管也不是任何系统的功能管理员时直接抛异常
             if(CollectionUtils.isEmpty(roleSysKey)){
                 throw new Exception("当前用户不是任何系统功能管理员,无法分配权限!");
             }
+        }else{
+            //超管也只能一个个系统处理
+            roleSysKey = permitItemPositionMapper.findOneSystemKey(sysType);
         }
 
         //通过当前用户获得权限
@@ -808,8 +811,10 @@ public class UserServiceImpl implements IUserService {
                 vo.setModifiedTime(new Date());
                 return vo;
             }).collect(Collectors.toList());
+            //sys_key 转换成 permit_key
+            List<String> permitKeys = changeKey(roleSysKey);
             //先删后插
-            permitItemPositionMapper.deleteBypositionId(positionId);
+            permitItemPositionMapper.deleteBypositionIdAndKey(positionId,permitKeys);
             permitItemPositionMapper.insertPosition(param);
         }
 
@@ -831,6 +836,24 @@ public class UserServiceImpl implements IUserService {
             // 改为由定时任务执行
             permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
         }
+    }
+
+    /**
+     * sys_key 转换成 permit_key
+     * @param list
+     * @return
+     */
+    private List<String> changeKey(List<String> list){
+        if(CollectionUtils.isEmpty(list)){
+            return null;
+        }
+        List <String> permissions = permitItemPositionMapper.getPermission(list);
+        List<String> result = new ArrayList<>();
+        for (String str : permissions) {
+            //拼接权限字符串
+            result.addAll(concatData(str));
+        }
+        return result;
     }
 
     public List<String> concatData(String sysContext){
