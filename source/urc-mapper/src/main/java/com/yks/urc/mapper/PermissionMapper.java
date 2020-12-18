@@ -78,7 +78,7 @@ public interface PermissionMapper {
      *
      * @return
      */
-    List<PermissionDO> getAllSysKeyBySysType(Integer sysType);
+    List<PermissionDO> getAllSysKeyBySysType(@Param("sysType") Integer sysType);
 
     /**
      * 根据sys_key更新sys_context
