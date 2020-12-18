@@ -222,16 +222,15 @@ public class UserServiceImpl implements IUserService {
         try {
             JSONObject jsonObject = StringUtility.parseString(jsonStr);
             String operator = jsonObject.getString(StringConstant.operator);
-            //系统类型:0:erp系统 1:FBA系统 (不传此字段时默认为0)
-            Integer sysType = jsonObject.getInteger(StringConstant.sysType);
-            if(sysType == null){
-                sysType =UrcConstant.SysType.ERP;
-            }
             SysKeysVO sysKeysVO = new SysKeysVO();
             if(null != jsonObject.getJSONObject(StringConstant.data)){
             	sysKeysVO =StringUtility.parseObject(jsonObject.getJSONObject(StringConstant.data).toString(),SysKeysVO.class);
             }
-
+            //系统类型:0:erp系统 1:FBA系统 (不传此字段时默认为0)
+            Integer sysType = sysKeysVO.getSysType();
+            if(sysType == null){
+                sysType =UrcConstant.SysType.ERP;
+            }
             return userBp.getAllFuncPermit(operator,null != sysKeysVO ? sysKeysVO.getSysKeys() : null,sysType);
         } catch (Exception ex) {
             logger.error(String.format("getAllFuncPermit:%s", jsonStr), ex);

@@ -11,7 +11,7 @@ package com.yks.urc.vo;
 import java.util.List;
 
 public class SysKeysVO {
-
+    private Integer sysType;
 
     private List<String> sysKeys;
 
@@ -21,6 +21,14 @@ public class SysKeysVO {
 
 	public void setSysKeys(List<String> sysKeys) {
 		this.sysKeys = sysKeys;
+	}
+
+	public Integer getSysType() {
+		return sysType;
+	}
+
+	public void setSysType(Integer sysType) {
+		this.sysType = sysType;
 	}
 
 	@Override
