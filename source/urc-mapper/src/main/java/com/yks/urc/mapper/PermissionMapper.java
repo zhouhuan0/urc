@@ -144,9 +144,9 @@ public interface PermissionMapper {
      * 获取所有的系统key和名称(包含禁用状态的系统)
      * @return
      */
-    List<PermissionDO> getAllSystem();
+    List<PermissionDO> getAllSystem(@Param("sysType") String sysType);
 
     List<PermissionDO> selectSelective(PermissionDO permissionDO);
 
-    List<PermissionDO> selectSystemInfoPage(@Param("sysKey") String sysKey,@Param("status")Integer status,@Param("pageData")Integer pageData,@Param("startIndex")Integer startIndex);
+    List<PermissionDO> selectSystemInfoPage(@Param("sysKey") String sysKey,@Param("status")Integer status,@Param("sysType") String sysType,@Param("pageData")Integer pageData,@Param("startIndex")Integer startIndex);
 }

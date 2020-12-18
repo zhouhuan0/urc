@@ -37,5 +37,7 @@ public class UpdateSystemVO {
 
     public Integer isInternalSystem;
 
+    public Integer sysType;
+
     public String createdTime;
 }

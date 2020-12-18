@@ -178,7 +178,7 @@ public class UrcMgrImpl implements IUrcMgr {
     @Override
     @Log("获取系统下拉框列表")
     public ResultVO getSystem(String jsonStr) {
-        return systemService.getSystemList();
+        return systemService.getSystemList(jsonStr);
     }
 
     @Override

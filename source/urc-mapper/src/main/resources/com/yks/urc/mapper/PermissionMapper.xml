@@ -196,6 +196,9 @@
 
     <select id="getAllSystem" resultType="com.yks.urc.entity.PermissionDO">
          SELECT sys_key,sys_name from urc_permission
+        <where>
+            <if test="sysType != null">and sys_type = #{sysType}</if>
+        </where>
     </select>
 
     <select id="selectSelective" resultMap="ResultMapWithBLOBs">
@@ -218,6 +221,7 @@
         <where>
             <if test="sysKey != null">and sys_key = #{sysKey}</if>
             <if test="status != null">and status = #{status}</if>
+            <if test="sysType != null">and sys_type = #{sysType}</if>
         </where>
         order by create_time
         <if test="startIndex != null and pageData != null">

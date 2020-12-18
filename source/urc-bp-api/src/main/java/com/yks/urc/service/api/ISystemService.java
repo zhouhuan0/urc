@@ -11,7 +11,7 @@ import com.yks.urc.vo.ResultVO;
  */
 public interface ISystemService {
     //获取系统下拉框列表
-    ResultVO getSystemList();
+    ResultVO getSystemList(String jsonStr);
 
     //获取系统的功能权限
     ResultVO getSystemPermission(String jsonStr);

@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -58,9 +59,15 @@ public class SystemServiceImpl implements ISystemService {
     private IUrcLogBp iUrcLogBp;
 
     @Override
-    public ResultVO getSystemList() {
+    public ResultVO getSystemList(String jsonStr) {
         try {
-            List<PermissionDO> allSystem = permissionMapper.getAllSystem();
+            String sysType = null;
+            JSONObject jsonObject = StringUtility.parseString(jsonStr);
+            JSONObject data = jsonObject.getJSONObject("data");
+            if(null != data) {
+                 sysType = data.getString("sysType");
+            }
+            List<PermissionDO> allSystem = permissionMapper.getAllSystem(sysType);
             return VoHelper.getSuccessResult(allSystem);
         } catch (Exception e) {
             logger.error("getSystemList error!", e);
@@ -155,6 +162,7 @@ public class SystemServiceImpl implements ISystemService {
             Integer pageData = data.getInteger("pageData");
             Integer status = data.getInteger("status");
             String sysKey = data.getString("sysKey");
+            String sysType = data.getString("sysType");
             if(pageNumber == null){
                 pageNumber =1;
             }
@@ -163,9 +171,9 @@ public class SystemServiceImpl implements ISystemService {
             }
             Map<String,Object> resultMap = new HashMap<>();
             //分页查询系统信息
-            List<PermissionDO> permissionDOS = permissionMapper.selectSystemInfoPage(sysKey,status,pageData,(pageNumber-1)*pageData);
+            List<PermissionDO> permissionDOS = permissionMapper.selectSystemInfoPage(sysKey,status,sysType,pageData,(pageNumber-1)*pageData);
             //查询总数
-            List<PermissionDO> list = permissionMapper.selectSystemInfoPage(sysKey, status, null, null);
+            List<PermissionDO> list = permissionMapper.selectSystemInfoPage(sysKey, status,sysType, null, null);
             if(CollectionUtils.isEmpty(permissionDOS)){
                 resultMap.put("lst",Collections.EMPTY_LIST);
                 resultMap.put("total",0);
@@ -182,6 +190,8 @@ public class SystemServiceImpl implements ISystemService {
                 updateSystemVO.remark = aDo.getRemark();
                 updateSystemVO.status = aDo.getStatus();
                 updateSystemVO.isInternalSystem = StringUtility.stringEqualsIgnoreCaseObj(aDo.getSysType(),UrcConstant.SysType.ERP) ? 1 : 0;
+                //系统类型
+                updateSystemVO.sysType = aDo.getSysType();
                 updateSystemVO.sysKey = aDo.getSysKey();
                 updateSystemVO.sysName = aDo.getSysName();
                 updateSystemVO.createdTime = aDo.getCreateTime() != null ? DateUtil.formatDate(aDo.getCreateTime(), "yyyy-MM-dd HH:mm:ss") : null;
