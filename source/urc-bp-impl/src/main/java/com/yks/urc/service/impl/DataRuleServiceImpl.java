@@ -163,7 +163,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         String valFlag = jsonObject.getString("valFlag");
         if (!isSuperAdmin && "1".equals(valFlag)) {
             //先查询该用户是哪些系统的数据管理员
-            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),UrcConstant.SysType.ERP);
             Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
             if (!isBizAdmin && CollectionUtils.isEmpty(keys)) {
                 throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能选择该方案", operator));
@@ -412,7 +412,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
         if (!isSuperAdmin) {
             Boolean isBizAdmin = roleMapper.isAdminAccount(operator);
             //先查询该用户是哪些系统的数据管理员
-            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),UrcConstant.SysType.ERP);
             if (!isBizAdmin && CollectionUtils.isEmpty(keys)) {
                 throw new URCBizException(ErrorCode.E_000003.getState(), String.format("用户[%s]非管理员，不能操作该方案", operator));
             } else {
@@ -1251,7 +1251,7 @@ public class DataRuleServiceImpl implements IDataRuleService {
 /*        if(StringUtility.isNullOrEmpty(sysKey)){
             return VoHelper.getSuccessResult((Object) "sysKey为空");
         }*/
-        List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+        List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),UrcConstant.SysType.ERP);
         boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
         List<DataRuleVO> dataRuel = new ArrayList<DataRuleVO>();
         if (lstUserName != null && lstUserName.size() > 0) {

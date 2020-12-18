@@ -112,7 +112,7 @@
 	                      #{sysKey} 
 	             </foreach>
        		 </if>
-            and udrs.data_rule_sys_id is not null and up.status = 1
+            and udrs.data_rule_sys_id is not null and up.status = 1 and up.sys_type = 0
         </where>
     </select>
 

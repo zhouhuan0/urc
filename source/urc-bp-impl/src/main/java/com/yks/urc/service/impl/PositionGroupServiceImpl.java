@@ -144,7 +144,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             //查询用户可以授权的系统
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
             if(!isSuperAdmin){
-                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue());
+                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),null);
             }
             if(!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)){
                 return VoHelper.getFail("当前用户没有可分配的系统功能权限");

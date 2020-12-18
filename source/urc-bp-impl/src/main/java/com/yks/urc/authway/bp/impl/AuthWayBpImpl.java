@@ -50,7 +50,7 @@ public class AuthWayBpImpl implements AuthWayBp {
         List<SysAuthWayVO> lstAuthWayVOS = new ArrayList<>();
         //1.首先通过用户判断是否是超级管理员 还是业务管理员,超级管理员拿到所有的业务系统key, 只需要拿定义表的数据即可
         if (isSuperAdmin == true) {
-            List<PermissionDO> permissionDOS = permissionMapper.getAllSysKey();
+            List<PermissionDO> permissionDOS = permissionMapper.getAllSysKeyBySysType(UrcConstant.SysType.ERP);
             List<String> getSysKey = new ArrayList<>();
             //组装所有的key
             for (PermissionDO permissionDO : permissionDOS) {
@@ -60,7 +60,7 @@ public class AuthWayBpImpl implements AuthWayBp {
             lstAuthWayVOS = this.AssembleSysAuthWay(getSysKey);
         } else {
             //先查询该用户是哪些系统的数据管理员
-            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue());
+            List<String> keys = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),UrcConstant.SysType.ERP);
             boolean isAdmin = roleMapper.isAdminAccount(operator);
             if (isAdmin) {
                 //2. 通过管理员拿到sys_key , 过滤掉禁用, 过期的角色

@@ -74,6 +74,13 @@ public interface PermissionMapper {
     List<PermissionDO> getAllSysKey();
 
     /**
+     * 得到所有的sys_key(不包含禁用状态的系统)
+     *
+     * @return
+     */
+    List<PermissionDO> getAllSysKeyBySysType(Integer sysType);
+
+    /**
      * 根据sys_key更新sys_context
      *
      * @param p

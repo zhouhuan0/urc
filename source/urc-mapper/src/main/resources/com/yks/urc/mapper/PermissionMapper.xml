@@ -124,6 +124,16 @@
 		SELECT sys_key, sys_context FROM  urc_permission where status = 1
     </select>
 
+
+    <select id="getAllSysKeyBySysType" resultType="com.yks.urc.entity.PermissionDO">
+		SELECT sys_key, sys_context
+		FROM  urc_permission
+		where status = 1
+		<if test="sysType != null">
+           and sys_type = #{sysType}
+        </if>
+    </select>
+
     <update id="updateSysContextBySysKey">
         update urc_permission
         <set>
