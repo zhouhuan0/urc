@@ -485,7 +485,7 @@ public class UserBpImpl implements IUserBp {
     public ResultVO<GetAllFuncPermitRespVO> getAllFuncPermit(String operator, List<String> sysKeys,Integer sysType) {
         // 先从缓存取
         GetAllFuncPermitRespVO permitCache = cacheBp.getUserFunc(operator, sysKeys,sysType);
-        if (permitCache == null) {
+        if (permitCache == null || CollectionUtils.isEmpty(permitCache.lstSysRoot)) {
             // 从DB取,并更新缓存
             permitCache = permitStatBp.updateUserPermitCache(operator);
             if (permitCache.lstUserSysVO != null && permitCache.lstUserSysVO.size() > 0) {
