@@ -647,7 +647,7 @@ public class UserServiceImpl implements IUserService {
     public ResultVO setSupperAdmin(String jsonStr,String operator) {
         try{
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
-            //String operator = jsonObject.getString("operator");
+            //Integer sysType = jsonObject.getInteger("sysType");
 
             if (StringUtility.isNullOrEmpty(operator)) {
                 throw new URCBizException("operator为空", ErrorCode.E_000002);
@@ -684,7 +684,7 @@ public class UserServiceImpl implements IUserService {
                 role.setModifiedBy(operator);
                 iUserMapper.setSupperAdmin(role);
                 //保存岗位功能权限
-                userService.doSavePositionPermission(permissionDOList,positionId,null);
+                userService.doSavePositionPermission(permissionDOList,positionId,null,null);
                 UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位设置超管",String.format("%s -> %s",roleMapper.getRoleName(positionId),StringUtility.stringEqualsIgnoreCase("1",isSupperAdmin) ? "是":"否"), jsonStr);
                 iUrcLogBp.insertUrcLog(urcLog);
                 return VoHelper.getSuccessResult();
@@ -700,19 +700,29 @@ public class UserServiceImpl implements IUserService {
     @Override
     public ResultVO getUserAuthorizablePermissionForPosition(String jsonStr,String operator) {
         try{
-            JSONObject jsonObject = StringUtility.parseString(jsonStr);
-            //String operator = jsonObject.getString("operator");
-
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            String sysType = null;
+            if(null != jsonObject){
+                sysType = jsonObject.getString("sysType");
+            }
             if (StringUtility.isNullOrEmpty(operator)) {
                 throw new URCBizException("operator为空", ErrorCode.E_000002);
             }
             List<PermissionDO> permissionVOs = new ArrayList<>();
             //有超管岗位就可以拥有所有功能权限
             if (roleMapper.isSuperAdminAccount(operator)) {
-                permissionVOs = permissionMapper.getAllSysKey();
+                if(StringUtils.isEmpty(sysType)) {
+                    permissionVOs = permissionMapper.getAllSysKey();
+                }else {
+                    permissionVOs = permissionMapper.getSysKey(sysType);
+                }
             }else {
                 //通过当前用户获得权限
-                permissionVOs = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
+                if(StringUtils.isEmpty(sysType)) {
+                    permissionVOs = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
+                }else {
+                    permissionVOs = iUserMapper.getUserPermission(operator, sysType);
+                }
             }
             return VoHelper.getSuccessResult(permissionVOs);
         } catch (Exception e) {
@@ -726,6 +736,7 @@ public class UserServiceImpl implements IUserService {
         try{
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             Long positionId = jsonObject.getLong("positionId");
+            Integer sysType = jsonObject.getInteger("sysType");
 
             if (positionId == null) {
                 throw new URCBizException("positionId为空", ErrorCode.E_000002);
@@ -735,7 +746,7 @@ public class UserServiceImpl implements IUserService {
             //判断用户是不是超级管理员
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(sessionBp.getOperator());
             //保存岗位功能权限
-            userService.doSavePositionPermission(permissionDOList,positionId,isSuperAdmin? null : sessionBp.getOperator());
+            userService.doSavePositionPermission(permissionDOList,positionId,isSuperAdmin? null : sessionBp.getOperator(),sysType);
             //保存操作日志
             UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "岗位分配权限",roleMapper.getRoleName(positionId) , jsonStr);
             iUrcLogBp.insertUrcLog(urcLog);
@@ -748,11 +759,11 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId, String operator) throws Exception {
+    public void doSavePositionPermission(List<PermissionDO> permissionDOList, long positionId, String operator,Integer sysType) throws Exception {
         List<String> roleSysKey = new ArrayList<String>();
         if (!StringUtil.isEmpty(operator)) {
             //查询用户可以授权的系统
-            roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),null);
+            roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
             //不是超管也不是任何系统的功能管理员时直接抛异常
             if(CollectionUtils.isEmpty(roleSysKey)){
                 throw new Exception("当前用户不是任何系统功能管理员,无法分配权限!");

@@ -130,7 +130,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         try {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
-            //String operator = jsonObject.getString("operator");
+            Integer sysType = jsonObject.getInteger("sysType");
             //权限组id
             String groupId = jsonObject.getString("groupId");
             String groupName = jsonObject.getString("groupName");
@@ -144,7 +144,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             //查询用户可以授权的系统
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
             if(!isSuperAdmin){
-                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),null);
+                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
             }
             if(!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)){
                 return VoHelper.getFail("当前用户没有可分配的系统功能权限");

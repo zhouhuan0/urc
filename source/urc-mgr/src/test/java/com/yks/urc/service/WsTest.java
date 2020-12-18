@@ -196,4 +196,15 @@ public class WsTest extends BaseServiceTest {
         System.out.println("zzzzzz");
 
     }
+
+    @Test
+    public void test17() {
+        //ceshi11a
+        String json = "{\"data\":{\"sysType\":1},\"operator\":\"wensheng\",\"type\":\"2\",\"ticket\":\"b52a446bb2de9502242612ebfe3ff9c9\",\"funcVersion\":\"8b774d6d304d48e066c363348545e59c\",\"moduleUrl\":\"/user/rolemanagement/operatingAuthorization/\",\"personName\":\"wensheng\",\"requestId\":\"1093e0bb525b68eaa9dcb2c\",\"deviceName\":\"Chrome浏览器\"}";
+        MotanSession.initialSession(json);
+        ResultVO resultVO = urcMgr.getUserAuthorizablePermissionForPosition(json);
+        System.out.println(StringUtility.toJSONString(resultVO));
+        System.out.println("zzzzzz");
+
+    }
 }
