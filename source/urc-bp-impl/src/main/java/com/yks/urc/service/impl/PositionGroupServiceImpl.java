@@ -169,7 +169,9 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     newGroupId = Long.parseLong(groupId);
                     //删除旧数据
                     urcPositionGroupMapper.deleteByGroupId(newGroupId);
-                    urcGroupPermissionMapper.deleteByGroupId(newGroupId);
+                    //通过可以删除
+                    //urcGroupPermissionMapper.deleteByGroupId(newGroupId);
+                    urcGroupPermissionMapper.deleteByGroupIdandKey(newGroupId,roleSysKey);
                 }
                 List<String> positionList = new ArrayList<String>();
                 if (positionIds != null && positionIds.size() > 0) {
@@ -245,7 +247,9 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     }
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(positionId));
-                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                    permissionDO.setSysType(sysType);
+                   // List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                    List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermissionBySysType(permissionDO);
                     List<String> list = new ArrayList<>();
                     for (RolePermissionDO rolePermissionDO : rolePermissionList) {
                         //拼接权限字符串

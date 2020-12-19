@@ -337,9 +337,9 @@ public class UrcServiceImpl implements IUrcService {
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         String operator = jsonObject.getString("operator");
         JSONObject dataObject = jsonObject.getJSONObject("data");
-        String sysType = dataObject.getString("sysType");
-        if(StringUtils.isEmpty(sysType)){
-            sysType = "0";
+        String sysType = "0";
+        if(null != dataObject) {
+             sysType = dataObject.getString("sysType");
         }
         return permissionService.getUserAuthorizablePermission(operator,sysType);
     }

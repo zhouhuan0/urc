@@ -272,4 +272,19 @@
     <delete id="deleteBySysKey" >
          delete from urc_role_permission where sys_key = #{sysKey,jdbcType=VARCHAR}
     </delete>
+
+    <select id="getRoleSuperAdminPermissionBySysType" parameterType="com.yks.urc.entity.RolePermissionDO" resultMap="BaseResultMap">
+        SELECT urp.sys_key, urp.selected_context
+        FROM urc_role_permission urp
+        inner join urc_permission up
+        on urp.sys_key = up.sys_key and up.status = 1
+        <where>
+            <if test="roleId != null ">
+                and urp.role_id=#{roleId}
+            </if>
+            <if test="sysType != null" >
+                and up.sys_type = #{sysType}
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -142,4 +142,13 @@
     delete from urc_group_permission
     where group_id = #{groupId}
   </delete>
+
+  <delete id="deleteByGroupIdandKey" >
+    delete from urc_group_permission
+    where group_id = #{groupId}
+    AND   sys_key  IN
+    <foreach collection="roleSysKey" index="index" item="sysYey" open="(" separator="," close=")">
+      #{sysYey}
+    </foreach>
+  </delete>
 </mapper>

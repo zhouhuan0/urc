@@ -117,4 +117,5 @@ public interface IRolePermissionMapper {
     Integer deleteBySysKey(@Param("sysKey") String sysKey);
 
 
+    List<RolePermissionDO> getRoleSuperAdminPermissionBySysType(RolePermissionDO permissionDO);
 }

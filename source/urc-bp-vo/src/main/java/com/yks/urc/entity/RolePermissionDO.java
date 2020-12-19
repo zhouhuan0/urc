@@ -25,10 +25,10 @@ public class RolePermissionDO {
 
     private String modifiedBy;
 
-
-
-
     private String sysName;
+
+    private Integer sysType;
+
     public Integer getId() {
         return id;
     }
@@ -99,5 +99,13 @@ public class RolePermissionDO {
 
     public void setSysName(String sysName) {
         this.sysName = sysName;
+    }
+
+    public Integer getSysType() {
+        return sysType;
+    }
+
+    public void setSysType(Integer sysType) {
+        this.sysType = sysType;
     }
 }
