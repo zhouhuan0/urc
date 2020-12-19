@@ -26,7 +26,7 @@ public interface IPositionGroupMapper {
 
     List<UserByPosition> getPositions(String groupId);
 
-    List<PermissionVO> getSelectedContext(String groupId);
+    List<PermissionVO> getSelectedContext(@Param("groupId") String groupId,@Param("sysType") Integer sysType);
 
     List<UserByPosition> getPositionList(@Param("positionName") String positionName);
 

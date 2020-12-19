@@ -324,6 +324,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         try {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            Integer sysType = jsonObject.getInteger("sysType");
+            if(null == sysType){
+                sysType = 0;
+            }
             //权限组id
             String groupId = jsonObject.getString("groupId");
             if (StringUtil.isEmpty(groupId)) {
@@ -334,11 +338,12 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             String name = positionGroupMapper.getPermissionGroupName(groupId);
             result.setGroupId(groupId);
             result.setGroupName(name);
+            result.setSysType(sysType);
             //获得岗位信息
             List<UserByPosition> positions = positionGroupMapper.getPositions(groupId);
             result.setPositions(positions);
             //获得权限信息
-            List<PermissionVO> selectedContext = positionGroupMapper.getSelectedContext(groupId);
+            List<PermissionVO> selectedContext = positionGroupMapper.getSelectedContext(groupId,sysType);
             result.setSelectedContext(selectedContext);
             return VoHelper.getSuccessResult(result);
         } catch (Exception e) {

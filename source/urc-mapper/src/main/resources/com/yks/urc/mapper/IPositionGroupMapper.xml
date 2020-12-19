@@ -65,11 +65,13 @@
     </select>
 
     <select id="getSelectedContext" resultType="com.yks.urc.vo.PermissionVO">
-        select
-            sys_key sysKey,
-            selected_context sysContext
-        from urc_group_permission
-        where group_id = #{groupId}
+         select
+            t.sys_key sysKey,
+            t.selected_context sysContext
+        from urc_group_permission t
+        left join urc_permission t1 on t.sys_key = t1.sys_key
+        where t.group_id = #{groupId}
+        and t1.sys_type = #{sysType}
     </select>
 
     <select id="getPositionList" resultType="com.yks.urc.vo.UserByPosition">

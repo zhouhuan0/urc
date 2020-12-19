@@ -22,6 +22,8 @@ public class PositionGroupInfo {
      */
     private List<PermissionVO> selectedContext;
 
+    private Integer sysType;
+
     public String getGroupId() {
         return groupId;
     }
@@ -52,5 +54,13 @@ public class PositionGroupInfo {
 
     public void setSelectedContext(List<PermissionVO> selectedContext) {
         this.selectedContext = selectedContext;
+    }
+
+    public Integer getSysType() {
+        return sysType;
+    }
+
+    public void setSysType(Integer sysType) {
+        this.sysType = sysType;
     }
 }
