@@ -82,7 +82,7 @@
             #{mem.id,jdbcType=BIGINT}, #{mem.sysName,jdbcType=CHAR}, #{mem.sysKey,jdbcType=CHAR},
             #{mem.createBy,jdbcType=VARCHAR}, #{mem.createTime,jdbcType=TIMESTAMP},
             #{mem.modifiedBy,jdbcType=VARCHAR},#{mem.modifiedTime,jdbcType=TIMESTAMP},
-            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{sysType}
+            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{mem.sysType}
             )
         </foreach>
     </insert>
