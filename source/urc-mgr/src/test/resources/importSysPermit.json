@@ -1,0 +1,91 @@
+{
+    "operator": "chenyiwen",
+    "pwd": "com.yks.urc.123456",
+    "ticket": "9f37984b2de40d5bee20351b72016588",
+    "funcVersion": "c9068057fcad62d9794c352d264bd809",
+    "data": [
+        {
+            "apiUrlPrefix": [
+                "/urc/motan/service/"
+            ],
+            "system": {
+                "key": "102",
+                "name": "开发",
+                "sysType": 1,
+                "url": "/develop/"
+            },
+            "menu": [
+                {
+                    "key": "102-000001",
+                    "name": "新品",
+                    "url": "/develop/",
+                    "sortIdx": 1,
+                    "module": [
+                        {
+                            "key": "102-000001-000001",
+                            "name": "产品立项",
+                            "show": 1,
+                            "sortIdx": 1,
+                            "url": "/develop/newproduct/projectapproval/",
+                            "function": [
+                                {
+                                    "key": "102-000001-000001-001",
+                                    "name": "查看"
+                                },
+                                {
+                                    "key": "102-000001-000001-002",
+                                    "name": "编辑"
+                                },
+                                {
+                                    "key": "102-000001-000001-003",
+                                    "name": "发起立项审核"
+                                },
+                                {
+                                    "key": "102-000001-000001-004",
+                                    "name": "创建项目"
+                                }
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "102-000002",
+                    "name": "合同",
+                    "url": "/develop/",
+                    "sortIdx": 2,
+                    "module": [
+                        {
+                            "key": "102-000002-000001",
+                            "name": "合同审批",
+                            "show": 1,
+                            "url": "/develop/contract/approval/",
+                            "function": [
+
+                            ],
+                            "module": []
+                        }
+                    ]
+                },
+                {
+                    "key": "102-000003",
+                    "name": "基础配置",
+                    "url": "/develop/",
+                    "sortIdx": 3,
+                    "module": [
+                        {
+                            "key": "102-000003-000001",
+                            "name": "团队配置",
+                            "show": 1,
+                            "url": "/develop/basicconfig/teamconfig/",
+                            "function": [
+
+                            ],
+                            "module": []
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
