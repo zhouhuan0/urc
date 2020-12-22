@@ -1,6 +1,7 @@
 package com.yks.urc.entity;
 
 import java.util.Date;
+import java.util.List;
 
 public class RolePermissionDO {
     private Integer id;
@@ -28,6 +29,8 @@ public class RolePermissionDO {
     private String sysName;
 
     private Integer sysType;
+
+    private List<String> sysKeys;
 
     public Integer getId() {
         return id;
@@ -107,5 +110,13 @@ public class RolePermissionDO {
 
     public void setSysType(Integer sysType) {
         this.sysType = sysType;
+    }
+
+    public List<String> getSysKeys() {
+        return sysKeys;
+    }
+
+    public void setSysKeys(List<String> sysKeys) {
+        this.sysKeys = sysKeys;
     }
 }

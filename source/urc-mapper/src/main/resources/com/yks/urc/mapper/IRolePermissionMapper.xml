@@ -285,6 +285,12 @@
             <if test="sysType != null" >
                 and up.sys_type = #{sysType}
             </if>
+            <if test="sysKeys != null" >
+                and up.sys_key in
+                <foreach collection="sysKeys" index="index" item="sysYey" open="(" separator="," close=")">
+                    #{sysYey}
+                </foreach>
+            </if>
         </where>
     </select>
 </mapper>

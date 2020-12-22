@@ -248,6 +248,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     RolePermissionDO permissionDO = new RolePermissionDO();
                     permissionDO.setRoleId(Long.parseLong(positionId));
                     permissionDO.setSysType(sysType);
+                    permissionDO.setSysKeys(roleSysKey);
                    // List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
                     List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermissionBySysType(permissionDO);
                     List<String> list = new ArrayList<>();
