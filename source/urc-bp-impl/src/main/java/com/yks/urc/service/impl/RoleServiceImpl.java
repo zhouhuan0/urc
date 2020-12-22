@@ -637,8 +637,10 @@ public class RoleServiceImpl implements IRoleService {
         for (RolePermissionDO rolePermissionDO : rolePermissionDOS) {
             String sysKey = rolePermissionDO.getSysKey();
             PermissionDO permissionDO = systemPermissionDos.get(sysKey);
-            String filterSelContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permissionDO.getSysContext());
-            rolePermissionDO.setSelectedContext(filterSelContext);
+            if(permissionDO != null) {
+                String filterSelContext = userValidateBp.cleanDeletedNode(rolePermissionDO.getSelectedContext(), permissionDO.getSysContext());
+                rolePermissionDO.setSelectedContext(filterSelContext);
+            }
         }
     }
 
