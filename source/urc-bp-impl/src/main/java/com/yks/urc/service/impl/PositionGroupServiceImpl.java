@@ -164,6 +164,11 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             if (!existSuperAdmin) {
                 Long newGroupId = null;
                 if (StringUtils.isEmpty(groupId)) {
+                    //校验权限组是否存在
+                    boolean isExist = urcPositionGroupMapper.existName(groupName);
+                    if(isExist){
+                        return VoHelper.getSuccessResult("权限组名重复！");
+                    }
                     newGroupId = seqBp.getNextRoleId();
                 } else {
                     newGroupId = Long.parseLong(groupId);

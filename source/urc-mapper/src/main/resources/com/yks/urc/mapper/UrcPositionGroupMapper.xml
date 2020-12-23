@@ -144,4 +144,8 @@
     delete from urc_position_group
     where group_id = #{groupId}
   </delete>
+
+  <select id="existName" resultType="Boolean">
+    select COUNT(id) > 0 from urc_position_group where group_name = #{groupName}
+  </select>
 </mapper>

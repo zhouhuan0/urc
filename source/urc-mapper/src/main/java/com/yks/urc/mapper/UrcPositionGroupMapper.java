@@ -17,4 +17,5 @@ public interface UrcPositionGroupMapper {
 
     void deleteByGroupId(Long groupId);
 
+    boolean existName(String groupName);
 }

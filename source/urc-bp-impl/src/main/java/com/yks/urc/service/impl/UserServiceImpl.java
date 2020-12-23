@@ -794,6 +794,7 @@ public class UserServiceImpl implements IUserService {
         RolePermissionDO permissionDO = new RolePermissionDO();
         permissionDO.setRoleId(positionId);
         permissionDO.setSysType(sysType);
+        permissionDO.setSysKeys(roleSysKey);
         List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermissionBySysType(permissionDO);
         List<String> list = new ArrayList<>();
         for (RolePermissionDO rolePermissionDO : rolePermissionList) {
