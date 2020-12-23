@@ -91,6 +91,7 @@ public class HrBpImpl implements IHrBp {
             return;
         }
 
+        List<String> newUserName = new ArrayList<>();
         List<PositionVO> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), PositionVO.class);
         for (PositionVO positionVO : list) {
             RoleDO roleDO = new RoleDO();
@@ -112,8 +113,13 @@ public class HrBpImpl implements IHrBp {
             } else {
                 roleDO.setIsAuthorizable(roleByRoleId.getIsAuthorizable());
                 roleDO.setRemark(roleByRoleId.getRemark());
-                updatePosition(roleDO,!StringUtility.stringEqualsIgnoreCaseObj(roleDO.isActive(),roleByRoleId.isActive()));
+                newUserName.addAll(updatePosition(roleDO, !StringUtility.stringEqualsIgnoreCaseObj(roleDO.isActive(), roleByRoleId.isActive())));
             }
+        }
+
+        if (!CollectionUtils.isEmpty(newUserName)) {
+            //有变动的用户需要重新处理功能权限数据
+            permitRefreshTaskBp.addPermitRefreshTask(newUserName.stream().distinct().collect(Collectors.toList()));
         }
 
         if(ifBymodifiedTime){
@@ -160,8 +166,16 @@ public class HrBpImpl implements IHrBp {
         }
     }
 
-    private void updatePosition(RoleDO roleDO,boolean statusChange) throws Exception {
+    /**
+     *
+     * @param roleDO
+     * @param statusChange 岗位状态
+     * @return
+     * @throws Exception
+     */
+    private List<String> updatePosition(RoleDO roleDO,boolean statusChange) throws Exception {
         int i = roleMapper.updateByRoleId(roleDO);
+        List<String> arrayList = new ArrayList<>();
         if (i > 0) {
             UserRoleDO ur = new UserRoleDO();
             ur.setRoleId(roleDO.getRoleId());
@@ -197,10 +211,10 @@ public class HrBpImpl implements IHrBp {
             }
             newUserName.addAll(copyOldUserList);
             if (!CollectionUtils.isEmpty(newUserName)) {
-                //有变动的用户需要重新处理功能权限数据
-                permitRefreshTaskBp.addPermitRefreshTask(newUserName);
+                arrayList.addAll(copyOldUserList);
             }
         }
+        return arrayList;
     }
 
     /**
@@ -242,6 +256,7 @@ public class HrBpImpl implements IHrBp {
             return VoHelper.getSuccessResult();
         }
         List<PositionVO> list = StringUtility.jsonToList(data, PositionVO.class);
+        List<String> newUserName = new ArrayList<>();
         for (PositionVO positionVO : list) {
             try {
                 if (positionVO.getId() == null) {
@@ -269,11 +284,16 @@ public class HrBpImpl implements IHrBp {
                     roleByRoleId.setActive(positionVO.getStatus() == null ? Boolean.TRUE : (positionVO.getStatus() == 1 ? Boolean.TRUE : Boolean.FALSE));
                     roleByRoleId.setRoleName(positionVO.getName());
                     roleByRoleId.setModifiedTime(new Date());
-                    updatePosition(roleByRoleId,statusChange);
+                    newUserName.addAll(updatePosition(roleByRoleId, statusChange));
                 }
             } catch (Exception e) {
                 logger.error("updatePosition error;", StringUtility.toJSONString(positionVO));
             }
+        }
+
+        if (!CollectionUtils.isEmpty(newUserName)) {
+            //有变动的用户需要重新处理功能权限数据
+            permitRefreshTaskBp.addPermitRefreshTask(newUserName.stream().distinct().collect(Collectors.toList()));
         }
         return VoHelper.getSuccessResult();
     }
