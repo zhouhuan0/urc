@@ -167,7 +167,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     //校验权限组是否存在
                     boolean isExist = urcPositionGroupMapper.existName(groupName);
                     if(isExist){
-                        return VoHelper.getSuccessResult("权限组名重复！");
+                        return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "权限组名重复！");
                     }
                     newGroupId = seqBp.getNextRoleId();
                 } else {
