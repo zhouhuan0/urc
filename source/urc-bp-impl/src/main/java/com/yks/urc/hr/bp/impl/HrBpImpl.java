@@ -211,7 +211,7 @@ public class HrBpImpl implements IHrBp {
             }
             newUserName.addAll(copyOldUserList);
             if (!CollectionUtils.isEmpty(newUserName)) {
-                arrayList.addAll(copyOldUserList);
+                arrayList.addAll(newUserName);
             }
         }
         return arrayList;

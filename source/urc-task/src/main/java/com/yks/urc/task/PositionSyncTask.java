@@ -9,7 +9,9 @@
  */
 package com.yks.urc.task;
 
+import com.alibaba.fastjson.JSON;
 import com.yks.pls.task.quatz.BaseTask;
+import com.yks.urc.fw.StringUtility;
 import com.yks.urc.hr.bp.api.IHrBp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +35,12 @@ public class PositionSyncTask extends BaseTask {
     @Override
     protected void doTaskSub(String param) throws Exception {
         try {
+            boolean ifBymodifiedTime = false;
+            if(!StringUtility.isNullOrEmpty(param)){
+                ifBymodifiedTime = true;
+            }
             logger.info("岗位数据同步开始");
-            hrBp.positionSync(true);
+            hrBp.positionSync(ifBymodifiedTime);
             logger.info("岗位数据同步完成");
         } catch (Exception e) {
             logger.error("岗位数据同步出错:", e);
