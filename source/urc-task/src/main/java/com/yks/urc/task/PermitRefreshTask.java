@@ -1,5 +1,7 @@
 package com.yks.urc.task;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.pls.task.quatz.BaseTask;
 import com.yks.urc.entity.PermitRefreshTaskVO;
@@ -45,7 +47,11 @@ public class PermitRefreshTask extends BaseTask {
 
     @Override
     protected void doTaskSub(String param) throws Exception {
-        Integer pageSize = 10;
+        Integer pageSize = 20;
+        if(!StringUtility.isNullOrEmpty(param)){
+            JSONObject jsonObject = JSON.parseObject(param);
+            pageSize = jsonObject.getInteger("size");
+        }
         List<PermitRefreshTaskVO> lstToDo = permitRefreshTaskMapper.selectToDo(pageSize);
         if (CollectionUtils.isEmpty(lstToDo)) {
             return;
@@ -112,7 +118,7 @@ public class PermitRefreshTask extends BaseTask {
                 lstUserName.addAll(userNameList);
             }
             //账号去重
-            List<String> list = lstUserName.stream().distinct().collect(Collectors.toList());
+            List<String> list = lstUserName.stream().distinct().filter(x -> !StringUtility.isNullOrEmpty(x)).collect(Collectors.toList());
             permitInverseQueryBp.doTaskSub(list);
             for (PermitRefreshTaskVO permitRefreshTaskVO : memList) {
                 permitRefreshTaskVO.setTaskStatus(StringUtility.convertToByte(PermitRefreshTaskStatusEnum.SUCCESS.getCode()));

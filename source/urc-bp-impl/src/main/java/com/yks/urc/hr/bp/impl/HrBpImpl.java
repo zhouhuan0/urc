@@ -245,7 +245,7 @@ public class HrBpImpl implements IHrBp {
             return Collections.emptyList();
         }
         List<String> list = StringUtility.jsonToList(jsonObject.getJSONObject("data").getString("list"), String.class);
-        return CollectionUtils.isEmpty(list) ? Collections.EMPTY_LIST : list.stream().distinct().collect(Collectors.toList());
+        return CollectionUtils.isEmpty(list) ? new ArrayList<String>() : list.stream().distinct().collect(Collectors.toList());
     }
 
     @Override
