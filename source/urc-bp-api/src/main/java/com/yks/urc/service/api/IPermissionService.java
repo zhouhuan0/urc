@@ -46,4 +46,6 @@ public interface IPermissionService {
 	ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO);
 
 	List<String> getUserAuthorizableSysKey(String operator);
+
+	ResultVO getAllPermission(String sysType);
 }

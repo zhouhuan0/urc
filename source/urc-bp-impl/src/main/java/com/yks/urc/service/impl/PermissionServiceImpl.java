@@ -476,4 +476,23 @@ public class PermissionServiceImpl implements IPermissionService {
         return rslt.data.stream().map(c -> c.getSysKey()).distinct().collect(Collectors.toList());
     }
 
+    @Override
+    public ResultVO getAllPermission(String sysType) {
+        List<PermissionVO> permissionVOs = new ArrayList<>();
+        List<PermissionDO> lstSysKey = null;
+        //查询所有的角色功能权限
+        if(StringUtils.isEmpty(sysType)) {
+            lstSysKey = permissionMapper.getAllSysKey();
+        }else{
+            lstSysKey = permissionMapper.getSysKey(sysType);
+        }
+        for (PermissionDO permission : lstSysKey) {
+            PermissionVO permissionVO = new PermissionVO();
+            permissionVO.setSysKey(permission.getSysKey());
+            permissionVO.setSysContext(permission.getSysContext());
+            permissionVOs.add(permissionVO);
+        }
+        return VoHelper.getSuccessResult(permissionVOs);
+    }
+
 }

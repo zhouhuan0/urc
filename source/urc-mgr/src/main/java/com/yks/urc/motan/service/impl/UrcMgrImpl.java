@@ -300,4 +300,16 @@ public class UrcMgrImpl implements IUrcMgr {
         return hrBp.updatePosition(jsonStr);
     }
 
+    @Override
+    @Log("获取系統所有功能权限")
+    public ResultVO getAllPermission(String jsonStr) {
+        JSONObject jsonObject = StringUtility.parseString(jsonStr);
+        JSONObject dataObject = jsonObject.getJSONObject("data");
+        String sysType = "0";
+        if(null != dataObject) {
+            sysType = dataObject.getString("sysType");
+        }
+        return permissionService.getAllPermission(sysType);
+    }
+
 }

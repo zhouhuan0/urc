@@ -226,4 +226,11 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO updatePosition(String jsonStr);
+
+    /**
+     *获取系統所有功能权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO getAllPermission(String jsonStr);
 }
