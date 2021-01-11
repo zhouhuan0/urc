@@ -131,7 +131,7 @@ public class UserServiceImpl implements IUserService {
     @Transactional(rollbackFor = Exception.class)
     public ResultVO<PageResultVO> getUsersByUserInfo(String operator, UserVO userVO, String pageNumber, String pageData) {
         //查询用户系统数据管理员
-        List<String> list = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),UrcConstant.SysType.ERP);
+        List<String> list = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.dataAdministrator.intValue(),null);
         if (!roleMapper.isAdminOrSuperAdmin(operator)) {
             //首先要判断该用户是否是超级管理员或业务管理员或系统数据管理员
             if(CollectionUtils.isEmpty(list)){

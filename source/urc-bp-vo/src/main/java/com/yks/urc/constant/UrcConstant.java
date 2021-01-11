@@ -27,5 +27,7 @@ public interface UrcConstant {
         int ERP = 0;
         //FBA系统
         int FBA = 1;
+        //账单系统
+        int BILL = 2;
     }
 }
