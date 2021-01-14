@@ -72,7 +72,7 @@ public interface IDataRuleService {
      * @param pageSize
      * @return
      */
-    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize);
+    ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize,List<String> userNameList);
 
     /**
      *  获取亚马逊的账号(分页)

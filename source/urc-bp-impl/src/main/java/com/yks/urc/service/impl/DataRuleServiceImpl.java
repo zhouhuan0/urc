@@ -1407,18 +1407,23 @@ public class DataRuleServiceImpl implements IDataRuleService {
     }
 
     @Override
-    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize) {
-        List<DataRuleSysDO> lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize == null ? 200 : pageSize);
-        if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
-            // 查询等于最大时间的记录
-            List<DataRuleSysDO> lstDrSysEq = dataRuleSysMapper.getDataRuleSysEqDt(sysKey, lstDrSysGt.get(lstDrSysGt.size() - 1).getCreateTime());
-            if (!CollectionUtils.isEmpty(lstDrSysEq)) {
-                for (DataRuleSysDO eq : lstDrSysEq) {
-                    if (!lstDrSysGt.stream().filter(c -> StringUtility.stringEqualsIgnoreCaseObj(c.getDataRuleSysId(), eq.getDataRuleSysId())).findFirst().isPresent()) {
-                        lstDrSysGt.add(eq);
+    public ResultVO<List<DataRuleSysVO>> getDataRuleGtDt(String sysKey, Date dt, Integer pageSize,List<String> userNameList) {
+        List<DataRuleSysDO> lstDrSysGt = null;
+        if(dt != null){
+            lstDrSysGt = dataRuleSysMapper.getDataRuleSysGtDt(sysKey, dt, pageSize == null ? 200 : pageSize);
+            if (lstDrSysGt != null && lstDrSysGt.size() > 0) {
+                // 查询等于最大时间的记录
+                List<DataRuleSysDO> lstDrSysEq = dataRuleSysMapper.getDataRuleSysEqDt(sysKey, lstDrSysGt.get(lstDrSysGt.size() - 1).getCreateTime());
+                if (!CollectionUtils.isEmpty(lstDrSysEq)) {
+                    for (DataRuleSysDO eq : lstDrSysEq) {
+                        if (!lstDrSysGt.stream().filter(c -> StringUtility.stringEqualsIgnoreCaseObj(c.getDataRuleSysId(), eq.getDataRuleSysId())).findFirst().isPresent()) {
+                            lstDrSysGt.add(eq);
+                        }
                     }
                 }
             }
+        }else{
+            lstDrSysGt = dataRuleSysMapper.getDataRuleSysByUserNameList(sysKey,userNameList);
         }
         List<DataRuleSysVO> lstDr = getDataRuleVOByDataRuleSys(lstDrSysGt);
         // 处理从账号管理系统同步过来的权限

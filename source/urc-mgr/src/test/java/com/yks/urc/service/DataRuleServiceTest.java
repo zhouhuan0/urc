@@ -228,7 +228,7 @@ public class DataRuleServiceTest extends BaseServiceTest {
     @Test
     public void getDataRuleGtDt() {
         Date dt = StringUtility.convertToDate("2020-07-29 12:40:56.391", null);
-        ResultVO<List<DataRuleSysVO>> rslt = dataRuleService.getDataRuleGtDt("001", dt, 100);
+        ResultVO<List<DataRuleSysVO>> rslt = dataRuleService.getDataRuleGtDt("001", dt, 100,null);
         System.out.println(serializeBp.obj2Json(rslt));
     }
 

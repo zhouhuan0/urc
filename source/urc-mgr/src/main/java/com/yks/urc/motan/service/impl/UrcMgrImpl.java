@@ -1,6 +1,8 @@
 package com.yks.urc.motan.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -45,7 +47,12 @@ public class UrcMgrImpl implements IUrcMgr {
         String sysKey = jObj.getString(StringConstant.sysKey);
         Date dt = StringUtility.convertToDate(jObj.getString("dt"), null);
         Integer pageSize = jObj.getInteger("pageSize");
-        return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize);
+        String userList = jObj.getString("userList");
+        List<String> list = null;
+        if(!StringUtility.isNullOrEmpty(userList)){
+            list = StringUtility.json2ObjNew(userList, new TypeReference<List<String>>() {});
+        }
+        return dataRuleService.getDataRuleGtDt(sysKey, dt, pageSize,list);
     }
 
 
