@@ -359,8 +359,8 @@ public class UrcServiceImpl implements IUrcService {
         }
 
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-
-        return roleService.getRolePermission(operator, lstRoleId);
+        Integer sysType = jsonObject.getInteger("sysType");
+        return roleService.getRolePermission(operator, lstRoleId,sysType);
     }
 
     @Log(value = "精确搜索用户", level = LogLevel.INFO)

@@ -753,7 +753,7 @@ public class RoleServiceImpl implements IRoleService {
      * @see
      */
     @Override
-    public ResultVO getRolePermission(String operator, List<String> lstRoleId) {
+    public ResultVO getRolePermission(String operator, List<String> lstRoleId,Integer sysType) {
         List<RoleVO> roleVoList = new ArrayList<RoleVO>();
         if (lstRoleId != null && lstRoleId.size() > 0) {
             for (int i = 0; i < lstRoleId.size(); i++) {
@@ -771,7 +771,8 @@ public class RoleServiceImpl implements IRoleService {
 
                 RolePermissionDO permissionDO = new RolePermissionDO();
                 permissionDO.setRoleId(Long.parseLong(lstRoleId.get(i)));
-                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                permissionDO.setSysType(sysType);
+                List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermissionBySysType(permissionDO);
                 List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
                 if (rolePermissionList != null && rolePermissionList.size() > 0) {
                     for (RolePermissionDO rolePermissionDO : rolePermissionList) {

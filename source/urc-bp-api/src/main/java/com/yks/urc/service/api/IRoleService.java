@@ -19,7 +19,7 @@ public interface IRoleService {
     ResultVO deleteRoles(String jsonStr);
 
 
-    ResultVO getRolePermission(String operator,List<String> lstRoleId);
+    ResultVO getRolePermission(String operator,List<String> lstRoleId,Integer sysType);
     /**
      * 更新角色的功能权限
      * @param  operator

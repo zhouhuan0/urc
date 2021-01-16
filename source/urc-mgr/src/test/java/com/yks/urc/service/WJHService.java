@@ -1,6 +1,7 @@
 package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.dingding.client.DingApiProxy;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.motan.MotanSession;
@@ -167,7 +168,7 @@ public class WJHService extends BaseServiceTest {
     	List<String> lstRoleId=new ArrayList<>();
         lstRoleId.add("1594269084562000031");
     	
-    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("yanfukun", lstRoleId)));
+    	System.out.println(StringUtility.toJSONString(roleService.getRolePermission("yanfukun", lstRoleId,UrcConstant.SysType.ERP)));
     	
     }
     

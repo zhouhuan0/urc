@@ -138,8 +138,8 @@ public class UrcMgrImpl implements IUrcMgr {
         }
 
         List<String> lstRoleId = StringUtility.jsonToList(jsonObject.getString("lstRoleId"), String.class);
-
-        return roleService.getRolePermission(operator, lstRoleId);
+        Integer sysType = jsonObject.getInteger("sysType");
+        return roleService.getRolePermission(operator, lstRoleId,sysType);
     }
 
     @Override

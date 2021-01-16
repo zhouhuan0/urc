@@ -2,6 +2,7 @@ package com.yks.urc.service;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.service.api.IDataRuleService;
@@ -45,8 +46,8 @@ public class PermissionServiceTest extends BaseServiceTest {
     public void getRolePermission() throws Exception{
         List<String> lstRoleId=new ArrayList<>();
         lstRoleId.add("1572485640340000418");
-        System.out.println(StringUtility.toJSONString(roleService.getRolePermission("panyun", lstRoleId)));
-        System.out.println(StringUtility.toJSONString(roleService.getRolePermission("hehuake", lstRoleId)));
+        System.out.println(StringUtility.toJSONString(roleService.getRolePermission("panyun", lstRoleId,UrcConstant.SysType.ERP)));
+        System.out.println(StringUtility.toJSONString(roleService.getRolePermission("hehuake", lstRoleId,UrcConstant.SysType.ERP)));
 
     }
 
