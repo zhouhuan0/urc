@@ -229,4 +229,6 @@ public interface IRoleMapper {
     boolean isGroupAccount(long positionId);
 
     String getRoleName(Long roleId);
+
+    List<RoleDO> selectAllSuperAdministratorRole();
 }

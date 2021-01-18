@@ -9,8 +9,8 @@ import java.util.List;
 public interface IPermissionService {
 
 	ResultVO importSysPermit(String jsonStr);
-	
-	
+
+	void saveSuperAdministrator();
 	/**
 	 * 获取指定用户可授权给其它角色的功能权限
 	 * @param operator

@@ -31,4 +31,11 @@ public interface IFuncJsonTreeBp {
      * @Date 2018/11/5 11:04
      */
     ResultVO updateSysPermitNode(FuncTreeVO funcTreeVO);
+
+    /**
+     * 拼接处permit_key 例如:000-000001-000004-002
+     * @param sysContext
+     * @return
+     */
+    List<String> concatData(String sysContext);
 }

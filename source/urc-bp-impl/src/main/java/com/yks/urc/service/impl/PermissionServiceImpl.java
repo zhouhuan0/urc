@@ -2,10 +2,8 @@ package com.yks.urc.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.yks.urc.cache.bp.api.ICacheBp;
-import com.yks.urc.cache.bp.api.IUpdateAffectedUserPermitCache;
 import com.yks.urc.constant.UrcConstant;
-import com.yks.urc.entity.PermissionDO;
-import com.yks.urc.entity.UserPermitStatDO;
+import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
@@ -15,9 +13,7 @@ import com.yks.urc.fw.constant.StringConstant;
 import com.yks.urc.mapper.*;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitRefreshTaskBp;
-import com.yks.urc.permitStat.bp.api.IPermitStatBp;
 import com.yks.urc.service.api.IPermissionService;
-import com.yks.urc.service.api.IRoleService;
 import com.yks.urc.session.bp.api.ISessionBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
@@ -70,17 +66,14 @@ public class PermissionServiceImpl implements IPermissionService {
     private IUserValidateBp userValidateBp;
     @Autowired
     private ISessionBp sessionBp;
-
     @Autowired
-    IPermitStatBp permitStatBp;
-
+    private IFuncJsonTreeBp funcJsonTreeBp;
     @Autowired
-    IFuncJsonTreeBp funcJsonTreeBp;
-
+    private IRolePermissionMapper rolePermitMapper;
     @Autowired
-    private IRoleService roleService;
+    private PermitItemPositionMapper permitItemPositionMapper;
     @Autowired
-    private IUpdateAffectedUserPermitCache updateAffectedUserPermitCache;
+    private PermissionMapper permitMapper;
 
     @Transactional
     @Override
@@ -103,7 +96,7 @@ public class PermissionServiceImpl implements IPermissionService {
             }
             SystemRootVO[] arr = StringUtility.parseObject(data, new SystemRootVO[0].getClass());
             // 若是key重复，则不让推
-            List<String>   keys =new ArrayList<>();
+            List<String> keys = new ArrayList<>();
             if (this.duplicateKey(arr, keys)) {
                 if (!CollectionUtils.isEmpty(keys)) {
                     //找出重复元素
@@ -123,7 +116,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     p.setApiUrlPrefixJson(StringUtility.toJSONString_NoException(root.apiUrlPrefix));
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
-                    p.setSysType(root.system.sysType == null ? UrcConstant.SysType.ERP : root.system.sysType );
+                    p.setSysType(root.system.sysType == null ? UrcConstant.SysType.ERP : root.system.sysType);
                     // 将API 前缀置为null. 在存入sysContext
                     root.apiUrlPrefix = null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));
@@ -136,7 +129,7 @@ public class PermissionServiceImpl implements IPermissionService {
                 // 更新缓存
                 for (PermissionDO p : lstPermit) {
                     //更新定义表
-                    if (p==null){
+                    if (p == null) {
                         continue;
                     }
                     PermissionDO pFromDb = permissionMapper.getPermission(p.getSysKey());
@@ -155,7 +148,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     if (updateRolePermissionAndCache(p)){ continue;}*/
 
                 }
-                permitRefreshTaskBp.addPermitRefreshTaskForImportSysPermit(Arrays.asList(arr).stream().map(c->c.system.key).collect(Collectors.toList()));
+                permitRefreshTaskBp.addPermitRefreshTaskForImportSysPermit(Arrays.asList(arr).stream().map(c -> c.system.key).collect(Collectors.toList()));
                 operationBp.addLog(PermissionServiceImpl.class.getName(), String.format("导入功能权限:%s", data), null);
                 rslt.state = CommonMessageCodeEnum.SUCCESS.getCode();
                 rslt.msg = "推送成功";
@@ -167,7 +160,7 @@ public class PermissionServiceImpl implements IPermissionService {
             logger.error(String.format("importSysPermit:%s", jsonStr), ex);
             throw new URCBizException(ex.getMessage(), ErrorCode.E_000000);
         }
-        //推送菜单树完成 将超级管理员存入urc_role_user_affected 调assignAllPermit2Role()刷新超级管理员权限
+        //推送菜单树完成,刷新超管数据
         saveSuperAdministrator();
         return rslt;
     }
@@ -176,63 +169,64 @@ public class PermissionServiceImpl implements IPermissionService {
     private IPermitRefreshTaskBp permitRefreshTaskBp;
 
     /**
-     *    重复key值
+     * 重复key值
+     *
      * @param
      * @return
      * @Author lwx
      * @Date 2019/4/27 10:00
      */
-    private Boolean duplicateKey(SystemRootVO[] arr,List<String> keys) {
-        if (arr == null || arr.length == 0 || keys ==null ) {
+    private Boolean duplicateKey(SystemRootVO[] arr, List<String> keys) {
+        if (arr == null || arr.length == 0 || keys == null) {
             return true;
         }
-        for (int i = 0,size =arr.length; i <size ; i++) {
+        for (int i = 0, size = arr.length; i < size; i++) {
             SystemRootVO systemRootVO = arr[i];
-            if (systemRootVO == null || CollectionUtils.isEmpty(systemRootVO.menu)){
+            if (systemRootVO == null || CollectionUtils.isEmpty(systemRootVO.menu)) {
                 return true;
             }
             systemRootVO.menu.forEach(menuVO -> {
-                if(StringUtils.isNotEmpty(menuVO.key)) {
+                if (StringUtils.isNotEmpty(menuVO.key)) {
                     keys.add(menuVO.key);
                 }
-                if (CollectionUtils.isEmpty(menuVO.module)){
+                if (CollectionUtils.isEmpty(menuVO.module)) {
                     return;
                 }
-                this.foreachModule(menuVO.module,keys);
+                this.foreachModule(menuVO.module, keys);
             });
         }
         return true;
     }
 
-    private void foreachModule(List<ModuleVO> module,List<String> keys){
-        if (CollectionUtils.isEmpty(module) || keys ==null){
+    private void foreachModule(List<ModuleVO> module, List<String> keys) {
+        if (CollectionUtils.isEmpty(module) || keys == null) {
             return;
         }
 
         module.forEach(moduleVO -> {
-            if (StringUtils.isNotEmpty(moduleVO.key)){
+            if (StringUtils.isNotEmpty(moduleVO.key)) {
                 keys.add(moduleVO.key);
             }
-            if (!CollectionUtils.isEmpty(moduleVO.function)){
-                this.foreachModule(moduleVO.module,keys);
+            if (!CollectionUtils.isEmpty(moduleVO.function)) {
+                this.foreachModule(moduleVO.module, keys);
             }
             if (!CollectionUtils.isEmpty(moduleVO.function)) {
-                this.foreachFunction(moduleVO.function,keys);
+                this.foreachFunction(moduleVO.function, keys);
             }
         });
 
     }
 
-    private void foreachFunction(List<FunctionVO> function,List<String> keys){
-        if (CollectionUtils.isEmpty(function)|| keys ==null){
+    private void foreachFunction(List<FunctionVO> function, List<String> keys) {
+        if (CollectionUtils.isEmpty(function) || keys == null) {
             return;
         }
         function.forEach(functionVO -> {
-            if (StringUtils.isNotEmpty(functionVO.key)){
+            if (StringUtils.isNotEmpty(functionVO.key)) {
                 keys.add(functionVO.key);
             }
-            if (!CollectionUtils.isEmpty(functionVO.function)){
-                foreachFunction(functionVO.function,keys);
+            if (!CollectionUtils.isEmpty(functionVO.function)) {
+                foreachFunction(functionVO.function, keys);
             }
         });
     }
@@ -240,25 +234,77 @@ public class PermissionServiceImpl implements IPermissionService {
     /**
      * 推送菜单树时将超级管理员存入urc_role_user_affected
      */
-    private void saveSuperAdministrator() {
-    	
-    	try {
-    		Long roleId = roleMapper.selectAllSuperAdministrator();
-            updateAffectedUserPermitCache.assignAllPermit2SuperAdministrator(roleId);
-		} catch (Exception e) {
-			logger.error("saveSuperAdministrator error! {}",e);
-		}
+    @Override
+    public void saveSuperAdministrator() {
+        try {
+            List<RoleDO> roleDOList = roleMapper.selectAllSuperAdministratorRole();
+            List<PermissionDO> lstPermit = permitMapper.getAllSysPermit();
+            List<String> lstUserName = new ArrayList<>();
+            for (RoleDO roleDO : roleDOList) {
+                List<RolePermissionDO> lstRolePermit = new ArrayList<>();
+                for (PermissionDO permit : lstPermit) {
+                    RolePermissionDO rp = new RolePermissionDO();
+                    rp.setRoleId(roleDO.getRoleId());
+                    rp.setSysKey(permit.getSysKey());
+                    rp.setSelectedContext(permit.getSysContext());
+                    rp.setCreateTime(new Date());
+                    rp.setCreateBy(sessionBp.getOperator());
+                    rp.setModifiedBy(sessionBp.getOperator());
+                    rp.setModifiedTime(rp.getCreateTime());
+                    lstRolePermit.add(rp);
+                }
+                rolePermitMapper.deleteByRoleId(roleDO.getRoleId());
+                rolePermitMapper.insertBatch(lstRolePermit);
+
+                //如果是岗位需要更新permit_item_position表
+                if(StringUtility.stringEqualsIgnoreCaseObj(roleDO.getRoleType(),UrcConstant.RoleType.position)){
+                    List<String> list = new ArrayList<>();
+                    for (PermissionDO rolePermissionDO : lstPermit) {
+                        //拼接权限字符串
+                        list.addAll(funcJsonTreeBp.concatData(rolePermissionDO.getSysContext()));
+                    }
+                    //写入关联表
+                    if (!CollectionUtils.isEmpty(list)) {
+                        List<PermitItemPosition> param = list.stream().map(e -> {
+                            PermitItemPosition vo = new PermitItemPosition();
+                            vo.setPermitKey(e);
+                            vo.setPositionId(roleDO.getRoleId());
+                            vo.setModifier(sessionBp.getOperator());
+                            vo.setCreator(sessionBp.getOperator());
+                            vo.setCreatedTime(new Date());
+                            vo.setModifiedTime(new Date());
+                            return vo;
+                        }).collect(Collectors.toList());
+                        //先删后插
+                        permitItemPositionMapper.deleteBypositionId(roleDO.getRoleId());
+                        permitItemPositionMapper.insertPosition(param);
+                    }
+                }
+
+                // 更新角色下的用户的权限缓存
+                UserRoleDO userRoleDO = new UserRoleDO();
+                userRoleDO.setRoleId(roleDO.getRoleId());
+                lstUserName.addAll(userRoleMapper.getUserNameByRoleId(userRoleDO));
+            }
+            // 耗时操作,入任务表，由定时任务处理
+            permitRefreshTaskBp.addPermitRefreshTask(lstUserName);
+
+            //Long roleId = roleMapper.selectAllSuperAdministrator();
+            //updateAffectedUserPermitCache.assignAllPermit2SuperAdministrator(roleId);
+        } catch (Exception e) {
+            logger.error("saveSuperAdministrator error! {}", e);
+        }
     }
 
     @Override
-    public ResultVO getUserAuthorizablePermission(String userName,String sysType) {
+    public ResultVO getUserAuthorizablePermission(String userName, String sysType) {
         List<PermissionVO> permissionVOs = new ArrayList<PermissionVO>();
         if (roleMapper.isSuperAdminAccount(userName)) {
             List<PermissionDO> lstSysKey = null;
             //查询所有的角色功能权限
-            if(StringUtils.isEmpty(sysType)) {
-                 lstSysKey = permissionMapper.getAllSysKey();
-            }else{
+            if (StringUtils.isEmpty(sysType)) {
+                lstSysKey = permissionMapper.getAllSysKey();
+            } else {
                 lstSysKey = permissionMapper.getSysKey(sysType);
             }
             for (PermissionDO permission : lstSysKey) {
@@ -270,9 +316,9 @@ public class PermissionServiceImpl implements IPermissionService {
         } else {
             //查询用户是否拥有系统功能管理员
             List<PermissionDO> userAuthorizablePermissionForPosition = null;
-            if(StringUtils.isEmpty(sysType)) {
+            if (StringUtils.isEmpty(sysType)) {
                 userAuthorizablePermissionForPosition = iUserMapper.getUserAuthorizablePermissionForPosition(userName);
-            }else {
+            } else {
                 userAuthorizablePermissionForPosition = iUserMapper.getUserPermission(userName, sysType);
             }
             for (PermissionDO permissionDO : userAuthorizablePermissionForPosition) {
@@ -284,10 +330,10 @@ public class PermissionServiceImpl implements IPermissionService {
             List<String> collect = userAuthorizablePermissionForPosition.stream().map(PermissionDO::getSysKey).collect(Collectors.toList());
             //兼容角色部分功能权限
             List<String> lstSysKey = null;
-            if(StringUtils.isEmpty(sysType)) {
-                 lstSysKey = userRoleMapper.getSysKeyByUser(userName);
-            }else{
-                lstSysKey = userRoleMapper.getSysKeyByUserAndType(userName,sysType);
+            if (StringUtils.isEmpty(sysType)) {
+                lstSysKey = userRoleMapper.getSysKeyByUser(userName);
+            } else {
+                lstSysKey = userRoleMapper.getSysKeyByUserAndType(userName, sysType);
             }
             //去除是功能管理员的系统
             lstSysKey.removeAll(collect);
@@ -299,7 +345,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     if (lstFuncJson != null && lstFuncJson.size() > 0) {
                         // 合并json树
                         SystemRootVO rootVO = userValidateBp.mergeFuncJson2Obj(lstFuncJson);
-                        if(null == rootVO) continue;
+                        if (null == rootVO) continue;
                         // 只有超管能分配用户中心权限
                         if (StringConstant.URC_SYS_KEY.equalsIgnoreCase(sysKey)) {
                             Optional<MenuVO> op = rootVO.menu.stream().filter(c -> StringUtility.stringEqualsIgnoreCase(c.key, StringConstant.URC_PERMIT_KEY)).findFirst();
@@ -329,7 +375,7 @@ public class PermissionServiceImpl implements IPermissionService {
      */
     @Override
     public ResultVO getUserPermissionList(String jsonStr) {
-         /*1、json字符串转json对象*/
+        /*1、json字符串转json对象*/
         JSONObject jsonObject = StringUtility.parseString(jsonStr);
         /*2、请求参数的基本校验并转换为内部使用的Map*/
         Map<String, Object> queryMap = new HashMap<>();
@@ -343,7 +389,7 @@ public class PermissionServiceImpl implements IPermissionService {
         PageResultVO pageResultVO = new PageResultVO(userPermitStatVOs, total, queryMap.get("pageSize").toString());
         return VoHelper.getSuccessResult(pageResultVO);
     }
-   /* */
+    /* */
 
     /**
      * 更新缓存API前缀
@@ -472,7 +518,7 @@ public class PermissionServiceImpl implements IPermissionService {
     @Override
     public List<String> getUserAuthorizableSysKey(String operator) {
         //角色只有ERP系统
-        ResultVO<List<PermissionVO>> rslt = getUserAuthorizablePermission(operator,"0");
+        ResultVO<List<PermissionVO>> rslt = getUserAuthorizablePermission(operator, "0");
         return rslt.data.stream().map(c -> c.getSysKey()).distinct().collect(Collectors.toList());
     }
 
@@ -481,9 +527,9 @@ public class PermissionServiceImpl implements IPermissionService {
         List<PermissionVO> permissionVOs = new ArrayList<>();
         List<PermissionDO> lstSysKey = null;
         //查询所有的角色功能权限
-        if(StringUtils.isEmpty(sysType)) {
+        if (StringUtils.isEmpty(sysType)) {
             lstSysKey = permissionMapper.getAllSysKey();
-        }else{
+        } else {
             lstSysKey = permissionMapper.getSysKey(sysType);
         }
         for (PermissionDO permission : lstSysKey) {

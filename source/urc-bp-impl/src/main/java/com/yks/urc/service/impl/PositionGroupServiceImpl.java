@@ -11,6 +11,7 @@ import com.yks.urc.excel.FileUpDownLoadUtils;
 import com.yks.urc.excel.PositionInfoExcelExport;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
+import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
 import com.yks.urc.fw.StringUtil;
 import com.yks.urc.fw.StringUtility;
 import com.yks.urc.mapper.*;
@@ -66,6 +67,8 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private IUrcLogBp iUrcLogBp;
     @Autowired
     private IRoleMapper roleMapper;
+    @Autowired
+    private IFuncJsonTreeBp funcJsonTreeBp;
 
     private static String excelTemp = "/opt/tmp/";
 
@@ -259,7 +262,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     List<String> list = new ArrayList<>();
                     for (RolePermissionDO rolePermissionDO : rolePermissionList) {
                         //拼接权限字符串
-                        list.addAll(concatData(rolePermissionDO.getSelectedContext()));
+                        list.addAll(funcJsonTreeBp.concatData(rolePermissionDO.getSelectedContext()));
                     }
                     //写入关联表
                     if (!CollectionUtils.isEmpty(list)) {
@@ -320,7 +323,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         List<String> result = new ArrayList<>();
         for (String str : permissions) {
             //拼接权限字符串
-            result.addAll(concatData(str));
+            result.addAll(funcJsonTreeBp.concatData(str));
         }
         return result;
     }
@@ -497,54 +500,6 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
         lstUserName.clear();
         lstUserName.addAll(h);
         return lstUserName;
-    }
-
-    public List<String> concatData(String sysContext) {
-        List<String> list = new ArrayList<String>();
-        Set<FunctionVO> lstAllKey = new HashSet<>();
-        if (StringUtils.isBlank(sysContext)) {
-            return list;
-        }
-        SystemRootVO rootVO = serializeBp.json2ObjNew(sysContext, new TypeReference<SystemRootVO>() {
-        });
-        lstAllKey.addAll(getAllPermitItem(rootVO));
-        list = lstAllKey.stream().map(e -> e.key).collect(Collectors.toList());
-        return list;
-    }
-
-    private void scanMenu(String sysName, SystemRootVO rootVO, Set<FunctionVO> lstAllKey) {
-        List<MenuVO> menu1 = rootVO.menu;
-        if (CollectionUtils.isEmpty(menu1)) {
-            return;
-        }
-        for (int j = 0; j < menu1.size(); j++) {
-            MenuVO curMemu = menu1.get(j);
-//            lstAllKey.add(curMemu.key);
-            scanModule(String.format("%s-%s", sysName, curMemu.name), curMemu.module, lstAllKey);
-        }
-    }
-
-    private void scanModule(String parentName, List<ModuleVO> lstModule, Set<FunctionVO> lstAllKey) {
-        if (CollectionUtils.isEmpty(lstModule)) {
-            return;
-        }
-        for (ModuleVO moduleVO : lstModule) {
-            if (CollectionUtils.isEmpty(moduleVO.module) && CollectionUtils.isEmpty(moduleVO.function)) {
-                FunctionVO fKey = new FunctionVO();
-                fKey.key = moduleVO.key;
-                fKey.name = String.format("%s-%s", parentName, moduleVO.name);
-                lstAllKey.add(fKey);
-            } else {
-                scanModule(String.format("%s-%s", parentName, moduleVO.name), moduleVO.module, lstAllKey);
-                scanFunction(String.format("%s-%s", parentName, moduleVO.name), moduleVO.function, lstAllKey);
-            }
-        }
-    }
-
-    private Set<FunctionVO> getAllPermitItem(SystemRootVO rootVO) {
-        Set<FunctionVO> lstAllKey = new HashSet<>();
-        scanMenu(rootVO.system.name, rootVO, lstAllKey);
-        return lstAllKey;
     }
 
     private void scanFunction(String parentName, List<FunctionVO> lstFunction, Set<FunctionVO> lstAllKey) {
