@@ -11,6 +11,7 @@ package com.yks.urc.funcjsontree.bp.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RolePermissionDO;
+import com.yks.urc.entity.UserRoleDO;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
@@ -264,9 +265,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             return true;
         }
         /*2、获取roleIds角色对应的用户名*/
-        Map dataMap = new HashMap();
-        dataMap.put("roleIds", roleIds);
-        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        List<String> userNames = userRoleMapper.getUserNamesByRoleIds(roleIds);
         /*3、更新用户操作权限冗余表和缓存*/
         if (!CollectionUtils.isEmpty(userNames)) {
             permitRefreshTaskBp.addPermitRefreshTask(userNames);
@@ -370,24 +369,22 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         if (CollectionUtils.isEmpty(updatePermissions)) {
             return;
         }
-        Map dataMap = new HashMap();
-        List<String> roleIds = new ArrayList<>();
+        List<Long> roleIds = new ArrayList<>();
         for (RolePermissionDO permissionDO : updatePermissions) {
             //更新权限树
             rolePermissionMapper.updateUserRoleByRoleId(permissionDO);
             if (permissionDO.getRoleId() != null) {
-                roleIds.add(String.valueOf(permissionDO.getRoleId()));
+                roleIds.add(permissionDO.getRoleId());
             }
         }
         //去重
         roleIds = roleIds.stream().distinct().collect(Collectors.toList());
-        dataMap.put("roleIds", roleIds);
         /*3、获取roleIds角色对应的用户名*/
         logger.info(String.format("获取的角色id为%s", roleIds));
         if (CollectionUtils.isEmpty(roleIds)) {
             logger.info("roleID 的集合为空");
         }
-        List<String> userNames = userRoleMapper.listUserNamesByRoleIds(dataMap);
+        List<String> userNames = userRoleMapper.getUserNamesByRoleIds(roleIds);
         logger.info(String.format("获取的用户名为%s", userNames));
         userNames = userNames.stream().distinct().collect(Collectors.toList());
         /*4、更新用户操作权限冗余表和缓存*/

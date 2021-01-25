@@ -123,4 +123,6 @@ public interface IUserRoleMapper {
     List<UserRoleDO> getRoleUserByRoleId(@Param("lstRoleId") List<String> lstRoleId);
 
 	List<String> getSysKeyByUserAndType(@Param("userName")String userName, @Param("sysType")String sysType);
+
+	List<String> getUserNamesByRoleIds(@Param("lstRoleId") List<Long> lstRoleId);
 }

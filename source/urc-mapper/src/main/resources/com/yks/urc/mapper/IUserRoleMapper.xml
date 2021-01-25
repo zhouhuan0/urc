@@ -283,4 +283,14 @@
 		AND p.sys_key is not null
 		order by p.sys_key
     </select>
+
+    <select id="getUserNamesByRoleIds" resultType="java.lang.String">
+        select user_name from urc_user_role
+        <where>
+            role_id in
+            <foreach item="item" index="index" collection="lstRoleId" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </where>
+    </select>
 </mapper>
