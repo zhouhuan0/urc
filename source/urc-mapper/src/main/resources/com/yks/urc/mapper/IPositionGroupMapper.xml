@@ -105,7 +105,7 @@
            t2.role_name positionName
         from permit_item_position t1
         left join permit_item_info t on t.permit_key = t1.permit_key
-        left join urc_role t2 on t1.position_id = t2.role_id and t2.role_type = 2
+        left join urc_role t2 on t1.position_id = t2.role_id
         <include refid="positionCondition"/>
         limit #{currIndex},#{pageSize}
     </select>
@@ -115,7 +115,7 @@
         count(*)
         from  permit_item_position t1
         left join permit_item_info t on t.permit_key = t1.permit_key
-        left join urc_role t2 on t1.position_id = t2.role_id and t2.role_type = 2
+        left join urc_role t2 on t1.position_id = t2.role_id
         <include refid="positionCondition"/>
     </select>
 
@@ -123,7 +123,7 @@
         <if test="positionIds != null and positionIds.size() > 0">
             left join urc_user_role t3 on t2.role_id=t3.role_id
         </if>
-        where t.permit_key in
+        where t2.role_type = 2 and t2.is_active = 1 and t.permit_key in
         <foreach collection="lstPermitKey" item="permitKey" open="(" separator="," close=")">
             #{permitKey}
         </foreach>
