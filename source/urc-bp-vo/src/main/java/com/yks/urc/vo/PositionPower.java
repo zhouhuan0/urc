@@ -33,7 +33,7 @@ public class PositionPower {
     /**
      * 最新分配时间
      */
-    private Date lastDate;
+    private String lastDate;
 
     private String sysContext;
 
@@ -77,11 +77,11 @@ public class PositionPower {
         this.distributionMan = distributionMan;
     }
 
-    public Date getLastDate() {
+    public String getLastDate() {
         return lastDate;
     }
 
-    public void setLastDate(Date lastDate) {
+    public void setLastDate(String lastDate) {
         this.lastDate = lastDate;
     }
 
