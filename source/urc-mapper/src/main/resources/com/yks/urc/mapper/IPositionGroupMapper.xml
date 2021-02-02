@@ -134,4 +134,24 @@
             </foreach>
         </if>
     </sql>
+
+    <select id="positionPowerList" resultType="com.yks.urc.vo.PositionPower">
+        select
+            ur.role_name positionName,
+            up.sys_type platformType,
+            up.sys_name systemName,
+            pf.permit_name permitName,
+            up.modified_by distributionMan,
+            up.modified_time lastDate
+        from urc_role ur
+        left join  permit_item_position pi on pi.position_id = ur.role_id
+        left join permit_item_info pf on pf.permit_key = pi.permit_key
+        left join urc_role_permission urp on ur.role_id = urp.role_id
+        left join urc_permission up on urp.sys_key = up.sys_key
+        where  ur.role_type = 2
+        and  ur.role_id in
+        <foreach collection="positionIds" item="positionId" open="(" separator="," close=")">
+            #{positionId}
+        </foreach>
+    </select>
 </mapper>

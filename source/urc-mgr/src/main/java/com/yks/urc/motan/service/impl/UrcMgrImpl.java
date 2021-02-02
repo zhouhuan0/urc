@@ -319,4 +319,10 @@ public class UrcMgrImpl implements IUrcMgr {
         return permissionService.getAllPermission(sysType);
     }
 
+    @Override
+    @Log("导出岗位相关的权限")
+    public ResultVO exportPositionPower(String jsonStr) {
+        return positionGroupService.exportPositionPower(jsonStr);
+    }
+
 }

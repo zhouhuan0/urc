@@ -231,4 +231,6 @@ public interface IRoleMapper {
     String getRoleName(Long roleId);
 
     List<RoleDO> selectAllSuperAdministratorRole();
+
+    List<RoleDO> listRoles(Map<String, Object> data);
 }

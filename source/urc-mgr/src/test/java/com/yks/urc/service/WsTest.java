@@ -216,4 +216,11 @@ public class WsTest extends BaseServiceTest {
         System.out.println(permissionService.importSysPermit(strJson1));
 
     }
+
+    @Test
+    public void test19() throws Exception {
+        String json = "{\"data\":{\"positionIds\":[\"10\",\"9\"]},\"ticket\":\"cc1ceb6c5aac32cc8557562d2abb18bf\",\"operator\":\"wensheng\",\"personName\":\"wensheng\",\"funcVersion\":\"6f87d800801f51404e40651a77e3f646\",\"moduleUrl\":\"/user/rolemanagement/\",\"requestId\":\"0202164954874183ba14124850de9604\",\"deviceName\":\"Chrome浏览器\"}";
+        System.out.println(urcMgr.exportPositionPower(json));
+        System.out.println("zzzz");
+    }
 }

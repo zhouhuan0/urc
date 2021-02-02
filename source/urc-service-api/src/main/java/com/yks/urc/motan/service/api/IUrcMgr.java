@@ -233,4 +233,11 @@ public interface IUrcMgr {
      * @return
      */
     ResultVO getAllPermission(String jsonStr);
+
+    /**
+     *导出岗位相关的权限
+     * @param jsonStr
+     * @return
+     */
+    ResultVO exportPositionPower(String jsonStr);
 }
