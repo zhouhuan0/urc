@@ -141,8 +141,8 @@
             up.sys_type platformType,
             up.sys_name systemName,
             pf.permit_name permitName,
-            up.modified_by distributionMan,
-            date_format(up.modified_time, '%Y-%m-%d %h:%i:%s') lastDate
+            urp.modified_by distributionMan,
+            date_format(urp.modified_time, '%Y-%m-%d %h:%i:%s') lastDate
         from urc_role ur
         left join  permit_item_position pi on pi.position_id = ur.role_id
         left join permit_item_info pf on pf.permit_key = pi.permit_key
