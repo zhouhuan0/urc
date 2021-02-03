@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
@@ -74,6 +75,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private RoleOwnerMapper ownerMapper;
     @Autowired
     private PositionPowerExcelExport positionPowerExcelExport;
+    @Autowired
+    private IConfigBp configBp;
+    //是否导出岗位权限(1可以导出，0不能)
+    private final static String POSITION_EXPORT_FLAG = "POSITION_EXPORT_FLAG";
 
     private static String excelTemp = "/opt/tmp/";
 
@@ -484,6 +489,10 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     @Override
     public ResultVO exportPositionPower(String jsonStr) {
         try {
+            String exportFlag = configBp.getString(POSITION_EXPORT_FLAG);
+            if(!"1".equals(exportFlag)){
+                return VoHelper.getErrorResult(ErrorCode.E_000000.getState(),"此功能已关闭！");
+            }
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             /* 2、获取参数并校验 */
