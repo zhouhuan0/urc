@@ -513,4 +513,65 @@
             and (is_forever = 1 or (NOW() BETWEEN effective_time and expire_time))
         </where>
     </select>
+
+    <select id="listRoles" parameterType="java.util.HashMap" resultMap="BaseResultMap">
+        select  u.role_id, u.role_name, u.is_active, u.is_authorizable, u.is_forever, u.effective_time, u.expire_time,
+        u.create_time, u.create_by, u.modified_time, u.modified_by,u.remark,u.role_type,u.position_modified_time
+        from urc_role u
+        <where>
+            <!-- 是否启用-->
+            <if test ="isActive != null">
+                and  u.is_active =#{isActive}
+            </if>
+            <if test ="isAdmin != null">
+                and u.is_authorizable =#{isAdmin}
+            </if>
+            <if test ="roleType != null">
+                and u.role_type =#{roleType}
+            </if>
+            <if test="createBy != null and createBy != ''">
+                and   (
+                u.create_by=#{createBy,jdbcType=VARCHAR}
+                <if test="roleIds != null">
+                    or u.role_id IN
+                    <foreach collection="roleIds" index="index" item="roleId" open="(" separator="," close=")">
+                        #{roleId}
+                    </foreach>
+                </if>
+                <if test="roleType == null or roleType == 2">
+                    or u.role_type = 2
+                </if>
+                )
+            </if>
+            <if test="roleNames != null and roleNames.size()>0">
+                and
+                <foreach item="item" index="index" collection="roleNames" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                        u.role_name  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
+                </foreach>
+            </if>
+            <if test="createBys != null and createBys.size() > 0">
+                and
+                <foreach item="item" index="index" collection="createBys" open="(" separator="or" close=")">
+                    <if test="item != null and item != ''">
+                        u. create_by  LIKE CONCAT(CONCAT('%',#{item},'%'))
+                    </if>
+                </foreach>
+            </if>
+            <if test="owners != null and owners.size() >0">
+                and exists (
+                select o.role_id from urc_role_owner o
+                <where>
+                    <foreach item="item" index="index" collection="owners" open="(" separator="or" close=")">
+                        <if test="item != null and item != ''">
+                            o.role_owner LIKE CONCAT(CONCAT('%',#{item},'%'))
+                        </if>
+                    </foreach>
+                    and o.role_id = u.role_id
+                </where>
+                )
+            </if>
+        </where>
+    </select>
 </mapper>

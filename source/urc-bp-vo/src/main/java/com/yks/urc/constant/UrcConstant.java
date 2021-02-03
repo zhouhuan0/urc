@@ -29,5 +29,9 @@ public interface UrcConstant {
         int FBA = 1;
         //账单系统
         int BILL = 2;
+        //海外物流优选
+        int overSea = 3;
+        //PBS系统
+        int PBS = 4;
     }
 }

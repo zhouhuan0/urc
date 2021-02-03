@@ -2,6 +2,7 @@ package com.yks.urc.mapper;
 
 import com.yks.urc.entity.PositionGroupVO;
 import com.yks.urc.vo.PermissionVO;
+import com.yks.urc.vo.PositionPower;
 import com.yks.urc.vo.UserByPosition;
 import org.apache.ibatis.annotations.Param;
 
@@ -35,4 +36,7 @@ public interface IPositionGroupMapper {
     List<UserByPosition> getPositionInfoByPermitKey(Map<String, Object> queryMap);
 
     int getPositionInfoByPermitKeyCount(Map<String, Object> queryMap);
+
+    List<PositionPower> positionPowerList(@Param("positionIds") List<String> positionIds);
+
 }

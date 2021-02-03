@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.Enum.ModuleCodeEnum;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
 import com.yks.urc.excel.FileUpDownLoadUtils;
 import com.yks.urc.excel.PositionInfoExcelExport;
+import com.yks.urc.excel.PositionPowerExcelExport;
 import com.yks.urc.exception.ErrorCode;
 import com.yks.urc.exception.URCBizException;
 import com.yks.urc.funcjsontree.bp.api.IFuncJsonTreeBp;
@@ -69,6 +71,14 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
     private IRoleMapper roleMapper;
     @Autowired
     private IFuncJsonTreeBp funcJsonTreeBp;
+    @Autowired
+    private RoleOwnerMapper ownerMapper;
+    @Autowired
+    private PositionPowerExcelExport positionPowerExcelExport;
+    @Autowired
+    private IConfigBp configBp;
+    //是否导出岗位权限(1可以导出，0不能)
+    private final static String POSITION_EXPORT_FLAG = "POSITION_EXPORT_FLAG";
 
     private static String excelTemp = "/opt/tmp/";
 
@@ -146,13 +156,13 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             List<String> roleSysKey = new ArrayList<>();
             //查询用户可以授权的系统
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
-            if(!isSuperAdmin){
-                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
-            }else{
+            if (!isSuperAdmin) {
+                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(), sysType);
+            } else {
                 //超管也只能一个个系统处理
                 roleSysKey = permitItemPositionMapper.findOneSystemKey(sysType);
             }
-            if(!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)){
+            if (!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)) {
                 return VoHelper.getFail("当前用户没有可分配的系统功能权限");
             }
 
@@ -169,7 +179,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                 if (StringUtils.isEmpty(groupId)) {
                     //校验权限组是否存在
                     boolean isExist = urcPositionGroupMapper.existName(groupName);
-                    if(isExist){
+                    if (isExist) {
                         return VoHelper.getErrorResult(CommonMessageCodeEnum.FAIL.getCode(), "权限组名重复！");
                     }
                     newGroupId = seqBp.getNextRoleId();
@@ -179,7 +189,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     urcPositionGroupMapper.deleteByGroupId(newGroupId);
                     //通过可以删除
                     //urcGroupPermissionMapper.deleteByGroupId(newGroupId);
-                    urcGroupPermissionMapper.deleteByGroupIdandKey(newGroupId,roleSysKey);
+                    urcGroupPermissionMapper.deleteByGroupIdandKey(newGroupId, roleSysKey);
                 }
                 List<String> positionList = new ArrayList<String>();
                 if (positionIds != null && positionIds.size() > 0) {
@@ -227,7 +237,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     }
                 }
                 //保存操作日志
-                UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "权限组保存或更新",groupName , jsonStr);
+                UrcLog urcLog = new UrcLog(sessionBp.getOperator(), ModuleCodeEnum.ROLE_MANAGERMENT.getStatus(), "权限组保存或更新", groupName, jsonStr);
                 iUrcLogBp.insertUrcLog(urcLog);
                 //权限控制
                 //先删除岗位权限,在插入
@@ -235,7 +245,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
 
                 for (String positionId : positionList) {
                     rolePermitMapper.deleteByRoleIdInSysKey(positionId, roleSysKey);
-                    if(!CollectionUtils.isEmpty(permissionDOList)) {
+                    if (!CollectionUtils.isEmpty(permissionDOList)) {
                         for (PermissionDO permissionDO : permissionDOList) {
                             RolePermissionDO rp = new RolePermissionDO();
                             rp.setRoleId(Long.parseLong(positionId));
@@ -257,7 +267,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                     permissionDO.setRoleId(Long.parseLong(positionId));
                     permissionDO.setSysType(sysType);
                     permissionDO.setSysKeys(roleSysKey);
-                   // List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
+                    // List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermission(permissionDO);
                     List<RolePermissionDO> rolePermissionList = rolePermissionMapper.getRoleSuperAdminPermissionBySysType(permissionDO);
                     List<String> list = new ArrayList<>();
                     for (RolePermissionDO rolePermissionDO : rolePermissionList) {
@@ -279,7 +289,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
                         //sys_key 转换成 permit_key
                         List<String> permitKeys = changeKey(roleSysKey);
                         //先删后插
-                        permitItemPositionMapper.deleteBypositionIdAndKey(Long.parseLong(positionId),permitKeys);
+                        permitItemPositionMapper.deleteBypositionIdAndKey(Long.parseLong(positionId), permitKeys);
                         permitItemPositionMapper.insertPosition(param);
                     }
 
@@ -312,14 +322,15 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
 
     /**
      * sys_key 转换成 permit_key
+     *
      * @param list
      * @return
      */
-    private List<String> changeKey(List<String> list){
-        if(CollectionUtils.isEmpty(list)){
+    private List<String> changeKey(List<String> list) {
+        if (CollectionUtils.isEmpty(list)) {
             return null;
         }
-        List <String> permissions = permitItemPositionMapper.getPermission(list);
+        List<String> permissions = permitItemPositionMapper.getPermission(list);
         List<String> result = new ArrayList<>();
         for (String str : permissions) {
             //拼接权限字符串
@@ -334,7 +345,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             /* 1、将json字符串转为Json对象 */
             JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
             Integer sysType = jsonObject.getInteger("sysType");
-            if(null == sysType){
+            if (null == sysType) {
                 sysType = 0;
             }
             //权限组id
@@ -352,7 +363,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             List<UserByPosition> positions = positionGroupMapper.getPositions(groupId);
             result.setPositions(positions);
             //获得权限信息
-            List<PermissionVO> selectedContext = positionGroupMapper.getSelectedContext(groupId,sysType);
+            List<PermissionVO> selectedContext = positionGroupMapper.getSelectedContext(groupId, sysType);
             result.setSelectedContext(selectedContext);
             return VoHelper.getSuccessResult(result);
         } catch (Exception e) {
@@ -473,6 +484,136 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             logger.error(String.format("exportPositionInfoByPermitKey error ! json:%s", jsonStr), e);
         }
         return VoHelper.getErrorResult();
+    }
+
+    @Override
+    public ResultVO exportPositionPower(String jsonStr) {
+        try {
+            String exportFlag = configBp.getString(POSITION_EXPORT_FLAG);
+            if(!"1".equals(exportFlag)){
+                return VoHelper.getErrorResult(ErrorCode.E_000000.getState(),"此功能已关闭！");
+            }
+            /* 1、将json字符串转为Json对象 */
+            JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+            /* 2、获取参数并校验 */
+            String positionIdStr = jsonObject.getString("positionIds");
+            List<String> positionIds = null;
+            if(null != positionIdStr) {
+                 positionIds = JSONArray.parseArray(positionIdStr, String.class);
+            }else {
+                 positionIds = getPositionIdList(jsonStr);
+            }
+            //获得导出集合
+            List<PositionPower> list = positionGroupMapper.positionPowerList(positionIds);
+            //生成导出文件
+            String downloadFileUrl = downloadPower(list);
+            return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), CommonMessageCodeEnum.SUCCESS.getDesc(), downloadFileUrl);
+        } catch (Exception e) {
+            logger.error(String.format("exportPositionPower error ! json:%s", jsonStr), e);
+        }
+        return VoHelper.getErrorResult();
+    }
+
+    /**
+     * 生成excle
+     *
+     * @param list
+     * @return
+     */
+    private String downloadPower(List<PositionPower> list) {
+        Date now = new Date();
+        String fileName = excelTemp + "positonPower-" + now.getTime() + ".xlsx";
+        positionPowerExcelExport.setList(list);
+        positionPowerExcelExport.setExportFilePath(fileName);
+        positionPowerExcelExport.initExportExcel();
+        String result = FileUpDownLoadUtils.getDownloadUrl("http://www.soter.youkeshu.com/yks/file/server/", fileName);
+        return result;
+    }
+
+
+    private List<String> getPositionIdList(String jsonStr) {
+        /* 1、将json字符串转为Json对象 */
+        JSONObject jsonObject = StringUtility.parseString(jsonStr).getJSONObject("data");
+        /* 2、获取参数并校验 */
+        String operator = StringUtility.parseString(jsonStr).getString("operator");
+        // 是否是管理员(0 .非管理员,1.管理员)
+        Integer isAuthorizable = jsonObject.getInteger("isAdmin");
+        //是否启用(0.不启用,1.启用)
+        Integer isActive = jsonObject.getInteger("isActive");
+        // 搜索类型(0.角色名称,1.创建人,2.owner)
+        Integer searchType = jsonObject.getInteger("searchType");
+        //搜索内容,多个值用 ','隔开
+        String searchContent = jsonObject.getString("searchContent");
+        //1:角色 2:岗位
+        Integer roleType = jsonObject.getInteger("roleType");
+        if (StringUtil.isEmpty(operator)) {
+            throw new URCBizException("parameter operator is null", ErrorCode.E_000002);
+        }
+
+        /*组装查询条件queryMap*/
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("isAdmin", isAuthorizable);
+        queryMap.put("isActive", isActive);
+        queryMap.put("roleType", roleType);
+        if (searchType != null) {
+            switch (searchType) {
+                case 0:
+                    queryMap.put("roleNames", splitStr(searchContent));
+                    break;
+                case 1:
+                    queryMap.put("createBys", splitStr(searchContent));
+                    break;
+                case 2:
+                    queryMap.put("owners", splitStr(searchContent));
+                    break;
+                default:
+            }
+        }
+        /*超级管理员角色不需要createBy条件，可以查看所有的角色*/
+        Boolean isAdmin = roleMapper.isSuperAdminAccount(operator);
+        if (isAdmin) {
+            queryMap.put("createBy", "");
+            queryMap.put("roleIds", null);
+        } else {
+            //查出当前操作人所属的owner的roleId
+            List<RoleOwnerDO> ownerDOS = ownerMapper.selectOwnerByOwner(operator);
+            if (!CollectionUtils.isEmpty(ownerDOS)) {
+                List<Long> roleIdList = new ArrayList<>();
+                for (RoleOwnerDO ownerDO : ownerDOS) {
+                    roleIdList.add(ownerDO.getRoleId());
+                }
+                queryMap.put("roleIds", roleIdList);
+            }
+            queryMap.put("createBy", operator);
+        }
+        List<RoleDO> roleDOS = roleMapper.listRoles(queryMap);
+        if (!CollectionUtils.isEmpty(roleDOS)) {
+            return roleDOS.stream().map(e -> e.getRoleId()+"").collect(Collectors.toList());
+        }
+        return null;
+    }
+
+    /**
+     * split并去除前后空格，空元素
+     *
+     * @param
+     * @return
+     * @Author lwx
+     * @Date 2018/11/6 14:40
+     */
+    private List<String> splitStr(String strSrc) {
+        if (StringUtils.isEmpty(strSrc)) {
+            return Collections.EMPTY_LIST;
+        }
+        String[] arrAcct = strSrc.split("(,)|(\r\n)|(\n)|(\r)");
+        List<String> lstRslt = new ArrayList<>();
+        for (int i = 0; i < arrAcct.length; i++) {
+            String mem = StringUtility.trimPattern_Private(arrAcct[i], "\\s");
+            if (!StringUtility.isNullOrEmpty(mem)) {
+                lstRslt.add(mem);
+            }
+        }
+        return lstRslt;
     }
 
     /**
