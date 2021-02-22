@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.Enum.ModuleCodeEnum;
 import com.yks.urc.authway.bp.api.AuthWayBp;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.dataauthorization.bp.api.DataAuthorization;
 import com.yks.urc.entity.*;
@@ -83,6 +84,8 @@ public class UserServiceImpl implements IUserService {
     private IRolePermissionMapper rolePermissionMapper;
     @Autowired
     private IFuncJsonTreeBp funcJsonTreeBp;
+    @Autowired
+    private IConfigBp configBp;
 
     @Value("${userInfo.resetPwdGetVerificationCode}")
     private String resetPwdGetVerificationCode;
@@ -719,11 +722,17 @@ public class UserServiceImpl implements IUserService {
                     permissionVOs = permissionMapper.getSysKey(sysType);
                 }
             }else {
-                //通过当前用户获得权限
-                if(StringUtils.isEmpty(sysType)) {
-                    permissionVOs = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
-                }else {
-                    permissionVOs = iUserMapper.getUserPermission(operator, sysType);
+                //如果登录人是系统管理员岗位,特殊处理
+                String roleId = configBp.getString("special_position");
+                if(roleId != null && userRoleMapper.existsUserName(roleId,operator)){
+                    permissionVOs = rolePermissionMapper.getPositionPermission(roleId,sysType);
+                }else{
+                    //通过当前用户获得权限
+                    if(StringUtils.isEmpty(sysType)) {
+                        permissionVOs = iUserMapper.getUserAuthorizablePermissionForPosition(operator);
+                    }else {
+                        permissionVOs = iUserMapper.getUserPermission(operator, sysType);
+                    }
                 }
             }
             return VoHelper.getSuccessResult(permissionVOs);

@@ -293,4 +293,8 @@
             </foreach>
         </where>
     </select>
+
+    <select id="existsUserName" resultType="boolean">
+         select count(*) from urc_user_role where role_id = #{roleId} and user_name = #{userName}
+    </select>
 </mapper>

@@ -138,7 +138,7 @@
     <select id="positionPowerList" resultType="com.yks.urc.vo.PositionPower">
         select
         t1.role_name positionName,
-        (select t5.sys_type from urc_role_permission t4 left join urc_permission t5 on t4.sys_key = t5.sys_key where t4.role_id = t1.role_id  and t4.sys_key = substring(t2.permit_key,1,INSTR(t2.permit_key,'-')-1)) platformType,
+        (select t5.sys_type_name from urc_role_permission t4 left join urc_permission t5 on t4.sys_key = t5.sys_key where t4.role_id = t1.role_id  and t4.sys_key = substring(t2.permit_key,1,INSTR(t2.permit_key,'-')-1)) platformType,
         (select t5.sys_name from urc_role_permission t4 left join urc_permission t5 on t4.sys_key = t5.sys_key where t4.role_id = t1.role_id  and t4.sys_key = substring(t2.permit_key,1,INSTR(t2.permit_key,'-')-1)) systemName,
         t3.permit_name permitName,
         (select t4.modified_by from urc_role_permission t4 where t4.role_id = t1.role_id  and t4.sys_key = substring(t2.permit_key,1,INSTR(t2.permit_key,'-')-1)) distributionMan,

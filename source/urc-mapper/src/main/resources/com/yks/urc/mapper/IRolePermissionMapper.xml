@@ -293,4 +293,15 @@
             </if>
         </where>
     </select>
+
+    <select id="getPositionPermission" resultType="com.yks.urc.entity.PermissionDO">
+        select
+        t.sys_key as sysKey,
+        t.selected_context as sysContext
+        from urc_role_permission t
+        left join urc_permission t1 on t.sys_key = t1.sys_key
+        where t.role_id = #{roleId}
+        and t1.status = 1
+        <if test="sysType != null and sysType != ''">and t1.sys_type = #{sysType}</if>
+    </select>
 </mapper>

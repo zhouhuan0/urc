@@ -37,6 +37,8 @@ public class PermissionDO {
      * 系统类型  0:erp系统(内部系统)  1:FBA系统
      */
     private Integer sysType;
+
+    private String sysTypeName;
     /**
      * 状态 0:禁用 1:启用
      */
@@ -45,6 +47,14 @@ public class PermissionDO {
      * 备注
      */
     private String remark;
+
+    public String getSysTypeName() {
+        return sysTypeName;
+    }
+
+    public void setSysTypeName(String sysTypeName) {
+        this.sysTypeName = sysTypeName;
+    }
 
     public Integer getSysType() {
         return sysType;

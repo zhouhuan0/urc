@@ -117,6 +117,7 @@ public class PermissionServiceImpl implements IPermissionService {
                     p.setSysName(root.system.name);
                     p.setSysKey(root.system.key);
                     p.setSysType(root.system.sysType == null ? UrcConstant.SysType.ERP : root.system.sysType);
+                    p.setSysTypeName(root.system.sysTypeName);
                     // 将API 前缀置为null. 在存入sysContext
                     root.apiUrlPrefix = null;
                     p.setSysContext(StringUtility.toJSONString_NoException(root));

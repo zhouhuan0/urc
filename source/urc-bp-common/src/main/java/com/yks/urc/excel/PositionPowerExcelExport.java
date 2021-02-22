@@ -39,16 +39,16 @@ public class PositionPowerExcelExport extends AbstractExcelExport {
 
     private void writeRowData(int rowNum, PositionPower positionPower) {
         LOGGER.info("write {} row data : resp_PositionPowerExcelExport=", rowNum, StringUtility.toJSONString(positionPower));
-        Map<String,String> map = new HashMap<String,String>();
+       /* Map<String,String> map = new HashMap<String,String>();
         map.put("0","ERP系统");
         map.put("1","FBA系统");
         map.put("2","账单系统");
         map.put("3","海外物流优选");
-        map.put("4","PBS系统");
+        map.put("4","PBS系统");*/
         //excle设值
         Row row = sheet.createRow(rowNum);
         row.createCell(0).setCellValue(StringUtility.convertToString(positionPower.getPositionName()));
-        row.createCell(1).setCellValue(map.get(StringUtility.convertToString(positionPower.getPlatformType())));
+        row.createCell(1).setCellValue(StringUtility.convertToString(positionPower.getPlatformType()));
         row.createCell(2).setCellValue(StringUtility.convertToString(positionPower.getSystemName()));
         row.createCell(3).setCellValue(StringUtility.convertToString(positionPower.getPermitName()));
         row.createCell(4).setCellValue(StringUtility.convertToString(positionPower.getDistributionMan()));

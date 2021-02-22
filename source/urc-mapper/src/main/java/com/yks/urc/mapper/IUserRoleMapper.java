@@ -125,4 +125,6 @@ public interface IUserRoleMapper {
 	List<String> getSysKeyByUserAndType(@Param("userName")String userName, @Param("sysType")String sysType);
 
 	List<String> getUserNamesByRoleIds(@Param("lstRoleId") List<Long> lstRoleId);
+
+	Boolean existsUserName(@Param("roleId") String roleId,@Param("userName") String userName);
 }

@@ -1,5 +1,6 @@
 package com.yks.urc.mapper;
 
+import com.yks.urc.entity.PermissionDO;
 import com.yks.urc.entity.RolePermissionDO;
 import org.apache.ibatis.annotations.Param;
 
@@ -118,4 +119,12 @@ public interface IRolePermissionMapper {
 
 
     List<RolePermissionDO> getRoleSuperAdminPermissionBySysType(RolePermissionDO permissionDO);
+
+    /**
+     * 根据系统类型查询岗位拥有的权限
+     * @param roleId
+     * @param sysType
+     * @return
+     */
+    List<PermissionDO> getPositionPermission(@Param("roleId") String roleId,@Param("sysType") String sysType);
 }

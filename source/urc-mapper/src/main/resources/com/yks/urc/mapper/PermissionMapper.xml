@@ -12,6 +12,7 @@
         <result column="sys_type"  property="sysType"/>
         <result column="status"  property="status"/>
         <result column="remark"  property="remark"/>
+        <result column="sys_type_name" property="sysTypeName"/>
     </resultMap>
     <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.yks.urc.entity.PermissionDO">
         <result column="sys_context" jdbcType="LONGVARCHAR" property="sysContext"/>
@@ -25,7 +26,7 @@
 
 
     <sql id="Base_Column_List">
-    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time,sys_type,status,remark
+    id, sys_name, sys_key, create_by, create_time, modified_by, modified_time,sys_type,sys_type_name,status,remark
   </sql>
     <sql id="Blob_Column_List">
     sys_context
@@ -74,7 +75,7 @@
 
     <insert id="insertSysPermitDefine">
         insert into urc_permission (id, sys_name, sys_key,create_by, create_time, modified_by, modified_time,
-        sys_context,api_url_prefix_json,sys_type)
+        sys_context,api_url_prefix_json,sys_type,sys_type_name)
         values
         <foreach collection="lstPermit" item="mem" index="index"
                  separator=",">
@@ -82,7 +83,7 @@
             #{mem.id,jdbcType=BIGINT}, #{mem.sysName,jdbcType=CHAR}, #{mem.sysKey,jdbcType=CHAR},
             #{mem.createBy,jdbcType=VARCHAR}, #{mem.createTime,jdbcType=TIMESTAMP},
             #{mem.modifiedBy,jdbcType=VARCHAR},#{mem.modifiedTime,jdbcType=TIMESTAMP},
-            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{mem.sysType}
+            #{mem.sysContext,jdbcType=LONGVARCHAR},#{mem.apiUrlPrefixJson,jdbcType=LONGVARCHAR},#{mem.sysType},#{mem.sysTypeName}
             )
         </foreach>
     </insert>
