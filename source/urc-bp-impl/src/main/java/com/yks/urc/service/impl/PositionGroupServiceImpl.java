@@ -157,13 +157,19 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             //查询用户可以授权的系统
             boolean isSuperAdmin = roleMapper.isSuperAdminAccount(operator);
             if (!isSuperAdmin) {
-                roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(), sysType);
+                String roleId = configBp.getString("special_position");
+                if(!StringUtility.isNullOrEmpty(roleId) && userRoleMapper.existsUserName(roleId,operator)){
+                    roleSysKey = permissionDOList.stream().map(PermissionDO ::getSysKey).collect(Collectors.toList());
+                }else{
+                    roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(), sysType);
+                }
+
+                if (CollectionUtils.isEmpty(roleSysKey)) {
+                    return VoHelper.getFail("当前用户没有可分配的系统功能权限");
+                }
             } else {
                 //超管也只能一个个系统处理
                 roleSysKey = permitItemPositionMapper.findOneSystemKey(sysType);
-            }
-            if (!isSuperAdmin && CollectionUtils.isEmpty(roleSysKey)) {
-                return VoHelper.getFail("当前用户没有可分配的系统功能权限");
             }
 
             //校验岗位是不是包含超管岗位
