@@ -724,7 +724,7 @@ public class UserServiceImpl implements IUserService {
             }else {
                 //如果登录人是系统管理员岗位,特殊处理
                 String roleId = configBp.getString("special_position");
-                if(roleId != null && userRoleMapper.existsUserName(roleId,operator)){
+                if(!StringUtility.isNullOrEmpty(roleId) && userRoleMapper.existsUserName(roleId,operator)){
                     permissionVOs = rolePermissionMapper.getPositionPermission(roleId,sysType);
                 }else{
                     //通过当前用户获得权限
@@ -775,9 +775,15 @@ public class UserServiceImpl implements IUserService {
         if (!isSuper) {
             //查询用户可以授权的系统
             roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(),sysType);
+            String roleId = configBp.getString("special_position");
+            boolean flag = !StringUtility.isNullOrEmpty(roleId) && userRoleMapper.existsUserName(roleId,operator);
             //不是超管也不是任何系统的功能管理员时直接抛异常
-            if(CollectionUtils.isEmpty(roleSysKey)){
+            if(CollectionUtils.isEmpty(roleSysKey) && !flag){
                 throw new Exception("当前用户不是任何系统功能管理员,无法分配权限!");
+            }
+            //如果登录人是系统管理员岗位,特殊处理
+            if(flag){
+                roleSysKey = permissionDOList.stream().map(PermissionDO ::getSysKey).collect(Collectors.toList());
             }
         }else{
             //超管也只能一个个系统处理

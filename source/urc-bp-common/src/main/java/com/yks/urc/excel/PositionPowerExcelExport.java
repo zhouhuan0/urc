@@ -32,7 +32,13 @@ public class PositionPowerExcelExport extends AbstractExcelExport {
         int dataLength = list.size();
         int startRowNum = TITLE_ROW_NUM + 1;
         for (int i = 0; i < dataLength; i++) {
-            writeRowData(startRowNum + i, list.get(i));
+            PositionPower positionPower = list.get(i);
+            //没有子系统名称的就不必要导出了,可能是脏数据
+            if(StringUtility.isNullOrEmpty(positionPower.getSystemName())){
+                continue;
+            }
+            writeRowData(startRowNum,positionPower);
+            startRowNum++;
         }
 
     }

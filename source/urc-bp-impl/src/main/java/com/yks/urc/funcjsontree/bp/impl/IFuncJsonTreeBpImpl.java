@@ -370,11 +370,13 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
             return;
         }
         List<Long> roleIds = new ArrayList<>();
+        List<String> lstSysKey = new ArrayList<>();
         for (RolePermissionDO permissionDO : updatePermissions) {
             //更新权限树
             rolePermissionMapper.updateUserRoleByRoleId(permissionDO);
             if (permissionDO.getRoleId() != null) {
                 roleIds.add(permissionDO.getRoleId());
+                lstSysKey.add(permissionDO.getSysKey());
             }
         }
         //去重
@@ -389,6 +391,7 @@ public class IFuncJsonTreeBpImpl implements IFuncJsonTreeBp {
         userNames = userNames.stream().distinct().collect(Collectors.toList());
         /*4、更新用户操作权限冗余表和缓存*/
         permitRefreshTaskBp.addPermitRefreshTask(userNames);
+        permitRefreshTaskBp.addPermitRefreshTaskForImportSysPermit(lstSysKey);
     }
 
     /**
