@@ -159,7 +159,7 @@ public class PositionGroupServiceImpl implements IPositionGroupService {
             if (!isSuperAdmin) {
                 String roleId = configBp.getString("special_position");
                 if(!StringUtility.isNullOrEmpty(roleId) && userRoleMapper.existsUserName(roleId,operator)){
-                    roleSysKey = permissionDOList.stream().map(PermissionDO ::getSysKey).collect(Collectors.toList());
+                    roleSysKey = rolePermissionMapper.getPositionPermission(roleId,sysType == null ? null : sysType.toString()).stream().map(PermissionDO :: getSysKey).collect(Collectors.toList());
                 }else{
                     roleSysKey = urcSystemAdministratorMapper.selectSysKeyByAdministratorType(operator, UrcConstant.AdministratorType.functionAdministrator.intValue(), sysType);
                 }
