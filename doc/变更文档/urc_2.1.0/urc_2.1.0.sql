@@ -76,3 +76,9 @@ CREATE TABLE `urcenter`.`urc_group_permission`  (
 INSERT INTO urcenter.yks_task (id,task_id, task_title, task_desc, task_group, task_name, trigger_start_time, cron_expression, is_enabled, bean_name, bean_method, bean_method_param, creator, created_time, modifier, modified_time) VALUES (120,120, '新员工授权', '新员工授权', 'taskScheduler', 'commonPermissionTask', now(), '0 0 12 * * ?', 1, 'commonPermissionTask', 'doTask', null, '', now(), '', now());
 #配置数据
 INSERT INTO urcenter.yks_prop_setting (prop_key, prop_value, remark, create_by, create_time, modified_by, modified_time) VALUES ('ROLE_NAME', '通用角色', '用户中心', 'wensheng', now(), 'wensheng', now());
+
+
+
+ALTER TABLE `urcenter`.`urc_permission`
+MODIFY COLUMN `sys_name` char(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '子系统名称' AFTER `id`,
+ADD COLUMN `sys_type_name` varchar(255) NULL COMMENT '系统类型名称' AFTER `sys_type`;
