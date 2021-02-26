@@ -82,3 +82,6 @@ INSERT INTO urcenter.yks_prop_setting (prop_key, prop_value, remark, create_by, 
 ALTER TABLE `urcenter`.`urc_permission`
 MODIFY COLUMN `sys_name` char(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '子系统名称' AFTER `id`,
 ADD COLUMN `sys_type_name` varchar(255) NULL COMMENT '系统类型名称' AFTER `sys_type`;
+
+ALTER TABLE `urcenter`.`urc_user`
+ADD COLUMN `avatar` varchar(255) NULL COMMENT '钉钉头像链接' AFTER `mobile`;

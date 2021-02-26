@@ -1,8 +1,12 @@
 package com.yks.urc.user.bp.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.yks.urc.cache.bp.api.ICacheBp;
 import com.yks.urc.comparator.impl.UserSysVOComparator;
+import com.yks.urc.config.bp.api.IConfigBp;
 import com.yks.urc.constant.UrcConstant;
 import com.yks.urc.entity.*;
 import com.yks.urc.enums.CommonMessageCodeEnum;
@@ -16,12 +20,14 @@ import com.yks.urc.lock.bp.api.ILockBp;
 import com.yks.urc.mapper.*;
 import com.yks.urc.operation.bp.api.IOperationBp;
 import com.yks.urc.permitStat.bp.api.IPermitStatBp;
+import com.yks.urc.serialize.bp.api.ISerializeBp;
 import com.yks.urc.user.bp.api.IUserBp;
 import com.yks.urc.user.bp.api.IUserLogBp;
 import com.yks.urc.userValidate.bp.api.IUserValidateBp;
 import com.yks.urc.vo.*;
 import com.yks.urc.vo.helper.Query;
 import com.yks.urc.vo.helper.VoHelper;
+import jdk.nashorn.internal.scripts.JS;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import sun.security.krb5.Config;
 
 import java.util.*;
 
@@ -50,6 +57,10 @@ public class UserBpImpl implements IUserBp {
     private UserTicketMapper userTicketMapper;
     @Autowired
     private PermissionMapper permissionMapper;
+    @Autowired
+    private IConfigBp configBp;
+    @Autowired
+    private ISerializeBp serializeBp;
     /**
      * token 请求地址
      */
@@ -194,6 +205,83 @@ public class UserBpImpl implements IUserBp {
             }
         }
         return VoHelper.getSuccessResult(permitCache);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public ResultVO updateAllUserInfoNew() {
+        List<UserDO> userDoList = new ArrayList<>();
+        logger.info("开始同步");
+        Map<String, String> headMap = new HashMap<>();
+        headMap.put("Content-Type","application/json");
+        headMap.put("yksToken", configBp.getString("yksToken","NjAzNGY0NWU2NDI2NTo3NTE5ZTVkZjMxZmQxMjk5MDUyNzgwYWM4YmMwODIwNw=="));
+        Date dateTimeNow = StringUtility.getDateTimeNow();
+        JSONObject paramBody = new JSONObject();
+        JSONObject data = new JSONObject();
+        data.put("type","java");
+        data.put("modifiedTime",StringUtility.convertToDate(configBp.getStringFromDb("synUserInfoPoint","2020-01-01 00:00:00"),dateTimeNow).getTime());
+        paramBody.put("data",data);
+        String responseString = HttpUtility.postHasHeaders(configBp.getString("getUserInfoUrl","http://ykshr.kokoerp.com/openapi/employee/getList"), headMap, paramBody.toString(), "utf-8");
+        if(StringUtility.isNullOrEmpty(responseString)){
+            return VoHelper.getFail("同步失败,请稍后重试");
+        }
+        JSONObject jsonObject = JSON.parseObject(responseString);
+        if(!StringUtility.stringEqualsIgnoreCase(CommonMessageCodeEnum.SUCCESS.getCode(),jsonObject.getString("state"))){
+            return VoHelper.getFail(jsonObject.getString("msg"));
+        }
+        JSONObject objectJSONObject = jsonObject.getJSONObject("data");
+        JSONArray list = objectJSONObject.getJSONArray("list");
+        //没有可更新的数据直接返回成功
+        if(list == null || list.isEmpty() ){
+            return VoHelper.getSuccessResult();
+        }
+
+        for (Object o : list) {
+            JSONObject object = (JSONObject) o;
+            String avatar = object.getString("avatar");
+            String chineseName = object.getString("chineseName");
+            String dingUserId = object.getString("dingUserId");
+            String mobile = object.getString("mobile");
+            String userName = object.getString("userName");
+            String activeTime = object.getString("activeTime");
+            String isActive = object.getString("isActive");
+            if(StringUtility.isNullOrEmpty(userName)){
+                continue;
+            }
+            UserDO userDo = new UserDO();
+            userDo.setUserName(userName);
+            userDo.setChineseName(chineseName);
+            userDo.setMobile(mobile);
+            userDo.setDingUserId(dingUserId);
+            userDo.setCreateBy(username);
+            userDo.setModifiedBy(username);
+            userDo.setCreateTime(StringUtility.getDateTimeNow());
+            userDo.setModifiedTime(StringUtility.getDateTimeNow());
+            userDo.setActiveTime(StringUtility.isNullOrEmpty(activeTime) || activeTime.length()< 13 ? new Date() : new Date(Long.valueOf(activeTime)));
+            userDo.setAvatar(avatar);
+            // 1在职，2离职
+            if (StringUtility.stringEqualsIgnoreCase(isActive,"2")) {
+                userDo.setIsActive(0);
+            } else {
+                userDo.setIsActive(1);
+            }
+            // 传入手动同步的创建人员
+            userDo.setCreateBy(username);
+            userDo.setModifiedBy(username);
+            userDoList.add(userDo);
+            //如果超过1000条, 先插入数据库,然后将list清空,在进行装载
+            if (userDoList.size() >= 1000) {
+                userMapper.insertOrUpdateBatchUser(userDoList);
+                userDoList.clear();
+            }
+        }
+        //如果跑完了,发现仍然还有数据,再插入一次
+        if (userDoList.size() != 0) {
+            userMapper.insertOrUpdateBatchUser(userDoList);
+        }
+        operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
+        configBp.update2Db("synUserInfoPoint", DateUtil.formatDate(dateTimeNow, DateUtil.YYYY_MM_DD_HH_MM_SS));
+        return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
     }
 
     /**
@@ -379,8 +467,15 @@ public class UserBpImpl implements IUserBp {
                 cacheBp.insertUser(u);
                 //缓存的同时备份到数据库
                 backupUserTicketToDB(u);
-                resp.personName = getPersonNameFromCacheOrDb(u.userName);
-
+                //获取用户信息
+                UserDO userDO = getPersonFromCacheOrDb(u.userName);
+                if(userDO == null){
+                    resp.personName = u.userName;
+                    resp.avatar = "";
+                }else{
+                    resp.personName = userDO.getChineseName();
+                    resp.avatar = userDO.getAvatar();
+                }
                 loginLog.remark = String.format("登陆操作:request:[%s,%s,%s],redis 原有的用户信息[%s],redis新增的用户信息[%s]", userName, pwd, ip, StringUtility.toJSONString(getU), StringUtility.toJSONString(u));
                 userLogBp.insertLog(loginLog);
                 return VoHelper.getResultVO(ErrorCode.E_000001, "登陆成功", resp);
@@ -437,19 +532,21 @@ public class UserBpImpl implements IUserBp {
      * @param userName
      * @return
      */
-    private String getPersonNameFromCacheOrDb(String userName) {
+    private UserDO getPersonFromCacheOrDb(String userName) {
         if (StringUtility.isNullOrEmpty(userName)) {
-            return userName;
+            return null;
         }
-        String personName = cacheBp.getPersonNameByUserName(userName);
-        if (StringUtility.isNullOrEmpty(personName)) {
-            personName = userMapper.getPersonNameByUserName(userName);
-            if (StringUtility.isNullOrEmpty(personName)) {
-                personName = userName;
+        String person = cacheBp.getPersonByUserName(userName);
+        if (StringUtility.isNullOrEmpty(person)) {
+            UserDO byUserName = userMapper.getPersonByUserName(userName);
+            if (byUserName == null) {
+                return null;
             }
-            cacheBp.setPersonNameByUserName(userName, personName);
+            cacheBp.setPersonByUserName(userName, serializeBp.obj2JsonNonEmpty(byUserName));
+            return byUserName;
         }
-        return personName;
+        return serializeBp.json2ObjNew(person, new TypeReference<UserDO>() {
+        });
     }
 
 //    ExecutorService fixedThreadPool = Executors.newFixedThreadPool(4);

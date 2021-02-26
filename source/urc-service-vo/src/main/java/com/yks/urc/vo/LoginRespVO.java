@@ -33,4 +33,9 @@ public class LoginRespVO implements Serializable {
 	
 	public String ip;
 	public String personName;
+
+	/**
+	 * 钉钉用户头像
+	 */
+	public String avatar;
 }

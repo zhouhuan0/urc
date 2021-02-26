@@ -57,6 +57,13 @@ public interface IUserMapper {
      * @return
      */
     int insertBatchUser(@Param("userDoList") List<UserDO> userDoList);
+    /**
+     * 批量同步到数据库
+     *
+     * @param userDoList
+     * @return
+     */
+    int insertOrUpdateBatchUser(@Param("userDoList") List<UserDO> userDoList);
 
     /**
      * @return
@@ -112,8 +119,6 @@ public interface IUserMapper {
      */
     List<UserDO> getUserByRoleId(UserRoleDO userRole);
 
-    UserDO test(@Param("userName") String userName);
-
     /**
      * 精确搜索用户
      *
@@ -141,7 +146,7 @@ public interface IUserMapper {
      */
     int fuzzySearchUsersByUserNameCount(Query query);
 
-    String getPersonNameByUserName(@Param("userName") String userName);
+    UserDO getPersonByUserName(@Param("userName") String userName);
 
     /**
      * 模糊搜索 用户 给第三方

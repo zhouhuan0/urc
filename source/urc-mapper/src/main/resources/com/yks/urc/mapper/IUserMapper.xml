@@ -11,6 +11,7 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="avatar" property="avatar"/>
     </resultMap>
 
 
@@ -24,12 +25,13 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="modified_by" jdbcType="VARCHAR" property="modifiedBy"/>
         <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime"/>
+        <result column="avatar" property="avatar"/>
     </resultMap>
 
 
     <sql id="Base_Column_List">
     id, user_name, is_active, active_time, ding_user_id, create_by, create_time, modified_by, 
-    modified_time
+    modified_time,avatar
   </sql>
     <!--根据roleId查询用户-->
     <select id="listUsersByRoleId" parameterType="java.lang.String" resultMap="BaseUserResultMap">
@@ -177,11 +179,10 @@
         </if>
         LIMIT #{currIndex},#{currSize}
     </select>
-    <select id="getPersonNameByUserName" resultType="java.lang.String">
-        select  distinct p.person_name
-        from urc_user u left join urc_person p ON u.ding_user_id=p.ding_user_id
-        where u.user_name=#{userName}
-        limit 1
+    <select id="getPersonByUserName" resultType="com.yks.urc.entity.UserDO">
+        select user_name as userName,ding_user_id as dingUserId,chinese_name as chineseName,avatar,is_active as isActive
+        from urc_user
+        where user_name=#{userName}
     </select>
 
     <select id="listUsersUserNameByRoleId" parameterType="java.lang.Long" resultType="java.lang.String">
@@ -327,6 +328,35 @@
             #{list.mobile})
         </foreach>
     </insert>
+
+    <insert id="insertOrUpdateBatchUser" parameterType="com.yks.urc.entity.UserDO">
+        insert into urc_user
+        (user_name,is_active,active_time,ding_user_id,create_by,modified_by,create_time,modified_time,chinese_name,mobile,avatar)
+        values
+        <foreach collection="userDoList" item="list" separator=",">
+            (#{list.userName},
+            #{list.isActive},
+            #{list.activeTime},
+            #{list.dingUserId},
+            #{list.createBy},
+            #{list.modifiedBy},
+            #{list.createTime},
+            #{list.modifiedTime},
+            #{list.chineseName},
+            #{list.mobile},
+            #{list.avatar})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+        mobile = VALUES(mobile),
+        is_active = VALUES(is_active),
+        ding_user_id = VALUES(ding_user_id),
+        active_time = VALUES(active_time),
+        chinese_name = VALUES(chinese_name),
+        avatar = VALUES(avatar),
+        mobile = VALUES(mobile),
+        modified_time = now(3)
+    </insert>
+
     <delete id="deleteUrcUser">
       DELETE FROM urc_user
     </delete>

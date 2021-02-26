@@ -54,4 +54,11 @@ public interface IUserBp {
 	 * @date 2018年6月14日 下午12:58:45
 	 */
 	ResultVO getAllFuncPermitForOtherSystem(String operator,List<String> sysKeys);
+
+	/**
+	 * 新的从人事系统拉取数据
+	 * @return
+	 * @throws Exception
+	 */
+	ResultVO updateAllUserInfoNew();
 }

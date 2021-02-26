@@ -82,14 +82,14 @@ public interface ICacheBp {
 	 * @param userName
 	 * @return
 	 */
-    String getPersonNameByUserName(String userName);
+    String getPersonByUserName(String userName);
 
 	/**
 	 * 设置用户姓名
 	 * @param userName
 	 * @param personName
 	 */
-	void setPersonNameByUserName(String userName, String personName);
+	void setPersonByUserName(String userName, String personName);
 	/**
 	 *  获取 所有有用的平台和账号
 	 * @param

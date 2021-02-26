@@ -130,6 +130,9 @@
       #{item.creator}, #{item.createdTime}, #{item.modifier},
       #{item.modifiedTime})
     </foreach>
+    ON DUPLICATE KEY UPDATE
+    modifier = VALUES(modifier),
+    modified_time = now(3)
   </insert>
 
   <delete id="deleteBypositionIdAndKey">

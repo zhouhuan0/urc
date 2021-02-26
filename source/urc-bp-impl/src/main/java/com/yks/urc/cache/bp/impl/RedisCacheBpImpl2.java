@@ -353,16 +353,16 @@ public class RedisCacheBpImpl2 implements ICacheBp {
         getCache(accessTokeTime).put(accessTokeTime, accessTokeValue);
     }
 
-    private String KEY_personName = "personName";
+    private String KEY_person = "person";
 
     @Override
-    public String getPersonNameByUserName(String userName) {
-        return StringUtility.addEmptyString(getUserInfoCache(userName).get(KEY_personName));
+    public String getPersonByUserName(String userName) {
+        return StringUtility.addEmptyString(getUserInfoCache(userName).get(KEY_person));
     }
 
     @Override
-    public void setPersonNameByUserName(String userName, String personName) {
-        getUserInfoCache(userName).put(KEY_personName, personName);
+    public void setPersonByUserName(String userName, String person) {
+        getUserInfoCache(userName).put(KEY_person, person);
     }
 
     private String Key_platform_shop ="ebay_platform_shop";
