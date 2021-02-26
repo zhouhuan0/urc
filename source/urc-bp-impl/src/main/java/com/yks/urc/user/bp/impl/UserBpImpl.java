@@ -114,13 +114,13 @@ public class UserBpImpl implements IUserBp {
         }
 
         try {
-            List<UserInfo> userInfoList = this.getUserInfo();
+           /* List<UserInfo> userInfoList = this.getUserInfo();
             if (userInfoList == null || userInfoList.size() == 0) {
                 logger.error(String.format("请求userInfo 接口异常"));
                 operationBp.addLog(this.getClass().getName(), "请求userInfo 接口异常", null);
                 throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
-            }
-            return BeanProvider.getBean(IUserBp.class).updateAllUserInfo(userInfoList);
+            }*/
+            return BeanProvider.getBean(IUserBp.class).updateAllUserInfoNew();
         } catch (Exception e) {
             throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..", e);
         } finally {
