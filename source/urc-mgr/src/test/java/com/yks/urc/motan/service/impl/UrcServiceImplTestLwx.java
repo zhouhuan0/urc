@@ -30,8 +30,8 @@ public class UrcServiceImplTestLwx extends BaseServiceTest {
 
     @Test
     public void login() throws Exception {
-        map.put("userName", "songguanye");
-        map.put("pwd", "670317483sgy??");
+        map.put("userName", "zengzheng");
+        map.put("pwd", "zYKS1234");
         map.put("ip", "192.168.93.176");
         map.put("deviceName", "Chrome浏览器");
         System.out.println(StringUtility.toJSONString(map));
