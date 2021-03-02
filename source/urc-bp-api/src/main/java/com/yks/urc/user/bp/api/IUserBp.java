@@ -60,5 +60,5 @@ public interface IUserBp {
 	 * @return
 	 * @throws Exception
 	 */
-	ResultVO updateAllUserInfoNew();
+	ResultVO updateAllUserInfoNew(String operator);
 }

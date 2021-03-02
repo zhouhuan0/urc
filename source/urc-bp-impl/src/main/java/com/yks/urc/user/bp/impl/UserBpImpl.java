@@ -120,7 +120,7 @@ public class UserBpImpl implements IUserBp {
                 operationBp.addLog(this.getClass().getName(), "请求userInfo 接口异常", null);
                 throw new URCBizException("请求userInfo 接口异常", ErrorCode.E_000000);
             }*/
-            return BeanProvider.getBean(IUserBp.class).updateAllUserInfoNew();
+            return BeanProvider.getBean(IUserBp.class).updateAllUserInfoNew(username);
         } catch (Exception e) {
             throw new URCServiceException(CommonMessageCodeEnum.FAIL.getCode(), "同步userInfo数据出错..", e);
         } finally {
@@ -209,7 +209,7 @@ public class UserBpImpl implements IUserBp {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO updateAllUserInfoNew() {
+    public ResultVO updateAllUserInfoNew(String operator) {
         List<UserDO> userDoList = new ArrayList<>();
         logger.info("开始同步");
         Map<String, String> headMap = new HashMap<>();
@@ -253,8 +253,8 @@ public class UserBpImpl implements IUserBp {
             userDo.setChineseName(chineseName);
             userDo.setMobile(mobile);
             userDo.setDingUserId(dingUserId);
-            userDo.setCreateBy(username);
-            userDo.setModifiedBy(username);
+            userDo.setCreateBy(operator);
+            userDo.setModifiedBy(operator);
             userDo.setCreateTime(StringUtility.getDateTimeNow());
             userDo.setModifiedTime(StringUtility.getDateTimeNow());
             userDo.setActiveTime(StringUtility.isNullOrEmpty(activeTime) || activeTime.length()< 13 ? new Date() : new Date(Long.valueOf(activeTime)));
@@ -265,9 +265,6 @@ public class UserBpImpl implements IUserBp {
             } else {
                 userDo.setIsActive(1);
             }
-            // 传入手动同步的创建人员
-            userDo.setCreateBy(username);
-            userDo.setModifiedBy(username);
             userDoList.add(userDo);
             //如果超过1000条, 先插入数据库,然后将list清空,在进行装载
             if (userDoList.size() >= 1000) {
