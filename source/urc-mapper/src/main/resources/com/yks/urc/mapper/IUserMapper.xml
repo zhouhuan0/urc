@@ -353,7 +353,6 @@
         active_time = VALUES(active_time),
         chinese_name = VALUES(chinese_name),
         avatar = VALUES(avatar),
-        mobile = VALUES(mobile),
         modified_time = now(3)
     </insert>
 
