@@ -277,7 +277,7 @@ public class UserBpImpl implements IUserBp {
             userMapper.insertOrUpdateBatchUser(userDoList);
         }
         operationBp.addLog(this.getClass().getName(), "同步userInfo数据成功..", null);
-        configBp.update2Db("synUserInfoPoint", DateUtil.formatDate(dateTimeNow, DateUtil.YYYY_MM_DD_HH_MM_SS));
+        //configBp.update2Db("synUserInfoPoint", DateUtil.formatDate(dateTimeNow, DateUtil.YYYY_MM_DD_HH_MM_SS));
         return VoHelper.getResultVO(CommonMessageCodeEnum.SUCCESS.getCode(), "同步userInfo数据成功..");
     }
 
